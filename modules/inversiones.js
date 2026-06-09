@@ -10,7 +10,7 @@ window.Mods.inversiones = {
     }
   },
 
-  // ── Mercado — búsqueda live ──────────────────────────────────────────
+  // ── Mercado ──────────────────────────────────────────────────────────
   async renderMercado() {
     const c = document.getElementById('content');
     const guardados = await dbFetch('precios_historicos', {
@@ -44,19 +44,19 @@ window.Mods.inversiones = {
 
       <div class="table-wrap">
         <div class="table-header">
-          <span class="table-title">Precios guardados en Supabase</span>
+          <span class="table-title">Precios guardados</span>
         </div>
         ${rows.length === 0 ? `
           <div class="empty">
             <div class="empty-icon">📡</div>
-            <div class="empty-text">Buscá un ticker y guardalo, o corré <code>actualizar_precios.py</code></div>
+            <div class="empty-text">Buscá un ticker y guardalo para ver el historial</div>
           </div>
         ` : `
           <table>
             <thead>
               <tr><th>Ticker</th><th>Fecha</th><th>Cierre</th><th>Apertura</th><th>Máx</th><th>Mín</th></tr>
             </thead>
-            <tbody id="precios-tbody">
+            <tbody>
               ${rows.map(r => `
                 <tr>
                   <td><strong>${r.ticker}</strong></td>
@@ -124,52 +124,20 @@ window.Mods.inversiones = {
       try {
         await dbUpsert('activos', { ticker: _lastInfo.ticker, tipo: 'accion' });
         await dbUpsert('precios_historicos', {
-          ticker:         _lastInfo.ticker,
-          fecha:          new Date().toISOString().slice(0, 10),
-          cierre:         _lastInfo.price,
-          apertura:       _lastInfo.open,
-          maximo:         _lastInfo.high,
-          minimo:         _lastInfo.low,
+          ticker:          _lastInfo.ticker,
+          fecha:           new Date().toISOString().slice(0, 10),
+          cierre:          _lastInfo.price,
+          apertura:        _lastInfo.open,
+          maximo:          _lastInfo.high,
+          minimo:          _lastInfo.low,
           cierre_ajustado: _lastInfo.price,
         });
-        toast('✅ Precio guardado en Supabase');
+        toast('✅ Precio guardado');
         document.getElementById('btn-guardar').style.display = 'none';
       } catch(e) {
         toast('❌ ' + e.message, 'err');
       }
     });
-  },
-
-  async fetchYahooPrice(ticker) {
-    const urls = [
-      `https://query2.finance.yahoo.com/v8/finance/chart/${ticker}?interval=1d&range=5d`,
-      `https://corsproxy.io/?${encodeURIComponent(`https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?interval=1d&range=5d`)}`,
-    ];
-    for (const url of urls) {
-      try {
-        const res  = await fetch(url);
-        if (!res.ok) continue;
-        const json = await res.json();
-        const r    = json.chart?.result?.[0];
-        if (!r) continue;
-        const meta  = r.meta;
-        const price = meta.regularMarketPrice;
-        const prev  = meta.previousClose ?? meta.chartPreviousClose ?? price;
-        return {
-          ticker:   meta.symbol,
-          name:     meta.shortName ?? meta.symbol,
-          price,
-          prev,
-          open:     meta.regularMarketOpen   ?? price,
-          high:     meta.regularMarketDayHigh ?? price,
-          low:      meta.regularMarketDayLow  ?? price,
-          change:   price - prev,
-          pct:      prev ? ((price - prev) / prev) * 100 : 0,
-          currency: meta.currency,
-        };
-      } catch (_) { /* intenta siguiente */ }
-    }
-    throw new Error('No se pudo obtener el precio. Verificá el ticker.');
   },
 
   // ── Portafolio ───────────────────────────────────────────────────────
@@ -181,13 +149,12 @@ window.Mods.inversiones = {
         dbFetch('precios_historicos', { order: { col: 'fecha', asc: false }, limit: 500 }),
       ]);
 
-      // Último precio por ticker
       const lastPrice = {};
       for (const r of precios) {
         if (!lastPrice[r.ticker]) lastPrice[r.ticker] = parseFloat(r.cierre);
       }
 
-      // Calcular posiciones — con parseFloat explícito para tipos NUMERIC de Postgres
+      // Posiciones en USD — precio_unitario siempre en USD
       const pos = {};
       for (const op of allOps) {
         const qty   = parseFloat(op.cantidad);
@@ -246,7 +213,7 @@ window.Mods.inversiones = {
             <table>
               <thead>
                 <tr>
-                  <th>Ticker</th><th>Cantidad</th><th>Precio prom.</th>
+                  <th>Ticker</th><th>Cantidad</th><th>Costo prom.</th>
                   <th>Precio actual</th><th>Valor</th><th>P&L</th><th>P&L %</th>
                 </tr>
               </thead>
@@ -274,7 +241,7 @@ window.Mods.inversiones = {
           `}
         </div>
         ${positions.length > 0 && Object.keys(lastPrice).length === 0 ? `
-          <p style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--text-sec);text-align:center">
+          <p style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--text-sec);text-align:center;margin-top:12px">
             💡 Buscá los tickers en Mercado y guardalos para ver el P&L actualizado
           </p>
         ` : ''}
@@ -284,111 +251,436 @@ window.Mods.inversiones = {
     }
   },
 
-  // ── Operaciones ──────────────────────────────────────────────────────
+  // ── Operaciones — flujo 3 pasos ──────────────────────────────────────
   async renderOperaciones() {
-    const c = document.getElementById('content');
+    const c   = document.getElementById('content');
     const ops = await dbFetch('operaciones', { order: { col: 'fecha', asc: false }, limit: 50 });
+    const today = new Date().toISOString().slice(0, 10);
+
+    // Estado del formulario multi-paso
+    const st = {
+      ticker: null, nombre: null, exchange: '',
+      moneda: 'USD', monedaNorm: 'USD', factor: 1.0, tc: 1.0,
+      _preview: null,
+    };
 
     c.innerHTML = `
       <h1>Operaciones</h1>
-      <p class="page-subtitle">Registrar compras y ventas</p>
+      <p class="page-subtitle">Compras y ventas con detección de moneda y tipo de cambio</p>
 
-      <div class="form-card">
-        <h3>Nueva operación</h3>
-        <form id="form-op">
-          <div class="form-grid">
-            <div class="form-group">
-              <label>Ticker</label>
-              <input id="op-ticker" type="text" placeholder="AAPL" style="text-transform:uppercase" required>
-            </div>
-            <div class="form-group">
-              <label>Tipo</label>
-              <select id="op-tipo">
-                <option value="compra">Compra</option>
-                <option value="venta">Venta</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>Fecha</label>
-              <input id="op-fecha" type="date" value="${new Date().toISOString().slice(0,10)}" required>
-            </div>
-            <div class="form-group">
-              <label>Cantidad</label>
-              <input id="op-cantidad" type="number" step="0.0001" min="0.0001" placeholder="10" required>
-            </div>
-            <div class="form-group">
-              <label>Precio unitario (USD)</label>
-              <input id="op-precio" type="number" step="0.01" min="0.01" placeholder="150.00" required>
-            </div>
-            <div class="form-group">
-              <label>Comisión (USD)</label>
-              <input id="op-comision" type="number" step="0.01" min="0" placeholder="0" value="0">
-            </div>
+      <!-- Paso 1: Búsqueda de activo -->
+      <div class="form-card" id="sec-search">
+        <h3>Paso 1 — Buscar activo</h3>
+        <div style="display:flex;gap:10px;align-items:flex-end">
+          <div class="form-group" style="flex:1;margin:0">
+            <label>Nombre o ticker (ej: Apple, AAPL, BMA.BA, Shell...)</label>
+            <input id="op-search" type="text" placeholder="Buscá por nombre o símbolo" autocomplete="off">
           </div>
-          <div class="form-group" style="margin-bottom:16px">
-            <label>Notas (opcional)</label>
-            <input id="op-notas" type="text" placeholder="Compra DCA mensual...">
-          </div>
-          <button type="submit" class="btn btn-primary">✚ Registrar operación</button>
-        </form>
+          <button id="btn-op-search" class="btn btn-primary" style="height:38px">Buscar</button>
+        </div>
+        <div id="op-search-results" style="margin-top:12px"></div>
+        <div id="op-selected" style="margin-top:10px"></div>
       </div>
 
-      <div class="table-wrap">
+      <!-- Paso 2: Datos de la operación -->
+      <div class="form-card hidden" id="sec-form">
+        <h3>Paso 2 — Datos de la operación</h3>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Tipo</label>
+            <select id="op-tipo">
+              <option value="compra">Compra</option>
+              <option value="venta">Venta</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Fecha</label>
+            <input id="op-fecha" type="date" value="${today}" required>
+          </div>
+          <div class="form-group">
+            <label>Cantidad</label>
+            <input id="op-cantidad" type="number" step="0.0001" min="0.0001" placeholder="10" required>
+          </div>
+          <div class="form-group">
+            <label id="op-precio-label">Precio unitario</label>
+            <input id="op-precio" type="number" step="0.0001" min="0.0001" placeholder="150.00" required>
+          </div>
+          <div class="form-group">
+            <label id="op-comision-label">Comisión</label>
+            <input id="op-comision" type="number" step="0.01" min="0" placeholder="0" value="0">
+          </div>
+          <div class="form-group">
+            <label>Notas (opcional)</label>
+            <input id="op-notas" type="text" placeholder="DCA mensual, cambio de estrategia...">
+          </div>
+        </div>
+        <div id="op-fx-info" style="margin:4px 0 16px;font-family:'DM Mono',monospace;font-size:.73rem;
+          color:var(--text-sec);line-height:1.6;background:rgba(255,255,255,.03);
+          border-radius:6px;padding:8px 12px"></div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button id="btn-preview" class="btn btn-primary">Ver resumen →</button>
+          <button id="btn-back-search" class="btn btn-ghost">← Cambiar activo</button>
+        </div>
+      </div>
+
+      <!-- Paso 3: Confirmación -->
+      <div class="form-card hidden" id="sec-preview">
+        <h3>Paso 3 — Confirmar operación</h3>
+        <div id="op-preview-content"></div>
+        <div style="margin-top:20px;display:flex;gap:10px;flex-wrap:wrap">
+          <button id="btn-confirm" class="btn btn-primary">✅ Confirmar y guardar</button>
+          <button id="btn-back-form" class="btn btn-ghost">← Editar datos</button>
+        </div>
+      </div>
+
+      <!-- Historial -->
+      <div class="table-wrap" id="ops-table-wrap">
         <div class="table-header"><span class="table-title">Últimas 50 operaciones</span></div>
         ${ops.length === 0 ? `
           <div class="empty">
             <div class="empty-icon">🔄</div>
-            <div class="empty-text">Sin operaciones registradas</div>
+            <div class="empty-text">Sin operaciones registradas aún</div>
           </div>
         ` : `
-          <table>
-            <thead>
-              <tr><th>Fecha</th><th>Ticker</th><th>Tipo</th><th>Cantidad</th><th>Precio</th><th>Monto</th><th>Comisión</th></tr>
-            </thead>
-            <tbody id="ops-tbody">
-              ${ops.map(op => this._opRow(op)).join('')}
-            </tbody>
-          </table>
+          <div style="overflow-x:auto">
+            <table>
+              <thead>
+                <tr>
+                  <th>Fecha</th><th>Ticker</th><th>Tipo</th><th>Cantidad</th>
+                  <th>Precio USD</th><th>Moneda orig.</th><th>TC</th><th>Monto USD</th><th>Com.</th><th></th>
+                </tr>
+              </thead>
+              <tbody id="ops-tbody">
+                ${ops.map(op => this._opRow(op)).join('')}
+              </tbody>
+            </table>
+          </div>
         `}
       </div>
     `;
 
-    document.getElementById('form-op').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const ticker = document.getElementById('op-ticker').value.trim().toUpperCase();
-      const tipo   = document.getElementById('op-tipo').value;
-      const fecha  = document.getElementById('op-fecha').value;
-      const qty    = parseFloat(document.getElementById('op-cantidad').value);
-      const precio = parseFloat(document.getElementById('op-precio').value);
-      const com    = parseFloat(document.getElementById('op-comision').value) || 0;
-      const notas  = document.getElementById('op-notas').value.trim();
+    // ── Paso 1: Búsqueda ─────────────────────────────────────────────
+    const doSearch = async () => {
+      const query = document.getElementById('op-search').value.trim();
+      if (!query) return;
+      const resDiv = document.getElementById('op-search-results');
+      resDiv.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
       try {
-        await dbUpsert('activos', { ticker, tipo: 'accion' });
+        const results = await this.searchTickers(query);
+        if (!results.length) {
+          resDiv.innerHTML = `<div class="empty" style="padding:16px"><div class="empty-text">Sin resultados. Intentá con el ticker exacto (ej: AAPL).</div></div>`;
+          return;
+        }
+        resDiv.innerHTML = `<div style="display:flex;flex-direction:column;gap:6px">
+          ${results.slice(0, 8).map((r, i) => `
+            <div class="search-result-row" data-idx="${i}" style="
+              display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;
+              cursor:pointer;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);
+              transition:background .15s">
+              <strong style="min-width:76px;color:var(--accent);font-size:.9rem">${r.ticker}</strong>
+              <span style="flex:1;color:var(--text);font-size:.85rem">${r.nombre}</span>
+              <span style="font-size:.7rem;color:var(--text-sec)">${r.exchange}</span>
+              <span class="tag" style="font-size:.65rem;margin-left:4px">${r.tipo}</span>
+            </div>
+          `).join('')}
+        </div>`;
+        resDiv.querySelectorAll('.search-result-row').forEach(el => {
+          el.addEventListener('mouseenter', () => el.style.background = 'rgba(46,127,217,.12)');
+          el.addEventListener('mouseleave', () => el.style.background = 'rgba(255,255,255,.04)');
+          el.addEventListener('click', () => selectTicker(results[parseInt(el.dataset.idx)]));
+        });
+        resDiv._results = results;
+      } catch(e) {
+        resDiv.innerHTML = `<div class="empty" style="padding:16px"><div class="empty-text">⚠️ ${e.message}</div></div>`;
+      }
+    };
+
+    const selectTicker = async (r) => {
+      st.ticker   = r.ticker;
+      st.nombre   = r.nombre;
+      st.exchange = r.exchange;
+      st.moneda   = r.currency || 'USD';
+
+      // Si el resultado no traía moneda, la buscamos del endpoint de precio
+      if (!r.currency) {
+        try {
+          const info = await this.fetchYahooPrice(r.ticker);
+          st.moneda = info.currency || 'USD';
+        } catch(_) {}
+      }
+
+      // Normalizar GBX/GBp
+      const norm    = this.normalizarMoneda(st.moneda);
+      st.monedaNorm = norm.moneda;
+      st.factor     = norm.factor;
+
+      // Actualizar UI
+      document.getElementById('op-search-results').innerHTML = '';
+      document.getElementById('op-selected').innerHTML = `
+        <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:8px;
+          background:rgba(46,127,217,.1);border:1px solid rgba(46,127,217,.25)">
+          <strong style="color:var(--accent);font-size:1.05rem">${st.ticker}</strong>
+          <span style="color:var(--text)">${st.nombre}</span>
+          <span style="font-size:.75rem;color:var(--text-sec)">${st.exchange}</span>
+          <span class="tag" style="font-size:.7rem">${st.moneda}${st.factor < 1 ? ' → ' + st.monedaNorm + ' ×0.01' : ''}</span>
+        </div>
+      `;
+
+      document.getElementById('op-precio-label').textContent  = `Precio unitario (${st.moneda})`;
+      document.getElementById('op-comision-label').textContent = `Comisión (${st.moneda})`;
+
+      const fxDiv = document.getElementById('op-fx-info');
+      if (st.monedaNorm !== 'USD') {
+        const note = st.factor < 1
+          ? `Moneda: ${st.moneda} (se divide por 100 → ${st.monedaNorm}). `
+          : `Moneda: ${st.moneda}. `;
+        fxDiv.innerHTML = `ℹ️ ${note}Al generar el resumen se buscará el tipo de cambio ${st.monedaNorm}/USD para la fecha seleccionada.`;
+      } else {
+        fxDiv.innerHTML = `ℹ️ Moneda: USD — sin conversión necesaria.`;
+      }
+
+      document.getElementById('sec-form').classList.remove('hidden');
+      document.getElementById('sec-form').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    };
+
+    document.getElementById('btn-op-search').addEventListener('click', doSearch);
+    document.getElementById('op-search').addEventListener('keydown', e => { if (e.key === 'Enter') doSearch(); });
+
+    // ── Volver a búsqueda ────────────────────────────────────────────
+    document.getElementById('btn-back-search').addEventListener('click', () => {
+      document.getElementById('sec-form').classList.add('hidden');
+      document.getElementById('sec-preview').classList.add('hidden');
+      document.getElementById('op-selected').innerHTML = '';
+      document.getElementById('op-search').value = '';
+      Object.assign(st, { ticker: null, nombre: null, moneda: 'USD', monedaNorm: 'USD', factor: 1.0, tc: 1.0, _preview: null });
+    });
+
+    // ── Paso 2 → Paso 3: Preview ─────────────────────────────────────
+    document.getElementById('btn-preview').addEventListener('click', async () => {
+      if (!st.ticker) { toast('❌ Buscá y seleccioná un activo primero', 'err'); return; }
+
+      const tipo     = document.getElementById('op-tipo').value;
+      const fecha    = document.getElementById('op-fecha').value;
+      const cantidad = parseFloat(document.getElementById('op-cantidad').value);
+      const precio   = parseFloat(document.getElementById('op-precio').value);
+      const comision = parseFloat(document.getElementById('op-comision').value) || 0;
+      const notas    = document.getElementById('op-notas').value.trim();
+
+      if (!fecha || !cantidad || isNaN(cantidad) || !precio || isNaN(precio)) {
+        toast('❌ Completá todos los campos obligatorios', 'err');
+        return;
+      }
+
+      const btn = document.getElementById('btn-preview');
+      btn.textContent = 'Calculando...';
+      btn.disabled = true;
+
+      try {
+        // Obtener tipo de cambio en la fecha
+        if (st.monedaNorm !== 'USD') {
+          const fxInfo = await this.fetchFXRate(st.monedaNorm);
+          st.tc = fxInfo.tc;
+        } else {
+          st.tc = 1.0;
+        }
+
+        // Conversión
+        const precioNorm  = precio   * st.factor;          // precio en monedaNorm (GBX→GBP)
+        const precioUSD   = precioNorm * st.tc;             // precio en USD
+        const comisionNorm = comision * st.factor;
+        const comisionUSD = comisionNorm * st.tc;
+        const montoOrigen = precio * cantidad + comision;   // en moneda original
+        const montoUSD    = precioUSD * cantidad + comisionUSD;
+
+        st._preview = { tipo, fecha, cantidad, precio, precioUSD, comision, comisionUSD, montoOrigen, montoUSD, notas };
+
+        document.getElementById('op-preview-content').innerHTML = `
+          <div class="metrics-row" style="margin-bottom:14px">
+            <div class="metric-card">
+              <div class="metric-label">Activo</div>
+              <div class="metric-value" style="font-size:1.2rem">${st.ticker}</div>
+              <div class="metric-delta neu" style="font-size:.7rem">${st.nombre}</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Tipo · Fecha</div>
+              <div class="metric-value" style="font-size:1rem;margin-top:4px">
+                <span class="tag ${tipo === 'compra' ? 'tag-buy' : 'tag-sell'}">${tipo}</span>
+              </div>
+              <div class="metric-delta neu">${fmtDate(fecha)}</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Cantidad · Precio ${st.moneda}</div>
+              <div class="metric-value" style="font-size:1.1rem">${fmt(cantidad, 4)}</div>
+              <div class="metric-delta neu">${fmt(precio, 4)} ${st.moneda}</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Precio en USD</div>
+              <div class="metric-value">${fmtUSD(precioUSD)}</div>
+              ${st.monedaNorm !== 'USD' ? `<div class="metric-delta neu">TC: ${fmt(st.tc, 4)}</div>` : ''}
+            </div>
+          </div>
+          <div style="background:rgba(255,255,255,.04);border-radius:8px;padding:14px 16px;
+            font-family:'DM Mono',monospace;font-size:.78rem;line-height:2">
+            <div>Cantidad: <strong>${fmt(cantidad, 4)}</strong></div>
+            <div>Precio unitario (${st.moneda}): <strong>${fmt(precio, 4)}</strong></div>
+            ${st.moneda !== st.monedaNorm ? `<div>Factor normalización: <strong>×${st.factor}</strong> (${st.moneda}→${st.monedaNorm})</div>` : ''}
+            ${st.monedaNorm !== 'USD' ? `<div>Tipo de cambio ${st.monedaNorm}/USD: <strong>${fmt(st.tc, 6)}</strong></div>` : ''}
+            <div>Precio unitario (USD): <strong>${fmtUSD(precioUSD)}</strong></div>
+            <div>Comisión: <strong>${fmt(comision, 2)} ${st.moneda}${st.monedaNorm !== 'USD' ? ` → ${fmtUSD(comisionUSD)}` : ''}</strong></div>
+            <hr style="border:none;border-top:1px solid rgba(255,255,255,.08);margin:6px 0">
+            <div style="font-size:.88rem">Monto total (${st.moneda}): <strong>${fmt(montoOrigen, 2)} ${st.moneda}</strong></div>
+            <div style="font-size:.88rem">Monto total (USD): <strong style="color:var(--accent)">${fmtUSD(montoUSD)}</strong></div>
+          </div>
+        `;
+
+        document.getElementById('sec-preview').classList.remove('hidden');
+        document.getElementById('sec-preview').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      } catch(e) {
+        toast('❌ Error al calcular: ' + e.message, 'err');
+      } finally {
+        btn.textContent = 'Ver resumen →';
+        btn.disabled = false;
+      }
+    });
+
+    document.getElementById('btn-back-form').addEventListener('click', () => {
+      document.getElementById('sec-preview').classList.add('hidden');
+    });
+
+    // ── Paso 3: Confirmar ────────────────────────────────────────────
+    document.getElementById('btn-confirm').addEventListener('click', async () => {
+      if (!st.ticker || !st._preview) return;
+      const btn = document.getElementById('btn-confirm');
+      btn.textContent = 'Guardando...';
+      btn.disabled = true;
+      const pv = st._preview;
+      try {
+        await dbUpsert('activos', {
+          ticker: st.ticker, nombre: st.nombre,
+          tipo: 'accion', moneda: st.monedaNorm,
+        });
         await dbInsert('operaciones', {
-          ticker, tipo, fecha, cantidad: qty,
-          precio_unitario: precio, comision: com,
-          notas: notas || null,
+          ticker:          st.ticker,
+          tipo:            pv.tipo,
+          fecha:           pv.fecha,
+          cantidad:        pv.cantidad,
+          precio_unitario: pv.precioUSD,    // siempre en USD
+          comision:        pv.comisionUSD,  // siempre en USD
+          moneda:          st.moneda,       // moneda original del ticker
+          tipo_cambio_usd: st.tc,
+          notas:           pv.notas || null,
         });
         toast('✅ Operación registrada');
-        e.target.reset();
-        document.getElementById('op-fecha').value = new Date().toISOString().slice(0,10);
-        const newOps = await dbFetch('operaciones', { order: { col: 'fecha', asc: false }, limit: 50 });
-        const tbody  = document.getElementById('ops-tbody');
-        if (tbody) tbody.innerHTML = newOps.map(op => this._opRow(op)).join('');
-      } catch(err) { toast('❌ ' + err.message, 'err'); }
+        this._resetForm(st, today);
+        await this._refreshTable();
+      } catch(e) {
+        toast('❌ ' + e.message, 'err');
+      } finally {
+        btn.textContent = '✅ Confirmar y guardar';
+        btn.disabled = false;
+      }
+    });
+
+    this._attachDeleteHandlers();
+  },
+
+  _resetForm(st, today) {
+    document.getElementById('sec-form').classList.add('hidden');
+    document.getElementById('sec-preview').classList.add('hidden');
+    document.getElementById('op-selected').innerHTML = '';
+    document.getElementById('op-search').value = '';
+    document.getElementById('op-search-results').innerHTML = '';
+    ['op-cantidad', 'op-precio', 'op-notas'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = id === 'op-notas' ? '' : '';
+    });
+    const com = document.getElementById('op-comision');
+    if (com) com.value = '0';
+    const fecha = document.getElementById('op-fecha');
+    if (fecha) fecha.value = today || new Date().toISOString().slice(0, 10);
+    Object.assign(st, { ticker: null, nombre: null, moneda: 'USD', monedaNorm: 'USD', factor: 1.0, tc: 1.0, _preview: null });
+  },
+
+  async _refreshTable() {
+    const newOps = await dbFetch('operaciones', { order: { col: 'fecha', asc: false }, limit: 50 });
+    const wrap   = document.getElementById('ops-table-wrap');
+    if (!wrap) return;
+    wrap.innerHTML = `
+      <div class="table-header"><span class="table-title">Últimas 50 operaciones</span></div>
+      ${newOps.length === 0 ? `
+        <div class="empty"><div class="empty-icon">🔄</div><div class="empty-text">Sin operaciones registradas aún</div></div>
+      ` : `
+        <div style="overflow-x:auto">
+          <table>
+            <thead>
+              <tr>
+                <th>Fecha</th><th>Ticker</th><th>Tipo</th><th>Cantidad</th>
+                <th>Precio USD</th><th>Moneda orig.</th><th>TC</th><th>Monto USD</th><th>Com.</th><th></th>
+              </tr>
+            </thead>
+            <tbody id="ops-tbody">
+              ${newOps.map(op => this._opRow(op)).join('')}
+            </tbody>
+          </table>
+        </div>
+      `}
+    `;
+    this._attachDeleteHandlers();
+  },
+
+  _attachDeleteHandlers() {
+    document.querySelectorAll('.btn-op-delete').forEach(btn => {
+      btn.replaceWith(btn.cloneNode(true)); // quitar handlers duplicados
+    });
+    document.querySelectorAll('.btn-op-delete').forEach(btn => {
+      btn.addEventListener('click', e => {
+        const { id, ticker, tipo } = e.currentTarget.dataset;
+        this._deleteOperation(parseInt(id), ticker, tipo);
+      });
     });
   },
 
+  async _deleteOperation(id, ticker, tipo) {
+    if (!confirm(`¿Eliminar operación de ${tipo} de ${ticker}?\nEsta acción no se puede deshacer.`)) return;
+    try {
+      if (tipo === 'compra') {
+        try { await dbDelete('lotes', { operacion_id: id }); } catch(_) {}
+      } else {
+        try { await dbDelete('operaciones_cerradas', { operacion_venta_id: id }); } catch(_) {}
+      }
+      await dbDelete('operaciones', { id });
+      toast('✅ Operación eliminada');
+      await this._refreshTable();
+    } catch(e) {
+      toast('❌ ' + e.message, 'err');
+    }
+  },
+
   _opRow(op) {
-    const monto = op.monto_total ?? (parseFloat(op.cantidad) * parseFloat(op.precio_unitario) + parseFloat(op.comision || 0));
+    const qty    = parseFloat(op.cantidad);
+    const price  = parseFloat(op.precio_unitario);
+    const com    = parseFloat(op.comision || 0);
+    const monto  = op.monto_total != null ? parseFloat(op.monto_total) : qty * price + com;
+    const moneda = op.moneda || 'USD';
+    const tc     = op.tipo_cambio_usd ? parseFloat(op.tipo_cambio_usd) : 1.0;
+    const showTC = moneda !== 'USD' && tc !== 1.0;
     return `<tr>
       <td>${fmtDate(op.fecha)}</td>
       <td><strong>${op.ticker}</strong></td>
       <td><span class="tag ${op.tipo === 'compra' ? 'tag-buy' : 'tag-sell'}">${op.tipo}</span></td>
-      <td>${fmt(parseFloat(op.cantidad), 4)}</td>
-      <td>${fmtUSD(parseFloat(op.precio_unitario))}</td>
+      <td>${fmt(qty, 4)}</td>
+      <td>${fmtUSD(price)}</td>
+      <td style="font-size:.75rem;color:var(--text-sec)">${moneda !== 'USD' ? moneda : '—'}</td>
+      <td style="font-size:.75rem;color:var(--text-sec)">${showTC ? fmt(tc, 4) : '—'}</td>
       <td>${fmtUSD(monto)}</td>
-      <td>${op.comision ? fmtUSD(parseFloat(op.comision)) : '—'}</td>
+      <td>${com > 0 ? fmtUSD(com) : '—'}</td>
+      <td>
+        <button class="btn-op-delete" data-id="${op.id}" data-ticker="${op.ticker}" data-tipo="${op.tipo}"
+          style="background:none;border:none;cursor:pointer;color:#e05454;font-size:.95rem;
+          padding:2px 4px;opacity:.7;transition:opacity .15s"
+          title="Eliminar operación"
+          onmouseenter="this.style.opacity=1" onmouseleave="this.style.opacity=.7">🗑️</button>
+      </td>
     </tr>`;
   },
 
@@ -398,8 +690,86 @@ window.Mods.inversiones = {
       <div class="placeholder-mod">
         <div class="ph-icon">📊</div>
         <div class="ph-title">Rentabilidad</div>
-        <div class="ph-text">Próximamente · requiere historial de snapshots</div>
+        <div class="ph-text">Próximamente · análisis por moneda, benchmark y período</div>
       </div>
     `;
+  },
+
+  // ── Helpers de market data ───────────────────────────────────────────
+  async fetchYahooPrice(ticker) {
+    const urls = [
+      `https://query2.finance.yahoo.com/v8/finance/chart/${ticker}?interval=1d&range=5d`,
+      `https://corsproxy.io/?${encodeURIComponent(`https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?interval=1d&range=5d`)}`,
+    ];
+    for (const url of urls) {
+      try {
+        const res  = await fetch(url);
+        if (!res.ok) continue;
+        const json = await res.json();
+        const r    = json.chart?.result?.[0];
+        if (!r) continue;
+        const meta  = r.meta;
+        const price = meta.regularMarketPrice;
+        const prev  = meta.previousClose ?? meta.chartPreviousClose ?? price;
+        return {
+          ticker:   meta.symbol,
+          name:     meta.shortName ?? meta.symbol,
+          price,
+          prev,
+          open:     meta.regularMarketOpen    ?? price,
+          high:     meta.regularMarketDayHigh ?? price,
+          low:      meta.regularMarketDayLow  ?? price,
+          change:   price - prev,
+          pct:      prev ? ((price - prev) / prev) * 100 : 0,
+          currency: meta.currency ?? 'USD',
+        };
+      } catch (_) {}
+    }
+    throw new Error('No se pudo obtener el precio. Verificá el ticker.');
+  },
+
+  async searchTickers(query) {
+    const q = encodeURIComponent(query);
+    const urls = [
+      `https://query2.finance.yahoo.com/v1/finance/search?q=${q}&quotesCount=10&newsCount=0&lang=en-US`,
+      `https://corsproxy.io/?${encodeURIComponent(`https://query1.finance.yahoo.com/v1/finance/search?q=${query}&quotesCount=10&newsCount=0&lang=en-US`)}`,
+    ];
+    for (const url of urls) {
+      try {
+        const res = await fetch(url);
+        if (!res.ok) continue;
+        const json = await res.json();
+        if (!json.quotes?.length) continue;
+        return json.quotes
+          .filter(r => r.symbol && r.quoteType !== 'OPTION')
+          .map(r => ({
+            ticker:   r.symbol,
+            nombre:   r.longname || r.shortname || r.symbol,
+            tipo:     (r.quoteType || 'equity').toLowerCase(),
+            exchange: r.exchDisp || r.exchange || '',
+            currency: r.currency || null,
+          }));
+      } catch(_) {}
+    }
+    throw new Error('No se pudo buscar. Verificá tu conexión o ingresá el ticker exacto.');
+  },
+
+  // Normaliza GBX/GBp/GBx → GBP con factor 0.01
+  normalizarMoneda(moneda) {
+    const m = (moneda || '').trim();
+    if (['GBX', 'GBx', 'GBp', 'GBP_'].includes(m)) return { moneda: 'GBP', factor: 0.01 };
+    return { moneda: m.toUpperCase() || 'USD', factor: 1.0 };
+  },
+
+  // Obtiene tipo de cambio vs USD
+  async fetchFXRate(monedaNorm) {
+    if (!monedaNorm || monedaNorm === 'USD') return { tc: 1.0 };
+    try {
+      const info = await this.fetchYahooPrice(`${monedaNorm}USD=X`);
+      return { tc: info.price };
+    } catch(_) {
+      toast('⚠️ No se pudo obtener el tipo de cambio, se usará 1.0', 'warn');
+      return { tc: 1.0 };
+    }
   },
 };
