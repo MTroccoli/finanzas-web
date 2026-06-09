@@ -13,53 +13,84 @@ window.Mods.inversiones = {
   // ── Mercado ──────────────────────────────────────────────────────────
   async renderMercado() {
     const c = document.getElementById('content');
-    const guardados = await dbFetch('precios_historicos', {
-      order: { col: 'fecha', asc: false }, limit: 200,
-    });
+
+    const guardados = await dbFetch('precios_historicos', { order: { col: 'fecha', asc: false }, limit: 200 });
     const lastByTicker = {};
-    for (const r of guardados) {
-      if (!lastByTicker[r.ticker]) lastByTicker[r.ticker] = r;
-    }
-    const rows = Object.values(lastByTicker);
+    for (const r of guardados) { if (!lastByTicker[r.ticker]) lastByTicker[r.ticker] = r; }
+    const savedRows = Object.values(lastByTicker);
+
+    const PERIODS = [
+      { label: '1D',  value: '1d',  interval: '5m'  },
+      { label: '5D',  value: '5d',  interval: '1h'  },
+      { label: '1M',  value: '1mo', interval: '1d'  },
+      { label: '6M',  value: '6mo', interval: '1d'  },
+      { label: '1A',  value: '1y',  interval: '1wk' },
+    ];
+
+    const fmtVol = n => {
+      if (!n) return '—';
+      if (n >= 1e9) return (n / 1e9).toFixed(1) + 'B';
+      if (n >= 1e6) return (n / 1e6).toFixed(1) + 'M';
+      if (n >= 1e3) return (n / 1e3).toFixed(0) + 'K';
+      return n.toLocaleString();
+    };
+
+    const TYPE_BADGE = {
+      equity: '🟩 Acción', etf: '🟦 ETF', mutualfund: '🟪 Fondo',
+      cryptocurrency: '🟨 Crypto', index: '⬛ Índice',
+    };
 
     c.innerHTML = `
       <h1>Mercado</h1>
-      <p class="page-subtitle">Precios en tiempo real</p>
+      <p class="page-subtitle">Cotizaciones en tiempo real · multi-moneda</p>
 
       <div class="form-card">
-        <h3>Buscar ticker</h3>
+        <h3>Buscar activo</h3>
         <div style="display:flex;gap:10px;align-items:flex-end">
           <div class="form-group" style="flex:1;margin:0">
-            <label>Símbolo</label>
-            <input id="ticker-input" type="text" placeholder="AAPL, MSFT, BMA.BA..."
-              style="text-transform:uppercase" autocomplete="off">
+            <input id="mkt-q" type="text"
+              placeholder="AAPL, Apple, Shell, BMA.BA, Bitcoin..." autocomplete="off">
           </div>
-          <button id="btn-buscar" class="btn btn-primary" style="height:38px">Buscar</button>
-          <button id="btn-guardar" class="btn btn-ghost" style="height:38px;display:none">
-            💾 Guardar en Supabase
-          </button>
+          <button id="btn-mkt-search" class="btn btn-primary" style="height:38px">Buscar</button>
         </div>
-        <div id="ticker-result" style="margin-top:16px"></div>
+        <div id="mkt-results" style="margin-top:12px"></div>
       </div>
 
+      <!-- Detalle del activo seleccionado -->
+      <div id="mkt-detail" class="hidden">
+        <div class="form-card" id="mkt-price-card" style="padding-bottom:8px"></div>
+
+        <div class="form-card" id="mkt-chart-card">
+          <div id="mkt-period-btns" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px"></div>
+          <div id="mkt-chart" style="width:100%;min-height:260px"></div>
+        </div>
+
+        <div class="table-wrap" id="mkt-metrics-wrap" style="margin-top:0">
+          <div class="table-header"><span class="table-title">Datos de mercado</span></div>
+          <div id="mkt-metrics-body"></div>
+        </div>
+      </div>
+
+      <!-- Precios guardados en Supabase -->
       <div class="table-wrap">
         <div class="table-header">
-          <span class="table-title">Precios guardados</span>
+          <span class="table-title">Precios guardados en Supabase</span>
         </div>
-        ${rows.length === 0 ? `
+        ${savedRows.length === 0 ? `
           <div class="empty">
             <div class="empty-icon">📡</div>
-            <div class="empty-text">Buscá un ticker y guardalo para ver el historial</div>
+            <div class="empty-text">Buscá un ticker y usá 💾 Guardar para crear historial</div>
           </div>
         ` : `
           <table>
-            <thead>
-              <tr><th>Ticker</th><th>Fecha</th><th>Cierre</th><th>Apertura</th><th>Máx</th><th>Mín</th></tr>
-            </thead>
+            <thead><tr><th>Ticker</th><th>Fecha</th><th>Cierre</th><th>Apertura</th><th>Máx</th><th>Mín</th></tr></thead>
             <tbody>
-              ${rows.map(r => `
+              ${savedRows.map(r => `
                 <tr>
-                  <td><strong>${r.ticker}</strong></td>
+                  <td><strong style="cursor:pointer;color:var(--accent)"
+                    onclick="document.getElementById('mkt-q').value='${r.ticker}';
+                             document.getElementById('btn-mkt-search').click()"
+                  >${r.ticker}</strong></td>
                   <td>${fmtDate(r.fecha)}</td>
                   <td><strong>${fmtUSD(r.cierre)}</strong></td>
                   <td>${fmtUSD(r.apertura)}</td>
@@ -73,71 +104,296 @@ window.Mods.inversiones = {
       </div>
     `;
 
-    let _lastInfo = null;
+    // ── Render gráfico ────────────────────────────────────────────────
+    let _activePeriod = '1mo';
+    let _activeTicker = null;
+    let _activeInfo   = null;
 
-    const buscar = async () => {
-      const ticker = document.getElementById('ticker-input').value.trim().toUpperCase();
-      if (!ticker) return;
-      const res = document.getElementById('ticker-result');
-      const btnGuardar = document.getElementById('btn-guardar');
-      res.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
-      btnGuardar.style.display = 'none';
-      _lastInfo = null;
+    const loadChart = async (ticker, period) => {
+      const pd = PERIODS.find(p => p.value === period) || PERIODS[2];
+      document.querySelectorAll('.mkt-period-btn').forEach(b => {
+        const isActive = b.dataset.period === period;
+        b.style.background = isActive ? 'var(--accent)' : 'transparent';
+        b.style.color       = isActive ? '#fff' : 'var(--text-sec)';
+        b.style.borderColor = isActive ? 'var(--accent)' : 'rgba(255,255,255,.15)';
+      });
+
+      const chartDiv = document.getElementById('mkt-chart');
+      if (!chartDiv) return;
+      chartDiv.innerHTML = '<div class="loading" style="height:200px;display:flex;align-items:center;justify-content:center"><div class="spinner"></div></div>';
+
       try {
-        const info = await this.fetchYahooPrice(ticker);
-        _lastInfo = info;
-        const plCls = info.change >= 0 ? 'pos' : 'neg';
-        const sign  = info.change >= 0 ? '+' : '';
-        res.innerHTML = `
-          <div class="metrics-row" style="margin:0">
-            <div class="metric-card">
-              <div class="metric-label">${info.name}</div>
-              <div class="metric-value">${fmtUSD(info.price)}</div>
-              <div class="metric-delta ${plCls}">${sign}${fmtUSD(info.change)} (${sign}${fmt(info.pct)}%)</div>
-            </div>
-            <div class="metric-card">
-              <div class="metric-label">Apertura</div>
-              <div class="metric-value" style="font-size:1.4rem">${fmtUSD(info.open)}</div>
-            </div>
-            <div class="metric-card">
-              <div class="metric-label">Máx / Mín</div>
-              <div class="metric-value" style="font-size:1.2rem">${fmtUSD(info.high)}</div>
-              <div class="metric-delta neu">${fmtUSD(info.low)}</div>
-            </div>
-            <div class="metric-card">
-              <div class="metric-label">Cierre anterior</div>
-              <div class="metric-value" style="font-size:1.4rem">${fmtUSD(info.prev)}</div>
-            </div>
-          </div>
-        `;
-        btnGuardar.style.display = 'inline-flex';
+        const { dates, prices } = await this.fetchYahooChart(ticker, period, pd.interval);
+        if (!prices.length) {
+          chartDiv.innerHTML = '<div class="empty" style="padding:40px"><div class="empty-text">Sin datos para este período</div></div>';
+          return;
+        }
+
+        chartDiv.innerHTML = '';
+        const first  = prices[0], last = prices[prices.length - 1];
+        const chgPct = first ? ((last - first) / first) * 100 : 0;
+        const isUp   = chgPct >= 0;
+        const color  = isUp ? '#26a69a' : '#ef5350';
+        const currency = _activeInfo?.currency || 'USD';
+
+        Plotly.react('mkt-chart', [{
+          x: dates,
+          y: prices,
+          type: 'scatter',
+          mode: 'lines',
+          fill: 'tozeroy',
+          fillcolor: isUp ? 'rgba(38,166,154,0.12)' : 'rgba(239,83,80,0.12)',
+          line: { color, width: 2 },
+          hovertemplate: `%{y:,.4g} ${currency}<extra></extra>`,
+        }], {
+          height: 260,
+          margin: { l: 50, r: 8, t: 32, b: 28 },
+          plot_bgcolor:  'rgba(0,0,0,0)',
+          paper_bgcolor: 'rgba(0,0,0,0)',
+          font: { color: '#8096b0', size: 11, family: "'DM Mono', monospace" },
+          title: {
+            text: `${isUp ? '▲' : '▼'} ${Math.abs(chgPct).toFixed(2)}%`,
+            font: { size: 12, color },
+            x: 0.01,
+          },
+          xaxis: {
+            showgrid: false, color: '#8096b0',
+            showspikes: true, spikecolor: '#2E7FD9', spikethickness: 1,
+          },
+          yaxis: {
+            showgrid: true, gridcolor: 'rgba(255,255,255,.05)', color: '#8096b0',
+            range: [Math.min(...prices) * 0.995, Math.max(...prices) * 1.005],
+            tickformat: ',.4g',
+          },
+          hovermode: 'x unified',
+          showlegend: false,
+        }, { responsive: true, displayModeBar: false });
       } catch(e) {
-        res.innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-text">${e.message}</div></div>`;
+        chartDiv.innerHTML = `<div class="empty" style="padding:40px"><div class="empty-text">⚠️ ${e.message}</div></div>`;
       }
     };
 
-    document.getElementById('btn-buscar').addEventListener('click', buscar);
-    document.getElementById('ticker-input').addEventListener('keydown', e => { if (e.key === 'Enter') buscar(); });
+    // ── Render detalle del activo ─────────────────────────────────────
+    const renderDetail = async (ticker, nombre, exchange, tipo) => {
+      _activeTicker = ticker;
+      const detail = document.getElementById('mkt-detail');
+      detail.classList.remove('hidden');
 
-    document.getElementById('btn-guardar').addEventListener('click', async () => {
-      if (!_lastInfo) return;
+      document.getElementById('mkt-price-card').innerHTML = `
+        <div style="display:flex;align-items:center;gap:12px;color:var(--text-sec);
+          font-family:'DM Mono',monospace;font-size:.75rem">
+          <div class="spinner" style="width:16px;height:16px;border-width:2px;flex-shrink:0"></div>
+          Cargando datos de ${ticker}...
+        </div>
+      `;
+
+      detail.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
       try {
-        await dbUpsert('activos', { ticker: _lastInfo.ticker, tipo: 'accion' });
-        await dbUpsert('precios_historicos', {
-          ticker:          _lastInfo.ticker,
-          fecha:           new Date().toISOString().slice(0, 10),
-          cierre:          _lastInfo.price,
-          apertura:        _lastInfo.open,
-          maximo:          _lastInfo.high,
-          minimo:          _lastInfo.low,
-          cierre_ajustado: _lastInfo.price,
+        const info = await this.fetchYahooPrice(ticker);
+        _activeInfo = info;
+
+        // Conversión de moneda
+        const { moneda: monedaNorm, factor } = this.normalizarMoneda(info.currency);
+        const priceDisp  = info.price;
+        const priceNorm  = priceDisp * factor;
+        let   priceUSD   = priceNorm, tc = 1.0;
+
+        if (monedaNorm !== 'USD') {
+          try {
+            const fx = await this.fetchFXRate(monedaNorm);
+            tc = fx.tc;
+          } catch(_) {}
+          priceUSD = priceNorm * tc;
+        }
+
+        const plCls = info.change >= 0 ? 'pos' : 'neg';
+        const sign  = info.change >= 0 ? '+' : '';
+        const dec   = info.currency === 'USD' ? 2 : 4;
+
+        document.getElementById('mkt-price-card').innerHTML = `
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;
+            flex-wrap:wrap;gap:12px;margin-bottom:16px">
+            <div>
+              <div style="font-size:1.4rem;font-weight:600;letter-spacing:.5px">${ticker}</div>
+              <div style="font-size:.85rem;color:var(--text-sec);margin-top:2px">${nombre}</div>
+              <div style="font-size:.7rem;color:var(--text-sec);margin-top:3px">
+                ${exchange} · ${TYPE_BADGE[tipo] || '⬜ Otro'}
+              </div>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button id="btn-save-price" class="btn btn-ghost" style="font-size:.72rem;padding:6px 12px">
+                💾 Guardar precio
+              </button>
+              <button id="btn-reg-compra" class="btn btn-primary" style="font-size:.8rem">
+                ➕ Registrar compra
+              </button>
+            </div>
+          </div>
+
+          <div class="metrics-row" style="margin:0">
+            <div class="metric-card">
+              <div class="metric-label">Precio (${info.currency})</div>
+              <div class="metric-value">${fmt(priceDisp, dec)}</div>
+              <div class="metric-delta ${plCls}">
+                ${sign}${fmt(info.change, dec)} (${sign}${fmt(info.pct)}%)
+              </div>
+            </div>
+
+            ${monedaNorm !== 'USD' ? `
+            <div class="metric-card">
+              <div class="metric-label">Equiv. USD</div>
+              <div class="metric-value">${fmtUSD(priceUSD)}</div>
+              <div class="metric-delta neu" style="font-size:.66rem;line-height:1.4">
+                ${monedaNorm}/USD: ${fmt(tc, 4)}
+                ${factor < 1 ? '<br>×0.01 (GBp→GBP)' : ''}
+              </div>
+            </div>
+            ` : ''}
+
+            <div class="metric-card">
+              <div class="metric-label">Apertura</div>
+              <div class="metric-value" style="font-size:1.3rem">${fmt(info.open, dec)}</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Máx / Mín día</div>
+              <div class="metric-value" style="font-size:1.2rem">${fmt(info.high, dec)}</div>
+              <div class="metric-delta neu">${fmt(info.low, dec)}</div>
+            </div>
+          </div>
+        `;
+
+        // Botón guardar precio
+        document.getElementById('btn-save-price').addEventListener('click', async () => {
+          try {
+            await dbUpsert('activos', { ticker, nombre, tipo: tipo || 'accion', moneda: monedaNorm });
+            await dbUpsert('precios_historicos', {
+              ticker,
+              fecha:           new Date().toISOString().slice(0, 10),
+              cierre:          priceUSD,
+              apertura:        info.open * factor * tc,
+              maximo:          info.high * factor * tc,
+              minimo:          info.low  * factor * tc,
+              cierre_ajustado: priceUSD,
+            });
+            toast('✅ Precio guardado en Supabase (USD)');
+          } catch(e) { toast('❌ ' + e.message, 'err'); }
         });
-        toast('✅ Precio guardado');
-        document.getElementById('btn-guardar').style.display = 'none';
+
+        // Botón registrar compra → pre-rellena operaciones
+        document.getElementById('btn-reg-compra').addEventListener('click', () => {
+          window._precompra = { ticker, nombre, exchange, currency: info.currency, tipo };
+          window.location.hash = '#inversiones/operaciones';
+        });
+
+        // Botones de período
+        const pbDiv = document.getElementById('mkt-period-btns');
+        pbDiv.innerHTML = PERIODS.map(p => `
+          <button class="mkt-period-btn" data-period="${p.value}" style="
+            padding:4px 14px;border-radius:6px;
+            border:1px solid ${p.value === _activePeriod ? 'var(--accent)' : 'rgba(255,255,255,.15)'};
+            background:${p.value === _activePeriod ? 'var(--accent)' : 'transparent'};
+            color:${p.value === _activePeriod ? '#fff' : 'var(--text-sec)'};
+            cursor:pointer;font-family:'DM Mono',monospace;font-size:.75rem;
+            transition:all .15s">
+            ${p.label}
+          </button>
+        `).join('');
+
+        pbDiv.querySelectorAll('.mkt-period-btn').forEach(btn => {
+          btn.addEventListener('click', async () => {
+            _activePeriod = btn.dataset.period;
+            await loadChart(ticker, _activePeriod);
+          });
+        });
+
+        // Cargar gráfico default
+        await loadChart(ticker, _activePeriod);
+
+        // Métricas adicionales
+        document.getElementById('mkt-metrics-body').innerHTML = `
+          <div class="metrics-row" style="padding:8px 16px 16px">
+            <div class="metric-card">
+              <div class="metric-label">Máx. 52 sem.</div>
+              <div class="metric-value" style="font-size:1.1rem">
+                ${info.w52high ? fmt(info.w52high, dec) : '—'}
+              </div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Mín. 52 sem.</div>
+              <div class="metric-value" style="font-size:1.1rem">
+                ${info.w52low ? fmt(info.w52low, dec) : '—'}
+              </div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Volumen</div>
+              <div class="metric-value" style="font-size:1.1rem">
+                ${fmtVol(info.volume)}
+              </div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Cierre anterior</div>
+              <div class="metric-value" style="font-size:1.1rem">
+                ${fmt(info.prev, dec)} ${info.currency}
+              </div>
+            </div>
+          </div>
+        `;
+
       } catch(e) {
-        toast('❌ ' + e.message, 'err');
+        document.getElementById('mkt-price-card').innerHTML = `
+          <div class="empty">
+            <div class="empty-icon">⚠️</div>
+            <div class="empty-text">${e.message}</div>
+          </div>
+        `;
       }
-    });
+    };
+
+    // ── Búsqueda ──────────────────────────────────────────────────────
+    const doSearch = async () => {
+      const query = document.getElementById('mkt-q').value.trim();
+      if (!query) return;
+      const res = document.getElementById('mkt-results');
+      res.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+      try {
+        const results = await this.searchTickers(query);
+        if (!results.length) {
+          res.innerHTML = `<div class="empty" style="padding:12px"><div class="empty-text">Sin resultados. Probá con el ticker exacto.</div></div>`;
+          return;
+        }
+        res.innerHTML = `<div style="display:flex;flex-direction:column;gap:5px">
+          ${results.slice(0, 8).map((r, i) => `
+            <div class="search-result-row" data-idx="${i}" style="
+              display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;
+              cursor:pointer;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);
+              transition:background .15s">
+              <span style="font-size:.9rem;flex-shrink:0">
+                ${TYPE_BADGE[r.tipo]?.slice(0,2) || '⬜'}
+              </span>
+              <strong style="min-width:76px;color:var(--accent);font-size:.88rem">${r.ticker}</strong>
+              <span style="flex:1;color:var(--text);font-size:.82rem">${r.nombre}</span>
+              <span style="font-size:.68rem;color:var(--text-sec);flex-shrink:0">${r.exchange}</span>
+            </div>
+          `).join('')}
+        </div>`;
+        res.querySelectorAll('.search-result-row').forEach(el => {
+          el.addEventListener('mouseenter', () => el.style.background = 'rgba(46,127,217,.12)');
+          el.addEventListener('mouseleave', () => el.style.background = 'rgba(255,255,255,.04)');
+          el.addEventListener('click', () => {
+            const r = results[parseInt(el.dataset.idx)];
+            res.innerHTML = '';
+            document.getElementById('mkt-q').value = '';
+            renderDetail(r.ticker, r.nombre, r.exchange, r.tipo);
+          });
+        });
+      } catch(e) {
+        res.innerHTML = `<div class="empty" style="padding:12px"><div class="empty-text">⚠️ ${e.message}</div></div>`;
+      }
+    };
+
+    document.getElementById('btn-mkt-search').addEventListener('click', doSearch);
+    document.getElementById('mkt-q').addEventListener('keydown', e => { if (e.key === 'Enter') doSearch(); });
   },
 
   // ── Portafolio ───────────────────────────────────────────────────────
@@ -582,6 +838,13 @@ window.Mods.inversiones = {
     });
 
     this._attachDeleteHandlers();
+
+    // Si viene desde Mercado → "Registrar compra", pre-seleccionar el activo
+    if (window._precompra) {
+      const pc = window._precompra;
+      window._precompra = null;
+      await selectTicker(pc);
+    }
   },
 
   _resetForm(st, today) {
@@ -722,10 +985,40 @@ window.Mods.inversiones = {
           change:   price - prev,
           pct:      prev ? ((price - prev) / prev) * 100 : 0,
           currency: meta.currency ?? 'USD',
+          volume:   meta.regularMarketVolume  ?? null,
+          w52high:  meta.fiftyTwoWeekHigh     ?? null,
+          w52low:   meta.fiftyTwoWeekLow      ?? null,
         };
       } catch (_) {}
     }
     throw new Error('No se pudo obtener el precio. Verificá el ticker.');
+  },
+
+  async fetchYahooChart(ticker, period = '1mo', interval = '1d') {
+    const urls = [
+      `https://query2.finance.yahoo.com/v8/finance/chart/${ticker}?interval=${interval}&range=${period}`,
+      `https://corsproxy.io/?${encodeURIComponent(`https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?interval=${interval}&range=${period}`)}`,
+    ];
+    for (const url of urls) {
+      try {
+        const res  = await fetch(url);
+        if (!res.ok) continue;
+        const json = await res.json();
+        const r    = json.chart?.result?.[0];
+        if (!r) continue;
+        const ts     = r.timestamp || [];
+        const closes = r.indicators?.quote?.[0]?.close || [];
+        const dates = [], prices = [];
+        for (let i = 0; i < ts.length; i++) {
+          if (closes[i] != null) {
+            dates.push(new Date(ts[i] * 1000));
+            prices.push(closes[i]);
+          }
+        }
+        return { dates, prices };
+      } catch(_) {}
+    }
+    throw new Error('No se pudieron obtener datos históricos.');
   },
 
   async searchTickers(query) {
