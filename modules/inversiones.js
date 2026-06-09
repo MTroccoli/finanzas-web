@@ -25,7 +25,13 @@ window.Mods.inversiones = {
       { label: '1M',  value: '1mo', interval: '1d'  },
       { label: '6M',  value: '6mo', interval: '1d'  },
       { label: '1A',  value: '1y',  interval: '1wk' },
+      { label: '5A',  value: '5y',  interval: '1wk' },
     ];
+
+    const TYPE_BADGE = {
+      equity: '🟩 Acción', etf: '🟦 ETF', mutualfund: '🟪 Fondo',
+      cryptocurrency: '🟨 Crypto', index: '⬛ Índice',
+    };
 
     const fmtVol = n => {
       if (!n) return '—';
@@ -35,9 +41,12 @@ window.Mods.inversiones = {
       return n.toLocaleString();
     };
 
-    const TYPE_BADGE = {
-      equity: '🟩 Acción', etf: '🟦 ETF', mutualfund: '🟪 Fondo',
-      cryptocurrency: '🟨 Crypto', index: '⬛ Índice',
+    const fmtCap = n => {
+      if (!n) return null;
+      if (n >= 1e12) return '$' + (n / 1e12).toFixed(2) + 'T';
+      if (n >= 1e9)  return '$' + (n / 1e9).toFixed(1) + 'B';
+      if (n >= 1e6)  return '$' + (n / 1e6).toFixed(0) + 'M';
+      return '$' + n.toLocaleString();
     };
 
     c.innerHTML = `
@@ -58,32 +67,41 @@ window.Mods.inversiones = {
 
       <!-- Detalle del activo seleccionado -->
       <div id="mkt-detail" class="hidden">
-        <div class="form-card" id="mkt-price-card" style="padding-bottom:8px"></div>
 
-        <div class="form-card" id="mkt-chart-card">
-          <div id="mkt-period-btns" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px"></div>
-          <div id="mkt-chart" style="width:100%;min-height:260px"></div>
-        </div>
+        <!-- Card con precio + todas las métricas -->
+        <div class="form-card" id="mkt-price-card"></div>
 
-        <div class="table-wrap" id="mkt-metrics-wrap" style="margin-top:0">
-          <div class="table-header"><span class="table-title">Datos de mercado</span></div>
-          <div id="mkt-metrics-body"></div>
+        <!-- Card con selector de período + gráfico -->
+        <div class="form-card" id="mkt-chart-card" style="padding-bottom:8px">
+          <div id="mkt-period-btns" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px"></div>
+          <div style="position:relative">
+            <div id="mkt-chart-overlay" style="
+              display:none;position:absolute;inset:0;z-index:5;border-radius:4px;
+              align-items:center;justify-content:center;
+              background:rgba(4,15,32,.65)">
+              <div class="spinner"></div>
+            </div>
+            <div id="mkt-chart" style="width:100%;height:280px"></div>
+          </div>
         </div>
       </div>
 
-      <!-- Precios guardados en Supabase -->
+      <!-- Precios guardados -->
       <div class="table-wrap">
         <div class="table-header">
-          <span class="table-title">Precios guardados en Supabase</span>
+          <span class="table-title">Historial de precios guardados</span>
+          <span style="font-size:.68rem;color:var(--text-sec);font-family:'DM Mono',monospace">
+            Usado por el Portafolio para P&L
+          </span>
         </div>
         ${savedRows.length === 0 ? `
           <div class="empty">
             <div class="empty-icon">📡</div>
-            <div class="empty-text">Buscá un ticker y usá 💾 Guardar para crear historial</div>
+            <div class="empty-text">Buscá un ticker, abrí su detalle y usá "Guardar P&L" para registrar el precio</div>
           </div>
         ` : `
           <table>
-            <thead><tr><th>Ticker</th><th>Fecha</th><th>Cierre</th><th>Apertura</th><th>Máx</th><th>Mín</th></tr></thead>
+            <thead><tr><th>Ticker</th><th>Fecha</th><th>Cierre (USD)</th><th>Apertura</th><th>Máx</th><th>Mín</th></tr></thead>
             <tbody>
               ${savedRows.map(r => `
                 <tr>
@@ -104,106 +122,108 @@ window.Mods.inversiones = {
       </div>
     `;
 
-    // ── Render gráfico ────────────────────────────────────────────────
     let _activePeriod = '1mo';
-    let _activeTicker = null;
     let _activeInfo   = null;
 
+    // ── Gráfico — fix: usar overlay + Plotly.newPlot (no react) ──────
     const loadChart = async (ticker, period) => {
       const pd = PERIODS.find(p => p.value === period) || PERIODS[2];
+
+      // Actualizar botones de período
       document.querySelectorAll('.mkt-period-btn').forEach(b => {
-        const isActive = b.dataset.period === period;
-        b.style.background = isActive ? 'var(--accent)' : 'transparent';
-        b.style.color       = isActive ? '#fff' : 'var(--text-sec)';
-        b.style.borderColor = isActive ? 'var(--accent)' : 'rgba(255,255,255,.15)';
+        const on = b.dataset.period === period;
+        b.style.background  = on ? 'var(--accent)' : 'transparent';
+        b.style.color       = on ? '#fff' : 'var(--text-sec)';
+        b.style.borderColor = on ? 'var(--accent)' : 'rgba(255,255,255,.15)';
       });
 
+      // Mostrar overlay SIN tocar el div del gráfico
+      const overlay  = document.getElementById('mkt-chart-overlay');
       const chartDiv = document.getElementById('mkt-chart');
       if (!chartDiv) return;
-      chartDiv.innerHTML = '<div class="loading" style="height:200px;display:flex;align-items:center;justify-content:center"><div class="spinner"></div></div>';
+      if (overlay) overlay.style.display = 'flex';
 
       try {
         const { dates, prices } = await this.fetchYahooChart(ticker, period, pd.interval);
+
+        if (overlay) overlay.style.display = 'none';
+
         if (!prices.length) {
-          chartDiv.innerHTML = '<div class="empty" style="padding:40px"><div class="empty-text">Sin datos para este período</div></div>';
+          try { Plotly.purge('mkt-chart'); } catch(_) {}
+          chartDiv.innerHTML = '<div class="empty" style="height:200px;display:flex;align-items:center;justify-content:center"><div class="empty-text">Sin datos para este período</div></div>';
           return;
         }
 
-        chartDiv.innerHTML = '';
         const first  = prices[0], last = prices[prices.length - 1];
         const chgPct = first ? ((last - first) / first) * 100 : 0;
         const isUp   = chgPct >= 0;
         const color  = isUp ? '#26a69a' : '#ef5350';
-        const currency = _activeInfo?.currency || 'USD';
+        const cur    = _activeInfo?.currency || 'USD';
 
-        Plotly.react('mkt-chart', [{
-          x: dates,
-          y: prices,
-          type: 'scatter',
-          mode: 'lines',
+        // Purge y newPlot — soluciona el problema de react sobre div vacío
+        try { Plotly.purge('mkt-chart'); } catch(_) {}
+        Plotly.newPlot('mkt-chart', [{
+          x: dates, y: prices,
+          type: 'scatter', mode: 'lines',
           fill: 'tozeroy',
           fillcolor: isUp ? 'rgba(38,166,154,0.12)' : 'rgba(239,83,80,0.12)',
           line: { color, width: 2 },
-          hovertemplate: `%{y:,.4g} ${currency}<extra></extra>`,
+          hovertemplate: `%{y:,.4g} ${cur}<extra></extra>`,
         }], {
-          height: 260,
+          height: 280,
           margin: { l: 50, r: 8, t: 32, b: 28 },
           plot_bgcolor:  'rgba(0,0,0,0)',
           paper_bgcolor: 'rgba(0,0,0,0)',
           font: { color: '#8096b0', size: 11, family: "'DM Mono', monospace" },
           title: {
-            text: `${isUp ? '▲' : '▼'} ${Math.abs(chgPct).toFixed(2)}%`,
-            font: { size: 12, color },
-            x: 0.01,
+            text: `${isUp ? '▲' : '▼'} ${Math.abs(chgPct).toFixed(2)}% en ${pd.label}`,
+            font: { size: 12, color }, x: 0.01,
           },
-          xaxis: {
-            showgrid: false, color: '#8096b0',
-            showspikes: true, spikecolor: '#2E7FD9', spikethickness: 1,
-          },
+          xaxis: { showgrid: false, color: '#8096b0', showspikes: true, spikecolor: '#2E7FD9', spikethickness: 1 },
           yaxis: {
             showgrid: true, gridcolor: 'rgba(255,255,255,.05)', color: '#8096b0',
             range: [Math.min(...prices) * 0.995, Math.max(...prices) * 1.005],
             tickformat: ',.4g',
           },
-          hovermode: 'x unified',
-          showlegend: false,
+          hovermode: 'x unified', showlegend: false,
         }, { responsive: true, displayModeBar: false });
+
       } catch(e) {
-        chartDiv.innerHTML = `<div class="empty" style="padding:40px"><div class="empty-text">⚠️ ${e.message}</div></div>`;
+        if (overlay) overlay.style.display = 'none';
+        try { Plotly.purge('mkt-chart'); } catch(_) {}
+        chartDiv.innerHTML = `<div class="empty" style="height:180px;display:flex;align-items:center;justify-content:center"><div class="empty-text">⚠️ ${e.message}</div></div>`;
       }
     };
 
-    // ── Render detalle del activo ─────────────────────────────────────
+    // ── Detalle del activo ────────────────────────────────────────────
     const renderDetail = async (ticker, nombre, exchange, tipo) => {
-      _activeTicker = ticker;
+      _activeInfo = null;
       const detail = document.getElementById('mkt-detail');
       detail.classList.remove('hidden');
-
       document.getElementById('mkt-price-card').innerHTML = `
-        <div style="display:flex;align-items:center;gap:12px;color:var(--text-sec);
+        <div style="display:flex;align-items:center;gap:10px;color:var(--text-sec);
           font-family:'DM Mono',monospace;font-size:.75rem">
           <div class="spinner" style="width:16px;height:16px;border-width:2px;flex-shrink:0"></div>
-          Cargando datos de ${ticker}...
+          Cargando ${ticker}...
         </div>
       `;
-
       detail.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 
       try {
-        const info = await this.fetchYahooPrice(ticker);
+        // Precio base + datos financieros en paralelo (best-effort)
+        const [info, quote] = await Promise.all([
+          this.fetchYahooPrice(ticker),
+          this.fetchYahooQuote(ticker).catch(() => null),
+        ]);
         _activeInfo = info;
 
-        // Conversión de moneda
         const { moneda: monedaNorm, factor } = this.normalizarMoneda(info.currency);
-        const priceDisp  = info.price;
-        const priceNorm  = priceDisp * factor;
-        let   priceUSD   = priceNorm, tc = 1.0;
+        const priceDisp = info.price;
+        const priceNorm = priceDisp * factor;
+        let priceUSD = priceNorm, tc = 1.0;
 
         if (monedaNorm !== 'USD') {
-          try {
-            const fx = await this.fetchFXRate(monedaNorm);
-            tc = fx.tc;
-          } catch(_) {}
+          try { const fx = await this.fetchFXRate(monedaNorm); tc = fx.tc; } catch(_) {}
           priceUSD = priceNorm * tc;
         }
 
@@ -211,26 +231,76 @@ window.Mods.inversiones = {
         const sign  = info.change >= 0 ? '+' : '';
         const dec   = info.currency === 'USD' ? 2 : 4;
 
+        // Barra de posición en rango 52 semanas
+        const w52bar = (info.w52high && info.w52low && info.w52high > info.w52low) ? (() => {
+          const pct = Math.min(100, Math.max(0, (priceDisp - info.w52low) / (info.w52high - info.w52low) * 100));
+          return `
+            <div style="margin:14px 0 4px">
+              <div style="display:flex;justify-content:space-between;margin-bottom:5px;
+                font-family:'DM Mono',monospace;font-size:.66rem;color:var(--text-sec)">
+                <span>Mín 52W: ${fmt(info.w52low, dec)}</span>
+                <span style="color:var(--accent);font-weight:500">Rango 52 semanas</span>
+                <span>Máx 52W: ${fmt(info.w52high, dec)}</span>
+              </div>
+              <div style="height:4px;border-radius:2px;background:rgba(255,255,255,.1);position:relative">
+                <div style="position:absolute;left:0;top:0;height:100%;width:${pct}%;
+                  background:linear-gradient(90deg,#ef5350,#26a69a);border-radius:2px"></div>
+                <div style="position:absolute;left:${pct}%;top:-4px;
+                  transform:translateX(-50%);width:10px;height:10px;border-radius:50%;
+                  background:var(--accent);border:2px solid var(--bg)"></div>
+              </div>
+            </div>
+          `;
+        })() : '';
+
+        // Fila de datos financieros (best-effort del quote endpoint)
+        const finRow = quote ? (() => {
+          const items = [
+            quote.marketCap  && { label: 'Mkt Cap',    value: fmtCap(quote.marketCap) },
+            quote.pe         && { label: 'P/E (trail.)',value: fmt(quote.pe, 1) },
+            quote.forwardPE  && { label: 'P/E (forw.)', value: fmt(quote.forwardPE, 1) },
+            quote.divYield   && { label: 'Div. Yield',  value: fmt(quote.divYield * 100, 2) + '%' },
+            quote.beta       && { label: 'Beta',        value: fmt(quote.beta, 2) },
+            quote.eps        && { label: 'EPS (trail.)', value: fmtUSD(quote.eps) },
+          ].filter(Boolean);
+          if (!items.length) return '';
+          return `
+            <div style="display:flex;gap:20px;flex-wrap:wrap;padding-top:12px;margin-top:12px;
+              border-top:1px solid rgba(255,255,255,.06);font-family:'DM Mono',monospace;font-size:.75rem">
+              ${items.map(i => `
+                <div>
+                  <div style="color:var(--text-sec);font-size:.65rem;margin-bottom:2px">${i.label}</div>
+                  <div style="color:var(--text);font-weight:500">${i.value}</div>
+                </div>
+              `).join('')}
+            </div>
+          `;
+        })() : '';
+
         document.getElementById('mkt-price-card').innerHTML = `
+          <!-- Header -->
           <div style="display:flex;justify-content:space-between;align-items:flex-start;
-            flex-wrap:wrap;gap:12px;margin-bottom:16px">
+            flex-wrap:wrap;gap:10px;margin-bottom:14px">
             <div>
-              <div style="font-size:1.4rem;font-weight:600;letter-spacing:.5px">${ticker}</div>
-              <div style="font-size:.85rem;color:var(--text-sec);margin-top:2px">${nombre}</div>
-              <div style="font-size:.7rem;color:var(--text-sec);margin-top:3px">
+              <div style="font-size:1.35rem;font-weight:600;letter-spacing:.4px">${ticker}</div>
+              <div style="font-size:.83rem;color:var(--text-sec);margin-top:2px">${nombre}</div>
+              <div style="font-size:.68rem;color:var(--text-sec);margin-top:3px">
                 ${exchange} · ${TYPE_BADGE[tipo] || '⬜ Otro'}
               </div>
             </div>
-            <div style="display:flex;gap:8px;flex-wrap:wrap">
-              <button id="btn-save-price" class="btn btn-ghost" style="font-size:.72rem;padding:6px 12px">
-                💾 Guardar precio
+            <div style="display:flex;gap:7px;flex-wrap:wrap;align-items:flex-start">
+              <button id="btn-save-price" class="btn btn-ghost"
+                style="font-size:.7rem;padding:5px 10px"
+                title="Guarda el precio actual en Supabase para que el Portafolio pueda calcular el P&L">
+                💾 Guardar P&L
               </button>
-              <button id="btn-reg-compra" class="btn btn-primary" style="font-size:.8rem">
+              <button id="btn-reg-compra" class="btn btn-primary" style="font-size:.78rem">
                 ➕ Registrar compra
               </button>
             </div>
           </div>
 
+          <!-- Métricas principales -->
           <div class="metrics-row" style="margin:0">
             <div class="metric-card">
               <div class="metric-label">Precio (${info.currency})</div>
@@ -244,26 +314,37 @@ window.Mods.inversiones = {
             <div class="metric-card">
               <div class="metric-label">Equiv. USD</div>
               <div class="metric-value">${fmtUSD(priceUSD)}</div>
-              <div class="metric-delta neu" style="font-size:.66rem;line-height:1.4">
-                ${monedaNorm}/USD: ${fmt(tc, 4)}
-                ${factor < 1 ? '<br>×0.01 (GBp→GBP)' : ''}
+              <div class="metric-delta neu" style="font-size:.65rem;line-height:1.5">
+                ${monedaNorm}/USD: ${fmt(tc, 4)}${factor < 1 ? '<br>×0.01 (GBp→GBP)' : ''}
               </div>
             </div>
             ` : ''}
 
             <div class="metric-card">
-              <div class="metric-label">Apertura</div>
-              <div class="metric-value" style="font-size:1.3rem">${fmt(info.open, dec)}</div>
+              <div class="metric-label">Apertura / Ant.</div>
+              <div class="metric-value" style="font-size:1.2rem">${fmt(info.open, dec)}</div>
+              <div class="metric-delta neu">${fmt(info.prev, dec)}</div>
             </div>
+
             <div class="metric-card">
               <div class="metric-label">Máx / Mín día</div>
               <div class="metric-value" style="font-size:1.2rem">${fmt(info.high, dec)}</div>
               <div class="metric-delta neu">${fmt(info.low, dec)}</div>
             </div>
+
+            <div class="metric-card">
+              <div class="metric-label">Volumen</div>
+              <div class="metric-value" style="font-size:1.2rem">${fmtVol(info.volume)}</div>
+            </div>
           </div>
+
+          <!-- Barra 52 semanas -->
+          ${w52bar}
+
+          <!-- Datos financieros (best-effort) -->
+          ${finRow}
         `;
 
-        // Botón guardar precio
         document.getElementById('btn-save-price').addEventListener('click', async () => {
           try {
             await dbUpsert('activos', { ticker, nombre, tipo: tipo || 'accion', moneda: monedaNorm });
@@ -276,11 +357,10 @@ window.Mods.inversiones = {
               minimo:          info.low  * factor * tc,
               cierre_ajustado: priceUSD,
             });
-            toast('✅ Precio guardado en Supabase (USD)');
+            toast('✅ Precio guardado — el Portafolio puede calcular P&L para ' + ticker);
           } catch(e) { toast('❌ ' + e.message, 'err'); }
         });
 
-        // Botón registrar compra → pre-rellena operaciones
         document.getElementById('btn-reg-compra').addEventListener('click', () => {
           window._precompra = { ticker, nombre, exchange, currency: info.currency, tipo };
           window.location.hash = '#inversiones/operaciones';
@@ -290,12 +370,11 @@ window.Mods.inversiones = {
         const pbDiv = document.getElementById('mkt-period-btns');
         pbDiv.innerHTML = PERIODS.map(p => `
           <button class="mkt-period-btn" data-period="${p.value}" style="
-            padding:4px 14px;border-radius:6px;
+            padding:4px 13px;border-radius:6px;
             border:1px solid ${p.value === _activePeriod ? 'var(--accent)' : 'rgba(255,255,255,.15)'};
             background:${p.value === _activePeriod ? 'var(--accent)' : 'transparent'};
             color:${p.value === _activePeriod ? '#fff' : 'var(--text-sec)'};
-            cursor:pointer;font-family:'DM Mono',monospace;font-size:.75rem;
-            transition:all .15s">
+            cursor:pointer;font-family:'DM Mono',monospace;font-size:.75rem;transition:all .15s">
             ${p.label}
           </button>
         `).join('');
@@ -307,45 +386,11 @@ window.Mods.inversiones = {
           });
         });
 
-        // Cargar gráfico default
         await loadChart(ticker, _activePeriod);
-
-        // Métricas adicionales
-        document.getElementById('mkt-metrics-body').innerHTML = `
-          <div class="metrics-row" style="padding:8px 16px 16px">
-            <div class="metric-card">
-              <div class="metric-label">Máx. 52 sem.</div>
-              <div class="metric-value" style="font-size:1.1rem">
-                ${info.w52high ? fmt(info.w52high, dec) : '—'}
-              </div>
-            </div>
-            <div class="metric-card">
-              <div class="metric-label">Mín. 52 sem.</div>
-              <div class="metric-value" style="font-size:1.1rem">
-                ${info.w52low ? fmt(info.w52low, dec) : '—'}
-              </div>
-            </div>
-            <div class="metric-card">
-              <div class="metric-label">Volumen</div>
-              <div class="metric-value" style="font-size:1.1rem">
-                ${fmtVol(info.volume)}
-              </div>
-            </div>
-            <div class="metric-card">
-              <div class="metric-label">Cierre anterior</div>
-              <div class="metric-value" style="font-size:1.1rem">
-                ${fmt(info.prev, dec)} ${info.currency}
-              </div>
-            </div>
-          </div>
-        `;
 
       } catch(e) {
         document.getElementById('mkt-price-card').innerHTML = `
-          <div class="empty">
-            <div class="empty-icon">⚠️</div>
-            <div class="empty-text">${e.message}</div>
-          </div>
+          <div class="empty"><div class="empty-icon">⚠️</div><div class="empty-text">${e.message}</div></div>
         `;
       }
     };
@@ -368,9 +413,7 @@ window.Mods.inversiones = {
               display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;
               cursor:pointer;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);
               transition:background .15s">
-              <span style="font-size:.9rem;flex-shrink:0">
-                ${TYPE_BADGE[r.tipo]?.slice(0,2) || '⬜'}
-              </span>
+              <span style="font-size:.9rem;flex-shrink:0">${TYPE_BADGE[r.tipo]?.slice(0,2) || '⬜'}</span>
               <strong style="min-width:76px;color:var(--accent);font-size:.88rem">${r.ticker}</strong>
               <span style="flex:1;color:var(--text);font-size:.82rem">${r.nombre}</span>
               <span style="font-size:.68rem;color:var(--text-sec);flex-shrink:0">${r.exchange}</span>
@@ -1045,6 +1088,32 @@ window.Mods.inversiones = {
       } catch(_) {}
     }
     throw new Error('No se pudo buscar. Verificá tu conexión o ingresá el ticker exacto.');
+  },
+
+  // Datos financieros básicos (best-effort — falla silenciosamente)
+  async fetchYahooQuote(ticker) {
+    const urls = [
+      `https://query2.finance.yahoo.com/v7/finance/quote?symbols=${ticker}`,
+      `https://corsproxy.io/?${encodeURIComponent(`https://query1.finance.yahoo.com/v7/finance/quote?symbols=${ticker}`)}`,
+    ];
+    for (const url of urls) {
+      try {
+        const res = await fetch(url);
+        if (!res.ok) continue;
+        const json = await res.json();
+        const q = json.quoteResponse?.result?.[0];
+        if (!q) continue;
+        return {
+          marketCap: q.marketCap                   ?? null,
+          pe:        q.trailingPE                  ?? null,
+          forwardPE: q.forwardPE                   ?? null,
+          beta:      q.beta                        ?? null,
+          eps:       q.epsTrailingTwelveMonths     ?? null,
+          divYield:  q.trailingAnnualDividendYield ?? q.dividendYield ?? null,
+        };
+      } catch(_) {}
+    }
+    return null;
   },
 
   // Normaliza GBX/GBp/GBx → GBP con factor 0.01
