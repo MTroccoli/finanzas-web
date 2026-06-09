@@ -291,8 +291,8 @@ window.Mods.inversiones = {
             <div style="display:flex;gap:7px;flex-wrap:wrap;align-items:flex-start">
               <button id="btn-save-price" class="btn btn-ghost"
                 style="font-size:.7rem;padding:5px 10px"
-                title="Guarda el precio actual en Supabase para que el Portafolio pueda calcular el P&L">
-                💾 Guardar P&L
+                title="Guarda el precio como snapshot histórico (el P&L del Portafolio ya usa precios live)">
+                💾 Snapshot
               </button>
               <button id="btn-reg-compra" class="btn btn-primary" style="font-size:.78rem">
                 ➕ Registrar compra
@@ -357,7 +357,7 @@ window.Mods.inversiones = {
               minimo:          info.low  * factor * tc,
               cierre_ajustado: priceUSD,
             });
-            toast('✅ Precio guardado — el Portafolio puede calcular P&L para ' + ticker);
+            toast('✅ Snapshot guardado para ' + ticker);
           } catch(e) { toast('❌ ' + e.message, 'err'); }
         });
 
@@ -437,23 +437,31 @@ window.Mods.inversiones = {
 
     document.getElementById('btn-mkt-search').addEventListener('click', doSearch);
     document.getElementById('mkt-q').addEventListener('keydown', e => { if (e.key === 'Enter') doSearch(); });
+
+    // Auto-search si viene desde Portafolio
+    if (window._mktAutoSearch) {
+      const ticker = window._mktAutoSearch;
+      window._mktAutoSearch = null;
+      document.getElementById('mkt-q').value = ticker;
+      doSearch();
+    }
   },
 
   // ── Portafolio ───────────────────────────────────────────────────────
   async renderPortafolio() {
     const c = document.getElementById('content');
+
+    // Spinner mientras carga
+    c.innerHTML = `
+      <h1>Portafolio</h1>
+      <p class="page-subtitle" style="color:var(--text-sec)">Cargando posiciones y precios…</p>
+      <div class="loading" style="height:100px"><div class="spinner"></div></div>
+    `;
+
     try {
-      const [allOps, precios] = await Promise.all([
-        dbFetch('operaciones', { order: { col: 'fecha', asc: true } }),
-        dbFetch('precios_historicos', { order: { col: 'fecha', asc: false }, limit: 500 }),
-      ]);
+      const allOps = await dbFetch('operaciones', { order: { col: 'fecha', asc: true } });
 
-      const lastPrice = {};
-      for (const r of precios) {
-        if (!lastPrice[r.ticker]) lastPrice[r.ticker] = parseFloat(r.cierre);
-      }
-
-      // Posiciones en USD — precio_unitario siempre en USD
+      // Posiciones (precio_unitario siempre en USD)
       const pos = {};
       for (const op of allOps) {
         const qty   = parseFloat(op.cantidad);
@@ -467,15 +475,51 @@ window.Mods.inversiones = {
           p.qty -= qty;
         }
       }
+      const positions = Object.values(pos).filter(p => p.qty > 0.0001);
 
-      const positions   = Object.values(pos).filter(p => p.qty > 0.0001);
+      if (!positions.length) {
+        c.innerHTML = `
+          <h1>Portafolio</h1>
+          <p class="page-subtitle">Sin posiciones abiertas</p>
+          <div class="empty">
+            <div class="empty-icon">📋</div>
+            <div class="empty-text">Registrá operaciones para ver el portafolio</div>
+          </div>
+        `;
+        return;
+      }
+
+      const tickers = positions.map(p => p.ticker);
+
+      // Precios live + guardados en paralelo (live tiene prioridad)
+      const [livePrices, savedRows] = await Promise.all([
+        this.fetchLivePricesUSD(tickers).catch(() => ({})),
+        dbFetch('precios_historicos', { order: { col: 'fecha', asc: false }, limit: 500 }).catch(() => []),
+      ]);
+
+      const savedPrices = {};
+      for (const r of savedRows) {
+        if (!savedPrices[r.ticker]) savedPrices[r.ticker] = parseFloat(r.cierre);
+      }
+
+      const lastPrice  = { ...savedPrices, ...livePrices };
+      const liveCount  = tickers.filter(t => livePrices[t] != null).length;
+      const priceLabel = liveCount === tickers.length
+        ? '<span style="color:#26a69a">● Precios en tiempo real</span>'
+        : liveCount > 0
+          ? `<span style="color:#ffca28">● ${liveCount}/${tickers.length} en tiempo real · resto guardados</span>`
+          : '<span style="color:#ef5350">● Usando precios guardados (Yahoo Finance no disponible)</span>';
+
       const totalCost   = positions.reduce((s, p) => s + p.costBasis * p.qty, 0);
       const totalMarket = positions.reduce((s, p) => s + (lastPrice[p.ticker] ?? p.costBasis) * p.qty, 0);
       const totalPL     = totalMarket - totalCost;
 
       c.innerHTML = `
         <h1>Portafolio</h1>
-        <p class="page-subtitle">Posiciones abiertas · ${positions.length} ticker${positions.length !== 1 ? 's' : ''}</p>
+        <p class="page-subtitle" style="font-size:.78rem">
+          ${positions.length} ticker${positions.length !== 1 ? 's' : ''} ·
+          <span style="font-family:'DM Mono',monospace">${priceLabel}</span>
+        </p>
 
         <div class="metrics-row">
           <div class="metric-card">
@@ -500,20 +544,16 @@ window.Mods.inversiones = {
 
         <div class="table-wrap">
           <div class="table-header">
-            <span class="table-title">Posiciones</span>
-            <a href="#inversiones/operaciones" class="btn btn-ghost" style="font-size:.7rem;padding:6px 12px">+ Nueva operación</a>
+            <span class="table-title">Posiciones abiertas</span>
+            <a href="#inversiones/operaciones" class="btn btn-ghost"
+               style="font-size:.7rem;padding:6px 12px">+ Nueva operación</a>
           </div>
-          ${positions.length === 0 ? `
-            <div class="empty">
-              <div class="empty-icon">📋</div>
-              <div class="empty-text">Sin posiciones · cargá operaciones primero</div>
-            </div>
-          ` : `
+          <div style="overflow-x:auto">
             <table>
               <thead>
                 <tr>
                   <th>Ticker</th><th>Cantidad</th><th>Costo prom.</th>
-                  <th>Precio actual</th><th>Valor</th><th>P&L</th><th>P&L %</th>
+                  <th>Precio actual</th><th>Valor USD</th><th>P&L</th><th>P&L %</th>
                 </tr>
               </thead>
               <tbody>
@@ -522,13 +562,21 @@ window.Mods.inversiones = {
                   const value   = current * p.qty;
                   const pl      = (current - p.costBasis) * p.qty;
                   const plPct   = p.costBasis ? ((current - p.costBasis) / p.costBasis) * 100 : 0;
-                  const hasPx   = !!lastPrice[p.ticker];
+                  const hasPx   = lastPrice[p.ticker] != null;
+                  const isLive  = livePrices[p.ticker] != null;
                   return `
                     <tr>
-                      <td><strong>${p.ticker}</strong></td>
+                      <td>
+                        <strong class="port-ticker-link" data-ticker="${p.ticker}"
+                          style="cursor:pointer;color:var(--accent)">${p.ticker}</strong>
+                      </td>
                       <td>${fmt(p.qty, 4)}</td>
                       <td>${fmtUSD(p.costBasis)}</td>
-                      <td>${hasPx ? fmtUSD(current) : '<span class="neu">sin precio</span>'}</td>
+                      <td>
+                        ${hasPx ? fmtUSD(current) : '<span class="neu">—</span>'}
+                        ${isLive ? '<span title="Precio en tiempo real" style="color:#26a69a;font-size:.65rem;margin-left:2px">●</span>'
+                                 : (hasPx ? '<span title="Precio guardado" style="color:#8096b0;font-size:.65rem;margin-left:2px">○</span>' : '')}
+                      </td>
                       <td>${hasPx ? fmtUSD(value) : '—'}</td>
                       <td class="${hasPx ? plClass(pl) : 'neu'}">${hasPx ? plSign(pl) + fmtUSD(pl) : '—'}</td>
                       <td class="${hasPx ? plClass(plPct) : 'neu'}">${hasPx ? plSign(plPct) + fmt(plPct) + '%' : '—'}</td>
@@ -537,14 +585,18 @@ window.Mods.inversiones = {
                 }).join('')}
               </tbody>
             </table>
-          `}
+          </div>
         </div>
-        ${positions.length > 0 && Object.keys(lastPrice).length === 0 ? `
-          <p style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--text-sec);text-align:center;margin-top:12px">
-            💡 Buscá los tickers en Mercado y guardalos para ver el P&L actualizado
-          </p>
-        ` : ''}
       `;
+
+      // Click en ticker → navega a Mercado con ese activo pre-buscado
+      document.querySelectorAll('.port-ticker-link').forEach(el => {
+        el.addEventListener('click', () => {
+          window._mktAutoSearch = el.dataset.ticker;
+          window.location.hash = '#inversiones/mercado';
+        });
+      });
+
     } catch(e) {
       c.innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-text">Error: ${e.message}</div></div>`;
     }
@@ -1088,6 +1140,55 @@ window.Mods.inversiones = {
       } catch(_) {}
     }
     throw new Error('No se pudo buscar. Verificá tu conexión o ingresá el ticker exacto.');
+  },
+
+  // Precios live en USD para múltiples tickers (batch)
+  async fetchLivePricesUSD(tickers) {
+    if (!tickers.length) return {};
+    const sym = tickers.join(',');
+    const urls = [
+      `https://query2.finance.yahoo.com/v7/finance/quote?symbols=${encodeURIComponent(sym)}`,
+      `https://corsproxy.io/?${encodeURIComponent(`https://query1.finance.yahoo.com/v7/finance/quote?symbols=${sym}`)}`,
+    ];
+
+    let raw = {};  // ticker → { price, currency }
+    for (const url of urls) {
+      try {
+        const res = await fetch(url);
+        if (!res.ok) continue;
+        const json = await res.json();
+        const results = json.quoteResponse?.result || [];
+        if (!results.length) continue;
+        for (const r of results) {
+          if (r.symbol && r.regularMarketPrice != null)
+            raw[r.symbol] = { price: r.regularMarketPrice, currency: r.currency || 'USD' };
+        }
+        break;
+      } catch(_) {}
+    }
+    if (!Object.keys(raw).length) return {};
+
+    // Monedas no-USD que necesitan tipo de cambio
+    const nonUSD = new Set();
+    for (const d of Object.values(raw)) {
+      const { moneda } = this.normalizarMoneda(d.currency);
+      if (moneda !== 'USD') nonUSD.add(moneda);
+    }
+
+    // Fetch FX rates en paralelo
+    const fxRates = {};
+    await Promise.all([...nonUSD].map(async cur => {
+      try { fxRates[cur] = (await this.fetchFXRate(cur)).tc; }
+      catch(_) { fxRates[cur] = 1.0; }
+    }));
+
+    // Convertir todo a USD
+    const result = {};
+    for (const [ticker, d] of Object.entries(raw)) {
+      const { moneda, factor } = this.normalizarMoneda(d.currency);
+      result[ticker] = d.price * factor * (moneda === 'USD' ? 1.0 : (fxRates[moneda] ?? 1.0));
+    }
+    return result;
   },
 
   // Datos financieros básicos (best-effort — falla silenciosamente)
