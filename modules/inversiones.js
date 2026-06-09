@@ -347,7 +347,7 @@ window.Mods.inversiones = {
 
         document.getElementById('btn-save-price').addEventListener('click', async () => {
           try {
-            await dbUpsert('activos', { ticker, nombre, tipo: tipo || 'accion', moneda: monedaNorm });
+            await dbUpsert('activos', { ticker, nombre, tipo: this._mapTipo(tipo), moneda: monedaNorm });
             await dbUpsert('precios_historicos', {
               ticker,
               fecha:           new Date().toISOString().slice(0, 10),
@@ -610,7 +610,7 @@ window.Mods.inversiones = {
 
     // Estado del formulario multi-paso
     const st = {
-      ticker: null, nombre: null, exchange: '',
+      ticker: null, nombre: null, exchange: '', tipoActivo: 'equity',
       moneda: 'USD', monedaNorm: 'USD', factor: 1.0, tc: 1.0,
       _preview: null,
     };
@@ -747,10 +747,11 @@ window.Mods.inversiones = {
     };
 
     const selectTicker = async (r) => {
-      st.ticker   = r.ticker;
-      st.nombre   = r.nombre;
-      st.exchange = r.exchange;
-      st.moneda   = r.currency || 'USD';
+      st.ticker      = r.ticker;
+      st.nombre      = r.nombre;
+      st.exchange    = r.exchange;
+      st.tipoActivo  = r.tipo || 'equity';
+      st.moneda      = r.currency || 'USD';
 
       // Si el resultado no traía moneda, la buscamos del endpoint de precio
       if (!r.currency) {
@@ -803,7 +804,7 @@ window.Mods.inversiones = {
       document.getElementById('sec-preview').classList.add('hidden');
       document.getElementById('op-selected').innerHTML = '';
       document.getElementById('op-search').value = '';
-      Object.assign(st, { ticker: null, nombre: null, moneda: 'USD', monedaNorm: 'USD', factor: 1.0, tc: 1.0, _preview: null });
+      Object.assign(st, { ticker: null, nombre: null, tipoActivo: 'equity', moneda: 'USD', monedaNorm: 'USD', factor: 1.0, tc: 1.0, _preview: null });
     });
 
     // ── Paso 2 → Paso 3: Preview ─────────────────────────────────────
@@ -908,7 +909,7 @@ window.Mods.inversiones = {
       try {
         await dbUpsert('activos', {
           ticker: st.ticker, nombre: st.nombre,
-          tipo: 'accion', moneda: st.monedaNorm,
+          tipo: this._mapTipo(st.tipoActivo), moneda: st.monedaNorm,
         });
         await dbInsert('operaciones', {
           ticker:          st.ticker,
@@ -956,7 +957,7 @@ window.Mods.inversiones = {
     if (com) com.value = '0';
     const fecha = document.getElementById('op-fecha');
     if (fecha) fecha.value = today || new Date().toISOString().slice(0, 10);
-    Object.assign(st, { ticker: null, nombre: null, moneda: 'USD', monedaNorm: 'USD', factor: 1.0, tc: 1.0, _preview: null });
+    Object.assign(st, { ticker: null, nombre: null, tipoActivo: 'equity', moneda: 'USD', monedaNorm: 'USD', factor: 1.0, tc: 1.0, _preview: null });
   },
 
   async _refreshTable() {
@@ -1215,6 +1216,12 @@ window.Mods.inversiones = {
       } catch(_) {}
     }
     return null;
+  },
+
+  // Mapea quoteType de Yahoo Finance → valor válido para activos.tipo
+  _mapTipo(yahooType) {
+    const m = { equity: 'accion', etf: 'etf', mutualfund: 'fondo', cryptocurrency: 'otro', index: 'otro' };
+    return m[(yahooType || '').toLowerCase()] || 'otro';
   },
 
   // Normaliza GBX/GBp/GBx → GBP con factor 0.01
