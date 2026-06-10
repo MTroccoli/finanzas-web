@@ -176,10 +176,11 @@ window.Mods.inversiones = {
           fill: 'tozeroy',
           fillcolor: isUp ? 'rgba(38,166,154,0.12)' : 'rgba(239,83,80,0.12)',
           line: { color, width: 2 },
-          hovertemplate: `<b>%{y:,.4g} ${cur}</b><br>%{x|%d/%m/%Y}<extra></extra>`,
+          hovertemplate: `%{y:,.2f} ${cur}<extra></extra>`,
           hoverlabel: {
             bgcolor: '#0e2040', bordercolor: '#2E7FD9',
             font: { color: '#e8f2ff', size: 13, family: "'DM Mono', monospace" },
+            namelength: 0,
           },
         }], {
           height: 280,
@@ -206,6 +207,17 @@ window.Mods.inversiones = {
           },
           hovermode: 'x', showlegend: false,
         }, { responsive: true, displayModeBar: false, scrollZoom: false });
+
+        // Bloquear pinch-zoom directamente en el elemento — se agrega una sola vez
+        if (!chartDiv.dataset.noZoom) {
+          chartDiv.dataset.noZoom = '1';
+          ['touchstart','touchmove'].forEach(t =>
+            chartDiv.addEventListener(t, e => { if (e.touches.length > 1) e.preventDefault(); }, { passive: false })
+          );
+          ['gesturestart','gesturechange','gestureend'].forEach(t =>
+            chartDiv.addEventListener(t, e => e.preventDefault(), { passive: false })
+          );
+        }
 
       } catch(e) {
         if (overlay) overlay.style.display = 'none';
@@ -626,7 +638,7 @@ window.Mods.inversiones = {
               <thead>
                 <tr>
                   <th>Ticker</th><th>Cantidad</th><th>Costo prom.</th>
-                  <th>Precio actual</th><th>Valor USD</th><th>P&L USD</th>
+                  <th>Precio actual</th><th>Valor USD</th><th>Peso</th><th>P&L USD</th>
                   <th title="Ganancia/pérdida por variación del tipo de cambio">P&L TC</th>
                   <th>P&L %</th>
                 </tr>
@@ -665,6 +677,7 @@ window.Mods.inversiones = {
                                      : (hasPx ? '<span title="Guardado" style="color:#8096b0;font-size:.65rem;margin-left:2px">○</span>' : '')}
                       </td>
                       <td>${hasPx ? fmtUSD(value) : '—'}</td>
+                      <td style="color:var(--text-sec)">${hasPx && totalMarket > 0 ? fmt(value / totalMarket * 100, 1) + '%' : '—'}</td>
                       <td class="${hasPx ? plClass(pl) : 'neu'}">${hasPx ? plSign(pl) + fmtUSD(pl) : '—'}</td>
                       <td class="${plTC != null ? plClass(plTC) : 'neu'}">
                         ${plTC != null ? (Math.abs(plTC) < 0.005 ? '<span class="neu">$0.00</span>' : plSign(plTC) + fmtUSD(plTC)) : '—'}
@@ -733,10 +746,11 @@ window.Mods.inversiones = {
         fill: 'tozeroy',
         fillcolor: isUp ? 'rgba(38,166,154,0.12)' : 'rgba(239,83,80,0.12)',
         line: { color, width: 2 },
-        hovertemplate: '<b>$%{y:,.2f}</b><br>%{x|%d/%m/%Y}<extra></extra>',
+        hovertemplate: '$%{y:,.2f}<extra></extra>',
         hoverlabel: {
           bgcolor: '#0e2040', bordercolor: '#2E7FD9',
           font: { color: '#e8f2ff', size: 13, family: "'DM Mono', monospace" },
+          namelength: 0,
         },
       }], {
         height: 260,
@@ -760,6 +774,16 @@ window.Mods.inversiones = {
         },
         hovermode: 'x', showlegend: false,
       }, { responsive: true, displayModeBar: false, scrollZoom: false });
+
+      if (!chartDiv.dataset.noZoom) {
+        chartDiv.dataset.noZoom = '1';
+        ['touchstart','touchmove'].forEach(t =>
+          chartDiv.addEventListener(t, e => { if (e.touches.length > 1) e.preventDefault(); }, { passive: false })
+        );
+        ['gesturestart','gesturechange','gestureend'].forEach(t =>
+          chartDiv.addEventListener(t, e => e.preventDefault(), { passive: false })
+        );
+      }
 
     } catch(e) {
       if (overlay) overlay.style.display = 'none';
