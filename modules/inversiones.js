@@ -184,7 +184,7 @@ window.Mods.inversiones = {
         }], {
           height: 280,
           margin: { l: 50, r: 8, t: 32, b: 28 },
-          plot_bgcolor:  'rgba(0,0,0,0)',
+          plot_bgcolor:  '#071E3D',
           paper_bgcolor: 'rgba(0,0,0,0)',
           font: { color: '#8096b0', size: 11, family: "'DM Mono', monospace" },
           title: {
@@ -195,15 +195,16 @@ window.Mods.inversiones = {
           xaxis: {
             showgrid: false, color: '#8096b0',
             showspikes: true, spikemode: 'across',
-            spikecolor: '#5a6e82', spikethickness: 1, spikedash: 'dot',
+            spikecolor: '#546272', spikethickness: 1, spikedash: 'dot',
+            showline: false, zeroline: false,
           },
           yaxis: {
-            showgrid: true, gridcolor: '#2a3a4a', griddash: 'dot', color: '#8096b0',
-            showspikes: false,
+            showgrid: true, gridcolor: '#0d2848', griddash: 'dot', color: '#8096b0',
+            showspikes: false, showline: false, zeroline: false,
             range: [Math.min(...prices) * 0.995, Math.max(...prices) * 1.005],
             tickformat: ',.4g',
           },
-          hovermode: 'closest', showlegend: false,
+          hovermode: 'x', showlegend: false,
         }, { responsive: true, displayModeBar: false, scrollZoom: false });
 
       } catch(e) {
@@ -740,7 +741,7 @@ window.Mods.inversiones = {
       }], {
         height: 260,
         margin: { l: 58, r: 8, t: 36, b: 28 },
-        plot_bgcolor:  'rgba(0,0,0,0)',
+        plot_bgcolor:  '#071E3D',
         paper_bgcolor: 'rgba(0,0,0,0)',
         font: { color: '#8096b0', size: 11, family: "'DM Mono', monospace" },
         title: { text: `${isUp ? '▲' : '▼'} ${Math.abs(chgPct).toFixed(2)}%`, font: { size: 12, color }, x: 0.01 },
@@ -748,15 +749,16 @@ window.Mods.inversiones = {
         xaxis: {
           showgrid: false, color: '#8096b0',
           showspikes: true, spikemode: 'across',
-          spikecolor: '#5a6e82', spikethickness: 1, spikedash: 'dot',
+          spikecolor: '#546272', spikethickness: 1, spikedash: 'dot',
+          showline: false, zeroline: false,
         },
         yaxis: {
-          showgrid: true, gridcolor: '#2a3a4a', griddash: 'dot', color: '#8096b0',
-          showspikes: false,
+          showgrid: true, gridcolor: '#0d2848', griddash: 'dot', color: '#8096b0',
+          showspikes: false, showline: false, zeroline: false,
           range: [Math.min(...values) * 0.97, Math.max(...values) * 1.03],
           tickprefix: '$', tickformat: ',.0f',
         },
-        hovermode: 'closest', showlegend: false,
+        hovermode: 'x', showlegend: false,
       }, { responsive: true, displayModeBar: false, scrollZoom: false });
 
     } catch(e) {
