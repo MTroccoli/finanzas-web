@@ -211,6 +211,7 @@ window.Mods.inversiones = {
             nticks: 5,
             showspikes: false, showline: false, zeroline: false,
             range: [Math.min(...prices) * 0.995, Math.max(...prices) * 1.005],
+            fixedrange: true,
             tickformat: ',.2f',
           },
           hovermode: 'x', showlegend: false,
@@ -566,6 +567,23 @@ window.Mods.inversiones = {
         }
       }
 
+      // For non-USD tickers using saved prices, fetch current FX rate so P&L TC can be computed
+      const savedNonUSD = tickers.filter(t => priceData[t] && !priceData[t].isLive && pos[t]?.moneda && pos[t].moneda !== 'USD');
+      if (savedNonUSD.length) {
+        const uniqueMonedas = [...new Set(savedNonUSD.map(t => this.normalizarMoneda(pos[t].moneda).moneda))];
+        const fxNow = {};
+        await Promise.all(uniqueMonedas.map(async m => {
+          try { fxNow[m] = (await this.fetchFXRate(m)).tc; } catch(_) {}
+        }));
+        for (const ticker of savedNonUSD) {
+          const { moneda, factor } = this.normalizarMoneda(pos[ticker].moneda);
+          const tc = fxNow[moneda] ?? 1.0;
+          const priceUSD = priceData[ticker].priceUSD;
+          priceData[ticker] = { ...priceData[ticker], currency: pos[ticker].moneda, factor, tc,
+            priceOrig: priceUSD / (factor * tc) };
+        }
+      }
+
       const liveCount  = tickers.filter(t => priceData[t]?.isLive).length;
       const failedTkrs = tickers.filter(t => !priceData[t]?.isLive);
 
@@ -590,7 +608,7 @@ window.Mods.inversiones = {
         const value  = priceUSD * p.qty;
         const pl     = (priceUSD - p.costBasis) * p.qty;
         const plPct  = p.costBasis ? ((priceUSD - p.costBasis) / p.costBasis) * 100 : 0;
-        const hasTC  = hasPx && pd.isLive && p.factor != null && p.tcAvg != null;
+        const hasTC  = hasPx && p.moneda !== 'USD' && p.tcAvg != null;
         const plTC   = hasTC ? p.qty * p.factor * p.costBasisOrig * (pd.tc - p.tcAvg) : null;
         const peso   = hasPx && totalMarket > 0 ? (value / totalMarket * 100) : 0;
         return { ...p, pd, hasPx, priceUSD, value, pl, plPct, plTC, peso };
