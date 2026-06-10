@@ -582,6 +582,44 @@ window.Mods.inversiones = {
       const totalMarket = positions.reduce((s, p) => s + (priceData[p.ticker]?.priceUSD ?? p.costBasis) * p.qty, 0);
       const totalPL     = totalMarket - totalCost;
 
+      // Pre-compute per-position data for table rendering and sorting
+      const computedPositions = positions.map(p => {
+        const pd     = priceData[p.ticker];
+        const hasPx  = pd != null;
+        const priceUSD = pd?.priceUSD ?? 0;
+        const value  = priceUSD * p.qty;
+        const pl     = (priceUSD - p.costBasis) * p.qty;
+        const plPct  = p.costBasis ? ((priceUSD - p.costBasis) / p.costBasis) * 100 : 0;
+        const hasTC  = hasPx && pd.isLive && p.factor != null && p.tcAvg != null;
+        const plTC   = hasTC ? p.qty * p.factor * p.costBasisOrig * (pd.tc - p.tcAvg) : null;
+        const peso   = hasPx && totalMarket > 0 ? (value / totalMarket * 100) : 0;
+        return { ...p, pd, hasPx, priceUSD, value, pl, plPct, plTC, peso };
+      });
+
+      const renderRows = (rows) => rows.map(p => {
+        const { pd, hasPx, value, pl, plPct, plTC, peso } = p;
+        return `
+          <tr>
+            <td><strong class="port-ticker-link" data-ticker="${p.ticker}"
+              style="cursor:pointer;color:var(--accent)">${p.ticker}</strong></td>
+            <td>${Math.abs(p.qty - Math.round(p.qty)) < 0.001 ? fmt(Math.round(p.qty), 0) : fmt(p.qty, 4)}</td>
+            <td>${this._fmtOrig(p.costBasisOrig, p.moneda)}</td>
+            <td>
+              ${hasPx ? this._fmtOrig(pd.priceOrig, pd.currency) : '<span class="neu">—</span>'}
+              ${pd?.isLive ? '<span title="Tiempo real" style="color:#26a69a;font-size:.65rem;margin-left:2px">●</span>'
+                           : (hasPx ? '<span title="Guardado" style="color:#8096b0;font-size:.65rem;margin-left:2px">○</span>' : '')}
+            </td>
+            <td>${hasPx ? fmtUSD(value) : '—'}</td>
+            <td style="color:var(--text-sec)">${hasPx ? fmt(peso, 1) + '%' : '—'}</td>
+            <td class="${hasPx ? plClass(pl) : 'neu'}">${hasPx ? plSign(pl) + fmtUSD(pl) : '—'}</td>
+            <td class="${plTC != null ? plClass(plTC) : 'neu'}">
+              ${plTC != null ? (Math.abs(plTC) < 0.005 ? '<span class="neu">$0</span>' : plSign(plTC) + fmtUSD(plTC)) : '—'}
+            </td>
+            <td class="${hasPx ? plClass(plPct) : 'neu'}">${hasPx ? plSign(plPct) + fmt(plPct) + '%' : '—'}</td>
+          </tr>
+        `;
+      }).join('');
+
       c.innerHTML = `
         <h1>Portafolio</h1>
         <p class="page-subtitle" style="font-size:.78rem">
@@ -641,71 +679,58 @@ window.Mods.inversiones = {
             <a href="#inversiones/operaciones" class="btn btn-ghost"
                style="font-size:.7rem;padding:6px 12px">+ Nueva operación</a>
           </div>
-          <div style="overflow-x:auto">
+          <div style="overflow:auto;max-height:65vh">
             <table>
-              <thead>
+              <thead style="position:sticky;top:0;z-index:2">
                 <tr>
-                  <th>Ticker</th><th>Cantidad</th><th>Costo prom.</th>
-                  <th>Precio actual</th><th>Valor USD</th><th>Peso</th><th>P&L USD</th>
+                  <th>Ticker</th><th>Cantidad</th><th>Costo prom.</th><th>Precio actual</th><th>Valor USD</th>
+                  <th class="sort-th" data-sort="peso" style="cursor:pointer;user-select:none;white-space:nowrap">
+                    Peso <span class="sort-arrow" style="opacity:.5">↕</span>
+                  </th>
+                  <th class="sort-th" data-sort="pl" style="cursor:pointer;user-select:none;white-space:nowrap">
+                    P&L USD <span class="sort-arrow" style="opacity:.5">↕</span>
+                  </th>
                   <th title="Ganancia/pérdida por variación del tipo de cambio">P&L TC</th>
-                  <th>P&L %</th>
+                  <th class="sort-th" data-sort="plPct" style="cursor:pointer;user-select:none;white-space:nowrap">
+                    P&L % <span class="sort-arrow" style="opacity:.5">↕</span>
+                  </th>
                 </tr>
               </thead>
-              <tbody>
-                ${positions.map(p => {
-                  const pd       = priceData[p.ticker];
-                  const hasPx    = pd != null;
-                  const priceUSD = pd?.priceUSD ?? 0;
-                  const value    = priceUSD * p.qty;
-                  const pl       = (priceUSD - p.costBasis) * p.qty;
-                  const plPct    = p.costBasis ? ((priceUSD - p.costBasis) / p.costBasis) * 100 : 0;
-
-                  // P&L por efecto TC: qty * factor * costBasisOrig * (tc_actual - tc_compra)
-                  // Para activos USD: factor=1, tc_actual=1, tcAvg=1 → resultado = 0
-                  const hasTC  = hasPx && pd.isLive && p.factor != null && p.tcAvg != null;
-                  const plTC   = hasTC ? p.qty * p.factor * p.costBasisOrig * (pd.tc - p.tcAvg) : null;
-
-                  // Formatear precio en moneda origen
-                  const fmtOrig = (price, currency) =>
-                    (!currency || currency === 'USD')
-                      ? fmtUSD(price)
-                      : `${fmt(price)} <span style="font-size:.7rem;color:var(--text-sec)">${currency}</span>`;
-
-                  return `
-                    <tr>
-                      <td>
-                        <strong class="port-ticker-link" data-ticker="${p.ticker}"
-                          style="cursor:pointer;color:var(--accent)">${p.ticker}</strong>
-                      </td>
-                      <td>${Math.abs(p.qty - Math.round(p.qty)) < 0.001 ? fmt(Math.round(p.qty), 0) : fmt(p.qty, 4)}</td>
-                      <td>${fmtOrig(p.costBasisOrig, p.moneda)}</td>
-                      <td>
-                        ${hasPx ? fmtOrig(pd.priceOrig, pd.currency) : '<span class="neu">—</span>'}
-                        ${pd?.isLive ? '<span title="Tiempo real" style="color:#26a69a;font-size:.65rem;margin-left:2px">●</span>'
-                                     : (hasPx ? '<span title="Guardado" style="color:#8096b0;font-size:.65rem;margin-left:2px">○</span>' : '')}
-                      </td>
-                      <td>${hasPx ? fmtUSD(value) : '—'}</td>
-                      <td style="color:var(--text-sec)">${hasPx && totalMarket > 0 ? fmt(value / totalMarket * 100, 1) + '%' : '—'}</td>
-                      <td class="${hasPx ? plClass(pl) : 'neu'}">${hasPx ? plSign(pl) + fmtUSD(pl) : '—'}</td>
-                      <td class="${plTC != null ? plClass(plTC) : 'neu'}">
-                        ${plTC != null ? (Math.abs(plTC) < 0.005 ? '<span class="neu">$0.00</span>' : plSign(plTC) + fmtUSD(plTC)) : '—'}
-                      </td>
-                      <td class="${hasPx ? plClass(plPct) : 'neu'}">${hasPx ? plSign(plPct) + fmt(plPct) + '%' : '—'}</td>
-                    </tr>
-                  `;
-                }).join('')}
+              <tbody id="port-tbody">
+                ${renderRows(computedPositions)}
               </tbody>
             </table>
           </div>
         </div>
       `;
 
-      document.querySelectorAll('.port-ticker-link').forEach(el => {
-        el.addEventListener('click', () => {
-          window._mktAutoSearch = el.dataset.ticker;
-          window.location.hash = '#inversiones/mercado';
+      // ── Sort ─────────────────────────────────────────────────────────────
+      let sortCol = null, sortDir = -1;
+
+      const attachTickerLinks = () => {
+        document.querySelectorAll('.port-ticker-link').forEach(el => {
+          el.addEventListener('click', () => {
+            window._mktAutoSearch = el.dataset.ticker;
+            window.location.hash = '#inversiones/mercado';
+          });
+        });
+      };
+
+      document.querySelectorAll('.sort-th').forEach(th => {
+        th.addEventListener('click', () => {
+          const col = th.dataset.sort;
+          if (sortCol === col) sortDir *= -1; else { sortCol = col; sortDir = -1; }
+          const sorted = [...computedPositions].sort((a, b) => ((a[col] ?? -Infinity) - (b[col] ?? -Infinity)) * sortDir);
+          document.getElementById('port-tbody').innerHTML = renderRows(sorted);
+          document.querySelectorAll('.sort-th').forEach(h => {
+            h.querySelector('.sort-arrow').textContent = h.dataset.sort === sortCol ? (sortDir === 1 ? '↑' : '↓') : '↕';
+            h.querySelector('.sort-arrow').style.opacity = h.dataset.sort === sortCol ? '1' : '.5';
+          });
+          attachTickerLinks();
         });
       });
+
+      attachTickerLinks();
 
       document.querySelectorAll('.port-period-btn').forEach(btn => {
         btn.addEventListener('click', () => this._loadPortfolioChart(allOps, btn.dataset.period));
@@ -1305,17 +1330,18 @@ window.Mods.inversiones = {
     if (n == null) return '—';
     const NORM = { GBX: 'GBP', GBp: 'GBP' };
     const currency = NORM[moneda] || moneda || 'USD';
+    const dec = Math.abs(n) >= 1000 ? 0 : 2;
     try {
       return new Intl.NumberFormat('en-US', {
         style: 'currency',
         currency,
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
+        minimumFractionDigits: dec,
+        maximumFractionDigits: dec,
       }).format(n);
     } catch {
       return new Intl.NumberFormat('en-US', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
+        minimumFractionDigits: dec,
+        maximumFractionDigits: dec,
       }).format(n) + ' ' + moneda;
     }
   },

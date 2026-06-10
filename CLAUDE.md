@@ -52,7 +52,7 @@ Cada módulo expone un objeto en `window.Mods.<nombre>` con un método `render()
 | Función | Uso |
 |---|---|
 | `fmt(n, dec = 2)` | Número genérico con N decimales |
-| `fmtUSD(n)` | Moneda en USD con símbolo `$` y 2 decimales |
+| `fmtUSD(n)` | Moneda en USD: 0 decimales si ≥ 1000, 2 decimales si < 1000 |
 | `fmtDate(d)` | Fecha en formato `dd/mm/yyyy` |
 | `plClass(n)` | Clase CSS según signo (`pos` / `neg` / `neu`) |
 | `plSign(n)` | Prefijo `+` si positivo |
@@ -61,7 +61,7 @@ En `inversiones.js` existe además:
 
 | Función | Uso |
 |---|---|
-| `this._fmtOrig(n, moneda)` | Precio en moneda origen (símbolo ISO), 2 decimales |
+| `this._fmtOrig(n, moneda)` | Precio en moneda origen: 0 decimales si ≥ 1000, 2 si < 1000 |
 
 ---
 
@@ -108,6 +108,19 @@ fmt(Math.round(qty), 0)
 
 // ❌ Incorrecto
 fmt(qty, 4)    // no usar decimales en cantidades
+```
+
+### 4. Decimales según magnitud del valor
+`fmtUSD` y `_fmtOrig` aplican esta regla automáticamente. Usarla siempre.
+
+```js
+// Regla: |valor| >= 1000 → 0 decimales | |valor| < 1000 → 2 decimales
+fmtUSD(1500)    // → $1,500
+fmtUSD(99.5)    // → $99.50
+fmtUSD(0.75)    // → $0.75
+
+// ❌ Incorrecto
+fmt(valor, 2)   // no hardcodear 2 decimales para valores monetarios grandes
 ```
 
 ---
