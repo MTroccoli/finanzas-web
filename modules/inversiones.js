@@ -182,8 +182,8 @@ window.Mods.inversiones = {
           line: { color, width: 2 },
           hovertemplate: `%{y:,.2f} ${cur}<extra></extra>`,
           hoverlabel: {
-            bgcolor: '#0e2040', bordercolor: '#2E7FD9',
-            font: { color: '#e8f2ff', size: 13, family: "'DM Mono', monospace" },
+            bgcolor: color, bordercolor: 'rgba(0,0,0,0)',
+            font: { color: '#fff', size: 11, family: "'DM Mono', monospace" },
             namelength: 0,
           },
         }], {
@@ -199,7 +199,7 @@ window.Mods.inversiones = {
           dragmode: false,
           xaxis: {
             showgrid: false, color: '#3d5568',
-            tickformat: xTickFmt,
+            tickformat: xTickFmt, hoverformat: '%d %b',
             tickfont: { size: 10, color: '#6a88a0', family: "'DM Sans', sans-serif" },
             showspikes: true, spikemode: 'across',
             spikecolor: '#546272', spikethickness: 1, spikedash: 'dot',
@@ -758,8 +758,8 @@ window.Mods.inversiones = {
         line: { color, width: 2 },
         hovertemplate: '$%{y:,.2f}<extra></extra>',
         hoverlabel: {
-          bgcolor: '#0e2040', bordercolor: '#2E7FD9',
-          font: { color: '#e8f2ff', size: 13, family: "'DM Mono', monospace" },
+          bgcolor: color, bordercolor: 'rgba(0,0,0,0)',
+          font: { color: '#fff', size: 11, family: "'DM Mono', monospace" },
           namelength: 0,
         },
       }], {
@@ -772,7 +772,7 @@ window.Mods.inversiones = {
         dragmode: false,
         xaxis: {
           showgrid: false, color: '#3d5568',
-          tickformat: xTickFmt,
+          tickformat: xTickFmt, hoverformat: '%d %b',
           tickfont: { size: 10, color: '#6a88a0', family: "'DM Sans', sans-serif" },
           showspikes: true, spikemode: 'across',
           spikecolor: '#546272', spikethickness: 1, spikedash: 'dot',
