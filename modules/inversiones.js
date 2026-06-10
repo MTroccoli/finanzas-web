@@ -1150,25 +1150,23 @@ window.Mods.inversiones = {
             </div>
             <div class="metric-card">
               <div class="metric-label">Cantidad · Precio ${st.moneda}</div>
-              <div class="metric-value" style="font-size:1.1rem">${fmt(cantidad, 4)}</div>
-              <div class="metric-delta neu">${fmt(precio, 4)} ${st.moneda}</div>
+              <div class="metric-value" style="font-size:1.1rem">${Math.round(cantidad)}</div>
+              <div class="metric-delta neu">${fmt(precio, 2)} ${st.moneda}</div>
             </div>
             <div class="metric-card">
-              <div class="metric-label">Precio en USD</div>
-              <div class="metric-value">${fmtUSD(precioUSD)}</div>
+              <div class="metric-label">Monto (USD)</div>
+              <div class="metric-value">${fmtUSD(montoUSD)}</div>
               ${st.monedaNorm !== 'USD' ? `<div class="metric-delta neu">TC: ${fmt(st.tc, 4)}</div>` : ''}
             </div>
           </div>
           <div style="background:rgba(255,255,255,.04);border-radius:8px;padding:14px 16px;
             font-family:'DM Mono',monospace;font-size:.78rem;line-height:2">
-            <div>Cantidad: <strong>${fmt(cantidad, 4)}</strong></div>
-            <div>Precio unitario (${st.moneda}): <strong>${fmt(precio, 4)}</strong></div>
+            <div>Cantidad: <strong>${Math.round(cantidad)}</strong></div>
+            <div>Precio unitario (${st.moneda}): <strong>${fmt(precio, 2)} ${st.moneda}</strong></div>
             ${st.moneda !== st.monedaNorm ? `<div>Factor normalización: <strong>×${st.factor}</strong> (${st.moneda}→${st.monedaNorm})</div>` : ''}
             ${st.monedaNorm !== 'USD' ? `<div>Tipo de cambio ${st.monedaNorm}/USD: <strong>${fmt(st.tc, 6)}</strong></div>` : ''}
-            <div>Precio unitario (USD): <strong>${fmtUSD(precioUSD)}</strong></div>
-            <div>Comisión: <strong>${fmt(comision, 2)} ${st.moneda}${st.monedaNorm !== 'USD' ? ` → ${fmtUSD(comisionUSD)}` : ''}</strong></div>
+            <div>Comisión: <strong>${fmtUSD(comisionUSD)}</strong></div>
             <hr style="border:none;border-top:1px solid rgba(255,255,255,.08);margin:6px 0">
-            <div style="font-size:.88rem">Monto total (${st.moneda}): <strong>${fmt(montoOrigen, 2)} ${st.moneda}</strong></div>
             <div style="font-size:.88rem">Monto total (USD): <strong style="color:var(--accent)">${fmtUSD(montoUSD)}</strong></div>
           </div>
         `;
@@ -1311,13 +1309,13 @@ window.Mods.inversiones = {
       return new Intl.NumberFormat('en-US', {
         style: 'currency',
         currency,
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
       }).format(n);
     } catch {
       return new Intl.NumberFormat('en-US', {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
       }).format(n) + ' ' + moneda;
     }
   },
@@ -1338,12 +1336,12 @@ window.Mods.inversiones = {
       <td>${fmtDate(op.fecha)}</td>
       <td><strong>${op.ticker}</strong></td>
       <td><span class="tag ${op.tipo === 'compra' ? 'tag-buy' : 'tag-sell'}">${op.tipo}</span></td>
-      <td>${fmt(qty, 4)}</td>
+      <td>${Math.round(qty)}</td>
       <td>${this._fmtOrig(priceOrig, moneda)}</td>
       <td style="font-size:.75rem;color:var(--text-sec)">${moneda !== 'USD' ? moneda : '—'}</td>
       <td style="font-size:.75rem;color:var(--text-sec)">${showTC ? fmt(tc, 4) : '—'}</td>
-      <td>${this._fmtOrig(montoOrig, moneda)}</td>
-      <td>${com > 0 ? this._fmtOrig(comOrig, moneda) : '—'}</td>
+      <td>${fmtUSD(monto)}</td>
+      <td>${com > 0 ? fmtUSD(com) : '—'}</td>
       <td>
         <button class="btn-op-delete" data-id="${op.id}" data-ticker="${op.ticker}" data-tipo="${op.tipo}"
           style="background:none;border:none;cursor:pointer;color:#e05454;font-size:.95rem;
