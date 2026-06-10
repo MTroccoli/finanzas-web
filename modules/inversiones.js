@@ -172,6 +172,7 @@ window.Mods.inversiones = {
         const xTickFmt = period === '1d'  ? '%H:%M'
           : ['5d','1mo','3mo'].includes(period) ? '%d %b'
           : '%b %y';
+        const hoverFmt = period === '1d' ? '%H:%M' : '%d %b';
 
         try { Plotly.purge('mkt-chart'); } catch(_) {}
         Plotly.newPlot('mkt-chart', [{
