@@ -199,9 +199,9 @@ window.Mods.inversiones = {
           dragmode: false,
           xaxis: {
             showgrid: false, color: '#3d5568',
-            tickformat: xTickFmt, hoverformat: '%d %b',
+            tickformat: xTickFmt, hoverformat: hoverFmt,
             tickfont: { size: 10, color: '#6a88a0', family: "'DM Sans', sans-serif" },
-            showspikes: true, spikemode: 'across',
+            fixedrange: true, showspikes: true, spikemode: 'across',
             spikecolor: '#546272', spikethickness: 1, spikedash: 'dot',
             showline: false, zeroline: false,
           },
@@ -653,7 +653,7 @@ window.Mods.inversiones = {
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px">
             <span style="font-weight:500;font-size:.9rem">Evolución de la cartera</span>
             <div style="display:flex;gap:6px;flex-wrap:wrap">
-              ${[['1mo','1M'],['3mo','3M'],['6mo','6M'],['1y','1A'],['2y','2A'],['5y','5A'],['10y','10A']].map(([v,l]) => `
+              ${[['1d','1D'],['5d','1S'],['1mo','1M'],['3mo','3M'],['6mo','6M'],['1y','1A'],['2y','2A'],['5y','5A'],['10y','10A']].map(([v,l]) => `
                 <button class="port-period-btn" data-period="${v}" style="
                   padding:4px 13px;border-radius:6px;font-size:.75rem;cursor:pointer;
                   font-family:'DM Mono',monospace;transition:all .15s;
@@ -772,7 +772,9 @@ window.Mods.inversiones = {
       const isUp   = chgPct >= 0;
       const color  = isUp ? '#26a69a' : '#ef5350';
 
-      const xTickFmt = ['1mo','3mo'].includes(period) ? '%d %b' : '%b %y';
+      const xTickFmt = period === '1d' ? '%H:%M'
+        : ['5d','1mo','3mo'].includes(period) ? '%d %b' : '%b %y';
+      const hoverFmt = period === '1d' ? '%H:%M' : '%d %b';
 
       try { Plotly.purge('port-chart'); } catch(_) {}
       Plotly.newPlot('port-chart', [{
@@ -797,9 +799,9 @@ window.Mods.inversiones = {
         dragmode: false,
         xaxis: {
           showgrid: false, color: '#3d5568',
-          tickformat: xTickFmt, hoverformat: '%d %b',
+          tickformat: xTickFmt, hoverformat: hoverFmt,
           tickfont: { size: 10, color: '#6a88a0', family: "'DM Sans', sans-serif" },
-          showspikes: true, spikemode: 'across',
+          fixedrange: true, showspikes: true, spikemode: 'across',
           spikecolor: '#546272', spikethickness: 1, spikedash: 'dot',
           showline: false, zeroline: false,
         },
@@ -808,6 +810,7 @@ window.Mods.inversiones = {
           tickfont: { size: 10, color: '#6a88a0', family: "'DM Mono', monospace" },
           nticks: 5,
           showspikes: false, showline: false, zeroline: false,
+          fixedrange: true,
           range: [Math.min(...values) * 0.97, Math.max(...values) * 1.03],
           tickprefix: '$', tickformat: ',.0f',
         },
@@ -832,7 +835,52 @@ window.Mods.inversiones = {
   },
 
   async _buildPortfolioHistory(allOps, period) {
-    const rangeMap = { '1mo':'1mo','3mo':'3mo','6mo':'6mo','1y':'1y','2y':'2y','5y':'5y','10y':'10y' };
+    // 1d: intraday using current positions (no date simulation needed)
+    if (period === '1d') {
+      const qtys = {};
+      for (const op of allOps) {
+        if (!qtys[op.ticker]) qtys[op.ticker] = 0;
+        qtys[op.ticker] += op.tipo === 'compra' ? parseFloat(op.cantidad) : -parseFloat(op.cantidad);
+      }
+      const activeTkrs = Object.keys(qtys).filter(t => qtys[t] > 0.0001);
+      const settled1d = await Promise.allSettled(activeTkrs.map(async ticker => {
+        const [chart, priceInfo] = await Promise.all([
+          this.fetchYahooChart(ticker, '1d', '30m'),
+          this.fetchYahooPrice(ticker),
+        ]);
+        const { moneda, factor } = this.normalizarMoneda(priceInfo.currency);
+        let tc = 1.0;
+        if (moneda !== 'USD') { try { tc = (await this.fetchFXRate(moneda)).tc; } catch(_) {} }
+        return { ticker, dates: chart.dates, prices: chart.prices, factor, tc };
+      }));
+      const timeMaps = {};
+      const allTimes = new Set();
+      for (const r of settled1d) {
+        if (r.status !== 'fulfilled' || !r.value.prices.length) continue;
+        const { ticker, dates, prices, factor, tc } = r.value;
+        const map = {};
+        for (let i = 0; i < dates.length; i++) {
+          const key = dates[i].getTime();
+          map[key] = prices[i] * factor * tc;
+          allTimes.add(key);
+        }
+        timeMaps[ticker] = map;
+      }
+      const sortedTs = [...allTimes].sort((a, b) => a - b);
+      const d1Dates = [], d1Values = [];
+      for (const ts of sortedTs) {
+        let total = 0, hasData = false;
+        for (const [ticker, qty] of Object.entries(qtys)) {
+          if (qty < 0.0001) continue;
+          const p = timeMaps[ticker]?.[ts];
+          if (p != null) { total += qty * p; hasData = true; }
+        }
+        if (hasData && total > 0) { d1Dates.push(new Date(ts)); d1Values.push(total); }
+      }
+      return d1Dates.length ? { dates: d1Dates, values: d1Values } : null;
+    }
+
+    const rangeMap = { '5d':'5d','1mo':'1mo','3mo':'3mo','6mo':'6mo','1y':'1y','2y':'2y','5y':'5y','10y':'10y' };
     const range    = rangeMap[period] || '6mo';
     const interval = ['10y'].includes(period) ? '1mo'
                    : ['1y','2y','5y'].includes(period) ? '1wk'
