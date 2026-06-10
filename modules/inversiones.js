@@ -176,7 +176,11 @@ window.Mods.inversiones = {
           fill: 'tozeroy',
           fillcolor: isUp ? 'rgba(38,166,154,0.12)' : 'rgba(239,83,80,0.12)',
           line: { color, width: 2 },
-          hovertemplate: `%{y:,.4g} ${cur}<extra></extra>`,
+          hovertemplate: `<b>%{y:,.4g} ${cur}</b><br>%{x|%d/%m/%Y}<extra></extra>`,
+          hoverlabel: {
+            bgcolor: '#0e2040', bordercolor: '#2E7FD9',
+            font: { color: '#e8f2ff', size: 13, family: "'DM Mono', monospace" },
+          },
         }], {
           height: 280,
           margin: { l: 50, r: 8, t: 32, b: 28 },
@@ -191,20 +195,15 @@ window.Mods.inversiones = {
           xaxis: {
             showgrid: false, color: '#8096b0',
             showspikes: true, spikemode: 'across',
-            spikecolor: 'rgba(140,155,165,.5)', spikethickness: 1, spikedash: 'dot',
+            spikecolor: '#5a6e82', spikethickness: 1, spikedash: 'dot',
           },
           yaxis: {
-            showgrid: true, gridcolor: 'rgba(120,135,150,.22)', griddash: 'dot', color: '#8096b0',
+            showgrid: true, gridcolor: '#2a3a4a', griddash: 'dot', color: '#8096b0',
             showspikes: false,
             range: [Math.min(...prices) * 0.995, Math.max(...prices) * 1.005],
             tickformat: ',.4g',
           },
-          hovermode: 'x unified',
-          hoverlabel: {
-            bgcolor: 'rgba(8,20,38,.96)', bordercolor: '#2E7FD9',
-            font: { color: '#dce8f8', size: 12, family: "'DM Mono', monospace" },
-          },
-          showlegend: false,
+          hovermode: 'closest', showlegend: false,
         }, { responsive: true, displayModeBar: false, scrollZoom: false });
 
       } catch(e) {
@@ -733,7 +732,11 @@ window.Mods.inversiones = {
         fill: 'tozeroy',
         fillcolor: isUp ? 'rgba(38,166,154,0.12)' : 'rgba(239,83,80,0.12)',
         line: { color, width: 2 },
-        hovertemplate: '$%{y:,.2f}<extra></extra>',
+        hovertemplate: '<b>$%{y:,.2f}</b><br>%{x|%d/%m/%Y}<extra></extra>',
+        hoverlabel: {
+          bgcolor: '#0e2040', bordercolor: '#2E7FD9',
+          font: { color: '#e8f2ff', size: 13, family: "'DM Mono', monospace" },
+        },
       }], {
         height: 260,
         margin: { l: 58, r: 8, t: 36, b: 28 },
@@ -745,20 +748,15 @@ window.Mods.inversiones = {
         xaxis: {
           showgrid: false, color: '#8096b0',
           showspikes: true, spikemode: 'across',
-          spikecolor: 'rgba(140,155,165,.5)', spikethickness: 1, spikedash: 'dot',
+          spikecolor: '#5a6e82', spikethickness: 1, spikedash: 'dot',
         },
         yaxis: {
-          showgrid: true, gridcolor: 'rgba(120,135,150,.22)', griddash: 'dot', color: '#8096b0',
+          showgrid: true, gridcolor: '#2a3a4a', griddash: 'dot', color: '#8096b0',
           showspikes: false,
           range: [Math.min(...values) * 0.97, Math.max(...values) * 1.03],
           tickprefix: '$', tickformat: ',.0f',
         },
-        hovermode: 'x unified',
-        hoverlabel: {
-          bgcolor: 'rgba(8,20,38,.96)', bordercolor: '#2E7FD9',
-          font: { color: '#dce8f8', size: 12, family: "'DM Mono', monospace" },
-        },
-        showlegend: false,
+        hovermode: 'closest', showlegend: false,
       }, { responsive: true, displayModeBar: false, scrollZoom: false });
 
     } catch(e) {

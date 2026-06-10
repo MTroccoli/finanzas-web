@@ -21,7 +21,7 @@
 
 /* ── Reset & base ──────────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-.js-plotly-plot { touch-action: manipulation; }
+.js-plotly-plot, .js-plotly-plot svg, .js-plotly-plot canvas { touch-action: pan-y; }
 html, body {
   height: 100%;
   font-family: 'DM Sans', sans-serif;

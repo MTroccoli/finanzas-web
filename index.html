@@ -61,6 +61,15 @@
   <script src="modules/presupuesto.js"></script>
   <script src="modules/config_page.js"></script>
   <script src="js/app.js"></script>
+  <script>
+    // iOS 10+ ignora user-scalable=no — prevenir pinch-zoom vía events
+    document.addEventListener('touchstart', function(e) {
+      if (e.touches.length > 1) e.preventDefault();
+    }, { passive: false });
+    document.addEventListener('touchmove', function(e) {
+      if (e.touches.length > 1) e.preventDefault();
+    }, { passive: false });
+  </script>
 
 </body>
 </html>
