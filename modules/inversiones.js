@@ -451,7 +451,6 @@ window.Mods.inversiones = {
   async renderPortafolio() {
     const c = document.getElementById('content');
 
-    // Spinner mientras carga
     c.innerHTML = `
       <h1>Portafolio</h1>
       <p class="page-subtitle" style="color:var(--text-sec)">Cargando posiciones y precios…</p>
@@ -461,7 +460,6 @@ window.Mods.inversiones = {
     try {
       const allOps = await dbFetch('operaciones', { order: { col: 'fecha', asc: true } });
 
-      // Posiciones (precio_unitario siempre en USD)
       const pos = {};
       for (const op of allOps) {
         const qty   = parseFloat(op.cantidad);
@@ -491,9 +489,8 @@ window.Mods.inversiones = {
 
       const tickers = positions.map(p => p.ticker);
 
-      // Precios live + guardados en paralelo (live tiene prioridad)
-      const [livePrices, savedRows] = await Promise.all([
-        this.fetchLivePricesUSD(tickers).catch(() => ({})),
+      const [liveData, savedRows] = await Promise.all([
+        this.fetchLivePrices(tickers).catch(() => ({})),
         dbFetch('precios_historicos', { order: { col: 'fecha', asc: false }, limit: 500 }).catch(() => []),
       ]);
 
@@ -502,23 +499,37 @@ window.Mods.inversiones = {
         if (!savedPrices[r.ticker]) savedPrices[r.ticker] = parseFloat(r.cierre);
       }
 
-      const lastPrice  = { ...savedPrices, ...livePrices };
-      const liveCount  = tickers.filter(t => livePrices[t] != null).length;
-      const priceLabel = liveCount === tickers.length
-        ? '<span style="color:#26a69a">● Precios en tiempo real</span>'
-        : liveCount > 0
-          ? `<span style="color:#ffca28">● ${liveCount}/${tickers.length} en tiempo real · resto guardados</span>`
-          : '<span style="color:#ef5350">● Usando precios guardados (Yahoo Finance no disponible)</span>';
+      // priceData[ticker] = { priceUSD, priceOrig, currency, factor, tc, isLive }
+      const priceData = {};
+      for (const ticker of tickers) {
+        if (liveData[ticker]) {
+          priceData[ticker] = { ...liveData[ticker], isLive: true };
+        } else if (savedPrices[ticker]) {
+          priceData[ticker] = { priceUSD: savedPrices[ticker], priceOrig: savedPrices[ticker], currency: 'USD', factor: 1, tc: 1, isLive: false };
+        }
+      }
+
+      const liveCount  = tickers.filter(t => priceData[t]?.isLive).length;
+      const failedTkrs = tickers.filter(t => !priceData[t]?.isLive);
+
+      let statusLabel;
+      if (liveCount === tickers.length) {
+        statusLabel = '<span style="color:#26a69a">● Precios en tiempo real</span>';
+      } else if (liveCount > 0) {
+        statusLabel = `<span style="color:#ffca28">● ${liveCount}/${tickers.length} en tiempo real · sin datos: ${failedTkrs.join(', ')}</span>`;
+      } else {
+        statusLabel = `<span style="color:#ef5350">● Sin precios live (Ctrl+Shift+R) · tickers: ${failedTkrs.join(', ')}</span>`;
+      }
 
       const totalCost   = positions.reduce((s, p) => s + p.costBasis * p.qty, 0);
-      const totalMarket = positions.reduce((s, p) => s + (lastPrice[p.ticker] ?? p.costBasis) * p.qty, 0);
+      const totalMarket = positions.reduce((s, p) => s + (priceData[p.ticker]?.priceUSD ?? p.costBasis) * p.qty, 0);
       const totalPL     = totalMarket - totalCost;
 
       c.innerHTML = `
         <h1>Portafolio</h1>
         <p class="page-subtitle" style="font-size:.78rem">
           ${positions.length} ticker${positions.length !== 1 ? 's' : ''} ·
-          <span style="font-family:'DM Mono',monospace">${priceLabel}</span>
+          <span style="font-family:'DM Mono',monospace">${statusLabel}</span>
         </p>
 
         <div class="metrics-row">
@@ -542,6 +553,31 @@ window.Mods.inversiones = {
           </div>
         </div>
 
+        <!-- Gráfico evolución del portafolio -->
+        <div class="form-card" id="port-chart-card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px">
+            <span style="font-weight:500;font-size:.9rem">Evolución de la cartera</span>
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              ${[['1mo','1M'],['3mo','3M'],['6mo','6M'],['1y','1A']].map(([v,l]) => `
+                <button class="port-period-btn" data-period="${v}" style="
+                  padding:4px 13px;border-radius:6px;font-size:.75rem;cursor:pointer;
+                  font-family:'DM Mono',monospace;transition:all .15s;
+                  border:1px solid ${v==='6mo'?'var(--accent)':'rgba(255,255,255,.15)'};
+                  background:${v==='6mo'?'var(--accent)':'transparent'};
+                  color:${v==='6mo'?'#fff':'var(--text-sec)'};
+                ">${l}</button>`).join('')}
+            </div>
+          </div>
+          <div style="position:relative">
+            <div id="port-chart-overlay" style="display:none;position:absolute;inset:0;z-index:5;
+              align-items:center;justify-content:center;background:rgba(4,15,32,.65);border-radius:4px">
+              <div class="spinner"></div>
+            </div>
+            <div id="port-chart" style="width:100%;height:260px"></div>
+          </div>
+        </div>
+
+        <!-- Tabla de posiciones -->
         <div class="table-wrap">
           <div class="table-header">
             <span class="table-title">Posiciones abiertas</span>
@@ -552,18 +588,29 @@ window.Mods.inversiones = {
             <table>
               <thead>
                 <tr>
-                  <th>Ticker</th><th>Cantidad</th><th>Costo prom.</th>
-                  <th>Precio actual</th><th>Valor USD</th><th>P&L</th><th>P&L %</th>
+                  <th>Ticker</th><th>Cantidad</th><th>Costo prom. USD</th>
+                  <th>Precio actual</th><th>Valor USD</th><th>P&L USD</th><th>P&L %</th>
                 </tr>
               </thead>
               <tbody>
                 ${positions.map(p => {
-                  const current = lastPrice[p.ticker] ?? p.costBasis;
-                  const value   = current * p.qty;
-                  const pl      = (current - p.costBasis) * p.qty;
-                  const plPct   = p.costBasis ? ((current - p.costBasis) / p.costBasis) * 100 : 0;
-                  const hasPx   = lastPrice[p.ticker] != null;
-                  const isLive  = livePrices[p.ticker] != null;
+                  const pd       = priceData[p.ticker];
+                  const hasPx    = pd != null;
+                  const priceUSD = pd?.priceUSD ?? 0;
+                  const value    = priceUSD * p.qty;
+                  const pl       = (priceUSD - p.costBasis) * p.qty;
+                  const plPct    = p.costBasis ? ((priceUSD - p.costBasis) / p.costBasis) * 100 : 0;
+
+                  // Precio en moneda origen (referencia de cómo cotiza el activo)
+                  let priceDispStr;
+                  if (!hasPx) {
+                    priceDispStr = '<span class="neu">—</span>';
+                  } else if (!pd.currency || pd.currency === 'USD') {
+                    priceDispStr = fmtUSD(pd.priceOrig);
+                  } else {
+                    priceDispStr = `${fmt(pd.priceOrig)} <span style="font-size:.7rem;color:var(--text-sec)">${pd.currency}</span>`;
+                  }
+
                   return `
                     <tr>
                       <td>
@@ -573,9 +620,9 @@ window.Mods.inversiones = {
                       <td>${fmt(p.qty, 4)}</td>
                       <td>${fmtUSD(p.costBasis)}</td>
                       <td>
-                        ${hasPx ? fmtUSD(current) : '<span class="neu">—</span>'}
-                        ${isLive ? '<span title="Precio en tiempo real" style="color:#26a69a;font-size:.65rem;margin-left:2px">●</span>'
-                                 : (hasPx ? '<span title="Precio guardado" style="color:#8096b0;font-size:.65rem;margin-left:2px">○</span>' : '')}
+                        ${priceDispStr}
+                        ${pd?.isLive ? '<span title="Tiempo real" style="color:#26a69a;font-size:.65rem;margin-left:2px">●</span>'
+                                     : (hasPx ? '<span title="Guardado" style="color:#8096b0;font-size:.65rem;margin-left:2px">○</span>' : '')}
                       </td>
                       <td>${hasPx ? fmtUSD(value) : '—'}</td>
                       <td class="${hasPx ? plClass(pl) : 'neu'}">${hasPx ? plSign(pl) + fmtUSD(pl) : '—'}</td>
@@ -589,7 +636,6 @@ window.Mods.inversiones = {
         </div>
       `;
 
-      // Click en ticker → navega a Mercado con ese activo pre-buscado
       document.querySelectorAll('.port-ticker-link').forEach(el => {
         el.addEventListener('click', () => {
           window._mktAutoSearch = el.dataset.ticker;
@@ -597,9 +643,157 @@ window.Mods.inversiones = {
         });
       });
 
+      document.querySelectorAll('.port-period-btn').forEach(btn => {
+        btn.addEventListener('click', () => this._loadPortfolioChart(allOps, btn.dataset.period));
+      });
+
+      await this._loadPortfolioChart(allOps, '6mo');
+
     } catch(e) {
       c.innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-text">Error: ${e.message}</div></div>`;
     }
+  },
+
+  async _loadPortfolioChart(allOps, period) {
+    document.querySelectorAll('.port-period-btn').forEach(b => {
+      const on = b.dataset.period === period;
+      b.style.background  = on ? 'var(--accent)' : 'transparent';
+      b.style.color       = on ? '#fff' : 'var(--text-sec)';
+      b.style.borderColor = on ? 'var(--accent)' : 'rgba(255,255,255,.15)';
+    });
+
+    const chartDiv = document.getElementById('port-chart');
+    const overlay  = document.getElementById('port-chart-overlay');
+    if (!chartDiv) return;
+    if (overlay) overlay.style.display = 'flex';
+
+    try {
+      const history = await this._buildPortfolioHistory(allOps, period);
+      if (overlay) overlay.style.display = 'none';
+
+      if (!history || !history.dates.length) {
+        try { Plotly.purge('port-chart'); } catch(_) {}
+        chartDiv.innerHTML = '<div class="empty" style="height:180px"><div class="empty-text">Sin datos históricos para este período</div></div>';
+        return;
+      }
+
+      const { dates, values } = history;
+      const first = values[0], last = values[values.length - 1];
+      const chgPct = first ? ((last - first) / first) * 100 : 0;
+      const isUp   = chgPct >= 0;
+      const color  = isUp ? '#26a69a' : '#ef5350';
+
+      try { Plotly.purge('port-chart'); } catch(_) {}
+      Plotly.newPlot('port-chart', [{
+        x: dates, y: values,
+        type: 'scatter', mode: 'lines',
+        fill: 'tozeroy',
+        fillcolor: isUp ? 'rgba(38,166,154,0.12)' : 'rgba(239,83,80,0.12)',
+        line: { color, width: 2 },
+        hovertemplate: '$%{y:,.2f}<extra></extra>',
+      }], {
+        height: 260,
+        margin: { l: 58, r: 8, t: 36, b: 28 },
+        plot_bgcolor:  'rgba(0,0,0,0)',
+        paper_bgcolor: 'rgba(0,0,0,0)',
+        font: { color: '#8096b0', size: 11, family: "'DM Mono', monospace" },
+        title: { text: `${isUp ? '▲' : '▼'} ${Math.abs(chgPct).toFixed(2)}%`, font: { size: 12, color }, x: 0.01 },
+        xaxis: { showgrid: false, color: '#8096b0', showspikes: true, spikecolor: '#2E7FD9', spikethickness: 1 },
+        yaxis: {
+          showgrid: true, gridcolor: 'rgba(255,255,255,.05)', color: '#8096b0',
+          range: [Math.min(...values) * 0.97, Math.max(...values) * 1.03],
+          tickprefix: '$', tickformat: ',.0f',
+        },
+        hovermode: 'x unified', showlegend: false,
+      }, { responsive: true, displayModeBar: false });
+
+    } catch(e) {
+      if (overlay) overlay.style.display = 'none';
+      try { Plotly.purge('port-chart'); } catch(_) {}
+      chartDiv.innerHTML = '<div class="empty" style="height:160px;display:flex;align-items:center;justify-content:center"><div class="empty-text">⚠️ No se pudo cargar el gráfico</div></div>';
+    }
+  },
+
+  async _buildPortfolioHistory(allOps, period) {
+    const rangeMap = { '1mo': '1mo', '3mo': '3mo', '6mo': '6mo', '1y': '1y' };
+    const range    = rangeMap[period] || '6mo';
+    const interval = period === '1y' ? '1wk' : '1d';
+
+    const activeTickers = [...new Set(allOps.map(op => op.ticker))];
+
+    const settled = await Promise.allSettled(activeTickers.map(async ticker => {
+      const [chart, priceInfo] = await Promise.all([
+        this.fetchYahooChart(ticker, range, interval),
+        this.fetchYahooPrice(ticker),
+      ]);
+      const { moneda, factor } = this.normalizarMoneda(priceInfo.currency);
+      let tc = 1.0;
+      if (moneda !== 'USD') {
+        try { tc = (await this.fetchFXRate(moneda)).tc; } catch(_) {}
+      }
+      return { ticker, dates: chart.dates, prices: chart.prices, factor, tc };
+    }));
+
+    const tickerCharts = {};
+    for (const r of settled) {
+      if (r.status === 'fulfilled' && r.value.prices.length) tickerCharts[r.value.ticker] = r.value;
+    }
+    if (!Object.keys(tickerCharts).length) return null;
+
+    // Indexar precios por fecha (convertidos a USD)
+    const priceMaps = {};
+    const allDateSet = new Set();
+    for (const [ticker, data] of Object.entries(tickerCharts)) {
+      const map = {};
+      for (let i = 0; i < data.dates.length; i++) {
+        const d = data.dates[i].toISOString().slice(0, 10);
+        map[d] = data.prices[i] * data.factor * data.tc;
+        allDateSet.add(d);
+      }
+      priceMaps[ticker] = map;
+    }
+
+    const sortedDates = [...allDateSet].sort();
+
+    // Forward-fill para cubrir fines de semana y feriados por diferencias de mercado
+    const filledMaps = {};
+    for (const [ticker, map] of Object.entries(priceMaps)) {
+      let last = null;
+      const filled = {};
+      for (const d of sortedDates) {
+        if (map[d] != null) last = map[d];
+        if (last != null) filled[d] = last;
+      }
+      filledMaps[ticker] = filled;
+    }
+
+    // Simular operaciones acumuladas en cada fecha y calcular valor total del portafolio
+    const portfolioDates = [];
+    const portfolioValues = [];
+
+    for (const dateStr of sortedDates) {
+      const opsToDate = allOps.filter(op => op.fecha <= dateStr);
+      const qtys = {};
+      for (const op of opsToDate) {
+        if (!qtys[op.ticker]) qtys[op.ticker] = 0;
+        const q = parseFloat(op.cantidad);
+        qtys[op.ticker] += op.tipo === 'compra' ? q : -q;
+      }
+
+      let total = 0, hasData = false;
+      for (const [ticker, qty] of Object.entries(qtys)) {
+        if (qty < 0.0001) continue;
+        const p = filledMaps[ticker]?.[dateStr];
+        if (p != null) { total += qty * p; hasData = true; }
+      }
+
+      if (hasData && total > 0) {
+        portfolioDates.push(new Date(dateStr + 'T12:00:00'));
+        portfolioValues.push(total);
+      }
+    }
+
+    return portfolioDates.length ? { dates: portfolioDates, values: portfolioValues } : null;
   },
 
   // ── Operaciones — flujo 3 pasos ──────────────────────────────────────
@@ -1144,15 +1338,12 @@ window.Mods.inversiones = {
   },
 
   // Precios live en USD para múltiples tickers
-  // Usa v8/finance/chart (mismo endpoint que Mercado — sin problemas de CORS)
-  // ejecuta todos en paralelo y agrupa los FX por moneda para no repetir requests
-  async fetchLivePricesUSD(tickers) {
+  // Precios actuales para múltiples tickers — devuelve { ticker: { priceOrig, currency, priceUSD, factor, tc } }
+  async fetchLivePrices(tickers) {
     if (!tickers.length) return {};
 
-    // Fetch de precios en paralelo — failures individuales no rompen el resto
     const settled = await Promise.allSettled(tickers.map(t => this.fetchYahooPrice(t)));
 
-    // Recolectar resultados exitosos e identificar monedas no-USD
     const infos = {};
     const nonUSD = new Set();
     for (let i = 0; i < tickers.length; i++) {
@@ -1165,18 +1356,23 @@ window.Mods.inversiones = {
     }
     if (!Object.keys(infos).length) return {};
 
-    // FX rates: una request por moneda distinta, en paralelo
     const fxRates = {};
     await Promise.all([...nonUSD].map(async cur => {
       try { fxRates[cur] = (await this.fetchFXRate(cur)).tc; }
       catch(_) { fxRates[cur] = 1.0; }
     }));
 
-    // Convertir a USD
     const result = {};
     for (const [ticker, info] of Object.entries(infos)) {
       const { moneda, factor } = this.normalizarMoneda(info.currency);
-      result[ticker] = info.price * factor * (moneda === 'USD' ? 1.0 : (fxRates[moneda] ?? 1.0));
+      const tc = moneda === 'USD' ? 1.0 : (fxRates[moneda] ?? 1.0);
+      result[ticker] = {
+        priceOrig: info.price,
+        currency:  info.currency,
+        priceUSD:  info.price * factor * tc,
+        factor,
+        tc,
+      };
     }
     return result;
   },
