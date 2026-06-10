@@ -180,7 +180,7 @@ window.Mods.inversiones = {
           fill: 'tozeroy',
           fillcolor: isUp ? 'rgba(38,166,154,0.12)' : 'rgba(239,83,80,0.12)',
           line: { color, width: 2 },
-          hovertemplate: `%{y:,.2f} ${cur}<extra></extra>`,
+          hovertemplate: `%{y:,.0f} ${cur}<extra></extra>`,
           hoverlabel: {
             bgcolor: color, bordercolor: 'rgba(0,0,0,0)',
             font: { color: '#fff', size: 11, family: "'DM Mono', monospace" },
@@ -756,7 +756,7 @@ window.Mods.inversiones = {
         fill: 'tozeroy',
         fillcolor: isUp ? 'rgba(38,166,154,0.12)' : 'rgba(239,83,80,0.12)',
         line: { color, width: 2 },
-        hovertemplate: '$%{y:,.2f}<extra></extra>',
+        hovertemplate: '$%{y:,.0f}<extra></extra>',
         hoverlabel: {
           bgcolor: color, bordercolor: 'rgba(0,0,0,0)',
           font: { color: '#fff', size: 11, family: "'DM Mono', monospace" },
