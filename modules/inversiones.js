@@ -1143,51 +1143,40 @@ window.Mods.inversiones = {
     throw new Error('No se pudo buscar. Verificá tu conexión o ingresá el ticker exacto.');
   },
 
-  // Precios live en USD para múltiples tickers (batch)
+  // Precios live en USD para múltiples tickers
+  // Usa v8/finance/chart (mismo endpoint que Mercado — sin problemas de CORS)
+  // ejecuta todos en paralelo y agrupa los FX por moneda para no repetir requests
   async fetchLivePricesUSD(tickers) {
     if (!tickers.length) return {};
-    const sym = tickers.join(',');
-    const urls = [
-      `https://query2.finance.yahoo.com/v7/finance/quote?symbols=${encodeURIComponent(sym)}`,
-      `https://corsproxy.io/?${encodeURIComponent(`https://query1.finance.yahoo.com/v7/finance/quote?symbols=${sym}`)}`,
-    ];
 
-    let raw = {};  // ticker → { price, currency }
-    for (const url of urls) {
-      try {
-        const res = await fetch(url);
-        if (!res.ok) continue;
-        const json = await res.json();
-        const results = json.quoteResponse?.result || [];
-        if (!results.length) continue;
-        for (const r of results) {
-          if (r.symbol && r.regularMarketPrice != null)
-            raw[r.symbol] = { price: r.regularMarketPrice, currency: r.currency || 'USD' };
-        }
-        break;
-      } catch(_) {}
-    }
-    if (!Object.keys(raw).length) return {};
+    // Fetch de precios en paralelo — failures individuales no rompen el resto
+    const settled = await Promise.allSettled(tickers.map(t => this.fetchYahooPrice(t)));
 
-    // Monedas no-USD que necesitan tipo de cambio
+    // Recolectar resultados exitosos e identificar monedas no-USD
+    const infos = {};
     const nonUSD = new Set();
-    for (const d of Object.values(raw)) {
-      const { moneda } = this.normalizarMoneda(d.currency);
-      if (moneda !== 'USD') nonUSD.add(moneda);
+    for (let i = 0; i < tickers.length; i++) {
+      if (settled[i].status === 'fulfilled') {
+        const info = settled[i].value;
+        infos[tickers[i]] = info;
+        const { moneda } = this.normalizarMoneda(info.currency);
+        if (moneda !== 'USD') nonUSD.add(moneda);
+      }
     }
+    if (!Object.keys(infos).length) return {};
 
-    // Fetch FX rates en paralelo
+    // FX rates: una request por moneda distinta, en paralelo
     const fxRates = {};
     await Promise.all([...nonUSD].map(async cur => {
       try { fxRates[cur] = (await this.fetchFXRate(cur)).tc; }
       catch(_) { fxRates[cur] = 1.0; }
     }));
 
-    // Convertir todo a USD
+    // Convertir a USD
     const result = {};
-    for (const [ticker, d] of Object.entries(raw)) {
-      const { moneda, factor } = this.normalizarMoneda(d.currency);
-      result[ticker] = d.price * factor * (moneda === 'USD' ? 1.0 : (fxRates[moneda] ?? 1.0));
+    for (const [ticker, info] of Object.entries(infos)) {
+      const { moneda, factor } = this.normalizarMoneda(info.currency);
+      result[ticker] = info.price * factor * (moneda === 'USD' ? 1.0 : (fxRates[moneda] ?? 1.0));
     }
     return result;
   },
