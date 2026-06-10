@@ -462,13 +462,26 @@ window.Mods.inversiones = {
 
       const pos = {};
       for (const op of allOps) {
-        const qty   = parseFloat(op.cantidad);
-        const price = parseFloat(op.precio_unitario);
-        if (!pos[op.ticker]) pos[op.ticker] = { ticker: op.ticker, qty: 0, costBasis: 0 };
+        const qty      = parseFloat(op.cantidad);
+        const priceUSD = parseFloat(op.precio_unitario);
+        const tc       = parseFloat(op.tipo_cambio_usd) || 1.0;
+        const moneda   = op.moneda || 'USD';
+        const { moneda: monedaNorm, factor } = this.normalizarMoneda(moneda);
+        // precio en moneda origen al momento de la operación
+        const priceOrig = monedaNorm === 'USD' ? priceUSD : priceUSD / (factor * tc);
+
+        if (!pos[op.ticker]) {
+          pos[op.ticker] = { ticker: op.ticker, qty: 0, costBasis: 0, costBasisOrig: 0, tcAvg: 1.0, moneda, factor };
+        }
         const p = pos[op.ticker];
         if (op.tipo === 'compra') {
-          p.costBasis = (p.costBasis * p.qty + price * qty) / (p.qty + qty);
-          p.qty += qty;
+          const newQty = p.qty + qty;
+          p.costBasis     = (p.costBasis     * p.qty + priceUSD  * qty) / newQty;
+          p.costBasisOrig = (p.costBasisOrig * p.qty + priceOrig * qty) / newQty;
+          p.tcAvg         = (p.tcAvg         * p.qty + tc        * qty) / newQty;
+          p.qty = newQty;
+          p.moneda = moneda;
+          p.factor = factor;
         } else {
           p.qty -= qty;
         }
@@ -558,7 +571,7 @@ window.Mods.inversiones = {
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px">
             <span style="font-weight:500;font-size:.9rem">Evolución de la cartera</span>
             <div style="display:flex;gap:6px;flex-wrap:wrap">
-              ${[['1mo','1M'],['3mo','3M'],['6mo','6M'],['1y','1A']].map(([v,l]) => `
+              ${[['1mo','1M'],['3mo','3M'],['6mo','6M'],['1y','1A'],['2y','2A'],['5y','5A'],['10y','10A']].map(([v,l]) => `
                 <button class="port-period-btn" data-period="${v}" style="
                   padding:4px 13px;border-radius:6px;font-size:.75rem;cursor:pointer;
                   font-family:'DM Mono',monospace;transition:all .15s;
@@ -588,8 +601,10 @@ window.Mods.inversiones = {
             <table>
               <thead>
                 <tr>
-                  <th>Ticker</th><th>Cantidad</th><th>Costo prom. USD</th>
-                  <th>Precio actual</th><th>Valor USD</th><th>P&L USD</th><th>P&L %</th>
+                  <th>Ticker</th><th>Cantidad</th><th>Costo prom.</th>
+                  <th>Precio actual</th><th>Valor USD</th><th>P&L USD</th>
+                  <th title="Ganancia/pérdida por variación del tipo de cambio">P&L TC</th>
+                  <th>P&L %</th>
                 </tr>
               </thead>
               <tbody>
@@ -601,15 +616,16 @@ window.Mods.inversiones = {
                   const pl       = (priceUSD - p.costBasis) * p.qty;
                   const plPct    = p.costBasis ? ((priceUSD - p.costBasis) / p.costBasis) * 100 : 0;
 
-                  // Precio en moneda origen (referencia de cómo cotiza el activo)
-                  let priceDispStr;
-                  if (!hasPx) {
-                    priceDispStr = '<span class="neu">—</span>';
-                  } else if (!pd.currency || pd.currency === 'USD') {
-                    priceDispStr = fmtUSD(pd.priceOrig);
-                  } else {
-                    priceDispStr = `${fmt(pd.priceOrig)} <span style="font-size:.7rem;color:var(--text-sec)">${pd.currency}</span>`;
-                  }
+                  // P&L por efecto TC: qty * factor * costBasisOrig * (tc_actual - tc_compra)
+                  // Para activos USD: factor=1, tc_actual=1, tcAvg=1 → resultado = 0
+                  const hasTC  = hasPx && pd.isLive && p.factor != null && p.tcAvg != null;
+                  const plTC   = hasTC ? p.qty * p.factor * p.costBasisOrig * (pd.tc - p.tcAvg) : null;
+
+                  // Formatear precio en moneda origen
+                  const fmtOrig = (price, currency) =>
+                    (!currency || currency === 'USD')
+                      ? fmtUSD(price)
+                      : `${fmt(price)} <span style="font-size:.7rem;color:var(--text-sec)">${currency}</span>`;
 
                   return `
                     <tr>
@@ -618,14 +634,17 @@ window.Mods.inversiones = {
                           style="cursor:pointer;color:var(--accent)">${p.ticker}</strong>
                       </td>
                       <td>${fmt(p.qty, 4)}</td>
-                      <td>${fmtUSD(p.costBasis)}</td>
+                      <td>${fmtOrig(p.costBasisOrig, p.moneda)}</td>
                       <td>
-                        ${priceDispStr}
+                        ${hasPx ? fmtOrig(pd.priceOrig, pd.currency) : '<span class="neu">—</span>'}
                         ${pd?.isLive ? '<span title="Tiempo real" style="color:#26a69a;font-size:.65rem;margin-left:2px">●</span>'
                                      : (hasPx ? '<span title="Guardado" style="color:#8096b0;font-size:.65rem;margin-left:2px">○</span>' : '')}
                       </td>
                       <td>${hasPx ? fmtUSD(value) : '—'}</td>
                       <td class="${hasPx ? plClass(pl) : 'neu'}">${hasPx ? plSign(pl) + fmtUSD(pl) : '—'}</td>
+                      <td class="${plTC != null ? plClass(plTC) : 'neu'}">
+                        ${plTC != null ? (Math.abs(plTC) < 0.005 ? '<span class="neu">$0.00</span>' : plSign(plTC) + fmtUSD(plTC)) : '—'}
+                      </td>
                       <td class="${hasPx ? plClass(plPct) : 'neu'}">${hasPx ? plSign(plPct) + fmt(plPct) + '%' : '—'}</td>
                     </tr>
                   `;
@@ -715,9 +734,11 @@ window.Mods.inversiones = {
   },
 
   async _buildPortfolioHistory(allOps, period) {
-    const rangeMap = { '1mo': '1mo', '3mo': '3mo', '6mo': '6mo', '1y': '1y' };
+    const rangeMap = { '1mo':'1mo','3mo':'3mo','6mo':'6mo','1y':'1y','2y':'2y','5y':'5y','10y':'10y' };
     const range    = rangeMap[period] || '6mo';
-    const interval = period === '1y' ? '1wk' : '1d';
+    const interval = ['10y'].includes(period) ? '1mo'
+                   : ['1y','2y','5y'].includes(period) ? '1wk'
+                   : '1d';
 
     const activeTickers = [...new Set(allOps.map(op => op.ticker))];
 
