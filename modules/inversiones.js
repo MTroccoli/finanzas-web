@@ -194,12 +194,17 @@ window.Mods.inversiones = {
             spikecolor: 'rgba(140,155,165,.5)', spikethickness: 1, spikedash: 'dot',
           },
           yaxis: {
-            showgrid: true, gridcolor: 'rgba(255,255,255,.05)', color: '#8096b0',
+            showgrid: true, gridcolor: 'rgba(120,135,150,.22)', griddash: 'dot', color: '#8096b0',
             showspikes: false,
             range: [Math.min(...prices) * 0.995, Math.max(...prices) * 1.005],
             tickformat: ',.4g',
           },
-          hovermode: 'x unified', showlegend: false,
+          hovermode: 'x unified',
+          hoverlabel: {
+            bgcolor: 'rgba(8,20,38,.96)', bordercolor: '#2E7FD9',
+            font: { color: '#dce8f8', size: 12, family: "'DM Mono', monospace" },
+          },
+          showlegend: false,
         }, { responsive: true, displayModeBar: false, scrollZoom: false });
 
       } catch(e) {
@@ -743,12 +748,17 @@ window.Mods.inversiones = {
           spikecolor: 'rgba(140,155,165,.5)', spikethickness: 1, spikedash: 'dot',
         },
         yaxis: {
-          showgrid: true, gridcolor: 'rgba(255,255,255,.05)', color: '#8096b0',
+          showgrid: true, gridcolor: 'rgba(120,135,150,.22)', griddash: 'dot', color: '#8096b0',
           showspikes: false,
           range: [Math.min(...values) * 0.97, Math.max(...values) * 1.03],
           tickprefix: '$', tickformat: ',.0f',
         },
-        hovermode: 'x unified', showlegend: false,
+        hovermode: 'x unified',
+        hoverlabel: {
+          bgcolor: 'rgba(8,20,38,.96)', bordercolor: '#2E7FD9',
+          font: { color: '#dce8f8', size: 12, family: "'DM Mono', monospace" },
+        },
+        showlegend: false,
       }, { responsive: true, displayModeBar: false, scrollZoom: false });
 
     } catch(e) {
