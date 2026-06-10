@@ -986,7 +986,7 @@ window.Mods.inversiones = {
               <thead>
                 <tr>
                   <th>Fecha</th><th>Ticker</th><th>Tipo</th><th>Cantidad</th>
-                  <th>Precio USD</th><th>Moneda orig.</th><th>TC</th><th>Monto USD</th><th>Com.</th><th></th>
+                  <th>Precio</th><th>Moneda</th><th>TC</th><th>Monto</th><th>Com.</th><th></th>
                 </tr>
               </thead>
               <tbody id="ops-tbody">
@@ -1303,6 +1303,16 @@ window.Mods.inversiones = {
     }
   },
 
+  _fmtOrig(n, moneda = 'USD') {
+    if (n == null) return '—';
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: moneda || 'USD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(n);
+  },
+
   _opRow(op) {
     const qty    = parseFloat(op.cantidad);
     const price  = parseFloat(op.precio_unitario);
@@ -1316,11 +1326,11 @@ window.Mods.inversiones = {
       <td><strong>${op.ticker}</strong></td>
       <td><span class="tag ${op.tipo === 'compra' ? 'tag-buy' : 'tag-sell'}">${op.tipo}</span></td>
       <td>${fmt(qty, 4)}</td>
-      <td>${fmtUSD(price)}</td>
+      <td>${this._fmtOrig(price, moneda)}</td>
       <td style="font-size:.75rem;color:var(--text-sec)">${moneda !== 'USD' ? moneda : '—'}</td>
       <td style="font-size:.75rem;color:var(--text-sec)">${showTC ? fmt(tc, 4) : '—'}</td>
-      <td>${fmtUSD(monto)}</td>
-      <td>${com > 0 ? fmtUSD(com) : '—'}</td>
+      <td>${this._fmtOrig(monto, moneda)}</td>
+      <td>${com > 0 ? this._fmtOrig(com, moneda) : '—'}</td>
       <td>
         <button class="btn-op-delete" data-id="${op.id}" data-ticker="${op.ticker}" data-tipo="${op.tipo}"
           style="background:none;border:none;cursor:pointer;color:#e05454;font-size:.95rem;
