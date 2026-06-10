@@ -5,6 +5,15 @@ Define convenciones, arquitectura y reglas de formato que deben respetarse en to
 
 ---
 
+## Flujo de trabajo con Git
+
+- **Rama principal:** `main` — es la única rama del proyecto.
+- Todos los cambios se hacen y pushean directamente a `main`.
+- No crear ramas feature salvo que el usuario lo pida explícitamente.
+- GitHub Pages despliega automáticamente desde `main`.
+
+---
+
 ## Stack tecnológico
 
 - **Frontend:** HTML + CSS + JavaScript vanilla (sin framework)
