@@ -1305,12 +1305,21 @@ window.Mods.inversiones = {
 
   _fmtOrig(n, moneda = 'USD') {
     if (n == null) return '—';
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: moneda || 'USD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(n);
+    const NORM = { GBX: 'GBP', GBp: 'GBP' };
+    const currency = NORM[moneda] || moneda || 'USD';
+    try {
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency,
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      }).format(n);
+    } catch {
+      return new Intl.NumberFormat('en-US', {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      }).format(n) + ' ' + moneda;
+    }
   },
 
   _opRow(op) {
@@ -1319,18 +1328,22 @@ window.Mods.inversiones = {
     const com    = parseFloat(op.comision || 0);
     const monto  = op.monto_total != null ? parseFloat(op.monto_total) : qty * price + com;
     const moneda = op.moneda || 'USD';
-    const tc     = op.tipo_cambio_usd ? parseFloat(op.tipo_cambio_usd) : 1.0;
+    const tc     = parseFloat(op.tipo_cambio_usd) || 1.0;
     const showTC = moneda !== 'USD' && tc !== 1.0;
+    // precio_unitario está guardado en USD → convertir a moneda origen
+    const priceOrig = price / tc;
+    const montoOrig = monto / tc;
+    const comOrig   = com   / tc;
     return `<tr>
       <td>${fmtDate(op.fecha)}</td>
       <td><strong>${op.ticker}</strong></td>
       <td><span class="tag ${op.tipo === 'compra' ? 'tag-buy' : 'tag-sell'}">${op.tipo}</span></td>
       <td>${fmt(qty, 4)}</td>
-      <td>${this._fmtOrig(price, moneda)}</td>
+      <td>${this._fmtOrig(priceOrig, moneda)}</td>
       <td style="font-size:.75rem;color:var(--text-sec)">${moneda !== 'USD' ? moneda : '—'}</td>
       <td style="font-size:.75rem;color:var(--text-sec)">${showTC ? fmt(tc, 4) : '—'}</td>
-      <td>${this._fmtOrig(monto, moneda)}</td>
-      <td>${com > 0 ? this._fmtOrig(com, moneda) : '—'}</td>
+      <td>${this._fmtOrig(montoOrig, moneda)}</td>
+      <td>${com > 0 ? this._fmtOrig(comOrig, moneda) : '—'}</td>
       <td>
         <button class="btn-op-delete" data-id="${op.id}" data-ticker="${op.ticker}" data-tipo="${op.tipo}"
           style="background:none;border:none;cursor:pointer;color:#e05454;font-size:.95rem;
