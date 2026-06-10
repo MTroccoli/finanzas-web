@@ -26,6 +26,7 @@ window.Mods.inversiones = {
       { label: '6M',  value: '6mo', interval: '1d'  },
       { label: '1A',  value: '1y',  interval: '1wk' },
       { label: '5A',  value: '5y',  interval: '1wk' },
+      { label: '10A', value: '10y', interval: '1mo' },
     ];
 
     const TYPE_BADGE = {
@@ -101,21 +102,28 @@ window.Mods.inversiones = {
           </div>
         ` : `
           <table>
-            <thead><tr><th>Ticker</th><th>Fecha</th><th>Cierre (USD)</th><th>Apertura</th><th>Máx</th><th>Mín</th></tr></thead>
+            <thead><tr><th>Ticker</th><th>Fecha</th><th>Cierre</th><th>Apertura</th><th>Máx</th><th>Mín</th></tr></thead>
             <tbody>
-              ${savedRows.map(r => `
-                <tr>
-                  <td><strong style="cursor:pointer;color:var(--accent)"
-                    onclick="document.getElementById('mkt-q').value='${r.ticker}';
-                             document.getElementById('btn-mkt-search').click()"
-                  >${r.ticker}</strong></td>
-                  <td>${fmtDate(r.fecha)}</td>
-                  <td><strong>${fmtUSD(r.cierre)}</strong></td>
-                  <td>${fmtUSD(r.apertura)}</td>
-                  <td>${fmtUSD(r.maximo)}</td>
-                  <td>${fmtUSD(r.minimo)}</td>
-                </tr>
-              `).join('')}
+              ${savedRows.map(r => {
+                const mon  = r.moneda || 'USD';
+                const isUSD = mon === 'USD';
+                const fmtP = (orig, usd) => orig != null
+                  ? (isUSD ? fmtUSD(orig) : `${fmt(orig)} <span style="font-size:.65rem;color:var(--text-sec)">${mon}</span>`)
+                  : fmtUSD(usd);
+                return `
+                  <tr>
+                    <td><strong style="cursor:pointer;color:var(--accent)"
+                      onclick="document.getElementById('mkt-q').value='${r.ticker}';
+                               document.getElementById('btn-mkt-search').click()"
+                    >${r.ticker}</strong></td>
+                    <td>${fmtDate(r.fecha)}</td>
+                    <td><strong>${fmtP(r.cierre_orig, r.cierre)}</strong></td>
+                    <td>${fmtP(r.apertura_orig, r.apertura)}</td>
+                    <td>${fmtP(r.maximo_orig, r.maximo)}</td>
+                    <td>${fmtP(r.minimo_orig, r.minimo)}</td>
+                  </tr>
+                `;
+              }).join('')}
             </tbody>
           </table>
         `}
@@ -179,14 +187,18 @@ window.Mods.inversiones = {
             text: `${isUp ? '▲' : '▼'} ${Math.abs(chgPct).toFixed(2)}% en ${pd.label}`,
             font: { size: 12, color }, x: 0.01,
           },
-          xaxis: { showgrid: false, color: '#8096b0', showspikes: true, spikecolor: '#2E7FD9', spikethickness: 1 },
+          xaxis: {
+            showgrid: false, color: '#8096b0',
+            showspikes: true, spikemode: 'across', spikecolor: 'rgba(255,255,255,.3)', spikethickness: 1,
+          },
           yaxis: {
             showgrid: true, gridcolor: 'rgba(255,255,255,.05)', color: '#8096b0',
+            showspikes: true, spikemode: 'across', spikecolor: 'rgba(255,255,255,.3)', spikethickness: 1,
             range: [Math.min(...prices) * 0.995, Math.max(...prices) * 1.005],
             tickformat: ',.4g',
           },
           hovermode: 'x unified', showlegend: false,
-        }, { responsive: true, displayModeBar: false });
+        }, { responsive: true, displayModeBar: false, scrollZoom: false });
 
       } catch(e) {
         if (overlay) overlay.style.display = 'none';
@@ -351,10 +363,15 @@ window.Mods.inversiones = {
             await dbUpsert('precios_historicos', {
               ticker,
               fecha:           new Date().toISOString().slice(0, 10),
+              moneda:          info.currency,
               cierre:          priceUSD,
+              cierre_orig:     priceDisp,
               apertura:        info.open * factor * tc,
+              apertura_orig:   info.open,
               maximo:          info.high * factor * tc,
+              maximo_orig:     info.high,
               minimo:          info.low  * factor * tc,
+              minimo_orig:     info.low,
               cierre_ajustado: priceUSD,
             });
             toast('✅ Snapshot guardado para ' + ticker);
@@ -633,7 +650,7 @@ window.Mods.inversiones = {
                         <strong class="port-ticker-link" data-ticker="${p.ticker}"
                           style="cursor:pointer;color:var(--accent)">${p.ticker}</strong>
                       </td>
-                      <td>${fmt(p.qty, 4)}</td>
+                      <td>${Math.abs(p.qty - Math.round(p.qty)) < 0.001 ? fmt(Math.round(p.qty), 0) : fmt(p.qty, 4)}</td>
                       <td>${fmtOrig(p.costBasisOrig, p.moneda)}</td>
                       <td>
                         ${hasPx ? fmtOrig(pd.priceOrig, pd.currency) : '<span class="neu">—</span>'}
@@ -717,14 +734,18 @@ window.Mods.inversiones = {
         paper_bgcolor: 'rgba(0,0,0,0)',
         font: { color: '#8096b0', size: 11, family: "'DM Mono', monospace" },
         title: { text: `${isUp ? '▲' : '▼'} ${Math.abs(chgPct).toFixed(2)}%`, font: { size: 12, color }, x: 0.01 },
-        xaxis: { showgrid: false, color: '#8096b0', showspikes: true, spikecolor: '#2E7FD9', spikethickness: 1 },
+        xaxis: {
+          showgrid: false, color: '#8096b0',
+          showspikes: true, spikemode: 'across', spikecolor: 'rgba(255,255,255,.3)', spikethickness: 1,
+        },
         yaxis: {
           showgrid: true, gridcolor: 'rgba(255,255,255,.05)', color: '#8096b0',
+          showspikes: true, spikemode: 'across', spikecolor: 'rgba(255,255,255,.3)', spikethickness: 1,
           range: [Math.min(...values) * 0.97, Math.max(...values) * 1.03],
           tickprefix: '$', tickformat: ',.0f',
         },
         hovermode: 'x unified', showlegend: false,
-      }, { responsive: true, displayModeBar: false });
+      }, { responsive: true, displayModeBar: false, scrollZoom: false });
 
     } catch(e) {
       if (overlay) overlay.style.display = 'none';
