@@ -168,7 +168,11 @@ window.Mods.inversiones = {
         const color  = isUp ? '#26a69a' : '#ef5350';
         const cur    = _activeInfo?.currency || 'USD';
 
-        // Purge y newPlot — soluciona el problema de react sobre div vacío
+        // Formato de fecha adaptado al período seleccionado
+        const xTickFmt = period === '1d'  ? '%H:%M'
+          : ['5d','1mo','3mo'].includes(period) ? '%d %b'
+          : '%b %y';
+
         try { Plotly.purge('mkt-chart'); } catch(_) {}
         Plotly.newPlot('mkt-chart', [{
           x: dates, y: prices,
@@ -194,16 +198,20 @@ window.Mods.inversiones = {
           },
           dragmode: false,
           xaxis: {
-            showgrid: false, color: '#8096b0',
+            showgrid: false, color: '#3d5568',
+            tickformat: xTickFmt,
+            tickfont: { size: 10, color: '#6a88a0', family: "'DM Sans', sans-serif" },
             showspikes: true, spikemode: 'across',
             spikecolor: '#546272', spikethickness: 1, spikedash: 'dot',
             showline: false, zeroline: false,
           },
           yaxis: {
-            showgrid: true, gridcolor: '#0d2848', griddash: 'dot', color: '#8096b0',
+            showgrid: true, gridcolor: '#0d2848', griddash: 'dot', color: '#3d5568',
+            tickfont: { size: 10, color: '#6a88a0', family: "'DM Mono', monospace" },
+            nticks: 5,
             showspikes: false, showline: false, zeroline: false,
             range: [Math.min(...prices) * 0.995, Math.max(...prices) * 1.005],
-            tickformat: ',.4g',
+            tickformat: ',.2f',
           },
           hovermode: 'x', showlegend: false,
         }, { responsive: true, displayModeBar: false, scrollZoom: false });
@@ -739,6 +747,8 @@ window.Mods.inversiones = {
       const isUp   = chgPct >= 0;
       const color  = isUp ? '#26a69a' : '#ef5350';
 
+      const xTickFmt = ['1mo','3mo'].includes(period) ? '%d %b' : '%b %y';
+
       try { Plotly.purge('port-chart'); } catch(_) {}
       Plotly.newPlot('port-chart', [{
         x: dates, y: values,
@@ -761,13 +771,17 @@ window.Mods.inversiones = {
         title: { text: `${isUp ? '▲' : '▼'} ${Math.abs(chgPct).toFixed(2)}%`, font: { size: 12, color }, x: 0.01 },
         dragmode: false,
         xaxis: {
-          showgrid: false, color: '#8096b0',
+          showgrid: false, color: '#3d5568',
+          tickformat: xTickFmt,
+          tickfont: { size: 10, color: '#6a88a0', family: "'DM Sans', sans-serif" },
           showspikes: true, spikemode: 'across',
           spikecolor: '#546272', spikethickness: 1, spikedash: 'dot',
           showline: false, zeroline: false,
         },
         yaxis: {
-          showgrid: true, gridcolor: '#0d2848', griddash: 'dot', color: '#8096b0',
+          showgrid: true, gridcolor: '#0d2848', griddash: 'dot', color: '#3d5568',
+          tickfont: { size: 10, color: '#6a88a0', family: "'DM Mono', monospace" },
+          nticks: 5,
           showspikes: false, showline: false, zeroline: false,
           range: [Math.min(...values) * 0.97, Math.max(...values) * 1.03],
           tickprefix: '$', tickformat: ',.0f',
