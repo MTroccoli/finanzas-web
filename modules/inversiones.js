@@ -982,24 +982,37 @@ window.Mods.inversiones = {
       const isUp   = chgPct >= 0;
       const color  = isUp ? '#26a69a' : '#ef5350';
 
+      const minY   = Math.min(...values);
+      const maxY   = Math.max(...values);
+      const padY   = (maxY - minY) * 0.06 || maxY * 0.05;
+
       const xTickFmt = period === '1d' ? '%H:%M'
         : ['5d','1mo','3mo'].includes(period) ? '%d %b' : '%b %y';
       const hoverFmt = period === '1d' ? '%H:%M' : '%d %b';
 
       try { Plotly.purge('port-chart'); } catch(_) {}
-      Plotly.newPlot('port-chart', [{
-        x: dates, y: values,
-        type: 'scatter', mode: 'lines',
-        fill: 'tozeroy',
-        fillcolor: isUp ? 'rgba(38,166,154,0.12)' : 'rgba(239,83,80,0.12)',
-        line: { color, width: 2 },
-        hovertemplate: '$%{y:,.0f}<extra></extra>',
-        hoverlabel: {
-          bgcolor: color, bordercolor: 'rgba(0,0,0,0)',
-          font: { color: '#fff', size: 11, family: "'DM Mono', monospace" },
-          namelength: 0,
+      Plotly.newPlot('port-chart', [
+        // Baseline invisible — ancla el fill en el mínimo real (no en cero)
+        {
+          x: dates, y: new Array(dates.length).fill(minY - padY),
+          type: 'scatter', mode: 'lines',
+          line: { width: 0 }, hoverinfo: 'skip', showlegend: false,
         },
-      }], {
+        // Línea principal — fill hasta la baseline
+        {
+          x: dates, y: values,
+          type: 'scatter', mode: 'lines',
+          fill: 'tonexty',
+          fillcolor: isUp ? 'rgba(38,166,154,0.12)' : 'rgba(239,83,80,0.12)',
+          line: { color, width: 2 },
+          hovertemplate: '$%{y:,.0f}<extra></extra>',
+          hoverlabel: {
+            bgcolor: color, bordercolor: 'rgba(0,0,0,0)',
+            font: { color: '#fff', size: 11, family: "'DM Mono', monospace" },
+            namelength: 0,
+          },
+        },
+      ], {
         height: 260,
         margin: { l: 58, r: 8, t: 36, b: 28 },
         plot_bgcolor:  '#071E3D',
@@ -1021,7 +1034,7 @@ window.Mods.inversiones = {
           nticks: 5,
           showspikes: false, showline: false, zeroline: false,
           fixedrange: true,
-          range: [Math.min(...values) * 0.97, Math.max(...values) * 1.03],
+          range: [minY - padY, maxY + padY],
           tickprefix: '$', tickformat: ',.0f',
         },
         hovermode: 'x', showlegend: false,
