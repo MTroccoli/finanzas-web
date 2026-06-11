@@ -628,14 +628,13 @@ window.Mods.inversiones = {
       const totalTC = computedPositions.reduce((s, p) => s + (p.plTC ?? 0), 0)
                     + Object.values(realByTicker).reduce((s, r) => s + r.tc, 0);
 
-      // Market status dot: null/unknown marketState + isLive → green (benefit of the doubt)
+      // Market status dot — 3 states only: green=open, red=closed, grey=no live data
       const mktDot = (pd) => {
-        if (!pd?.isLive) return '<span class="mkt-dot mkt-unknown" title="Sin datos live">●</span>';
+        if (!pd?.isLive) return '<span class="mkt-dot mkt-unknown" title="Sin conexión">●</span>';
         const s = (pd.marketState ?? '').toUpperCase();
-        if (s === 'CLOSED')               return '<span class="mkt-dot mkt-closed" title="Mercado cerrado">●</span>';
-        if (s === 'PRE')                  return '<span class="mkt-dot mkt-pre"    title="Pre-mercado">●</span>';
-        if (s === 'POST' || s === 'POSTPOST') return '<span class="mkt-dot mkt-post" title="Post-mercado">●</span>';
-        return '<span class="mkt-dot mkt-open" title="Mercado abierto">●</span>';
+        if (s === 'REGULAR') return '<span class="mkt-dot mkt-open"   title="Mercado abierto">●</span>';
+        if (s === '')        return '<span class="mkt-dot mkt-unknown" title="Sin datos de mercado">●</span>';
+        return '<span class="mkt-dot mkt-closed" title="Mercado cerrado">●</span>';
       };
 
       // Fetch dividends in parallel (best-effort)
@@ -672,6 +671,9 @@ window.Mods.inversiones = {
                 <strong class="port-ticker-link" data-ticker="${p.ticker}"
                   style="color:var(--accent)">${p.ticker}</strong>
                 ${mktDot(p.pd)}
+                <div class="port-acc-price">
+                  ${p.hasPx ? this._fmtOrig(p.pd.priceOrig, p.pd.currency) : this._fmtOrig(p.costBasisOrig, p.moneda)}
+                </div>
               </div>
               <div class="port-acc-peso">
                 <span>${p.hasPx ? fmt(p.peso, 1) + '%' : ''}</span>
@@ -757,6 +759,10 @@ window.Mods.inversiones = {
           <div class="metric-card">
             <div class="metric-label">P&L Tipo de cambio</div>
             <div class="metric-value ${plClass(totalTC)}">${plSign(totalTC)}${fmtUSD(totalTC)}</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Dividendos</div>
+            <div class="metric-value pos">${totalDividendos > 0 ? '+' + fmtUSD(totalDividendos) : fmtUSD(0)}</div>
           </div>
         </div>
 
@@ -1539,7 +1545,7 @@ window.Mods.inversiones = {
     if (n == null) return '—';
     const NORM = { GBX: 'GBP', GBp: 'GBP' };
     const currency = NORM[moneda] || moneda || 'USD';
-    const dec = Math.abs(n) >= 1000 ? 0 : 2;
+    const dec = Math.abs(n) >= 100 ? 0 : 2;
     try {
       return new Intl.NumberFormat('en-US', {
         style: 'currency',

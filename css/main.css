@@ -316,11 +316,12 @@ hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
 }
 .port-acc-main {
   display: flex;
-  align-items: center;
-  gap: 5px;
-  min-width: 70px;
-  font-size: .95rem;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 80px;
 }
+.port-acc-main > :first-child { display: flex; align-items: center; gap: 5px; font-size: .95rem; }
+.port-acc-price { font-size: .72rem; color: var(--text-sec); font-family: 'DM Mono', monospace; }
 .port-acc-peso {
   display: flex;
   align-items: center;

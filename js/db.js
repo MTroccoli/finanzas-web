@@ -57,7 +57,7 @@ function fmt(n, dec = 2) {
 }
 function fmtUSD(n) {
   if (n == null) return '—';
-  const dec = Math.abs(n) >= 1000 ? 0 : 2;
+  const dec = Math.abs(n) >= 100 ? 0 : 2;
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: dec, maximumFractionDigits: dec }).format(n);
 }
 function fmtDate(d) {

@@ -114,13 +114,14 @@ fmt(qty, 4)    // no usar decimales en cantidades
 `fmtUSD` y `_fmtOrig` aplican esta regla automáticamente. Usarla siempre.
 
 ```js
-// Regla: |valor| >= 1000 → 0 decimales | |valor| < 1000 → 2 decimales
+// Regla: |valor| >= 100 → 0 decimales | |valor| < 100 → 2 decimales
 fmtUSD(1500)    // → $1,500
+fmtUSD(250)     // → $250
 fmtUSD(99.5)    // → $99.50
 fmtUSD(0.75)    // → $0.75
 
 // ❌ Incorrecto
-fmt(valor, 2)   // no hardcodear 2 decimales para valores monetarios grandes
+fmt(valor, 2)   // no hardcodear 2 decimales para valores monetarios de 3+ dígitos
 ```
 
 ---
