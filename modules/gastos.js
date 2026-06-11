@@ -1,17 +1,283 @@
 window.Mods = window.Mods || {};
 window.Mods.gastos = {
+  _tab:        'importar',
+  _cats:       [],
+  _pending:    [],         // transacciones parseadas pendientes de confirmación
+  _histMes:    null,
+  _histCat:    '',
+  _histMoneda: 'ARS',
 
   async render() {
     const c = document.getElementById('content');
-    const [gastos, categorias] = await Promise.all([
-      dbFetch('gastos', { order: { col: 'fecha', asc: false }, limit: 50 }),
-      dbFetch('categorias_gastos', { filters: { activo: 1 }, order: { col: 'nombre', asc: true } }),
-    ]);
+    c.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+    this._cats = await dbFetch('categorias_gastos', {
+      filters: { activo: 1 },
+      order: { col: 'nombre', asc: true },
+    });
+    this._drawShell();
+    this._drawTab();
+  },
 
+  _drawShell() {
+    const c = document.getElementById('content');
+    const tabs = [['importar','📤 Importar EDC'],['manual','✚ Nuevo gasto'],['historial','📋 Historial']];
     c.innerHTML = `
       <h1>Gastos</h1>
-      <p class="page-subtitle">Control de egresos</p>
+      <p class="page-subtitle">Control de egresos · importación automática de EDC</p>
+      <div class="g-tabs">
+        ${tabs.map(([t,l]) => `<button class="g-tab${this._tab===t?' active':''}" data-tab="${t}">${l}</button>`).join('')}
+      </div>
+      <div id="g-content"></div>
+    `;
+    document.querySelectorAll('.g-tab').forEach(btn =>
+      btn.addEventListener('click', () => {
+        this._tab = btn.dataset.tab;
+        document.querySelectorAll('.g-tab').forEach(b => b.classList.toggle('active', b === btn));
+        this._drawTab();
+      })
+    );
+  },
 
+  _drawTab() {
+    switch (this._tab) {
+      case 'importar':  return this._drawImportar();
+      case 'manual':    return this._drawManual();
+      case 'historial': return this._drawHistorial();
+    }
+  },
+
+  // ── Importar EDC ────────────────────────────────────────────────────────
+  _drawImportar() {
+    if (this._pending.length) return this._drawReview();
+    document.getElementById('g-content').innerHTML = `
+      <div class="form-card">
+        <h3>Importar Estado de Cuenta VISA</h3>
+        <p style="font-size:.82rem;color:var(--text-sec);margin:0 0 16px">
+          Subí el PDF del resumen o una captura. Claude extrae y categoriza todas las transacciones automáticamente.
+        </p>
+        <div class="g-upload-zone" id="g-drop-zone">
+          <div style="font-size:2rem;line-height:1;margin-bottom:8px">📄</div>
+          <div style="font-size:.88rem;color:var(--text-sec)">Arrastrá el archivo acá<br>o tocá para seleccionar</div>
+          <div id="g-file-name" style="margin-top:8px;font-size:.78rem;color:var(--accent);display:none"></div>
+          <input type="file" id="g-file-input" accept=".pdf,image/*" style="display:none">
+        </div>
+        <button id="g-btn-parse" class="btn btn-primary" style="margin-top:14px;display:none">
+          ✨ Parsear con IA
+        </button>
+        <div id="g-parse-log" style="margin-top:10px;font-family:'DM Mono',monospace;font-size:.72rem;color:var(--text-sec);min-height:18px"></div>
+      </div>
+    `;
+
+    const zone     = document.getElementById('g-drop-zone');
+    const input    = document.getElementById('g-file-input');
+    const btnParse = document.getElementById('g-btn-parse');
+    const nameEl   = document.getElementById('g-file-name');
+    let selFile    = null;
+
+    const setFile = f => {
+      selFile = f;
+      nameEl.textContent = f.name;
+      nameEl.style.display = 'block';
+      btnParse.style.display = 'inline-flex';
+    };
+
+    zone.addEventListener('click', () => input.click());
+    zone.addEventListener('dragover',  e => { e.preventDefault(); zone.classList.add('drag'); });
+    zone.addEventListener('dragleave', ()  => zone.classList.remove('drag'));
+    zone.addEventListener('drop', e => {
+      e.preventDefault(); zone.classList.remove('drag');
+      if (e.dataTransfer.files[0]) setFile(e.dataTransfer.files[0]);
+    });
+    input.addEventListener('change', () => { if (input.files[0]) setFile(input.files[0]); });
+
+    btnParse.addEventListener('click', async () => {
+      if (!selFile) return;
+      const log = document.getElementById('g-parse-log');
+      btnParse.disabled = true;
+      btnParse.textContent = '⏳ Procesando…';
+      log.textContent = 'Enviando a Claude…';
+      try {
+        const fd = new FormData();
+        fd.append('file', selFile);
+        const resp = await fetch(`${SUPABASE_URL}/functions/v1/parse-edc`, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${SUPABASE_KEY}` },
+          body: fd,
+        });
+        const result = await resp.json();
+        if (!resp.ok || result.error) throw new Error(result.error || result.detail || 'Error desconocido');
+        log.textContent = `✅ ${result.count} transacciones encontradas. Revisá y confirmá.`;
+        const restId = this._cats.find(c => c.nombre === 'Restaurantes')?.id ?? null;
+        this._pending = result.transactions.map((t, i) => ({
+          ...t, _id: i, _include: true, _dividido: false,
+          _catId: this._cats.find(c => c.nombre === t.categoria)?.id ?? null,
+          _restId: restId,
+        }));
+        setTimeout(() => this._drawReview(), 700);
+      } catch(e) {
+        log.textContent = `❌ ${e.message}`;
+        btnParse.disabled = false;
+        btnParse.textContent = '✨ Parsear con IA';
+      }
+    });
+  },
+
+  _drawReview() {
+    const restId  = this._cats.find(c => c.nombre === 'Restaurantes')?.id ?? null;
+    const catOpts = this._cats.map(c =>
+      `<option value="${c.id}">${c.icono} ${c.nombre}</option>`).join('');
+    const sel     = this._pending.filter(t => t._include).length;
+
+    document.getElementById('g-content').innerHTML = `
+      <div class="form-card" style="padding-bottom:12px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+          <h3 style="margin:0">${this._pending.length} transacciones · <span id="g-sel-count">${sel}</span> seleccionadas</h3>
+          <div style="display:flex;gap:8px">
+            <button id="g-btn-cancel" class="btn btn-ghost" style="font-size:.78rem">✕ Cancelar</button>
+            <button id="g-btn-confirm" class="btn btn-primary" style="font-size:.78rem">
+              ✅ Guardar <span id="g-confirm-n">${sel}</span> gastos
+            </button>
+          </div>
+        </div>
+        <div style="overflow-x:auto">
+          <table style="font-size:.78rem">
+            <thead>
+              <tr>
+                <th><input type="checkbox" id="g-chk-all" checked></th>
+                <th>Fecha</th><th>Descripción</th><th>Monto</th><th>Mon.</th>
+                <th>Categoría</th><th style="white-space:nowrap">÷2</th>
+              </tr>
+            </thead>
+            <tbody id="g-review-tbody">
+              ${this._pending.map(t => this._reviewRow(t, catOpts, restId)).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+
+    const refreshCounts = () => {
+      const n = this._pending.filter(t => t._include).length;
+      document.getElementById('g-sel-count').textContent   = n;
+      document.getElementById('g-confirm-n').textContent   = n;
+      document.querySelectorAll('#g-review-tbody tr').forEach((tr, i) => {
+        tr.style.opacity = this._pending[i]?._include ? 1 : 0.4;
+      });
+    };
+
+    document.getElementById('g-chk-all').addEventListener('change', e => {
+      this._pending.forEach(t => { t._include = e.target.checked; });
+      document.querySelectorAll('.g-row-chk').forEach(c => { c.checked = e.target.checked; });
+      refreshCounts();
+    });
+
+    const tbody = document.getElementById('g-review-tbody');
+
+    tbody.addEventListener('change', e => {
+      const id = e.target.dataset.id !== undefined ? +e.target.dataset.id : null;
+      const t  = id != null ? this._pending.find(p => p._id === id) : null;
+      if (!t) return;
+
+      if (e.target.classList.contains('g-row-chk')) {
+        t._include = e.target.checked;
+        refreshCounts();
+      }
+      if (e.target.classList.contains('g-cat-sel')) {
+        t._catId = e.target.value ? +e.target.value : null;
+        t.categoria = this._cats.find(c => c.id === t._catId)?.nombre ?? 'Otros';
+        const divCell = tbody.querySelector(`.g-div-cell[data-id="${id}"]`);
+        if (divCell) divCell.innerHTML = t._catId === restId
+          ? `<input type="checkbox" class="g-div-chk" data-id="${id}"${t._dividido?' checked':''}>`
+          : '—';
+      }
+      if (e.target.classList.contains('g-div-chk')) {
+        t._dividido = e.target.checked;
+      }
+    });
+
+    tbody.addEventListener('input', e => {
+      if (!e.target.classList.contains('g-monto-inp')) return;
+      const t = this._pending.find(p => p._id === +e.target.dataset.id);
+      if (t) t.monto = parseFloat(e.target.value) || t.monto;
+    });
+
+    document.getElementById('g-btn-cancel').addEventListener('click', () => {
+      this._pending = [];
+      this._drawImportar();
+    });
+    document.getElementById('g-btn-confirm').addEventListener('click', () => this._confirmImport());
+  },
+
+  _reviewRow(t, catOpts, restId) {
+    const divCell = t._catId === restId
+      ? `<input type="checkbox" class="g-div-chk" data-id="${t._id}"${t._dividido?' checked':''}>`
+      : '—';
+    const descEsc = t.descripcion.replace(/"/g, '&quot;');
+    return `
+      <tr style="opacity:${t._include?1:.4}">
+        <td><input type="checkbox" class="g-row-chk" data-id="${t._id}" checked></td>
+        <td style="white-space:nowrap;font-family:'DM Mono',monospace;font-size:.72rem">${t.fecha}</td>
+        <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${descEsc}">${t.descripcion}</td>
+        <td><input type="number" class="g-monto-inp" data-id="${t._id}" value="${t.monto}"
+          style="width:88px;font-size:.75rem;padding:3px 6px;border-radius:4px;
+            border:1px solid var(--border);background:var(--surface);color:var(--text);
+            font-family:'DM Mono',monospace"></td>
+        <td style="font-family:'DM Mono',monospace;font-size:.72rem">${t.moneda}</td>
+        <td>
+          <select class="g-cat-sel" data-id="${t._id}"
+            style="font-size:.72rem;padding:3px 6px;border-radius:4px;
+              border:1px solid var(--border);background:var(--surface);color:var(--text);max-width:140px">
+            <option value="">—</option>
+            ${this._cats.map(c =>
+              `<option value="${c.id}"${c.id===t._catId?' selected':''}>${c.icono} ${c.nombre}</option>`
+            ).join('')}
+          </select>
+        </td>
+        <td class="g-div-cell" data-id="${t._id}" style="text-align:center">${divCell}</td>
+      </tr>`;
+  },
+
+  async _confirmImport() {
+    const toSave = this._pending.filter(t => t._include);
+    if (!toSave.length) { toast('Seleccioná al menos una transacción', 'warn'); return; }
+    const btn = document.getElementById('g-btn-confirm');
+    btn.disabled = true; btn.textContent = 'Guardando…';
+    try {
+      const imp = await dbInsert('importaciones', {
+        tipo: 'pdf', nombre_archivo: 'edc_visa', registros_importados: toSave.length,
+      });
+      for (const t of toSave) {
+        const monto = t._dividido ? t.monto / 2 : t.monto;
+        await dbInsert('gastos', {
+          fecha: t.fecha, monto, moneda: t.moneda || 'ARS',
+          comercio: t.descripcion,
+          categoria_id: t._catId || null,
+          usuario: 'compartido',
+          fuente: 'edc_visa',
+          dividido: t._dividido,
+          importacion_id: imp.id,
+          notas: t._dividido ? `Total original: ${t.monto} ${t.moneda}` : null,
+        });
+      }
+      toast(`✅ ${toSave.length} gastos importados`);
+      this._pending = [];
+      this._tab = 'historial';
+      this._drawShell();
+      this._drawTab();
+    } catch(e) {
+      toast('❌ ' + e.message, 'err');
+      btn.disabled = false;
+      btn.textContent = `✅ Guardar ${toSave.length} gastos`;
+    }
+  },
+
+  // ── Manual ──────────────────────────────────────────────────────────────
+  _drawManual() {
+    const catOpts = this._cats.map(c =>
+      `<option value="${c.id}">${c.icono} ${c.nombre}</option>`).join('');
+    const restId = this._cats.find(c => c.nombre === 'Restaurantes')?.id ?? null;
+
+    document.getElementById('g-content').innerHTML = `
       <div class="form-card">
         <h3>Nuevo gasto</h3>
         <form id="form-gasto">
@@ -21,18 +287,25 @@ window.Mods.gastos = {
               <input id="g-fecha" type="date" value="${new Date().toISOString().slice(0,10)}" required>
             </div>
             <div class="form-group">
-              <label>Monto (USD)</label>
-              <input id="g-monto" type="number" step="0.01" min="0.01" placeholder="50.00" required>
+              <label>Monto</label>
+              <input id="g-monto" type="number" step="0.01" min="0.01" placeholder="5000" required>
+            </div>
+            <div class="form-group">
+              <label>Moneda</label>
+              <select id="g-moneda">
+                <option value="ARS">ARS — Pesos</option>
+                <option value="USD">USD — Dólares</option>
+              </select>
             </div>
             <div class="form-group">
               <label>Comercio / descripción</label>
-              <input id="g-comercio" type="text" placeholder="Supermercado...">
+              <input id="g-comercio" type="text" placeholder="Carrefour, Uber…">
             </div>
             <div class="form-group">
               <label>Categoría</label>
               <select id="g-categoria">
                 <option value="">Sin categoría</option>
-                ${categorias.map(cat => `<option value="${cat.id}">${cat.icono ?? ''} ${cat.nombre}</option>`).join('')}
+                ${catOpts}
               </select>
             </div>
             <div class="form-group">
@@ -44,72 +317,198 @@ window.Mods.gastos = {
               </select>
             </div>
           </div>
+          <div id="g-div-wrap" style="display:none;margin-bottom:14px">
+            <label style="display:flex;align-items:center;gap:8px;font-size:.84rem;cursor:pointer">
+              <input type="checkbox" id="g-dividido">
+              Dividir entre 2 — guardar la mitad del monto
+            </label>
+          </div>
           <div class="form-group" style="margin-bottom:16px">
             <label>Notas (opcional)</label>
-            <input id="g-notas" type="text" placeholder="Detalle adicional...">
+            <input id="g-notas" type="text" placeholder="Detalle adicional…">
           </div>
           <button type="submit" class="btn btn-primary">✚ Registrar gasto</button>
         </form>
       </div>
+    `;
 
+    document.getElementById('g-categoria').addEventListener('change', e => {
+      const isRest = e.target.value && +e.target.value === restId;
+      document.getElementById('g-div-wrap').style.display = isRest ? 'block' : 'none';
+      if (!isRest) document.getElementById('g-dividido').checked = false;
+    });
+
+    document.getElementById('form-gasto').addEventListener('submit', async e => {
+      e.preventDefault();
+      const rawMonto = parseFloat(document.getElementById('g-monto').value);
+      const dividido = document.getElementById('g-dividido').checked;
+      const monto    = dividido ? rawMonto / 2 : rawMonto;
+      const catId    = document.getElementById('g-categoria').value;
+      const notas    = document.getElementById('g-notas').value.trim();
+      try {
+        await dbInsert('gastos', {
+          fecha:       document.getElementById('g-fecha').value,
+          monto, moneda: document.getElementById('g-moneda').value,
+          comercio:    document.getElementById('g-comercio').value.trim() || null,
+          categoria_id: catId ? +catId : null,
+          usuario:     document.getElementById('g-usuario').value,
+          dividido, fuente: 'manual',
+          notas: dividido ? `Total original: ${rawMonto}` : (notas || null),
+        });
+        toast('✅ Gasto registrado');
+        e.target.reset();
+        document.getElementById('g-fecha').value = new Date().toISOString().slice(0,10);
+        document.getElementById('g-div-wrap').style.display = 'none';
+      } catch(err) { toast('❌ ' + err.message, 'err'); }
+    });
+  },
+
+  // ── Historial ───────────────────────────────────────────────────────────
+  async _drawHistorial() {
+    const gc = document.getElementById('g-content');
+    gc.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+
+    const now     = new Date();
+    const mesAct  = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+    const mesFilter   = this._histMes    || mesAct;
+    const catFilter   = this._histCat    || '';
+    const monedaFilter= this._histMoneda || 'ARS';
+
+    const [yr, mo] = mesFilter.split('-').map(Number);
+    const desde = `${yr}-${String(mo).padStart(2,'0')}-01`;
+    const hasta = `${yr}-${String(mo).padStart(2,'0')}-${new Date(yr, mo, 0).getDate()}`;
+
+    // Build 12-month dropdown
+    const meses = Array.from({ length: 12 }, (_, i) => {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      return {
+        val: `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`,
+        lbl: d.toLocaleDateString('es-AR', { month: 'long', year: 'numeric' }),
+      };
+    });
+
+    // Fetch with date range via Supabase client directly
+    let q = getDB().from('gastos').select('*').gte('fecha', desde).lte('fecha', hasta);
+    if (catFilter)    q = q.eq('categoria_id', +catFilter);
+    if (monedaFilter) q = q.eq('moneda', monedaFilter);
+    const { data: gastos, error } = await q.order('fecha', { ascending: false });
+    if (error) throw error;
+
+    // Totals by category
+    const bycat = {};
+    for (const g of gastos) {
+      const k = g.categoria_id ?? 'sin';
+      bycat[k] = (bycat[k] || 0) + parseFloat(g.monto);
+    }
+    const totalMes = gastos.reduce((s, g) => s + parseFloat(g.monto), 0);
+
+    const fmtAmt = (n, mon = monedaFilter) => mon === 'USD'
+      ? fmtUSD(n)
+      : new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(n);
+
+    const catBadge = id => {
+      const c = this._cats.find(c => c.id === (id === 'sin' ? null : +id));
+      return c ? `${c.icono} ${c.nombre}` : '—';
+    };
+
+    gc.innerHTML = `
+      <!-- Filtros -->
+      <div class="form-card" style="padding:12px 16px;margin-bottom:.75rem">
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <select id="h-mes" style="font-size:.82rem;padding:5px 10px;border-radius:6px;
+            border:1px solid var(--border);background:var(--surface);color:var(--text)">
+            ${meses.map(m => `<option value="${m.val}"${m.val===mesFilter?' selected':''}>${m.lbl}</option>`).join('')}
+          </select>
+          <select id="h-cat" style="font-size:.82rem;padding:5px 10px;border-radius:6px;
+            border:1px solid var(--border);background:var(--surface);color:var(--text)">
+            <option value="">Todas las categorías</option>
+            ${this._cats.map(c =>
+              `<option value="${c.id}"${String(c.id)===catFilter?' selected':''}>${c.icono} ${c.nombre}</option>`
+            ).join('')}
+          </select>
+          <select id="h-moneda" style="font-size:.82rem;padding:5px 10px;border-radius:6px;
+            border:1px solid var(--border);background:var(--surface);color:var(--text)">
+            <option value="ARS"${monedaFilter==='ARS'?' selected':''}>ARS</option>
+            <option value="USD"${monedaFilter==='USD'?' selected':''}>USD</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Resumen por categoría -->
+      ${Object.keys(bycat).length === 0 ? '' : `
+      <div class="form-card" style="padding:14px 16px;margin-bottom:.75rem">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <span style="font-weight:600;font-size:.9rem">Resumen del mes</span>
+          <span style="font-family:'DM Mono',monospace;font-size:.85rem;color:var(--accent);font-weight:600">
+            Total: ${fmtAmt(totalMes)}
+          </span>
+        </div>
+        ${Object.entries(bycat).sort((a,b) => b[1]-a[1]).map(([id, tot]) => {
+          const pct = totalMes > 0 ? (tot/totalMes*100) : 0;
+          return `
+            <div style="margin-bottom:9px">
+              <div style="display:flex;justify-content:space-between;font-size:.78rem;margin-bottom:3px">
+                <span>${catBadge(id)}</span>
+                <span style="font-family:'DM Mono',monospace">
+                  ${fmtAmt(tot)} <span style="color:var(--text-sec)">(${pct.toFixed(0)}%)</span>
+                </span>
+              </div>
+              <div style="height:4px;background:var(--border);border-radius:2px">
+                <div style="height:4px;background:var(--accent);border-radius:2px;width:${pct.toFixed(1)}%"></div>
+              </div>
+            </div>`;
+        }).join('')}
+      </div>`}
+
+      <!-- Tabla -->
       <div class="table-wrap">
-        <div class="table-header"><span class="table-title">Últimos 50 gastos</span></div>
+        <div class="table-header">
+          <span class="table-title">${gastos.length} gastos</span>
+          <span style="font-size:.68rem;color:var(--text-sec);font-family:'DM Mono',monospace">
+            ${mesFilter}
+          </span>
+        </div>
         ${gastos.length === 0 ? `
-          <div class="empty">
-            <div class="empty-icon">💸</div>
-            <div class="empty-text">Sin gastos registrados</div>
-          </div>
+          <div class="empty"><div class="empty-icon">💸</div>
+          <div class="empty-text">Sin gastos para este período</div></div>
         ` : `
           <table>
-            <thead>
-              <tr><th>Fecha</th><th>Comercio</th><th>Categoría</th><th>Usuario</th><th>Monto</th></tr>
-            </thead>
-            <tbody id="gastos-tbody">
-              ${gastos.map(g => this._row(g, categorias)).join('')}
+            <thead><tr><th>Fecha</th><th>Comercio</th><th>Categoría</th><th>Monto</th><th></th></tr></thead>
+            <tbody>
+              ${gastos.map(g => `
+                <tr>
+                  <td style="white-space:nowrap">${fmtDate(g.fecha)}</td>
+                  <td>${g.comercio ?? '—'}${g.dividido
+                    ? ' <span style="font-size:.65rem;color:var(--text-sec)">÷2</span>' : ''}</td>
+                  <td>${catBadge(g.categoria_id)}</td>
+                  <td style="font-family:'DM Mono',monospace;font-weight:600;white-space:nowrap">
+                    ${fmtAmt(parseFloat(g.monto), g.moneda)}
+                  </td>
+                  <td><button class="btn btn-ghost btn-del-g" data-id="${g.id}"
+                    style="font-size:.7rem;padding:2px 7px;color:var(--red)">✕</button></td>
+                </tr>`).join('')}
             </tbody>
           </table>
         `}
       </div>
     `;
 
-    document.getElementById('form-gasto').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const fecha      = document.getElementById('g-fecha').value;
-      const monto      = parseFloat(document.getElementById('g-monto').value);
-      const comercio   = document.getElementById('g-comercio').value.trim();
-      const catId      = document.getElementById('g-categoria').value;
-      const usuario    = document.getElementById('g-usuario').value;
-      const notas      = document.getElementById('g-notas').value.trim();
-
-      try {
-        await dbInsert('gastos', {
-          fecha, monto, comercio: comercio || null,
-          categoria_id: catId ? parseInt(catId) : null,
-          usuario, notas: notas || null,
-        });
-        toast('✅ Gasto registrado');
-        e.target.reset();
-        document.getElementById('g-fecha').value = new Date().toISOString().slice(0,10);
-
-        const newGastos = await dbFetch('gastos', { order: { col: 'fecha', asc: false }, limit: 50 });
-        const tbody = document.getElementById('gastos-tbody');
-        if (tbody) tbody.innerHTML = newGastos.map(g => this._row(g, categorias)).join('');
-      } catch(err) {
-        toast('❌ ' + err.message, 'err');
-      }
+    ['h-mes','h-cat','h-moneda'].forEach(id => {
+      document.getElementById(id)?.addEventListener('change', () => {
+        this._histMes    = document.getElementById('h-mes').value;
+        this._histCat    = document.getElementById('h-cat').value;
+        this._histMoneda = document.getElementById('h-moneda').value;
+        this._drawHistorial();
+      });
     });
-  },
 
-  _row(g, categorias) {
-    const cat = categorias.find(c => c.id === g.categoria_id);
-    return `
-      <tr>
-        <td>${fmtDate(g.fecha)}</td>
-        <td>${g.comercio ?? '—'}</td>
-        <td>${cat ? `${cat.icono ?? ''} ${cat.nombre}` : '—'}</td>
-        <td>${g.usuario}</td>
-        <td><strong>${fmtUSD(g.monto)}</strong></td>
-      </tr>
-    `;
+    document.querySelectorAll('.btn-del-g').forEach(btn =>
+      btn.addEventListener('click', async () => {
+        if (!confirm('¿Eliminar este gasto?')) return;
+        await dbDelete('gastos', { id: +btn.dataset.id });
+        toast('Eliminado');
+        this._drawHistorial();
+      })
+    );
   },
 };
