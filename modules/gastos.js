@@ -4,6 +4,8 @@ window.Mods.gastos = {
   _cats:       [],
   _pending:    [],         // transacciones parseadas pendientes de confirmación
   _learned:    {},         // { merchant_normalizado: categoria_id }
+  _excludedCards: '',
+  _splitCatNames: new Set(['Restaurantes', 'Viajes']),
   _histMes:    null,
   _histCat:    '',
   _histMoneda: 'ARS',
@@ -23,21 +25,28 @@ window.Mods.gastos = {
   async render() {
     const c = document.getElementById('content');
     c.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
-    const [cats, learnedRows] = await Promise.all([
+    const [cats, learnedRows, excludedCards] = await Promise.all([
       dbFetch('categorias_gastos', { filters: { activo: 1 }, order: { col: 'nombre', asc: true } }),
       dbFetch('merchant_categorias', { order: { col: 'seen_count', asc: false } }).catch(() => []),
+      getConfig('gastos_tarjetas_excluidas').catch(() => ''),
     ]);
     this._cats = cats;
     this._learned = {};
     for (const r of learnedRows) this._learned[r.merchant_normalizado] = r.categoria_id;
     this._learnedRows = learnedRows;
+    this._excludedCards = excludedCards || '';
+    this._splitCatIds = new Set(
+      cats.filter(c => this._splitCatNames.has(c.nombre)).map(c => c.id)
+    );
     this._drawShell();
     this._drawTab();
   },
 
+  _isSplitCat(catId) { return this._splitCatIds?.has(catId); },
+
   _drawShell() {
     const c = document.getElementById('content');
-    const tabs = [['importar','📤 Importar EDC'],['manual','✚ Nuevo gasto'],['historial','📋 Historial']];
+    const tabs = [['importar','📤 Importar EDC'],['manual','✚ Nuevo gasto'],['historial','📋 Historial'],['cuotas','📅 Cuotas']];
     c.innerHTML = `
       <h1>Gastos</h1>
       <p class="page-subtitle">Control de egresos · importación automática de EDC</p>
@@ -60,6 +69,7 @@ window.Mods.gastos = {
       case 'importar':  return this._drawImportar();
       case 'manual':    return this._drawManual();
       case 'historial': return this._drawHistorial();
+      case 'cuotas':    return this._drawCuotas();
     }
   },
 
@@ -72,6 +82,19 @@ window.Mods.gastos = {
         <p style="font-size:.82rem;color:var(--text-sec);margin:0 0 16px">
           Subí el PDF del resumen o una captura. Claude extrae y categoriza todas las transacciones automáticamente.
         </p>
+        <div style="margin:0 0 14px">
+          <label style="display:block;font-size:.78rem;color:var(--text-sec);margin-bottom:4px">
+            Tarjetas adicionales a excluir (últimos 4 dígitos, separados por coma)
+          </label>
+          <input id="g-exclude-cards" type="text" value="${this._excludedCards}"
+            placeholder="ej: 7084, 1234"
+            style="width:100%;max-width:280px;font-size:.82rem;padding:6px 10px;border-radius:6px;
+              border:1px solid var(--border);background:var(--surface);color:var(--text);
+              font-family:'DM Mono',monospace">
+          <div style="font-size:.7rem;color:var(--text-sec);margin-top:3px">
+            Se excluyen sus compras y los descuentos/beneficios asociados
+          </div>
+        </div>
         <div class="g-upload-zone" id="g-drop-zone">
           <div style="font-size:2rem;line-height:1;margin-bottom:8px">📄</div>
           <div style="font-size:.88rem;color:var(--text-sec)">Arrastrá el archivo acá<br>o tocá para seleccionar</div>
@@ -114,8 +137,16 @@ window.Mods.gastos = {
       btnParse.textContent = '⏳ Procesando…';
       log.textContent = 'Enviando a Claude…';
       try {
+        // Persistir cambios al campo de tarjetas excluidas
+        const excludeVal = document.getElementById('g-exclude-cards').value.trim();
+        if (excludeVal !== this._excludedCards) {
+          this._excludedCards = excludeVal;
+          setConfig('gastos_tarjetas_excluidas', excludeVal).catch(() => {});
+        }
+
         const fd = new FormData();
         fd.append('file', selFile);
+        if (excludeVal) fd.append('exclude_cards', excludeVal);
 
         // Enviar top-50 ejemplos aprendidos como hints few-shot
         const topLearned = (this._learnedRows || []).slice(0, 50).map(r => ({
@@ -132,8 +163,6 @@ window.Mods.gastos = {
         const result = await resp.json();
         if (!resp.ok || result.error) throw new Error(result.error || result.detail || 'Error desconocido');
 
-        const restId = this._cats.find(c => c.nombre === 'Restaurantes')?.id ?? null;
-
         // Aplicar override local con merchant_categorias aprendidos (más confiable que la IA)
         let overrides = 0;
         this._pending = result.transactions.map((t, i) => {
@@ -144,7 +173,10 @@ window.Mods.gastos = {
           if (learnedCat && learnedCat !== aiCat) overrides++;
           return {
             ...t, _id: i, _include: true, _dividirEntre: 1,
-            _catId: finalCat, _restId: restId, _normMerchant: norm,
+            _catId: finalCat,
+            _cuotaActual:   t.cuota_actual   ?? null,
+            _cuotasTotales: t.cuotas_totales ?? null,
+            _normMerchant: norm,
             _overridden: learnedCat && learnedCat !== aiCat,
           };
         });
@@ -159,7 +191,6 @@ window.Mods.gastos = {
   },
 
   _drawReview() {
-    const restId  = this._cats.find(c => c.nombre === 'Restaurantes')?.id ?? null;
     const catOpts = this._cats.map(c =>
       `<option value="${c.id}">${c.icono} ${c.nombre}</option>`).join('');
     const sel     = this._pending.filter(t => t._include).length;
@@ -185,7 +216,7 @@ window.Mods.gastos = {
               </tr>
             </thead>
             <tbody id="g-review-tbody">
-              ${this._pending.map(t => this._reviewRow(t, catOpts, restId)).join('')}
+              ${this._pending.map(t => this._reviewRow(t, catOpts)).join('')}
             </tbody>
           </table>
         </div>
@@ -222,7 +253,8 @@ window.Mods.gastos = {
         t._catId = e.target.value ? +e.target.value : null;
         t.categoria = this._cats.find(c => c.id === t._catId)?.nombre ?? 'Otros';
         const divCell = tbody.querySelector(`.g-div-cell[data-id="${id}"]`);
-        if (divCell) divCell.innerHTML = this._divCellHTML(t, restId);
+        if (divCell) divCell.innerHTML = this._divCellHTML(t);
+        if (!this._isSplitCat(t._catId)) t._dividirEntre = 1;
       }
       if (e.target.classList.contains('g-div-sel')) {
         t._dividirEntre = +e.target.value || 1;
@@ -242,8 +274,8 @@ window.Mods.gastos = {
     document.getElementById('g-btn-confirm').addEventListener('click', () => this._confirmImport());
   },
 
-  _divCellHTML(t, restId) {
-    if (t._catId !== restId) return '—';
+  _divCellHTML(t) {
+    if (!this._isSplitCat(t._catId)) return '—';
     const opts = [1, 2, 3, 4, 5, 6, 7, 8].map(n =>
       `<option value="${n}"${n===(t._dividirEntre||1)?' selected':''}>${n===1?'No':'÷'+n}</option>`).join('');
     return `<select class="g-div-sel" data-id="${t._id}"
@@ -251,16 +283,20 @@ window.Mods.gastos = {
         border:1px solid var(--border);background:var(--surface);color:var(--text)">${opts}</select>`;
   },
 
-  _reviewRow(t, catOpts, restId) {
+  _reviewRow(t, catOpts) {
     const descEsc = t.descripcion.replace(/"/g, '&quot;');
     const aiBadge = t._overridden
       ? ' <span style="font-size:.6rem;color:var(--accent)" title="Re-categorizado según tu historial">✦</span>'
+      : '';
+    const cuotaBadge = (t._cuotaActual && t._cuotasTotales)
+      ? ` <span style="font-size:.62rem;color:var(--text-sec);background:rgba(255,255,255,.06);padding:1px 5px;border-radius:3px"
+          title="Cuota ${t._cuotaActual} de ${t._cuotasTotales}">📅 ${t._cuotaActual}/${t._cuotasTotales}</span>`
       : '';
     return `
       <tr style="opacity:${t._include?1:.4}">
         <td><input type="checkbox" class="g-row-chk" data-id="${t._id}" checked></td>
         <td style="white-space:nowrap;font-family:'DM Mono',monospace;font-size:.72rem">${t.fecha}</td>
-        <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${descEsc}">${t.descripcion}${aiBadge}</td>
+        <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${descEsc}">${t.descripcion}${aiBadge}${cuotaBadge}</td>
         <td><input type="number" class="g-monto-inp" data-id="${t._id}" value="${t.monto}"
           style="width:88px;font-size:.75rem;padding:3px 6px;border-radius:4px;
             border:1px solid var(--border);background:var(--surface);color:var(--text);
@@ -276,7 +312,7 @@ window.Mods.gastos = {
             ).join('')}
           </select>
         </td>
-        <td class="g-div-cell" data-id="${t._id}" style="text-align:center">${this._divCellHTML(t, restId)}</td>
+        <td class="g-div-cell" data-id="${t._id}" style="text-align:center">${this._divCellHTML(t)}</td>
       </tr>`;
   },
 
@@ -300,6 +336,8 @@ window.Mods.gastos = {
           fuente: 'edc_visa',
           dividido_entre: N,
           importacion_id: imp.id,
+          cuota_actual:   t._cuotaActual   || null,
+          cuotas_totales: t._cuotasTotales || null,
           notas: N > 1 ? `Dividido entre ${N} · total original: ${t.monto} ${t.moneda}` : null,
         });
       }
@@ -347,7 +385,6 @@ window.Mods.gastos = {
   _drawManual() {
     const catOpts = this._cats.map(c =>
       `<option value="${c.id}">${c.icono} ${c.nombre}</option>`).join('');
-    const restId = this._cats.find(c => c.nombre === 'Restaurantes')?.id ?? null;
 
     document.getElementById('g-content').innerHTML = `
       <div class="form-card">
@@ -398,6 +435,16 @@ window.Mods.gastos = {
               ).join('')}
             </select>
           </div>
+          <div class="form-grid" style="margin-bottom:14px">
+            <div class="form-group">
+              <label>Cuota actual (opcional)</label>
+              <input id="g-cuota-actual" type="number" min="1" max="120" placeholder="ej: 3">
+            </div>
+            <div class="form-group">
+              <label>Cuotas totales (opcional)</label>
+              <input id="g-cuotas-totales" type="number" min="1" max="120" placeholder="ej: 12">
+            </div>
+          </div>
           <div class="form-group" style="margin-bottom:16px">
             <label>Notas (opcional)</label>
             <input id="g-notas" type="text" placeholder="Detalle adicional…">
@@ -408,9 +455,10 @@ window.Mods.gastos = {
     `;
 
     document.getElementById('g-categoria').addEventListener('change', e => {
-      const isRest = e.target.value && +e.target.value === restId;
-      document.getElementById('g-div-wrap').style.display = isRest ? 'block' : 'none';
-      if (!isRest) document.getElementById('g-dividir-entre').value = '1';
+      const catId = e.target.value ? +e.target.value : null;
+      const split = this._isSplitCat(catId);
+      document.getElementById('g-div-wrap').style.display = split ? 'block' : 'none';
+      if (!split) document.getElementById('g-dividir-entre').value = '1';
     });
 
     document.getElementById('form-gasto').addEventListener('submit', async e => {
@@ -419,7 +467,17 @@ window.Mods.gastos = {
       const N        = parseInt(document.getElementById('g-dividir-entre').value) || 1;
       const monto    = rawMonto / N;
       const catId    = document.getElementById('g-categoria').value;
+      const cuotaA   = parseInt(document.getElementById('g-cuota-actual').value)   || null;
+      const cuotaT   = parseInt(document.getElementById('g-cuotas-totales').value) || null;
       const notas    = document.getElementById('g-notas').value.trim();
+
+      if ((cuotaA && !cuotaT) || (cuotaT && !cuotaA)) {
+        return toast('Completá las dos cuotas o dejalas vacías', 'err');
+      }
+      if (cuotaA && cuotaT && cuotaA > cuotaT) {
+        return toast('La cuota actual no puede ser mayor al total', 'err');
+      }
+
       try {
         await dbInsert('gastos', {
           fecha:        document.getElementById('g-fecha').value,
@@ -428,6 +486,8 @@ window.Mods.gastos = {
           categoria_id: catId ? +catId : null,
           usuario:      document.getElementById('g-usuario').value,
           dividido_entre: N, fuente: 'manual',
+          cuota_actual:   cuotaA,
+          cuotas_totales: cuotaT,
           notas: N > 1 ? `Total original: ${rawMonto} · dividido entre ${N}` : (notas || null),
         });
         toast('✅ Gasto registrado');
@@ -554,7 +614,8 @@ window.Mods.gastos = {
                 <tr>
                   <td style="white-space:nowrap">${fmtDate(g.fecha)}</td>
                   <td>${g.comercio ?? '—'}${(g.dividido_entre > 1)
-                    ? ` <span style="font-size:.65rem;color:var(--text-sec)">÷${g.dividido_entre}</span>` : ''}</td>
+                    ? ` <span style="font-size:.65rem;color:var(--text-sec)">÷${g.dividido_entre}</span>` : ''}${(g.cuota_actual && g.cuotas_totales)
+                    ? ` <span style="font-size:.62rem;color:var(--text-sec);background:rgba(255,255,255,.06);padding:1px 5px;border-radius:3px">📅 ${g.cuota_actual}/${g.cuotas_totales}</span>` : ''}</td>
                   <td>${catBadge(g.categoria_id)}</td>
                   <td style="font-family:'DM Mono',monospace;font-weight:600;white-space:nowrap">
                     ${fmtAmt(parseFloat(g.monto), g.moneda)}
@@ -583,6 +644,160 @@ window.Mods.gastos = {
         await dbDelete('gastos', { id: +btn.dataset.id });
         toast('Eliminado');
         this._drawHistorial();
+      })
+    );
+  },
+
+  // ── Cuotas (proyección de gastos futuros) ───────────────────────────────
+  async _drawCuotas() {
+    const gc = document.getElementById('g-content');
+    gc.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+
+    // Traemos solo gastos con cuotas pendientes (cuota_actual < cuotas_totales)
+    const sb = getDB();
+    const { data: rows, error } = await sb.from('gastos')
+      .select('*')
+      .not('cuotas_totales', 'is', null)
+      .order('fecha', { ascending: false });
+    if (error) throw error;
+
+    const activas = (rows || []).filter(g => g.cuota_actual < g.cuotas_totales);
+    const catBadge = id => {
+      const c = this._cats.find(c => c.id === id);
+      return c ? `${c.icono} ${c.nombre}` : '—';
+    };
+    const fmtAmt = (n, mon) => mon === 'USD'
+      ? fmtUSD(n)
+      : new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(n);
+
+    // Proyección: para cada gasto activo, sumar la cuota en los próximos 12 meses
+    const now = new Date();
+    const proj = []; // [{ym, label, ARS, USD}]
+    for (let i = 1; i <= 12; i++) {
+      const d = new Date(now.getFullYear(), now.getMonth() + i, 1);
+      const ym = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+      proj.push({
+        ym,
+        label: d.toLocaleDateString('es-AR', { month: 'short', year: '2-digit' }),
+        ARS: 0, USD: 0,
+      });
+    }
+
+    for (const g of activas) {
+      const restantes = g.cuotas_totales - g.cuota_actual;
+      const [yr, mo] = g.fecha.split('-').map(Number);
+      const baseDate = new Date(yr, mo - 1, 1);
+      const monto = parseFloat(g.monto);
+      const mon = (g.moneda === 'USD') ? 'USD' : 'ARS';
+      for (let k = 1; k <= restantes; k++) {
+        const d = new Date(baseDate.getFullYear(), baseDate.getMonth() + k, 1);
+        const ym = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+        const slot = proj.find(p => p.ym === ym);
+        if (slot) slot[mon] += monto;
+      }
+    }
+
+    const totalARS = activas.filter(g => g.moneda !== 'USD').reduce((s, g) => s + parseFloat(g.monto) * (g.cuotas_totales - g.cuota_actual), 0);
+    const totalUSD = activas.filter(g => g.moneda === 'USD').reduce((s, g) => s + parseFloat(g.monto) * (g.cuotas_totales - g.cuota_actual), 0);
+
+    const maxProj = Math.max(1, ...proj.map(p => Math.max(p.ARS, p.USD)));
+
+    gc.innerHTML = `
+      <!-- Totales -->
+      <div class="form-card" style="padding:14px 16px;margin-bottom:.75rem">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+          <div>
+            <div style="font-weight:600;font-size:.9rem">Cuotas pendientes</div>
+            <div style="font-size:.74rem;color:var(--text-sec);margin-top:2px">
+              ${activas.length} compras con cuotas restantes
+            </div>
+          </div>
+          <div style="text-align:right;font-family:'DM Mono',monospace;font-size:.85rem">
+            ${totalARS > 0 ? `<div>${fmtAmt(totalARS, 'ARS')}</div>` : ''}
+            ${totalUSD > 0 ? `<div style="color:var(--accent)">${fmtAmt(totalUSD, 'USD')}</div>` : ''}
+            ${(!totalARS && !totalUSD) ? `<div style="color:var(--text-sec)">—</div>` : ''}
+          </div>
+        </div>
+      </div>
+
+      ${activas.length === 0 ? `
+        <div class="table-wrap">
+          <div class="empty"><div class="empty-icon">📅</div>
+          <div class="empty-text">Sin cuotas pendientes</div>
+          <div style="font-size:.75rem;color:var(--text-sec);margin-top:4px">
+            Las compras en cuotas detectadas al importar el EDC aparecerán acá.
+          </div></div>
+        </div>` : `
+
+      <!-- Proyección por mes -->
+      <div class="form-card" style="padding:14px 16px;margin-bottom:.75rem">
+        <div style="font-weight:600;font-size:.9rem;margin-bottom:12px">Proyección próximos 12 meses</div>
+        ${proj.map(p => {
+          const tot = p.ARS + (p.USD * 1000); // mezcla solo para sizing visual
+          const pct = Math.max(2, (Math.max(p.ARS, p.USD) / maxProj) * 100);
+          if (p.ARS === 0 && p.USD === 0) return '';
+          return `
+            <div style="margin-bottom:8px">
+              <div style="display:flex;justify-content:space-between;font-size:.76rem;margin-bottom:3px">
+                <span style="text-transform:capitalize">${p.label}</span>
+                <span style="font-family:'DM Mono',monospace">
+                  ${p.ARS > 0 ? fmtAmt(p.ARS, 'ARS') : ''}
+                  ${p.USD > 0 ? `<span style="color:var(--accent);margin-left:6px">${fmtAmt(p.USD, 'USD')}</span>` : ''}
+                </span>
+              </div>
+              <div style="height:4px;background:var(--border);border-radius:2px">
+                <div style="height:4px;background:var(--accent);border-radius:2px;width:${pct.toFixed(1)}%"></div>
+              </div>
+            </div>`;
+        }).join('') || '<div style="color:var(--text-sec);font-size:.78rem">Sin proyección en los próximos 12 meses</div>'}
+      </div>
+
+      <!-- Lista de compras con cuotas activas -->
+      <div class="table-wrap">
+        <div class="table-header">
+          <span class="table-title">Compras en cuotas</span>
+        </div>
+        <table>
+          <thead><tr>
+            <th>Compra</th><th>Categoría</th><th>Cuota</th><th>Por mes</th><th>Restante</th><th></th>
+          </tr></thead>
+          <tbody>
+            ${activas.map(g => {
+              const restantes = g.cuotas_totales - g.cuota_actual;
+              const monto = parseFloat(g.monto);
+              return `
+                <tr>
+                  <td>${g.comercio ?? '—'}
+                    <div style="font-size:.68rem;color:var(--text-sec);font-family:'DM Mono',monospace">
+                      ${fmtDate(g.fecha)}
+                    </div>
+                  </td>
+                  <td>${catBadge(g.categoria_id)}</td>
+                  <td style="font-family:'DM Mono',monospace;font-size:.78rem">
+                    ${g.cuota_actual}/${g.cuotas_totales}
+                  </td>
+                  <td style="font-family:'DM Mono',monospace;font-weight:600;white-space:nowrap">
+                    ${fmtAmt(monto, g.moneda)}
+                  </td>
+                  <td style="font-family:'DM Mono',monospace;color:var(--text-sec);white-space:nowrap">
+                    ${fmtAmt(monto * restantes, g.moneda)}
+                    <div style="font-size:.65rem">${restantes} cuotas</div>
+                  </td>
+                  <td><button class="btn btn-ghost btn-del-c" data-id="${g.id}"
+                    style="font-size:.7rem;padding:2px 7px;color:var(--red)">✕</button></td>
+                </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>`}
+    `;
+
+    document.querySelectorAll('.btn-del-c').forEach(btn =>
+      btn.addEventListener('click', async () => {
+        if (!confirm('¿Eliminar este gasto?')) return;
+        await dbDelete('gastos', { id: +btn.dataset.id });
+        toast('Eliminado');
+        this._drawCuotas();
       })
     );
   },
