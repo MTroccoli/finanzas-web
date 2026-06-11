@@ -1128,15 +1128,45 @@ window.Mods.inversiones = {
         timeMaps[ticker] = map;
       }
       const sortedTs = [...allTimes].sort((a, b) => a - b);
+
+      // Cuál es el primer timestamp en que CADA ticker tiene dato propio.
+      // A partir del más tardío (cuando el último mercado abrió), todos tienen datos.
+      const latestStart1d = Object.values(timeMaps).reduce((acc, map) => {
+        const firstTs = Math.min(...Object.keys(map).map(Number));
+        return firstTs > acc ? firstTs : acc;
+      }, 0);
+
+      // Recorrer todos los timestamps con carry-forward, pero plotear solo desde latestStart1d.
+      const lastKnown = {};
       const d1Dates = [], d1Values = [];
       for (const ts of sortedTs) {
+        for (const [ticker, map] of Object.entries(timeMaps)) {
+          if (map[ts] != null) lastKnown[ticker] = map[ts];
+        }
+        if (ts < latestStart1d) continue; // esperar a que todos los mercados tengan datos
         let total = 0, hasData = false;
         for (const [ticker, qty] of Object.entries(qtys)) {
           if (qty < 0.0001) continue;
-          const p = timeMaps[ticker]?.[ts];
+          const p = lastKnown[ticker];
           if (p != null) { total += qty * p; hasData = true; }
         }
         if (hasData && total > 0) { d1Dates.push(new Date(ts)); d1Values.push(total); }
+      }
+      // Fallback: si no hay puntos tras el filtro (p.ej. NYSE aún no abrió) mostrar todos con carry-forward
+      if (!d1Dates.length) {
+        const lk2 = {};
+        for (const ts of sortedTs) {
+          for (const [ticker, map] of Object.entries(timeMaps)) {
+            if (map[ts] != null) lk2[ticker] = map[ts];
+          }
+          let total = 0, hasData = false;
+          for (const [ticker, qty] of Object.entries(qtys)) {
+            if (qty < 0.0001) continue;
+            const p = lk2[ticker];
+            if (p != null) { total += qty * p; hasData = true; }
+          }
+          if (hasData && total > 0) { d1Dates.push(new Date(ts)); d1Values.push(total); }
+        }
       }
       return d1Dates.length ? { dates: d1Dates, values: d1Values } : null;
     }
