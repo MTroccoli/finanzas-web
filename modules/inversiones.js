@@ -2,7 +2,6 @@ window.Mods = window.Mods || {};
 window.Mods.inversiones = {
 
   async render(sub = 'portafolio') {
-    clearTimeout(this._refreshTimer);
     switch (sub) {
       case 'portafolio':   return this.renderPortafolio();
       case 'operaciones':  return this.renderOperaciones();
@@ -948,10 +947,6 @@ window.Mods.inversiones = {
       });
 
       await this._loadPortfolioChart(allOps, '6mo');
-
-      this._refreshTimer = setTimeout(() => {
-        if (window.location.hash === '#inversiones/portafolio') this.renderPortafolio();
-      }, 60000);
 
     } catch(e) {
       c.innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-text">Error: ${e.message}</div></div>`;
