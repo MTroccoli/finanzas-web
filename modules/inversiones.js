@@ -628,13 +628,14 @@ window.Mods.inversiones = {
       const totalTC = computedPositions.reduce((s, p) => s + (p.plTC ?? 0), 0)
                     + Object.values(realByTicker).reduce((s, r) => s + r.tc, 0);
 
-      // Market status dot — 3 states only: green=open, red=closed, grey=no live data
+      // Market status dot — green=open, red=closed, grey=no live data
+      // Live tickers with no marketState (e.g. ASX stocks) are assumed open
       const mktDot = (pd) => {
         if (!pd?.isLive) return '<span class="mkt-dot mkt-unknown" title="Sin conexión">●</span>';
         const s = (pd.marketState ?? '').toUpperCase();
-        if (s === 'REGULAR') return '<span class="mkt-dot mkt-open"   title="Mercado abierto">●</span>';
-        if (s === '')        return '<span class="mkt-dot mkt-unknown" title="Sin datos de mercado">●</span>';
-        return '<span class="mkt-dot mkt-closed" title="Mercado cerrado">●</span>';
+        if (s === 'CLOSED' || s === 'PRE' || s === 'POST' || s === 'POSTPOST')
+          return '<span class="mkt-dot mkt-closed" title="Mercado cerrado">●</span>';
+        return '<span class="mkt-dot mkt-open" title="Mercado abierto">●</span>';
       };
 
       // Fetch dividends in parallel (best-effort)
@@ -791,10 +792,15 @@ window.Mods.inversiones = {
         </div>
 
         <!-- Posiciones acordeón -->
-        <div style="display:flex;justify-content:space-between;align-items:center;margin:1.5rem 0 .75rem">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin:1.5rem 0 .5rem">
           <span style="font-weight:600;font-size:.9rem">Posiciones · ${accSorted.length} activos</span>
           <a href="#inversiones/operaciones" class="btn btn-ghost"
              style="font-size:.7rem;padding:5px 11px">+ Nueva operación</a>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:.75rem">
+          <button class="sort-btn active" data-sort="peso">Peso</button>
+          <button class="sort-btn" data-sort="pl_total">P&L Total</button>
+          <button class="sort-btn" data-sort="pl_pct">P&L %</button>
         </div>
         <div class="port-accordion">
           ${accSorted.map(p => accItem(p)).join('')}
@@ -853,6 +859,26 @@ window.Mods.inversiones = {
           <div class="empty-text">Sin dividendos registrados · usá "+ Registrar" para agregar</div>
         </div>`}
       `;
+
+      // Sort buttons
+      const sortFns = {
+        peso:     (a, b) => b.peso - a.peso,
+        pl_total: (a, b) => ((b.pl ?? 0) + b.rb.total) - ((a.pl ?? 0) + a.rb.total),
+        pl_pct:   (a, b) => (b.plPct ?? 0) - (a.plPct ?? 0),
+      };
+      document.querySelectorAll('.sort-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.sort-btn').forEach(b => b.classList.toggle('active', b === btn));
+          const container = document.querySelector('.port-accordion');
+          [...container.querySelectorAll('.port-acc-item')]
+            .sort((a, b) => {
+              const pa = computedPositions.find(p => p.ticker === a.dataset.ticker);
+              const pb = computedPositions.find(p => p.ticker === b.dataset.ticker);
+              return sortFns[btn.dataset.sort](pa, pb);
+            })
+            .forEach(item => container.appendChild(item));
+        });
+      });
 
       // Accordion toggle
       document.querySelectorAll('.port-acc-header').forEach(header => {

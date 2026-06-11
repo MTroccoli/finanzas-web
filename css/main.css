@@ -294,6 +294,24 @@ hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
 .mkt-closed  { color: #ef5350; }
 .mkt-unknown { color: #546272; }
 
+/* ── Portfolio sort buttons ──────────────────────────────────── */
+.sort-btn {
+  padding: 5px 13px;
+  border-radius: 16px;
+  font-size: .72rem;
+  cursor: pointer;
+  font-family: 'DM Mono', monospace;
+  border: 1px solid rgba(255,255,255,.18);
+  background: transparent;
+  color: var(--text-sec);
+  transition: all .15s;
+}
+.sort-btn.active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
 /* ── Portfolio accordion ─────────────────────────────────────── */
 .port-accordion { margin-bottom: 1rem; }
 .port-acc-item {
