@@ -294,6 +294,68 @@ hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
 .mkt-closed  { color: #ef5350; }
 .mkt-unknown { color: #546272; }
 
+/* ── Portfolio accordion ─────────────────────────────────────── */
+.port-accordion { margin-bottom: 1rem; }
+.port-acc-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin-bottom: 8px;
+  overflow: hidden;
+  transition: border-color .15s;
+}
+.port-acc-item.is-open { border-color: var(--accent); }
+.port-acc-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 14px;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.port-acc-main {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 70px;
+  font-size: .95rem;
+}
+.port-acc-peso {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+}
+.port-acc-peso span { font-size: .68rem; color: var(--text-sec); min-width: 28px; flex-shrink: 0; }
+.port-acc-vals { text-align: right; flex-shrink: 0; }
+.port-acc-chevron {
+  font-size: 1rem;
+  color: var(--text-sec);
+  transition: transform .2s;
+  flex-shrink: 0;
+}
+.port-acc-item.is-open .port-acc-chevron { transform: rotate(90deg); }
+.port-acc-body {
+  display: none;
+  padding: 0 14px 14px;
+  border-top: 1px solid var(--border);
+}
+.port-acc-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  padding: 12px 0 0;
+}
+.port-acc-detail-label {
+  font-size: .65rem;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--text-sec);
+  margin-bottom: 3px;
+}
+
 /* ── P&L cards ───────────────────────────────────────────────── */
 .pl-cards {
   display: grid;

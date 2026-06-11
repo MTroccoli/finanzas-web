@@ -628,94 +628,106 @@ window.Mods.inversiones = {
       const totalTC = computedPositions.reduce((s, p) => s + (p.plTC ?? 0), 0)
                     + Object.values(realByTicker).reduce((s, r) => s + r.tc, 0);
 
-      // Market status dot helper — normalize to uppercase to handle API variants
+      // Market status dot: null/unknown marketState + isLive → green (benefit of the doubt)
       const mktDot = (pd) => {
         if (!pd?.isLive) return '<span class="mkt-dot mkt-unknown" title="Sin datos live">●</span>';
         const s = (pd.marketState ?? '').toUpperCase();
-        if (s === 'REGULAR')                  return '<span class="mkt-dot mkt-open"   title="Mercado abierto">●</span>';
-        if (s === 'PRE')                      return '<span class="mkt-dot mkt-pre"    title="Pre-mercado">●</span>';
-        if (s === 'POST' || s === 'POSTPOST') return '<span class="mkt-dot mkt-post"   title="Post-mercado">●</span>';
-        if (s === 'CLOSED' || s === '')       return '<span class="mkt-dot mkt-closed" title="Mercado cerrado">●</span>';
+        if (s === 'CLOSED')               return '<span class="mkt-dot mkt-closed" title="Mercado cerrado">●</span>';
+        if (s === 'PRE')                  return '<span class="mkt-dot mkt-pre"    title="Pre-mercado">●</span>';
+        if (s === 'POST' || s === 'POSTPOST') return '<span class="mkt-dot mkt-post" title="Post-mercado">●</span>';
         return '<span class="mkt-dot mkt-open" title="Mercado abierto">●</span>';
       };
 
-      // Max |grand total P&L| across positions — used to normalize total bars
-      const maxGrand = Math.max(...computedPositions.map(p => Math.abs((p.pl ?? 0) + p.rb.total)), 0.01);
+      // Fetch dividends in parallel (best-effort)
+      const dividendos = await dbFetch('dividendos', { order: { col: 'fecha', asc: false } }).catch(() => []);
+      const totalDividendos = dividendos.reduce((s, d) => s + parseFloat(d.monto_usd), 0);
 
-      const posCard = (p) => {
-        const qtyStr = Math.abs(p.qty - Math.round(p.qty)) < 0.001 ? fmt(Math.round(p.qty), 0) : fmt(p.qty, 4);
-        const price  = p.hasPx ? this._fmtOrig(p.pd.priceOrig, p.pd.currency) : this._fmtOrig(p.costBasisOrig, p.moneda);
-        return `
-          <div class="pos-card">
-            <div class="pos-card-header">
-              <strong class="port-ticker-link" data-ticker="${p.ticker}"
-                style="cursor:pointer;color:var(--accent)">${p.ticker}</strong>
-              ${mktDot(p.pd)}
-            </div>
-            <div class="pos-card-price">${price}</div>
-            <div class="pos-card-weight">
-              <span>${p.hasPx ? fmt(p.peso, 1) + '%' : ''}</span>
-              <div class="pos-weight-bar-bg">
-                <div class="pos-weight-bar" style="width:${p.hasPx ? p.peso.toFixed(1) : 0}%"></div>
-              </div>
-            </div>
-            <div class="pos-card-footer">
-              <span class="pos-qty">${qtyStr} ud.</span>
-              <strong class="pos-value">${p.hasPx ? fmtUSD(p.value) : '—'}</strong>
-            </div>
-          </div>`;
-      };
-
-      const plCard = (p) => {
-        const grandTotal   = (p.pl ?? 0) + p.rb.total;
-        const totalBarPct  = Math.abs(grandTotal) / maxGrand * 92;
-        const showTC       = p.moneda !== 'USD';
-        const unrealAbs    = Math.abs(p.plPrecio) + Math.abs(p.plTC ?? 0);
-        const realAbs      = Math.abs(p.rb.precio) + Math.abs(p.rb.tc);
-        const precioPct    = unrealAbs > 0 ? Math.abs(p.plPrecio)   / unrealAbs * 100 : 100;
-        const tcPct        = unrealAbs > 0 ? Math.abs(p.plTC ?? 0)  / unrealAbs * 100 : 0;
-        const rPrecioPct   = realAbs   > 0 ? Math.abs(p.rb.precio)  / realAbs   * 100 : 100;
-        const rTcPct       = realAbs   > 0 ? Math.abs(p.rb.tc)      / realAbs   * 100 : 0;
-
-        const compRow = (label, val, barPct) => val !== 0 || !showTC ? `
+      // Shared P&L component row helper
+      const compRow = (label, val, barPct, showTC) =>
+        (val !== 0 || !showTC) ? `
           <div class="pl-component">
             <span class="pl-comp-label">${label}</span>
             <div class="pl-comp-bar"><div class="pl-comp-bar-fill ${plClass(val)}" style="width:${barPct.toFixed(1)}%"></div></div>
             <span class="pl-comp-val ${plClass(val)}">${plSign(val)}${fmtUSD(val)}</span>
           </div>` : '';
 
+      const maxGrand = Math.max(...computedPositions.map(p => Math.abs((p.pl ?? 0) + p.rb.total)), 0.01);
+
+      const accItem = (p) => {
+        const qtyStr      = Math.abs(p.qty - Math.round(p.qty)) < 0.001 ? fmt(Math.round(p.qty), 0) : fmt(p.qty, 4);
+        const grandTotal  = (p.pl ?? 0) + p.rb.total;
+        const totalBarPct = Math.abs(grandTotal) / maxGrand * 92;
+        const showTC      = p.moneda !== 'USD';
+        const unrealAbs   = Math.abs(p.plPrecio) + Math.abs(p.plTC ?? 0);
+        const realAbs     = Math.abs(p.rb.precio) + Math.abs(p.rb.tc);
+        const precioPct   = unrealAbs > 0 ? Math.abs(p.plPrecio)  / unrealAbs * 100 : 100;
+        const tcPct       = unrealAbs > 0 ? Math.abs(p.plTC ?? 0) / unrealAbs * 100 : 0;
+        const rPrecioPct  = realAbs   > 0 ? Math.abs(p.rb.precio) / realAbs   * 100 : 100;
+        const rTcPct      = realAbs   > 0 ? Math.abs(p.rb.tc)     / realAbs   * 100 : 0;
+
         return `
-          <div class="pl-card">
-            <div class="pl-card-header">
-              <strong>${p.ticker}</strong>
-              <span class="${plClass(grandTotal)}">${plSign(grandTotal)}${fmtUSD(grandTotal)}</span>
-            </div>
-            <div class="pl-bar-wrap">
-              <div class="pl-bar-fill ${plClass(grandTotal)}" style="width:${totalBarPct.toFixed(1)}%"></div>
-            </div>
-            <div class="pl-sections">
-              <div class="pl-section">
-                <div class="pl-section-title">No realizado</div>
-                <div class="pl-section-total ${p.hasPx ? plClass(p.pl) : 'neu'}">
-                  ${p.hasPx ? plSign(p.pl) + fmtUSD(p.pl) : '—'}
-                </div>
-                ${p.hasPx ? compRow('Valuación', p.plPrecio, precioPct) : ''}
-                ${p.hasPx && showTC ? compRow('T. cambio', p.plTC ?? 0, tcPct) : ''}
+          <div class="port-acc-item" data-ticker="${p.ticker}">
+            <div class="port-acc-header">
+              <div class="port-acc-main">
+                <strong class="port-ticker-link" data-ticker="${p.ticker}"
+                  style="color:var(--accent)">${p.ticker}</strong>
+                ${mktDot(p.pd)}
               </div>
-              <div class="pl-section pl-section-right">
-                <div class="pl-section-title">Realizado</div>
-                <div class="pl-section-total ${plClass(p.rb.total)}">
-                  ${p.rb.total !== 0 ? plSign(p.rb.total) + fmtUSD(p.rb.total) : '<span class="neu">—</span>'}
+              <div class="port-acc-peso">
+                <span>${p.hasPx ? fmt(p.peso, 1) + '%' : ''}</span>
+                <div class="pos-weight-bar-bg">
+                  <div class="pos-weight-bar" style="width:${p.hasPx ? p.peso.toFixed(1) : 0}%"></div>
                 </div>
-                ${p.rb.total !== 0 ? compRow('Valuación', p.rb.precio, rPrecioPct) : ''}
-                ${p.rb.total !== 0 && showTC ? compRow('T. cambio', p.rb.tc, rTcPct) : ''}
+              </div>
+              <div class="port-acc-vals">
+                <div style="font-weight:600;font-size:.9rem">${p.hasPx ? fmtUSD(p.value) : '—'}</div>
+                <div class="${p.hasPx ? plClass(p.pl) : 'neu'}" style="font-size:.75rem">
+                  ${p.hasPx ? plSign(p.pl) + fmtUSD(p.pl) + ' (' + plSign(p.plPct) + fmt(p.plPct, 1) + '%)' : ''}
+                </div>
+              </div>
+              <span class="port-acc-chevron">›</span>
+            </div>
+            <div class="port-acc-body">
+              <div class="port-acc-detail-grid">
+                <div>
+                  <div class="port-acc-detail-label">Precio actual</div>
+                  <div style="font-size:.85rem">${p.hasPx ? this._fmtOrig(p.pd.priceOrig, p.pd.currency) : '—'}</div>
+                </div>
+                <div>
+                  <div class="port-acc-detail-label">Precio prom.</div>
+                  <div style="font-size:.85rem">${this._fmtOrig(p.costBasisOrig, p.moneda)}</div>
+                </div>
+                <div>
+                  <div class="port-acc-detail-label">Cantidad</div>
+                  <div style="font-size:.85rem">${qtyStr} ud.</div>
+                </div>
+              </div>
+              <div class="pl-bar-wrap" style="margin:12px 0 10px">
+                <div class="pl-bar-fill ${plClass(grandTotal)}" style="width:${totalBarPct.toFixed(1)}%"></div>
+              </div>
+              <div class="pl-sections">
+                <div class="pl-section">
+                  <div class="pl-section-title">No realizado</div>
+                  <div class="pl-section-total ${p.hasPx ? plClass(p.pl) : 'neu'}">
+                    ${p.hasPx ? plSign(p.pl) + fmtUSD(p.pl) : '—'}
+                  </div>
+                  ${p.hasPx ? compRow('Valuación', p.plPrecio, precioPct, showTC) : ''}
+                  ${p.hasPx && showTC ? compRow('T. cambio', p.plTC ?? 0, tcPct, showTC) : ''}
+                </div>
+                <div class="pl-section pl-section-right">
+                  <div class="pl-section-title">Realizado</div>
+                  <div class="pl-section-total ${plClass(p.rb.total)}">
+                    ${p.rb.total !== 0 ? plSign(p.rb.total) + fmtUSD(p.rb.total) : '<span class="neu">—</span>'}
+                  </div>
+                  ${p.rb.total !== 0 ? compRow('Valuación', p.rb.precio, rPrecioPct, showTC) : ''}
+                  ${p.rb.total !== 0 && showTC ? compRow('T. cambio', p.rb.tc, rTcPct, showTC) : ''}
+                </div>
               </div>
             </div>
           </div>`;
       };
 
-      const posSorted = [...computedPositions].sort((a, b) => b.peso - a.peso);
-      const plSorted  = [...computedPositions].sort((a, b) => b.plPct - a.plPct);
+      const accSorted = [...computedPositions].sort((a, b) => b.peso - a.peso);
 
       c.innerHTML = `
         <h1>Portafolio</h1>
@@ -772,28 +784,112 @@ window.Mods.inversiones = {
           </div>
         </div>
 
-        <!-- Posiciones -->
+        <!-- Posiciones acordeón -->
         <div style="display:flex;justify-content:space-between;align-items:center;margin:1.5rem 0 .75rem">
-          <span style="font-weight:600;font-size:.9rem">Posiciones</span>
+          <span style="font-weight:600;font-size:.9rem">Posiciones · ${accSorted.length} activos</span>
           <a href="#inversiones/operaciones" class="btn btn-ghost"
              style="font-size:.7rem;padding:5px 11px">+ Nueva operación</a>
         </div>
-        <div class="pos-grid">
-          ${posSorted.map(p => posCard(p)).join('')}
+        <div class="port-accordion">
+          ${accSorted.map(p => accItem(p)).join('')}
         </div>
 
-        <!-- Rentabilidad -->
-        <div style="font-weight:600;font-size:.9rem;margin:.5rem 0 .75rem">Rentabilidad</div>
-        <div class="pl-cards">
-          ${plSorted.map(p => plCard(p)).join('')}
+        <!-- Dividendos -->
+        <div style="display:flex;justify-content:space-between;align-items:center;margin:1.5rem 0 .75rem">
+          <span style="font-weight:600;font-size:.9rem">Dividendos</span>
+          <button class="btn btn-ghost" id="div-add-btn" style="font-size:.7rem;padding:5px 11px">+ Registrar</button>
         </div>
+        <div id="div-form-wrap" style="display:none;margin-bottom:1rem">
+          <div class="form-card" style="margin-bottom:0">
+            <div class="form-grid" style="grid-template-columns:repeat(auto-fill,minmax(130px,1fr))">
+              <div class="form-group">
+                <label>Fecha</label>
+                <input id="div-fecha" type="date" value="${new Date().toISOString().slice(0,10)}">
+              </div>
+              <div class="form-group">
+                <label>Ticker</label>
+                <input id="div-ticker" type="text" placeholder="AAPL" style="text-transform:uppercase">
+              </div>
+              <div class="form-group">
+                <label>Monto (USD)</label>
+                <input id="div-monto" type="number" step="0.01" placeholder="0.00">
+              </div>
+              <div class="form-group">
+                <label>Descripción</label>
+                <input id="div-desc" type="text" placeholder="Dividendo trimestral">
+              </div>
+            </div>
+            <button class="btn btn-primary" id="div-save-btn">Guardar</button>
+          </div>
+        </div>
+        ${dividendos.length ? `
+        <div class="form-card" style="padding:0;overflow:hidden">
+          <div style="padding:10px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">
+            <span style="font-size:.8rem;color:var(--text-sec)">Total recibido</span>
+            <strong class="pos">${fmtUSD(totalDividendos)}</strong>
+          </div>
+          <div style="overflow:auto;max-height:280px">
+            <table>
+              <thead><tr><th>Fecha</th><th>Ticker</th><th>Monto</th><th>Descripción</th><th></th></tr></thead>
+              <tbody id="div-tbody">
+                ${dividendos.map(d => `<tr>
+                  <td>${fmtDate(d.fecha)}</td>
+                  <td><strong>${d.ticker}</strong></td>
+                  <td class="pos">+${fmtUSD(parseFloat(d.monto_usd))}</td>
+                  <td style="color:var(--text-sec);font-size:.8rem">${d.descripcion || '—'}</td>
+                  <td><button class="btn-op-delete div-del-btn" data-id="${d.id}" style="font-size:.75rem">🗑️</button></td>
+                </tr>`).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>` : `<div class="empty" style="padding:2rem 0">
+          <div class="empty-icon">💰</div>
+          <div class="empty-text">Sin dividendos registrados · usá "+ Registrar" para agregar</div>
+        </div>`}
       `;
+
+      // Accordion toggle
+      document.querySelectorAll('.port-acc-header').forEach(header => {
+        header.addEventListener('click', (e) => {
+          if (e.target.closest('.port-ticker-link')) return;
+          const item = header.closest('.port-acc-item');
+          const body = item.querySelector('.port-acc-body');
+          const open = item.classList.toggle('is-open');
+          body.style.display = open ? 'block' : 'none';
+        });
+      });
 
       // Ticker links → abre en Mercado
       document.querySelectorAll('.port-ticker-link').forEach(el => {
         el.addEventListener('click', () => {
           window._mktAutoSearch = el.dataset.ticker;
           window.location.hash = '#inversiones/mercado';
+        });
+      });
+
+      // Dividendos
+      document.getElementById('div-add-btn').addEventListener('click', () => {
+        const wrap = document.getElementById('div-form-wrap');
+        wrap.style.display = wrap.style.display === 'none' ? 'block' : 'none';
+      });
+      document.getElementById('div-save-btn').addEventListener('click', async () => {
+        const fecha  = document.getElementById('div-fecha').value;
+        const ticker = document.getElementById('div-ticker').value.trim().toUpperCase();
+        const monto  = parseFloat(document.getElementById('div-monto').value);
+        const desc   = document.getElementById('div-desc').value.trim();
+        if (!fecha || !ticker || isNaN(monto) || monto <= 0) { toast('Completá todos los campos', 'err'); return; }
+        try {
+          await dbInsert('dividendos', { fecha, ticker, monto_usd: monto, descripcion: desc || null });
+          toast('Dividendo guardado');
+          this.renderPortafolio();
+        } catch(e) { toast('Error: ' + e.message, 'err'); }
+      });
+      document.querySelectorAll('.div-del-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          if (!confirm('¿Eliminar este dividendo?')) return;
+          await dbDelete('dividendos', { id: parseInt(btn.dataset.id) });
+          toast('Eliminado');
+          this.renderPortafolio();
         });
       });
 
@@ -1518,7 +1614,7 @@ window.Mods.inversiones = {
           change:   price - prev,
           pct:      prev ? ((price - prev) / prev) * 100 : 0,
           currency:    meta.currency ?? 'USD',
-          marketState: meta.marketState ?? 'CLOSED',
+          marketState: meta.marketState ?? null,
           volume:   meta.regularMarketVolume  ?? null,
           w52high:  meta.fiftyTwoWeekHigh     ?? null,
           w52low:   meta.fiftyTwoWeekLow      ?? null,
