@@ -628,14 +628,13 @@ window.Mods.inversiones = {
       const totalTC = computedPositions.reduce((s, p) => s + (p.plTC ?? 0), 0)
                     + Object.values(realByTicker).reduce((s, r) => s + r.tc, 0);
 
-      // Market status dot — green=open, red=closed, grey=no live data
-      // Live tickers with no marketState (e.g. ASX stocks) are assumed open
+      // Market status dot — green=REGULAR, red=any closed state, grey=no live data
       const mktDot = (pd) => {
         if (!pd?.isLive) return '<span class="mkt-dot mkt-unknown" title="Sin conexión">●</span>';
         const s = (pd.marketState ?? '').toUpperCase();
-        if (s === 'CLOSED' || s === 'PRE' || s === 'POST' || s === 'POSTPOST')
-          return '<span class="mkt-dot mkt-closed" title="Mercado cerrado">●</span>';
-        return '<span class="mkt-dot mkt-open" title="Mercado abierto">●</span>';
+        if (s === 'REGULAR') return '<span class="mkt-dot mkt-open" title="Mercado abierto">●</span>';
+        if (s === '') return '<span class="mkt-dot mkt-unknown" title="Sin datos de mercado">●</span>';
+        return '<span class="mkt-dot mkt-closed" title="Mercado cerrado">●</span>';
       };
 
       // Fetch dividends in parallel (best-effort)
@@ -669,9 +668,11 @@ window.Mods.inversiones = {
           <div class="port-acc-item" data-ticker="${p.ticker}">
             <div class="port-acc-header">
               <div class="port-acc-main">
-                <strong class="port-ticker-link" data-ticker="${p.ticker}"
-                  style="color:var(--accent)">${p.ticker}</strong>
-                ${mktDot(p.pd)}
+                <div>
+                  ${mktDot(p.pd)}
+                  <strong class="port-ticker-link" data-ticker="${p.ticker}"
+                    style="color:var(--accent)">${p.ticker}</strong>
+                </div>
                 <div class="port-acc-price">
                   ${p.hasPx ? this._fmtOrig(p.pd.priceOrig, p.pd.currency) : this._fmtOrig(p.costBasisOrig, p.moneda)}
                 </div>
@@ -1635,6 +1636,25 @@ window.Mods.inversiones = {
         const meta  = r.meta;
         const price = meta.regularMarketPrice;
         const prev  = meta.previousClose ?? meta.chartPreviousClose ?? price;
+
+        // Use Yahoo's marketState when available; fall back to currentTradingPeriod timestamps
+        let marketState = meta.marketState ?? null;
+        if (!marketState) {
+          const ctp = meta.currentTradingPeriod;
+          if (ctp) {
+            const now = Date.now() / 1000;
+            if (ctp.regular && now >= ctp.regular.start && now <= ctp.regular.end) {
+              marketState = 'REGULAR';
+            } else if (ctp.pre && now >= ctp.pre.start && now <= ctp.pre.end) {
+              marketState = 'PRE';
+            } else if (ctp.post && now >= ctp.post.start && now <= ctp.post.end) {
+              marketState = 'POST';
+            } else {
+              marketState = 'CLOSED';
+            }
+          }
+        }
+
         return {
           ticker:   meta.symbol,
           name:     meta.shortName ?? meta.symbol,
@@ -1646,7 +1666,7 @@ window.Mods.inversiones = {
           change:   price - prev,
           pct:      prev ? ((price - prev) / prev) * 100 : 0,
           currency:    meta.currency ?? 'USD',
-          marketState: meta.marketState ?? null,
+          marketState,
           volume:   meta.regularMarketVolume  ?? null,
           w52high:  meta.fiftyTwoWeekHigh     ?? null,
           w52low:   meta.fiftyTwoWeekLow      ?? null,
