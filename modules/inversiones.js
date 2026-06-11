@@ -1928,7 +1928,6 @@ window.Mods.inversiones = {
         tipo_cambio_usd: newTC,
         precio_unitario: newPriceUSD,
         comision:        newComUSD,
-        monto_total:     newPriceUSD * qty + newComUSD,
       }, { id: op.id });
       updated++;
     }
