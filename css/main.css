@@ -276,6 +276,15 @@ hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
 }
 .pos-qty   { font-size: .7rem;  color: var(--text-sec); }
 .pos-value { font-size: .92rem; }
+.pos-card-weight {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 3px;
+}
+.pos-card-weight span { font-size: .68rem; color: var(--text-sec); min-width: 28px; }
+.pos-weight-bar-bg    { flex: 1; height: 3px; background: rgba(255,255,255,.08); border-radius: 2px; overflow: hidden; }
+.pos-weight-bar       { height: 100%; background: var(--accent); border-radius: 2px; opacity: .55; }
 
 /* Market status dot */
 .mkt-dot     { font-size: .6rem; }

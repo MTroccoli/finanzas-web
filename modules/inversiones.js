@@ -604,9 +604,10 @@ window.Mods.inversiones = {
         statusLabel = `<span style="color:#ef5350">● Sin precios live (Ctrl+Shift+R) · tickers: ${failedTkrs.join(', ')}</span>`;
       }
 
-      const totalCost   = positions.reduce((s, p) => s + p.costBasis * p.qty, 0);
-      const totalMarket = positions.reduce((s, p) => s + (priceData[p.ticker]?.priceUSD ?? p.costBasis) * p.qty, 0);
-      const totalPL     = totalMarket - totalCost;
+      const totalCost      = positions.reduce((s, p) => s + p.costBasis * p.qty, 0);
+      const totalMarket    = positions.reduce((s, p) => s + (priceData[p.ticker]?.priceUSD ?? p.costBasis) * p.qty, 0);
+      const totalPL        = totalMarket - totalCost;
+      const totalRealizado = Object.values(realByTicker).reduce((s, r) => s + r.total, 0);
 
       // Pre-compute per-position data
       const computedPositions = positions.map(p => {
@@ -624,14 +625,18 @@ window.Mods.inversiones = {
         return { ...p, pd, hasPx, priceUSD, value, pl, plPct, plTC, plPrecio, peso, rb };
       });
 
-      // Market status dot helper
+      const totalTC = computedPositions.reduce((s, p) => s + (p.plTC ?? 0), 0)
+                    + Object.values(realByTicker).reduce((s, r) => s + r.tc, 0);
+
+      // Market status dot helper — normalize to uppercase to handle API variants
       const mktDot = (pd) => {
         if (!pd?.isLive) return '<span class="mkt-dot mkt-unknown" title="Sin datos live">●</span>';
-        const s = pd.marketState;
+        const s = (pd.marketState ?? '').toUpperCase();
         if (s === 'REGULAR')                  return '<span class="mkt-dot mkt-open"   title="Mercado abierto">●</span>';
         if (s === 'PRE')                      return '<span class="mkt-dot mkt-pre"    title="Pre-mercado">●</span>';
         if (s === 'POST' || s === 'POSTPOST') return '<span class="mkt-dot mkt-post"   title="Post-mercado">●</span>';
-        return '<span class="mkt-dot mkt-closed" title="Mercado cerrado">●</span>';
+        if (s === 'CLOSED' || s === '')       return '<span class="mkt-dot mkt-closed" title="Mercado cerrado">●</span>';
+        return '<span class="mkt-dot mkt-open" title="Mercado abierto">●</span>';
       };
 
       // Max |grand total P&L| across positions — used to normalize total bars
@@ -648,6 +653,12 @@ window.Mods.inversiones = {
               ${mktDot(p.pd)}
             </div>
             <div class="pos-card-price">${price}</div>
+            <div class="pos-card-weight">
+              <span>${p.hasPx ? fmt(p.peso, 1) + '%' : ''}</span>
+              <div class="pos-weight-bar-bg">
+                <div class="pos-weight-bar" style="width:${p.hasPx ? p.peso.toFixed(1) : 0}%"></div>
+              </div>
+            </div>
             <div class="pos-card-footer">
               <span class="pos-qty">${qtyStr} ud.</span>
               <strong class="pos-value">${p.hasPx ? fmtUSD(p.value) : '—'}</strong>
@@ -703,8 +714,8 @@ window.Mods.inversiones = {
           </div>`;
       };
 
-      const posSorted = [...computedPositions].sort((a, b) => b.value - a.value);
-      const plSorted  = [...computedPositions].sort((a, b) => Math.abs((b.pl ?? 0) + b.rb.total) - Math.abs((a.pl ?? 0) + a.rb.total));
+      const posSorted = [...computedPositions].sort((a, b) => b.peso - a.peso);
+      const plSorted  = [...computedPositions].sort((a, b) => b.plPct - a.plPct);
 
       c.innerHTML = `
         <h1>Portafolio</h1>
@@ -725,12 +736,15 @@ window.Mods.inversiones = {
           <div class="metric-card">
             <div class="metric-label">P&L no realizado</div>
             <div class="metric-value ${plClass(totalPL)}">${plSign(totalPL)}${fmtUSD(totalPL)}</div>
+            <div class="metric-delta ${plClass(totalPL)}">${totalCost ? plSign(totalPL) + fmt((totalPL / totalCost) * 100, 1) + '%' : ''}</div>
           </div>
           <div class="metric-card">
-            <div class="metric-label">P&L %</div>
-            <div class="metric-value ${plClass(totalPL)}" style="font-size:1.5rem">
-              ${totalCost ? `${plSign(totalPL)}${fmt((totalPL / totalCost) * 100)}%` : '—'}
-            </div>
+            <div class="metric-label">P&L Realizado</div>
+            <div class="metric-value ${plClass(totalRealizado)}">${plSign(totalRealizado)}${fmtUSD(totalRealizado)}</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">P&L Tipo de cambio</div>
+            <div class="metric-value ${plClass(totalTC)}">${plSign(totalTC)}${fmtUSD(totalTC)}</div>
           </div>
         </div>
 
