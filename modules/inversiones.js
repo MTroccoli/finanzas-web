@@ -811,6 +811,17 @@ window.Mods.inversiones = {
           <a href="#inversiones/operaciones" class="btn btn-ghost"
              style="font-size:.7rem;padding:5px 11px">+ Nueva operación</a>
         </div>
+        <div style="display:flex;gap:6px;align-items:center;margin-bottom:.6rem">
+          <div style="position:relative;display:inline-flex;align-items:center;flex:1;max-width:220px">
+            <input id="pos-filter" type="text" placeholder="Buscar ticker…"
+              style="width:100%;font-size:.8rem;padding:5px 10px;padding-right:28px;border-radius:6px;
+                border:1px solid var(--border);background:var(--surface);color:var(--text);
+                font-family:'DM Mono',monospace;outline:none">
+            <button id="pos-filter-clear"
+              style="position:absolute;right:6px;background:none;border:none;cursor:pointer;
+                color:var(--text-sec);padding:0;font-size:.9rem;line-height:1;visibility:hidden">✕</button>
+          </div>
+        </div>
         <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:.75rem">
           <button class="sort-btn active" data-sort="peso">Peso</button>
           <button class="sort-btn" data-sort="pl_total">P&L Total</button>
@@ -895,6 +906,20 @@ window.Mods.inversiones = {
             })
             .forEach(item => container.appendChild(item));
         });
+      });
+
+      // Filtro de posiciones
+      document.getElementById('pos-filter').addEventListener('input', e => {
+        const q = e.target.value.trim().toUpperCase();
+        document.getElementById('pos-filter-clear').style.visibility = q ? 'visible' : 'hidden';
+        document.querySelectorAll('.port-acc-item').forEach(el => {
+          el.style.display = (q && !el.dataset.ticker.includes(q)) ? 'none' : '';
+        });
+      });
+      document.getElementById('pos-filter-clear').addEventListener('click', () => {
+        document.getElementById('pos-filter').value = '';
+        document.getElementById('pos-filter-clear').style.visibility = 'hidden';
+        document.querySelectorAll('.port-acc-item').forEach(el => { el.style.display = ''; });
       });
 
       // Accordion toggle
@@ -982,9 +1007,12 @@ window.Mods.inversiones = {
       const isUp   = chgPct >= 0;
       const color  = isUp ? '#26a69a' : '#ef5350';
 
-      const minY   = Math.min(...values);
       const maxY   = Math.max(...values);
-      const padY   = (maxY - minY) * 0.06 || maxY * 0.05;
+      const sortedVals = [...values].sort((a, b) => a - b);
+      const p10idx = Math.max(0, Math.floor(sortedVals.length * 0.10) - 1);
+      const floorY = sortedVals[p10idx];
+      const spanY  = maxY - floorY;
+      const padY   = spanY * 0.06 || maxY * 0.05;
 
       const xTickFmt = period === '1d' ? '%H:%M'
         : ['5d','1mo','3mo'].includes(period) ? '%d %b' : '%b %y';
@@ -992,9 +1020,9 @@ window.Mods.inversiones = {
 
       try { Plotly.purge('port-chart'); } catch(_) {}
       Plotly.newPlot('port-chart', [
-        // Baseline invisible — ancla el fill en el mínimo real (no en cero)
+        // Baseline invisible — ancla el fill en el percentil 10 (no en cero)
         {
-          x: dates, y: new Array(dates.length).fill(minY - padY),
+          x: dates, y: new Array(dates.length).fill(floorY - padY),
           type: 'scatter', mode: 'lines',
           line: { width: 0 }, hoverinfo: 'skip', showlegend: false,
         },
@@ -1034,7 +1062,7 @@ window.Mods.inversiones = {
           nticks: 5,
           showspikes: false, showline: false, zeroline: false,
           fixedrange: true,
-          range: [minY - padY, maxY + padY],
+          range: [floorY - padY, maxY + padY],
           tickprefix: '$', tickformat: ',.0f',
         },
         hovermode: 'x', showlegend: false,
@@ -1189,7 +1217,7 @@ window.Mods.inversiones = {
   // ── Operaciones — flujo 3 pasos ──────────────────────────────────────
   async renderOperaciones() {
     const c   = document.getElementById('content');
-    if (this._opLimit == null) this._opLimit = 50;
+    if (this._opLimit == null) this._opLimit = 25;
     this._opFilter = '';
     const ops = await dbFetch('operaciones', { order: { col: 'fecha', asc: false }, limit: this._opLimit });
     this._lastOps = ops;
@@ -1275,10 +1303,15 @@ window.Mods.inversiones = {
       <div style="display:flex;justify-content:space-between;align-items:center;margin:1.5rem 0 .6rem;flex-wrap:wrap;gap:8px">
         <span style="font-weight:600;font-size:.9rem">Historial</span>
         <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-          <input id="ops-filter" type="text" placeholder="Buscar ticker…"
-            style="width:140px;font-size:.8rem;padding:5px 10px;border-radius:6px;
-              border:1px solid var(--border);background:var(--surface);color:var(--text);
-              font-family:'DM Mono',monospace;outline:none">
+          <div style="position:relative;display:inline-flex;align-items:center">
+            <input id="ops-filter" type="text" placeholder="Buscar ticker…"
+              style="width:140px;font-size:.8rem;padding:5px 28px 5px 10px;border-radius:6px;
+                border:1px solid var(--border);background:var(--surface);color:var(--text);
+                font-family:'DM Mono',monospace;outline:none">
+            <button id="ops-filter-clear"
+              style="position:absolute;right:6px;background:none;border:none;cursor:pointer;
+                color:var(--text-sec);padding:0;font-size:.9rem;line-height:1;visibility:hidden">✕</button>
+          </div>
           <select id="ops-limit"
             style="font-size:.8rem;padding:5px 10px;border-radius:6px;
               border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer">
@@ -1300,6 +1333,14 @@ window.Mods.inversiones = {
     // ── Filtro y límite de historial ─────────────────────────────────
     document.getElementById('ops-filter').addEventListener('input', e => {
       this._opFilter = e.target.value.trim().toUpperCase();
+      document.getElementById('ops-filter-clear').style.visibility = this._opFilter ? 'visible' : 'hidden';
+      const tbody = document.getElementById('ops-tbody');
+      if (tbody) tbody.innerHTML = this._filteredOpRows();
+    });
+    document.getElementById('ops-filter-clear').addEventListener('click', () => {
+      document.getElementById('ops-filter').value = '';
+      this._opFilter = '';
+      document.getElementById('ops-filter-clear').style.visibility = 'hidden';
       const tbody = document.getElementById('ops-tbody');
       if (tbody) tbody.innerHTML = this._filteredOpRows();
     });
