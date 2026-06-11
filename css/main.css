@@ -350,12 +350,20 @@ tbody tr:hover td { background: rgba(46,127,217,.04); }
 }
 
 /* ── Formulario ────────────────────────────────────────────────────────── */
-.form-card {
+.form-card, .card {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 20px 24px;
   margin-bottom: 24px;
+}
+.card-title {
+  font-size: .75rem;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--text-sec);
+  margin-bottom: 10px;
 }
 .form-grid {
   display: grid;

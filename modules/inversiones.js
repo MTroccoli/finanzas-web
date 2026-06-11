@@ -982,6 +982,77 @@ window.Mods.inversiones = {
     return portfolioDates.length ? { dates: portfolioDates, values: portfolioValues } : null;
   },
 
+  // P&L history: value(t) − net_cash_invested(t) using Yahoo historical data
+  async _buildPLHistory(allOps, period = '1y') {
+    const interval = ['2y','5y'].includes(period) ? '1wk' : '1d';
+    const activeTickers = [...new Set(allOps.map(op => op.ticker))];
+
+    const settled = await Promise.allSettled(activeTickers.map(async ticker => {
+      const [chart, priceInfo] = await Promise.all([
+        this.fetchYahooChart(ticker, period, interval),
+        this.fetchYahooPrice(ticker),
+      ]);
+      const { moneda, factor } = this.normalizarMoneda(priceInfo.currency);
+      let tc = 1.0;
+      if (moneda !== 'USD') try { tc = (await this.fetchFXRate(moneda)).tc; } catch(_) {}
+      return { ticker, dates: chart.dates, prices: chart.prices, factor, tc };
+    }));
+
+    const tickerCharts = {};
+    for (const r of settled) {
+      if (r.status === 'fulfilled' && r.value.prices.length) tickerCharts[r.value.ticker] = r.value;
+    }
+    if (!Object.keys(tickerCharts).length) return null;
+
+    const allDateSet = new Set();
+    const rawMaps = {};
+    for (const [ticker, data] of Object.entries(tickerCharts)) {
+      rawMaps[ticker] = {};
+      for (let i = 0; i < data.dates.length; i++) {
+        const d = data.dates[i].toISOString().slice(0, 10);
+        rawMaps[ticker][d] = data.prices[i] * data.factor * data.tc;
+        allDateSet.add(d);
+      }
+    }
+    const sortedDates = [...allDateSet].sort();
+
+    // Forward-fill weekends / market-closure gaps
+    const filledMaps = {};
+    for (const [ticker, map] of Object.entries(rawMaps)) {
+      let last = null; const filled = {};
+      for (const d of sortedDates) {
+        if (map[d] != null) last = map[d];
+        if (last != null) filled[d] = last;
+      }
+      filledMaps[ticker] = filled;
+    }
+
+    const outDates = [], outPL = [];
+    for (const dateStr of sortedDates) {
+      const opsToDate = allOps.filter(op => op.fecha <= dateStr);
+      const qtys = {};
+      let netInvested = 0;
+      for (const op of opsToDate) {
+        if (!qtys[op.ticker]) qtys[op.ticker] = 0;
+        const q     = parseFloat(op.cantidad);
+        const monto = parseFloat(op.monto_total) || parseFloat(op.precio_unitario) * q;
+        qtys[op.ticker] += op.tipo === 'compra' ? q : -q;
+        netInvested     += op.tipo === 'compra' ? monto : -monto;
+      }
+      let value = 0, hasData = false;
+      for (const [ticker, qty] of Object.entries(qtys)) {
+        if (qty < 0.0001) continue;
+        const p = filledMaps[ticker]?.[dateStr];
+        if (p != null) { value += qty * p; hasData = true; }
+      }
+      if (hasData && value > 0) {
+        outDates.push(new Date(dateStr + 'T12:00:00'));
+        outPL.push(value - netInvested);
+      }
+    }
+    return outDates.length ? { dates: outDates, pl: outPL } : null;
+  },
+
   // ── Operaciones — flujo 3 pasos ──────────────────────────────────────
   async renderOperaciones() {
     const c   = document.getElementById('content');
@@ -1447,13 +1518,273 @@ window.Mods.inversiones = {
 
   // ── Rentabilidad ─────────────────────────────────────────────────────
   async renderRentabilidad() {
-    document.getElementById('content').innerHTML = `
-      <div class="placeholder-mod">
-        <div class="ph-icon">📊</div>
-        <div class="ph-title">Rentabilidad</div>
-        <div class="ph-text">Próximamente · análisis por moneda, benchmark y período</div>
-      </div>
-    `;
+    const c = document.getElementById('content');
+    c.innerHTML = `<h1>Rentabilidad</h1><div class="loading" style="height:120px"><div class="spinner"></div></div>`;
+
+    try {
+      const allOps = await dbFetch('operaciones', { order: { col: 'fecha', asc: true } });
+      if (!allOps.length) {
+        c.innerHTML = `<h1>Rentabilidad</h1>
+          <div class="empty"><div class="empty-icon">📊</div>
+          <div class="empty-text">Sin operaciones registradas</div></div>`;
+        return;
+      }
+
+      // ── 1. Realized P&L + running positions ──────────────────────────
+      const runPos = {};
+      let realTotal = 0, realPrecio = 0, realTC = 0;
+      const realByTicker = {};
+
+      for (const op of allOps) {
+        const qty      = parseFloat(op.cantidad);
+        const priceUSD = parseFloat(op.precio_unitario);
+        const tc       = parseFloat(op.tipo_cambio_usd) || 1.0;
+        const moneda   = op.moneda || 'USD';
+        const { moneda: monedaNorm, factor } = this.normalizarMoneda(moneda);
+        const priceOrig = monedaNorm === 'USD' ? priceUSD : priceUSD / (factor * tc);
+
+        if (!runPos[op.ticker]) runPos[op.ticker] = { qty: 0, costBasis: 0, costBasisOrig: 0, tcAvg: 1, moneda, monedaNorm, factor };
+        if (!realByTicker[op.ticker]) realByTicker[op.ticker] = { total: 0, precio: 0, tc: 0 };
+
+        const p = runPos[op.ticker];
+        if (op.tipo === 'compra') {
+          const nq = p.qty + qty;
+          p.costBasis     = (p.costBasis * p.qty + priceUSD * qty) / nq;
+          p.costBasisOrig = (p.costBasisOrig * p.qty + priceOrig * qty) / nq;
+          p.tcAvg         = (p.tcAvg * p.qty + tc * qty) / nq;
+          p.qty = nq; p.moneda = moneda; p.factor = factor; p.monedaNorm = monedaNorm;
+        } else {
+          const sq = Math.min(qty, p.qty);
+          const rP = sq * factor * (priceOrig - p.costBasisOrig) * tc;
+          const rT = sq * factor * p.costBasisOrig * (tc - p.tcAvg);
+          realByTicker[op.ticker].precio += rP;
+          realByTicker[op.ticker].tc     += rT;
+          realByTicker[op.ticker].total  += rP + rT;
+          realPrecio += rP; realTC += rT; realTotal += rP + rT;
+          p.qty -= sq;
+        }
+      }
+
+      const positions = Object.entries(runPos)
+        .filter(([_, p]) => p.qty > 0.0001)
+        .map(([ticker, p]) => ({ ticker, ...p }));
+      const tickers = positions.map(p => p.ticker);
+
+      // ── 2. Live prices + saved fallback ──────────────────────────────
+      const [liveData, savedRows] = await Promise.all([
+        this.fetchLivePrices(tickers).catch(() => ({})),
+        dbFetch('precios_historicos', { order: { col: 'fecha', asc: false }, limit: 500 }).catch(() => []),
+      ]);
+      const savedPrices = {};
+      for (const r of savedRows) if (!savedPrices[r.ticker]) savedPrices[r.ticker] = parseFloat(r.cierre);
+
+      const priceData = {};
+      for (const ticker of tickers) {
+        if (liveData[ticker]) priceData[ticker] = { ...liveData[ticker], isLive: true };
+        else if (savedPrices[ticker]) priceData[ticker] = { priceUSD: savedPrices[ticker], priceOrig: savedPrices[ticker], currency: 'USD', factor: 1, tc: 1, isLive: false };
+      }
+      // Patch non-USD saved prices with current FX
+      const savedNonUSD = tickers.filter(t => priceData[t] && !priceData[t].isLive && runPos[t]?.moneda && runPos[t].moneda !== 'USD');
+      if (savedNonUSD.length) {
+        const uniqueM = [...new Set(savedNonUSD.map(t => this.normalizarMoneda(runPos[t].moneda).moneda))];
+        const fxNow = {};
+        await Promise.all(uniqueM.map(async m => { try { fxNow[m] = (await this.fetchFXRate(m)).tc; } catch(_) {} }));
+        for (const ticker of savedNonUSD) {
+          const { moneda, factor } = this.normalizarMoneda(runPos[ticker].moneda);
+          const tc = fxNow[moneda] ?? 1.0;
+          priceData[ticker] = { ...priceData[ticker], currency: runPos[ticker].moneda, factor, tc,
+            priceOrig: priceData[ticker].priceUSD / (factor * tc) };
+        }
+      }
+
+      // ── 3. Unrealized P&L decomposition ──────────────────────────────
+      let unrealPrecio = 0, unrealTC = 0, unrealTotal = 0, totalCost = 0, totalValue = 0;
+      const byTicker = {};
+
+      for (const p of positions) {
+        const pd = priceData[p.ticker];
+        const rb = realByTicker[p.ticker] || { total: 0, precio: 0, tc: 0 };
+        totalCost += p.costBasis * p.qty;
+        if (pd) {
+          const curOrig = pd.priceOrig ?? pd.priceUSD;
+          const curTC   = pd.tc ?? 1.0;
+          const uP = p.qty * p.factor * (curOrig - p.costBasisOrig) * curTC;
+          const uT = p.qty * p.factor * p.costBasisOrig * (curTC - p.tcAvg);
+          unrealPrecio += uP; unrealTC += uT; unrealTotal += uP + uT;
+          totalValue   += pd.priceUSD * p.qty;
+          byTicker[p.ticker] = { ticker: p.ticker, uP, uT, rb, totalPL: uP + uT + rb.total };
+        } else {
+          byTicker[p.ticker] = { ticker: p.ticker, uP: 0, uT: 0, rb, totalPL: rb.total };
+        }
+      }
+      for (const [ticker, rb] of Object.entries(realByTicker)) {
+        if (!byTicker[ticker] && rb.total !== 0)
+          byTicker[ticker] = { ticker, uP: 0, uT: 0, rb, totalPL: rb.total };
+      }
+
+      const totalPL     = unrealTotal + realTotal;
+      const totalPLPct  = totalCost > 0 ? (totalPL / totalCost) * 100 : 0;
+      const totalPrecio = unrealPrecio + realPrecio;
+      const totalTC     = unrealTC + realTC;
+      const tickerList  = Object.values(byTicker).sort((a, b) => b.totalPL - a.totalPL);
+
+      // ── 4. Temporal P&L evolution ─────────────────────────────────────
+      let evolDates = [], evolPL = [];
+      try {
+        const hist = await this._buildPLHistory(allOps, '1y');
+        if (hist) { evolDates = hist.dates; evolPL = hist.pl; }
+      } catch(_) {}
+
+      // ── 5. Render HTML ────────────────────────────────────────────────
+      c.innerHTML = `
+        <h1>Rentabilidad</h1>
+
+        <div class="metrics-row" style="margin-bottom:1.5rem">
+          <div class="metric-card">
+            <div class="metric-label">Invertido</div>
+            <div class="metric-value">${fmtUSD(totalCost)}</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Valor actual</div>
+            <div class="metric-value">${fmtUSD(totalValue)}</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">P&L Total</div>
+            <div class="metric-value ${plClass(totalPL)}">${plSign(totalPL)}${fmtUSD(totalPL)}</div>
+            <div class="metric-delta ${plClass(totalPLPct)}">${plSign(totalPLPct)}${fmt(totalPLPct, 1)}%</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">No realizado</div>
+            <div class="metric-value ${plClass(unrealTotal)}">${plSign(unrealTotal)}${fmtUSD(unrealTotal)}</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Realizado</div>
+            <div class="metric-value ${plClass(realTotal)}">${plSign(realTotal)}${fmtUSD(realTotal)}</div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem">
+          <div class="card">
+            <div class="card-title">Descomposición del P&L</div>
+            <div id="rent-waterfall" style="height:260px"></div>
+          </div>
+          <div class="card">
+            <div class="card-title">Contribución por activo</div>
+            <div id="rent-contrib" style="height:260px"></div>
+          </div>
+        </div>
+
+        ${evolDates.length >= 3 ? `
+        <div class="card" style="margin-bottom:1rem">
+          <div class="card-title">Evolución del P&L · últimos 12 meses</div>
+          <div id="rent-evol" style="height:220px"></div>
+        </div>` : ''}
+
+        <div class="card">
+          <div class="card-title">Detalle por activo</div>
+          <div style="overflow:auto">
+            <table>
+              <thead><tr>
+                <th>Ticker</th>
+                <th title="Movimiento del precio en moneda origen × TC actual">P&L Precio</th>
+                <th title="Movimiento del tipo de cambio × inversión original">P&L TC</th>
+                <th title="Ganancia ya materializada en ventas">Realizado</th>
+                <th>P&L Total</th>
+              </tr></thead>
+              <tbody>
+                ${tickerList.map(t => `<tr>
+                  <td><strong>${t.ticker}</strong></td>
+                  <td class="${plClass(t.uP)}">${plSign(t.uP)}${fmtUSD(t.uP)}</td>
+                  <td class="${plClass(t.uT)}">${t.uT !== 0 ? plSign(t.uT) + fmtUSD(t.uT) : '—'}</td>
+                  <td class="${plClass(t.rb.total)}">${t.rb.total !== 0 ? plSign(t.rb.total) + fmtUSD(t.rb.total) : '—'}</td>
+                  <td class="${plClass(t.totalPL)}"><strong>${plSign(t.totalPL)}${fmtUSD(t.totalPL)}</strong></td>
+                </tr>`).join('')}
+                <tr style="border-top:2px solid var(--border);font-weight:700">
+                  <td>Total</td>
+                  <td class="${plClass(totalPrecio)}">${plSign(totalPrecio)}${fmtUSD(totalPrecio)}</td>
+                  <td class="${plClass(totalTC)}">${plSign(totalTC)}${fmtUSD(totalTC)}</td>
+                  <td class="${plClass(realTotal)}">${realTotal !== 0 ? plSign(realTotal) + fmtUSD(realTotal) : '—'}</td>
+                  <td class="${plClass(totalPL)}"><strong>${plSign(totalPL)}${fmtUSD(totalPL)}</strong></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+
+      // ── 6. Plotly charts ──────────────────────────────────────────────
+      const PLOT_BG = '#071E3D', PAPER_BG = 'rgba(0,0,0,0)', GRID = '#0d2848';
+      const baseLayout = {
+        plot_bgcolor: PLOT_BG, paper_bgcolor: PAPER_BG, dragmode: false,
+        font: { color: '#8096b0', size: 11, family: "'DM Mono', monospace" },
+        margin: { l: 60, r: 28, t: 20, b: 36 },
+      };
+      const noBar = { responsive: true, displayModeBar: false };
+
+      // Waterfall: precio + TC + realizado → total
+      Plotly.newPlot('rent-waterfall', [{
+        type: 'waterfall', orientation: 'v',
+        measure: ['relative', 'relative', 'relative', 'total'],
+        x: ['P&L Precio', 'P&L TC', 'Realizado', 'Total'],
+        y: [unrealPrecio, unrealTC, realTotal, totalPL],
+        connector: { line: { color: 'rgba(100,130,160,0.3)', width: 1 } },
+        decreasing: { marker: { color: '#ef5350' } },
+        increasing: { marker: { color: '#26a69a' } },
+        totals:     { marker: { color: totalPL >= 0 ? '#26a69a' : '#ef5350' } },
+        texttemplate: '%{y:+$,.0f}',
+        textfont: { size: 10, color: '#c8d8e8' },
+        textposition: 'outside',
+      }], {
+        ...baseLayout,
+        xaxis: { fixedrange: true, showgrid: false, tickfont: { size: 11 } },
+        yaxis: { fixedrange: true, showgrid: true, gridcolor: GRID, griddash: 'dot',
+          zeroline: true, zerolinecolor: '#1a3a5c', tickformat: '$,.0f' },
+      }, noBar);
+
+      // Horizontal bars — contribution by ticker
+      const ctSorted = [...tickerList].sort((a, b) => b.totalPL - a.totalPL);
+      Plotly.newPlot('rent-contrib', [{
+        type: 'bar', orientation: 'h',
+        x: ctSorted.map(t => t.totalPL),
+        y: ctSorted.map(t => t.ticker),
+        marker: { color: ctSorted.map(t => t.totalPL >= 0 ? '#26a69a' : '#ef5350') },
+        texttemplate: '%{x:+$,.0f}',
+        textfont: { size: 10, color: '#c8d8e8' },
+        textposition: 'outside',
+        cliponaxis: false,
+        hovertemplate: '<b>%{y}</b>: %{x:+$,.0f}<extra></extra>',
+      }], {
+        ...baseLayout,
+        margin: { ...baseLayout.margin, l: 72, r: 72 },
+        xaxis: { fixedrange: true, showgrid: true, gridcolor: GRID, griddash: 'dot',
+          zeroline: true, zerolinecolor: '#1a3a5c', tickformat: '$,.0f' },
+        yaxis: { fixedrange: true, showgrid: false, autorange: 'reversed' },
+      }, noBar);
+
+      // Temporal P&L line
+      if (evolDates.length >= 3) {
+        const lastPL = evolPL[evolPL.length - 1];
+        const color  = lastPL >= 0 ? '#26a69a' : '#ef5350';
+        Plotly.newPlot('rent-evol', [{
+          x: evolDates, y: evolPL,
+          type: 'scatter', mode: 'lines',
+          fill: 'tozeroy',
+          fillcolor: lastPL >= 0 ? 'rgba(38,166,154,0.12)' : 'rgba(239,83,80,0.12)',
+          line: { color, width: 2 },
+          hovertemplate: '%{x|%d %b}: <b>%{y:+$,.0f}</b><extra></extra>',
+        }], {
+          ...baseLayout,
+          xaxis: { fixedrange: true, showgrid: false, tickformat: '%b %y',
+            tickfont: { size: 10 }, color: '#3d5568' },
+          yaxis: { fixedrange: true, showgrid: true, gridcolor: GRID, griddash: 'dot',
+            zeroline: true, zerolinecolor: '#1a3a5c', tickformat: '$,.0f', nticks: 5 },
+        }, noBar);
+      }
+
+    } catch(e) {
+      c.innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-text">${e.message}</div></div>`;
+      console.error(e);
+    }
   },
 
   // ── Helpers de market data ───────────────────────────────────────────
