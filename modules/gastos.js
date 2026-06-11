@@ -3,17 +3,34 @@ window.Mods.gastos = {
   _tab:        'importar',
   _cats:       [],
   _pending:    [],         // transacciones parseadas pendientes de confirmación
+  _learned:    {},         // { merchant_normalizado: categoria_id }
   _histMes:    null,
   _histCat:    '',
   _histMoneda: 'ARS',
 
+  // Normalizar comercio para matching: lowercase, sin tildes, sin códigos de comercio
+  _normMerchant(s) {
+    if (!s) return '';
+    return s.toLowerCase()
+      .normalize('NFD').replace(/[̀-ͯ]/g, '')         // quitar tildes
+      .replace(/\b\d{3,}\b/g, '')                               // quitar números largos (códigos)
+      .replace(/\*+\d+/g, '')                                   // quitar *1234
+      .replace(/[^a-z0-9 ]+/g, ' ')                             // solo alfanumérico
+      .replace(/\b(s a|s r l|sa|srl|sas|sucursal|hiper|express|exp)\b/g, '')
+      .replace(/\s+/g, ' ').trim();
+  },
+
   async render() {
     const c = document.getElementById('content');
     c.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
-    this._cats = await dbFetch('categorias_gastos', {
-      filters: { activo: 1 },
-      order: { col: 'nombre', asc: true },
-    });
+    const [cats, learnedRows] = await Promise.all([
+      dbFetch('categorias_gastos', { filters: { activo: 1 }, order: { col: 'nombre', asc: true } }),
+      dbFetch('merchant_categorias', { order: { col: 'seen_count', asc: false } }).catch(() => []),
+    ]);
+    this._cats = cats;
+    this._learned = {};
+    for (const r of learnedRows) this._learned[r.merchant_normalizado] = r.categoria_id;
+    this._learnedRows = learnedRows;
     this._drawShell();
     this._drawTab();
   },
@@ -99,6 +116,14 @@ window.Mods.gastos = {
       try {
         const fd = new FormData();
         fd.append('file', selFile);
+
+        // Enviar top-50 ejemplos aprendidos como hints few-shot
+        const topLearned = (this._learnedRows || []).slice(0, 50).map(r => ({
+          ejemplo: r.ejemplo_original || r.merchant_normalizado,
+          categoria: this._cats.find(c => c.id === r.categoria_id)?.nombre || 'Otros',
+        }));
+        if (topLearned.length) fd.append('learned', JSON.stringify(topLearned));
+
         const resp = await fetch(`${SUPABASE_URL}/functions/v1/parse-edc`, {
           method: 'POST',
           headers: { 'Authorization': `Bearer ${SUPABASE_KEY}` },
@@ -106,14 +131,25 @@ window.Mods.gastos = {
         });
         const result = await resp.json();
         if (!resp.ok || result.error) throw new Error(result.error || result.detail || 'Error desconocido');
-        log.textContent = `✅ ${result.count} transacciones encontradas. Revisá y confirmá.`;
+
         const restId = this._cats.find(c => c.nombre === 'Restaurantes')?.id ?? null;
-        this._pending = result.transactions.map((t, i) => ({
-          ...t, _id: i, _include: true, _dividido: false,
-          _catId: this._cats.find(c => c.nombre === t.categoria)?.id ?? null,
-          _restId: restId,
-        }));
-        setTimeout(() => this._drawReview(), 700);
+
+        // Aplicar override local con merchant_categorias aprendidos (más confiable que la IA)
+        let overrides = 0;
+        this._pending = result.transactions.map((t, i) => {
+          const norm = this._normMerchant(t.descripcion);
+          const learnedCat = this._learned[norm];
+          const aiCat = this._cats.find(c => c.nombre === t.categoria)?.id ?? null;
+          const finalCat = learnedCat ?? aiCat;
+          if (learnedCat && learnedCat !== aiCat) overrides++;
+          return {
+            ...t, _id: i, _include: true, _dividirEntre: 1,
+            _catId: finalCat, _restId: restId, _normMerchant: norm,
+            _overridden: learnedCat && learnedCat !== aiCat,
+          };
+        });
+        log.textContent = `✅ ${result.count} transacciones · ${overrides} re-categorizadas con tu historial. Revisá y confirmá.`;
+        setTimeout(() => this._drawReview(), 900);
       } catch(e) {
         log.textContent = `❌ ${e.message}`;
         btnParse.disabled = false;
@@ -145,7 +181,7 @@ window.Mods.gastos = {
               <tr>
                 <th><input type="checkbox" id="g-chk-all" checked></th>
                 <th>Fecha</th><th>Descripción</th><th>Monto</th><th>Mon.</th>
-                <th>Categoría</th><th style="white-space:nowrap">÷2</th>
+                <th>Categoría</th><th style="white-space:nowrap" title="Dividir entre N personas">÷N</th>
               </tr>
             </thead>
             <tbody id="g-review-tbody">
@@ -186,12 +222,10 @@ window.Mods.gastos = {
         t._catId = e.target.value ? +e.target.value : null;
         t.categoria = this._cats.find(c => c.id === t._catId)?.nombre ?? 'Otros';
         const divCell = tbody.querySelector(`.g-div-cell[data-id="${id}"]`);
-        if (divCell) divCell.innerHTML = t._catId === restId
-          ? `<input type="checkbox" class="g-div-chk" data-id="${id}"${t._dividido?' checked':''}>`
-          : '—';
+        if (divCell) divCell.innerHTML = this._divCellHTML(t, restId);
       }
-      if (e.target.classList.contains('g-div-chk')) {
-        t._dividido = e.target.checked;
+      if (e.target.classList.contains('g-div-sel')) {
+        t._dividirEntre = +e.target.value || 1;
       }
     });
 
@@ -208,16 +242,25 @@ window.Mods.gastos = {
     document.getElementById('g-btn-confirm').addEventListener('click', () => this._confirmImport());
   },
 
+  _divCellHTML(t, restId) {
+    if (t._catId !== restId) return '—';
+    const opts = [1, 2, 3, 4, 5, 6, 7, 8].map(n =>
+      `<option value="${n}"${n===(t._dividirEntre||1)?' selected':''}>${n===1?'No':'÷'+n}</option>`).join('');
+    return `<select class="g-div-sel" data-id="${t._id}"
+      style="font-size:.72rem;padding:3px 6px;border-radius:4px;
+        border:1px solid var(--border);background:var(--surface);color:var(--text)">${opts}</select>`;
+  },
+
   _reviewRow(t, catOpts, restId) {
-    const divCell = t._catId === restId
-      ? `<input type="checkbox" class="g-div-chk" data-id="${t._id}"${t._dividido?' checked':''}>`
-      : '—';
     const descEsc = t.descripcion.replace(/"/g, '&quot;');
+    const aiBadge = t._overridden
+      ? ' <span style="font-size:.6rem;color:var(--accent)" title="Re-categorizado según tu historial">✦</span>'
+      : '';
     return `
       <tr style="opacity:${t._include?1:.4}">
         <td><input type="checkbox" class="g-row-chk" data-id="${t._id}" checked></td>
         <td style="white-space:nowrap;font-family:'DM Mono',monospace;font-size:.72rem">${t.fecha}</td>
-        <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${descEsc}">${t.descripcion}</td>
+        <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${descEsc}">${t.descripcion}${aiBadge}</td>
         <td><input type="number" class="g-monto-inp" data-id="${t._id}" value="${t.monto}"
           style="width:88px;font-size:.75rem;padding:3px 6px;border-radius:4px;
             border:1px solid var(--border);background:var(--surface);color:var(--text);
@@ -233,7 +276,7 @@ window.Mods.gastos = {
             ).join('')}
           </select>
         </td>
-        <td class="g-div-cell" data-id="${t._id}" style="text-align:center">${divCell}</td>
+        <td class="g-div-cell" data-id="${t._id}" style="text-align:center">${this._divCellHTML(t, restId)}</td>
       </tr>`;
   },
 
@@ -247,27 +290,56 @@ window.Mods.gastos = {
         tipo: 'pdf', nombre_archivo: 'edc_visa', registros_importados: toSave.length,
       });
       for (const t of toSave) {
-        const monto = t._dividido ? t.monto / 2 : t.monto;
+        const N = Math.max(1, t._dividirEntre || 1);
+        const monto = t.monto / N;
         await dbInsert('gastos', {
           fecha: t.fecha, monto, moneda: t.moneda || 'ARS',
           comercio: t.descripcion,
           categoria_id: t._catId || null,
           usuario: 'compartido',
           fuente: 'edc_visa',
-          dividido: t._dividido,
+          dividido_entre: N,
           importacion_id: imp.id,
-          notas: t._dividido ? `Total original: ${t.monto} ${t.moneda}` : null,
+          notas: N > 1 ? `Dividido entre ${N} · total original: ${t.monto} ${t.moneda}` : null,
         });
       }
+
+      // Aprender merchants categorizados
+      await this._learnMerchants(toSave);
+
       toast(`✅ ${toSave.length} gastos importados`);
       this._pending = [];
       this._tab = 'historial';
-      this._drawShell();
-      this._drawTab();
+      await this.render();
     } catch(e) {
       toast('❌ ' + e.message, 'err');
       btn.disabled = false;
       btn.textContent = `✅ Guardar ${toSave.length} gastos`;
+    }
+  },
+
+  // Guardar/actualizar mapeo merchant → categoría para futuras importaciones
+  async _learnMerchants(transactions) {
+    const updates = {};
+    for (const t of transactions) {
+      if (!t._catId) continue;
+      const norm = t._normMerchant || this._normMerchant(t.descripcion);
+      if (!norm || norm.length < 3) continue;
+      // Si hay conflicto entre filas, gana la última (la corrección más reciente)
+      updates[norm] = { ejemplo: t.descripcion, catId: t._catId };
+    }
+    const sb = getDB();
+    for (const [norm, { ejemplo, catId }] of Object.entries(updates)) {
+      const { data: existing } = await sb.from('merchant_categorias')
+        .select('seen_count').eq('merchant_normalizado', norm).maybeSingle();
+      const seen = (existing?.seen_count || 0) + 1;
+      await sb.from('merchant_categorias').upsert({
+        merchant_normalizado: norm,
+        categoria_id: catId,
+        ejemplo_original: ejemplo,
+        seen_count: seen,
+        ultima_vez: new Date().toISOString(),
+      });
     }
   },
 
@@ -318,10 +390,13 @@ window.Mods.gastos = {
             </div>
           </div>
           <div id="g-div-wrap" style="display:none;margin-bottom:14px">
-            <label style="display:flex;align-items:center;gap:8px;font-size:.84rem;cursor:pointer">
-              <input type="checkbox" id="g-dividido">
-              Dividir entre 2 — guardar la mitad del monto
-            </label>
+            <label style="font-size:.84rem;margin-bottom:5px;display:block">Dividir entre N personas</label>
+            <select id="g-dividir-entre" style="font-size:.84rem;padding:5px 10px;border-radius:6px;
+              border:1px solid var(--border);background:var(--surface);color:var(--text)">
+              ${[1,2,3,4,5,6,7,8].map(n =>
+                `<option value="${n}"${n===1?' selected':''}>${n===1?'No dividir':'Dividir entre '+n}</option>`
+              ).join('')}
+            </select>
           </div>
           <div class="form-group" style="margin-bottom:16px">
             <label>Notas (opcional)</label>
@@ -335,25 +410,25 @@ window.Mods.gastos = {
     document.getElementById('g-categoria').addEventListener('change', e => {
       const isRest = e.target.value && +e.target.value === restId;
       document.getElementById('g-div-wrap').style.display = isRest ? 'block' : 'none';
-      if (!isRest) document.getElementById('g-dividido').checked = false;
+      if (!isRest) document.getElementById('g-dividir-entre').value = '1';
     });
 
     document.getElementById('form-gasto').addEventListener('submit', async e => {
       e.preventDefault();
       const rawMonto = parseFloat(document.getElementById('g-monto').value);
-      const dividido = document.getElementById('g-dividido').checked;
-      const monto    = dividido ? rawMonto / 2 : rawMonto;
+      const N        = parseInt(document.getElementById('g-dividir-entre').value) || 1;
+      const monto    = rawMonto / N;
       const catId    = document.getElementById('g-categoria').value;
       const notas    = document.getElementById('g-notas').value.trim();
       try {
         await dbInsert('gastos', {
-          fecha:       document.getElementById('g-fecha').value,
+          fecha:        document.getElementById('g-fecha').value,
           monto, moneda: document.getElementById('g-moneda').value,
-          comercio:    document.getElementById('g-comercio').value.trim() || null,
+          comercio:     document.getElementById('g-comercio').value.trim() || null,
           categoria_id: catId ? +catId : null,
-          usuario:     document.getElementById('g-usuario').value,
-          dividido, fuente: 'manual',
-          notas: dividido ? `Total original: ${rawMonto}` : (notas || null),
+          usuario:      document.getElementById('g-usuario').value,
+          dividido_entre: N, fuente: 'manual',
+          notas: N > 1 ? `Total original: ${rawMonto} · dividido entre ${N}` : (notas || null),
         });
         toast('✅ Gasto registrado');
         e.target.reset();
@@ -478,8 +553,8 @@ window.Mods.gastos = {
               ${gastos.map(g => `
                 <tr>
                   <td style="white-space:nowrap">${fmtDate(g.fecha)}</td>
-                  <td>${g.comercio ?? '—'}${g.dividido
-                    ? ' <span style="font-size:.65rem;color:var(--text-sec)">÷2</span>' : ''}</td>
+                  <td>${g.comercio ?? '—'}${(g.dividido_entre > 1)
+                    ? ` <span style="font-size:.65rem;color:var(--text-sec)">÷${g.dividido_entre}</span>` : ''}</td>
                   <td>${catBadge(g.categoria_id)}</td>
                   <td style="font-family:'DM Mono',monospace;font-weight:600;white-space:nowrap">
                     ${fmtAmt(parseFloat(g.monto), g.moneda)}
