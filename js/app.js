@@ -1,6 +1,6 @@
 const PAGES = {
   dashboard:     (sub) => window.Mods.dashboard.render(),
-  inversiones:   (sub) => window.Mods.inversiones.render(sub || 'mercado'),
+  inversiones:   (sub) => window.Mods.inversiones.render(sub || 'portafolio'),
   gastos:        (sub) => window.Mods.gastos.render(),
   ingresos:      (sub) => window.Mods.ingresos.render(),
   presupuesto:   (sub) => window.Mods.presupuesto.render(),
@@ -26,7 +26,7 @@ async function handleRoute() {
     subnav.classList.remove('hidden');
     content.className = 'with-subnav';
     document.querySelectorAll('.sub-item').forEach(el => {
-      el.classList.toggle('active', el.dataset.sub === (sub || 'mercado'));
+      el.classList.toggle('active', el.dataset.sub === (sub || 'portafolio'));
     });
   } else {
     subnav.classList.add('hidden');

@@ -1,7 +1,7 @@
 window.Mods = window.Mods || {};
 window.Mods.inversiones = {
 
-  async render(sub = 'mercado') {
+  async render(sub = 'portafolio') {
     clearTimeout(this._refreshTimer);
     switch (sub) {
       case 'portafolio':   return this.renderPortafolio();
