@@ -1181,7 +1181,14 @@ window.Mods.inversiones = {
       priceMaps[ticker] = map;
     }
 
-    const sortedDates = [...allDateSet].sort();
+    // Arrancar solo desde la fecha en que TODOS los tickers tienen su primer dato.
+    // Distintos mercados (NYSE vs TSX vs ASX) pueden empezar un día antes/después
+    // en el mismo rango, generando saltos artificiales en el total del portafolio.
+    const latestStart = Object.values(priceMaps).reduce((acc, map) => {
+      const first = Object.keys(map).sort()[0];
+      return (first && first > acc) ? first : acc;
+    }, '');
+    const sortedDates = [...allDateSet].filter(d => !latestStart || d >= latestStart).sort();
 
     // Forward-fill para cubrir fines de semana y feriados por diferencias de mercado
     const filledMaps = {};
