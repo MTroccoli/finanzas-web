@@ -790,7 +790,7 @@ window.Mods.inversiones = {
                 <button class="port-period-btn" data-period="${v}" style="
                   padding:4px 13px;border-radius:6px;font-size:.75rem;cursor:pointer;
                   font-family:'DM Mono',monospace;transition:all .15s;
-                  border:1px solid ${v==='6mo'?'var(--accent)':'rgba(255,255,255,.15)'};
+                  border:1px solid ${v==='1mo'?'var(--accent)':'rgba(255,255,255,.15)'};
                   background:${v==='6mo'?'var(--accent)':'transparent'};
                   color:${v==='6mo'?'#fff':'var(--text-sec)'};
                 ">${l}</button>`).join('')}
@@ -971,7 +971,7 @@ window.Mods.inversiones = {
         btn.addEventListener('click', () => this._loadPortfolioChart(allOps, btn.dataset.period));
       });
 
-      await this._loadPortfolioChart(allOps, '6mo');
+      await this._loadPortfolioChart(allOps, '1mo');
 
     } catch(e) {
       c.innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-text">Error: ${e.message}</div></div>`;
@@ -1007,12 +1007,22 @@ window.Mods.inversiones = {
       const isUp   = chgPct >= 0;
       const color  = isUp ? '#26a69a' : '#ef5350';
 
+      const minY   = Math.min(...values);
       const maxY   = Math.max(...values);
-      const sortedVals = [...values].sort((a, b) => a - b);
-      const p10idx = Math.max(0, Math.floor(sortedVals.length * 0.10) - 1);
-      const floorY = sortedVals[p10idx];
-      const spanY  = maxY - floorY;
-      const padY   = spanY * 0.06 || maxY * 0.05;
+      let floorY, padY;
+      if (['1d', '5d'].includes(period)) {
+        // Intraday / 1-week: zoom tight around actual range
+        floorY = minY;
+        const spread = maxY - minY;
+        padY = spread > 0 ? spread * 0.12 : maxY * 0.002;
+      } else {
+        // Longer periods: clip bottom 10% so portfolio-building-from-zero doesn't crush the scale
+        const sortedVals = [...values].sort((a, b) => a - b);
+        const p10idx = Math.max(0, Math.floor(sortedVals.length * 0.10) - 1);
+        floorY = sortedVals[p10idx];
+        const spanY = maxY - floorY;
+        padY = spanY * 0.06 || maxY * 0.05;
+      }
 
       const xTickFmt = period === '1d' ? '%H:%M'
         : ['5d','1mo','3mo'].includes(period) ? '%d %b' : '%b %y';
