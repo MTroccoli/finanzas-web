@@ -2,6 +2,7 @@ window.Mods = window.Mods || {};
 window.Mods.inversiones = {
 
   async render(sub = 'mercado') {
+    clearTimeout(this._refreshTimer);
     switch (sub) {
       case 'portafolio':   return this.renderPortafolio();
       case 'operaciones':  return this.renderOperaciones();
@@ -668,6 +669,8 @@ window.Mods.inversiones = {
         const rTcPct      = realAbs   > 0 ? Math.abs(p.rb.tc)     / realAbs   * 100 : 0;
         const divAmt      = divByTicker[p.ticker] ?? 0;
         const divPct      = p.costBasis * p.qty > 0 ? (divAmt / (p.costBasis * p.qty)) * 100 : 0;
+        const headerPL    = (p.pl ?? 0) + divAmt;
+        const headerPct   = p.costBasis * p.qty > 0 ? (headerPL / (p.costBasis * p.qty)) * 100 : p.plPct;
 
         return `
           <div class="port-acc-item" data-ticker="${p.ticker}">
@@ -690,8 +693,8 @@ window.Mods.inversiones = {
               </div>
               <div class="port-acc-vals">
                 <div style="font-weight:600;font-size:.9rem">${p.hasPx ? fmtUSD(p.value) : '—'}</div>
-                <div class="${p.hasPx ? plClass(p.pl) : 'neu'}" style="font-size:.75rem">
-                  ${p.hasPx ? plSign(p.pl) + fmtUSD(p.pl) + ' (' + plSign(p.plPct) + fmt(p.plPct, 1) + '%)' : ''}
+                <div class="${p.hasPx ? plClass(headerPL) : 'neu'}" style="font-size:.75rem">
+                  ${p.hasPx ? plSign(headerPL) + fmtUSD(headerPL) + ' (' + plSign(headerPct) + fmt(headerPct, 1) + '%)' : ''}
                 </div>
               </div>
               <span class="port-acc-chevron">›</span>
@@ -945,6 +948,10 @@ window.Mods.inversiones = {
       });
 
       await this._loadPortfolioChart(allOps, '6mo');
+
+      this._refreshTimer = setTimeout(() => {
+        if (window.location.hash === '#inversiones/portafolio') this.renderPortafolio();
+      }, 60000);
 
     } catch(e) {
       c.innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-text">Error: ${e.message}</div></div>`;
