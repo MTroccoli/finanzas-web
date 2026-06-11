@@ -1414,9 +1414,9 @@ window.Mods.inversiones = {
       btn.disabled = true;
 
       try {
-        // Obtener tipo de cambio en la fecha
+        // Obtener tipo de cambio histórico para la fecha de la operación
         if (st.monedaNorm !== 'USD') {
-          const fxInfo = await this.fetchFXRate(st.monedaNorm);
+          const fxInfo = await this.fetchFXRate(st.monedaNorm, fecha);
           st.tc = fxInfo.tc;
         } else {
           st.tc = 1.0;
@@ -1855,9 +1855,15 @@ window.Mods.inversiones = {
     return { moneda: m.toUpperCase() || 'USD', factor: 1.0 };
   },
 
-  // Obtiene tipo de cambio vs USD
-  async fetchFXRate(monedaNorm) {
+  // Obtiene tipo de cambio vs USD — si se pasa fecha y es pasada, usa el TC histórico de ese día
+  async fetchFXRate(monedaNorm, fecha = null) {
     if (!monedaNorm || monedaNorm === 'USD') return { tc: 1.0 };
+    if (fecha && fecha < new Date().toISOString().slice(0, 10)) {
+      try {
+        const tc = await this._fetchHistoricalFXRate(monedaNorm, fecha);
+        if (tc) return { tc };
+      } catch(_) {}
+    }
     try {
       const info = await this.fetchYahooPrice(`${monedaNorm}USD=X`);
       return { tc: info.price };
@@ -1865,5 +1871,67 @@ window.Mods.inversiones = {
       toast('⚠️ No se pudo obtener el tipo de cambio, se usará 1.0', 'warn');
       return { tc: 1.0 };
     }
+  },
+
+  // Busca el TC de cierre de una moneda vs USD para una fecha específica usando Yahoo Finance
+  async _fetchHistoricalFXRate(monedaNorm, fecha) {
+    const target    = new Date(fecha + 'T12:00:00');
+    const daysSince = (Date.now() - target.getTime()) / 86400000;
+    const range     = daysSince > 700 ? '5y' : daysSince > 350 ? '2y' : daysSince > 170 ? '1y' : '6mo';
+    const chart     = await this.fetchYahooChart(`${monedaNorm}USD=X`, range, '1d');
+    const targetStr = target.toDateString();
+    for (let i = 0; i < chart.dates.length; i++) {
+      if (chart.dates[i].toDateString() === targetStr && chart.prices[i]) return chart.prices[i];
+    }
+    // Fallback: día de trading más cercano (fin de semana / feriado)
+    let best = null, bestDiff = Infinity;
+    for (let i = 0; i < chart.dates.length; i++) {
+      if (!chart.prices[i]) continue;
+      const diff = Math.abs(chart.dates[i] - target);
+      if (diff < bestDiff) { bestDiff = diff; best = chart.prices[i]; }
+    }
+    return best;
+  },
+
+  // Corrige tipo_cambio_usd, precio_unitario, comision y monto_total de todas las ops no-USD
+  // usando el TC de cierre histórico de Yahoo Finance para la fecha de cada operación
+  async _migrateHistoricalTCs(onProgress) {
+    const ops = await dbFetch('operaciones', {
+      select: 'id,ticker,fecha,tipo,cantidad,precio_unitario,moneda,tipo_cambio_usd,comision,monto_total',
+    });
+    const nonUSD = ops.filter(op => op.moneda && op.moneda !== 'USD');
+    if (!nonUSD.length) return 0;
+
+    const cache = {};
+    let updated = 0;
+    for (let i = 0; i < nonUSD.length; i++) {
+      const op = nonUSD[i];
+      const { moneda: monedaNorm, factor } = this.normalizarMoneda(op.moneda);
+      const key = `${monedaNorm}_${op.fecha}`;
+      if (!(key in cache)) {
+        cache[key] = null;
+        try { cache[key] = await this._fetchHistoricalFXRate(monedaNorm, op.fecha); } catch(_) {}
+      }
+      const newTC = cache[key];
+      if (onProgress) onProgress(i + 1, nonUSD.length, op.ticker, op.fecha, newTC);
+      if (!newTC) continue;
+      const oldTC = parseFloat(op.tipo_cambio_usd) || 1.0;
+      if (Math.abs(newTC - oldTC) < 0.00005) continue;
+
+      // Preservar precio en moneda origen, recalcular valores USD
+      const priceOrig   = parseFloat(op.precio_unitario) / (factor * oldTC);
+      const comOrig     = parseFloat(op.comision || 0) / (factor * oldTC);
+      const qty         = parseFloat(op.cantidad);
+      const newPriceUSD = priceOrig * factor * newTC;
+      const newComUSD   = comOrig   * factor * newTC;
+      await dbUpdate('operaciones', {
+        tipo_cambio_usd: newTC,
+        precio_unitario: newPriceUSD,
+        comision:        newComUSD,
+        monto_total:     newPriceUSD * qty + newComUSD,
+      }, { id: op.id });
+      updated++;
+    }
+    return updated;
   },
 };
