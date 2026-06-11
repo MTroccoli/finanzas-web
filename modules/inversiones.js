@@ -14,11 +14,6 @@ window.Mods.inversiones = {
   async renderMercado() {
     const c = document.getElementById('content');
 
-    const guardados = await dbFetch('precios_historicos', { order: { col: 'fecha', asc: false }, limit: 200 });
-    const lastByTicker = {};
-    for (const r of guardados) { if (!lastByTicker[r.ticker]) lastByTicker[r.ticker] = r; }
-    const savedRows = Object.values(lastByTicker);
-
     const PERIODS = [
       { label: '1D',  value: '1d',  interval: '5m'  },
       { label: '5D',  value: '5d',  interval: '1h'  },
@@ -87,47 +82,6 @@ window.Mods.inversiones = {
         </div>
       </div>
 
-      <!-- Precios guardados -->
-      <div class="table-wrap">
-        <div class="table-header">
-          <span class="table-title">Historial de precios guardados</span>
-          <span style="font-size:.68rem;color:var(--text-sec);font-family:'DM Mono',monospace">
-            Usado por el Portafolio para P&L
-          </span>
-        </div>
-        ${savedRows.length === 0 ? `
-          <div class="empty">
-            <div class="empty-icon">📡</div>
-            <div class="empty-text">Buscá un ticker, abrí su detalle y usá "Guardar P&L" para registrar el precio</div>
-          </div>
-        ` : `
-          <table>
-            <thead><tr><th>Ticker</th><th>Fecha</th><th>Cierre</th><th>Apertura</th><th>Máx</th><th>Mín</th></tr></thead>
-            <tbody>
-              ${savedRows.map(r => {
-                const mon  = r.moneda || 'USD';
-                const isUSD = mon === 'USD';
-                const fmtP = (orig, usd) => orig != null
-                  ? (isUSD ? fmtUSD(orig) : `${fmt(orig)} <span style="font-size:.65rem;color:var(--text-sec)">${mon}</span>`)
-                  : fmtUSD(usd);
-                return `
-                  <tr>
-                    <td><strong style="cursor:pointer;color:var(--accent)"
-                      onclick="document.getElementById('mkt-q').value='${r.ticker}';
-                               document.getElementById('btn-mkt-search').click()"
-                    >${r.ticker}</strong></td>
-                    <td>${fmtDate(r.fecha)}</td>
-                    <td><strong>${fmtP(r.cierre_orig, r.cierre)}</strong></td>
-                    <td>${fmtP(r.apertura_orig, r.apertura)}</td>
-                    <td>${fmtP(r.maximo_orig, r.maximo)}</td>
-                    <td>${fmtP(r.minimo_orig, r.minimo)}</td>
-                  </tr>
-                `;
-              }).join('')}
-            </tbody>
-          </table>
-        `}
-      </div>
     `;
 
     let _activePeriod = '1mo';
@@ -591,6 +545,22 @@ window.Mods.inversiones = {
           priceData[ticker] = { ...priceData[ticker], currency: pos[ticker].moneda, factor, tc,
             priceOrig: priceUSD / (factor * tc) };
         }
+      }
+
+      // Auto-backup live prices → precios_historicos (fire-and-forget, no bloquea render)
+      {
+        const today = new Date().toISOString().slice(0, 10);
+        Promise.all(
+          tickers.filter(t => priceData[t]?.isLive).map(t => {
+            const pd = priceData[t];
+            return dbUpsert('precios_historicos', {
+              ticker: t, fecha: today,
+              moneda: pd.currency,
+              cierre: pd.priceUSD,
+              cierre_orig: pd.priceOrig,
+            }).catch(() => {});
+          })
+        );
       }
 
       const liveCount  = tickers.filter(t => priceData[t]?.isLive).length;
@@ -1382,14 +1352,14 @@ window.Mods.inversiones = {
       this._opFilter = e.target.value.trim().toUpperCase();
       document.getElementById('ops-filter-clear').style.visibility = this._opFilter ? 'visible' : 'hidden';
       const tbody = document.getElementById('ops-tbody');
-      if (tbody) tbody.innerHTML = this._filteredOpRows();
+      if (tbody) { tbody.innerHTML = this._filteredOpRows(); this._attachDeleteHandlers(); }
     });
     document.getElementById('ops-filter-clear').addEventListener('click', () => {
       document.getElementById('ops-filter').value = '';
       this._opFilter = '';
       document.getElementById('ops-filter-clear').style.visibility = 'hidden';
       const tbody = document.getElementById('ops-tbody');
-      if (tbody) tbody.innerHTML = this._filteredOpRows();
+      if (tbody) { tbody.innerHTML = this._filteredOpRows(); this._attachDeleteHandlers(); }
     });
     document.getElementById('ops-limit').addEventListener('change', e => {
       const val = parseInt(e.target.value);
