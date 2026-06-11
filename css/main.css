@@ -435,6 +435,33 @@ hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
   flex-shrink: 0;
 }
 
+/* Dividends summary row inside accordion */
+.pl-div-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+.pl-div-label {
+  font-size: .65rem;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--text-sec);
+  flex-shrink: 0;
+}
+.pl-div-amount {
+  font-size: .9rem;
+  font-weight: 600;
+  font-family: 'DM Mono', monospace;
+}
+.pl-div-pct {
+  font-size: .72rem;
+  color: #26a69a;
+}
+
 /* ── Metrics row ─────────────────────────────────────────────── */
 .metrics-row {
   display: grid;

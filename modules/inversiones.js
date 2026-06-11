@@ -731,13 +731,13 @@ window.Mods.inversiones = {
                   ${p.rb.total !== 0 ? compRow('Valuación', p.rb.precio, rPrecioPct, showTC) : ''}
                   ${p.rb.total !== 0 && showTC ? compRow('T. cambio', p.rb.tc, rTcPct, showTC) : ''}
                 </div>
-                ${divAmt > 0 ? `
-                <div class="pl-section pl-section-right">
-                  <div class="pl-section-title">Dividendos</div>
-                  <div class="pl-section-total pos">+${fmtUSD(divAmt)}</div>
-                  <div style="font-size:.72rem;color:#26a69a;margin-top:2px">+${fmt(divPct, 1)}% sobre costo</div>
-                </div>` : ''}
               </div>
+              ${divAmt > 0 ? `
+              <div class="pl-div-row">
+                <span class="pl-div-label">Dividendos</span>
+                <span class="pl-div-amount pos">+${fmtUSD(divAmt)}</span>
+                <span class="pl-div-pct">(+${fmt(divPct, 1)}% sobre costo)</span>
+              </div>` : ''}
             </div>
           </div>`;
       };
