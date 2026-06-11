@@ -1181,7 +1181,10 @@ window.Mods.inversiones = {
   // ── Operaciones — flujo 3 pasos ──────────────────────────────────────
   async renderOperaciones() {
     const c   = document.getElementById('content');
-    const ops = await dbFetch('operaciones', { order: { col: 'fecha', asc: false }, limit: 50 });
+    if (this._opLimit == null) this._opLimit = 50;
+    this._opFilter = '';
+    const ops = await dbFetch('operaciones', { order: { col: 'fecha', asc: false }, limit: this._opLimit });
+    this._lastOps = ops;
     const today = new Date().toISOString().slice(0, 10);
 
     // Estado del formulario multi-paso
@@ -1260,31 +1263,43 @@ window.Mods.inversiones = {
         </div>
       </div>
 
-      <!-- Historial -->
+      <!-- Historial controles -->
+      <div style="display:flex;justify-content:space-between;align-items:center;margin:1.5rem 0 .6rem;flex-wrap:wrap;gap:8px">
+        <span style="font-weight:600;font-size:.9rem">Historial</span>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <input id="ops-filter" type="text" placeholder="Buscar ticker…"
+            style="width:140px;font-size:.8rem;padding:5px 10px;border-radius:6px;
+              border:1px solid var(--border);background:var(--surface);color:var(--text);
+              font-family:'DM Mono',monospace;outline:none">
+          <select id="ops-limit"
+            style="font-size:.8rem;padding:5px 10px;border-radius:6px;
+              border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer">
+            <option value="25"  ${this._opLimit===25?'selected':''}>25 ops</option>
+            <option value="50"  ${this._opLimit===50?'selected':''}>50 ops</option>
+            <option value="100" ${this._opLimit===100?'selected':''}>100 ops</option>
+            <option value="200" ${this._opLimit===200?'selected':''}>200 ops</option>
+            <option value="0"   ${this._opLimit===null?'selected':''}>Todas</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Historial tabla -->
       <div class="table-wrap" id="ops-table-wrap">
-        <div class="table-header"><span class="table-title">Últimas 50 operaciones</span></div>
-        ${ops.length === 0 ? `
-          <div class="empty">
-            <div class="empty-icon">🔄</div>
-            <div class="empty-text">Sin operaciones registradas aún</div>
-          </div>
-        ` : `
-          <div style="overflow-x:auto">
-            <table>
-              <thead>
-                <tr>
-                  <th>Fecha</th><th>Ticker</th><th>Tipo</th><th>Cantidad</th>
-                  <th>Precio</th><th>Moneda</th><th>TC</th><th>Monto</th><th>Com.</th><th></th>
-                </tr>
-              </thead>
-              <tbody id="ops-tbody">
-                ${ops.map(op => this._opRow(op)).join('')}
-              </tbody>
-            </table>
-          </div>
-        `}
+        ${this._opsTableHTML(ops)}
       </div>
     `;
+
+    // ── Filtro y límite de historial ─────────────────────────────────
+    document.getElementById('ops-filter').addEventListener('input', e => {
+      this._opFilter = e.target.value.trim().toUpperCase();
+      const tbody = document.getElementById('ops-tbody');
+      if (tbody) tbody.innerHTML = this._filteredOpRows();
+    });
+    document.getElementById('ops-limit').addEventListener('change', e => {
+      const val = parseInt(e.target.value);
+      this._opLimit = val === 0 ? null : val;
+      this._refreshTable();
+    });
 
     // ── Paso 1: Búsqueda ─────────────────────────────────────────────
     const doSearch = async () => {
@@ -1535,12 +1550,24 @@ window.Mods.inversiones = {
   },
 
   async _refreshTable() {
-    const newOps = await dbFetch('operaciones', { order: { col: 'fecha', asc: false }, limit: 50 });
-    const wrap   = document.getElementById('ops-table-wrap');
+    const newOps = await dbFetch('operaciones', { order: { col: 'fecha', asc: false }, limit: this._opLimit });
+    this._lastOps = newOps;
+    const wrap = document.getElementById('ops-table-wrap');
     if (!wrap) return;
-    wrap.innerHTML = `
-      <div class="table-header"><span class="table-title">Últimas 50 operaciones</span></div>
-      ${newOps.length === 0 ? `
+    wrap.innerHTML = this._opsTableHTML(newOps);
+    this._attachDeleteHandlers();
+  },
+
+  _opsTableHTML(ops) {
+    const rows = this._filteredOpRows();
+    const total = ops.length;
+    const shown = (this._opFilter ? ops.filter(op => op.ticker.includes(this._opFilter)).length : total);
+    const label = this._opFilter
+      ? `${shown} de ${total} operaciones · filtro: ${this._opFilter}`
+      : `${total} operacion${total !== 1 ? 'es' : ''}`;
+    return `
+      <div class="table-header"><span class="table-title">${label}</span></div>
+      ${ops.length === 0 ? `
         <div class="empty"><div class="empty-icon">🔄</div><div class="empty-text">Sin operaciones registradas aún</div></div>
       ` : `
         <div style="overflow-x:auto">
@@ -1548,17 +1575,20 @@ window.Mods.inversiones = {
             <thead>
               <tr>
                 <th>Fecha</th><th>Ticker</th><th>Tipo</th><th>Cantidad</th>
-                <th>Precio USD</th><th>Moneda orig.</th><th>TC</th><th>Monto USD</th><th>Com.</th><th></th>
+                <th>Precio</th><th>Moneda</th><th>TC</th><th>Monto</th><th>Com.</th><th></th>
               </tr>
             </thead>
-            <tbody id="ops-tbody">
-              ${newOps.map(op => this._opRow(op)).join('')}
-            </tbody>
+            <tbody id="ops-tbody">${rows}</tbody>
           </table>
         </div>
-      `}
-    `;
-    this._attachDeleteHandlers();
+      `}`;
+  },
+
+  _filteredOpRows() {
+    const ops = this._lastOps ?? [];
+    const q = (this._opFilter ?? '').toUpperCase();
+    const filtered = q ? ops.filter(op => op.ticker.toUpperCase().includes(q)) : ops;
+    return filtered.map(op => this._opRow(op)).join('');
   },
 
   _attachDeleteHandlers() {
