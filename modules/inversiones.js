@@ -505,6 +505,7 @@ window.Mods.inversiones = {
 
     try {
       const allOps = await dbFetch('operaciones', { order: { col: 'fecha', asc: true } });
+      const allUniqueTickers = [...new Set(allOps.map(op => op.ticker))].sort();
 
       const pos = {}, realByTicker = {};
       for (const op of allOps) {
@@ -640,6 +641,8 @@ window.Mods.inversiones = {
       // Fetch dividends in parallel (best-effort)
       const dividendos = await dbFetch('dividendos', { order: { col: 'fecha', asc: false } }).catch(() => []);
       const totalDividendos = dividendos.reduce((s, d) => s + parseFloat(d.monto_usd), 0);
+      const divByTicker = {};
+      for (const d of dividendos) divByTicker[d.ticker] = (divByTicker[d.ticker] ?? 0) + parseFloat(d.monto_usd);
 
       // Shared P&L component row helper
       const compRow = (label, val, barPct, showTC) =>
@@ -663,6 +666,8 @@ window.Mods.inversiones = {
         const tcPct       = unrealAbs > 0 ? Math.abs(p.plTC ?? 0) / unrealAbs * 100 : 0;
         const rPrecioPct  = realAbs   > 0 ? Math.abs(p.rb.precio) / realAbs   * 100 : 100;
         const rTcPct      = realAbs   > 0 ? Math.abs(p.rb.tc)     / realAbs   * 100 : 0;
+        const divAmt      = divByTicker[p.ticker] ?? 0;
+        const divPct      = p.costBasis * p.qty > 0 ? (divAmt / (p.costBasis * p.qty)) * 100 : 0;
 
         return `
           <div class="port-acc-item" data-ticker="${p.ticker}">
@@ -726,6 +731,12 @@ window.Mods.inversiones = {
                   ${p.rb.total !== 0 ? compRow('Valuación', p.rb.precio, rPrecioPct, showTC) : ''}
                   ${p.rb.total !== 0 && showTC ? compRow('T. cambio', p.rb.tc, rTcPct, showTC) : ''}
                 </div>
+                ${divAmt > 0 ? `
+                <div class="pl-section pl-section-right">
+                  <div class="pl-section-title">Dividendos</div>
+                  <div class="pl-section-total pos">+${fmtUSD(divAmt)}</div>
+                  <div style="font-size:.72rem;color:#26a69a;margin-top:2px">+${fmt(divPct, 1)}% sobre costo</div>
+                </div>` : ''}
               </div>
             </div>
           </div>`;
@@ -821,7 +832,10 @@ window.Mods.inversiones = {
               </div>
               <div class="form-group">
                 <label>Ticker</label>
-                <input id="div-ticker" type="text" placeholder="AAPL" style="text-transform:uppercase">
+                <select id="div-ticker">
+                  <option value="">Seleccionar...</option>
+                  ${allUniqueTickers.map(t => `<option value="${t}">${t}</option>`).join('')}
+                </select>
               </div>
               <div class="form-group">
                 <label>Monto (USD)</label>
@@ -907,7 +921,7 @@ window.Mods.inversiones = {
       });
       document.getElementById('div-save-btn').addEventListener('click', async () => {
         const fecha  = document.getElementById('div-fecha').value;
-        const ticker = document.getElementById('div-ticker').value.trim().toUpperCase();
+        const ticker = document.getElementById('div-ticker').value;
         const monto  = parseFloat(document.getElementById('div-monto').value);
         const desc   = document.getElementById('div-desc').value.trim();
         if (!fecha || !ticker || isNaN(monto) || monto <= 0) { toast('Completá todos los campos', 'err'); return; }
