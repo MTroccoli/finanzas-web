@@ -334,7 +334,9 @@ window.Mods.gastos = {
           const finalCat = learnedCat ?? aiCat;
           if (learnedCat && learnedCat !== aiCat) overrides++;
           return {
-            ...t, _id: i, _include: t.tarjeta_adicional !== true, _dividirEntre: 1,
+            ...t, _id: i,
+            _include: t.tarjeta_adicional !== true && t.descuento_de_adicional !== true,
+            _dividirEntre: 1,
             _catId: finalCat,
             _cuotaActual:   t.cuota_actual   ?? null,
             _cuotasTotales: t.cuotas_totales ?? null,
@@ -350,10 +352,12 @@ window.Mods.gastos = {
           if (inp) inp.value = result.fecha_cierre;
         }
         this._pendingFile = selFile;
-        const addCount = this._pending.filter(p => p.tarjeta_adicional).length;
-        const mesInfo = result.fecha_cierre ? ` · EDC: ${result.fecha_cierre}` : '';
-        const addInfo = addCount > 0 ? ` · ${addCount} de tarjeta adicional (sin marcar)` : '';
-        log.textContent = `✅ ${result.count} transacciones${mesInfo}${addInfo} · ${overrides} re-categorizadas. Revisá y confirmá.`;
+        const addCount  = this._pending.filter(p => p.tarjeta_adicional).length;
+        const descCount = this._pending.filter(p => p.descuento_de_adicional).length;
+        const mesInfo  = result.fecha_cierre ? ` · EDC: ${result.fecha_cierre}` : '';
+        const addInfo  = addCount  > 0 ? ` · ${addCount} tarjeta adicional` : '';
+        const descInfo = descCount > 0 ? ` · ${descCount} desc. asociado` : '';
+        log.textContent = `✅ ${result.count} transacciones${mesInfo}${addInfo}${descInfo} (sin marcar) · ${overrides} re-categorizadas. Revisá y confirmá.`;
         setTimeout(() => this._drawReview(), 900);
       } catch(e) {
         log.textContent = `❌ ${e.message}`;
@@ -565,7 +569,9 @@ window.Mods.gastos = {
       : '';
     const adicionalBadge = t.tarjeta_adicional
       ? ' <span style="font-size:.6rem;color:var(--text-sec);background:rgba(255,255,255,.07);padding:1px 5px;border-radius:3px" title="Tarjeta adicional — incluida sin marcar">🔲 Adicional</span>'
-      : '';
+      : t.descuento_de_adicional
+        ? ` <span style="font-size:.6rem;color:#10b981;background:rgba(16,185,129,.1);padding:1px 5px;border-radius:3px" title="Descuento/beneficio de una compra de tarjeta adicional${t.ref_comercio ? ' en ' + t.ref_comercio : ''}">🔗 Desc. adicional</span>`
+        : '';
     const cuotaBadge = (t._cuotaActual && t._cuotasTotales)
       ? ` <span style="font-size:.62rem;color:var(--text-sec);background:rgba(255,255,255,.06);padding:1px 5px;border-radius:3px"
           title="Cuota ${t._cuotaActual} de ${t._cuotasTotales}">📅 ${t._cuotaActual}/${t._cuotasTotales}</span>`
@@ -1083,7 +1089,7 @@ window.Mods.gastos = {
         groups[norm] = {
           norm, example: r.comercio, ids: [],
           gastos: [], hasQuotas: false,
-          count: 0, totals: { UYU: 0, USD: 0 },
+          count: 0, totals: { UYU: 0, USD: 0 }, negs: { UYU: 0, USD: 0 },
           catCounts: {}, tipoCounts: {}, ultima: r.fecha,
         };
       }
@@ -1092,7 +1098,10 @@ window.Mods.gastos = {
       g.gastos.push(r);
       if (r.cuota_actual) g.hasQuotas = true;
       g.count++;
-      g.totals[r.moneda === 'USD' ? 'USD' : 'UYU'] += parseFloat(r.monto);
+      const monto = parseFloat(r.monto);
+      const mon = r.moneda === 'USD' ? 'USD' : 'UYU';
+      if (monto >= 0) g.totals[mon] += monto;
+      else            g.negs[mon]   += monto;
       const cid = r.categoria_id ?? 'sin';
       g.catCounts[cid] = (g.catCounts[cid] || 0) + 1;
       const tid = r.tipo_gasto || 'casual';
@@ -1273,20 +1282,28 @@ window.Mods.gastos = {
     const catOpts = this._cats.map(c =>
       `<option value="${c.id}"${c.id===it.currentCat?' selected':''}>${c.icono} ${c.nombre}</option>`
     ).join('');
-    const ttlUYU = it.totals.UYU > 0 ? this._fmtMon(it.totals.UYU, 'UYU') : '—';
-    const ttlUSD = it.totals.USD > 0 ? this._fmtUSD(it.totals.USD)        : '—';
+    const ttlUYU = it.totals.UYU > 0
+      ? this._fmtMon(it.totals.UYU, 'UYU')
+        + (it.negs.UYU < 0 ? `<span style="color:#10b981;font-size:.7rem;display:block">${this._fmtMon(it.negs.UYU, 'UYU')}</span>` : '')
+      : (it.negs.UYU < 0 ? `<span style="color:#10b981">${this._fmtMon(it.negs.UYU, 'UYU')}</span>` : '—');
+    const ttlUSD = it.totals.USD > 0
+      ? this._fmtUSD(it.totals.USD)
+        + (it.negs.USD < 0 ? `<span style="color:#10b981;font-size:.7rem;display:block">${this._fmtUSD(it.negs.USD)}</span>` : '')
+      : (it.negs.USD < 0 ? `<span style="color:#10b981">${this._fmtUSD(it.negs.USD)}</span>` : '—');
 
     const sortedGastos = [...(it.gastos || [])].sort((a, b) => b.fecha.localeCompare(a.fecha));
     const detailRows = sortedGastos.map(g => {
       const catC = this._cats.find(c => c.id === g.categoria_id);
       const catLabel = catC ? `${catC.icono} ${catC.nombre}` : '—';
-      const montoStr = g.moneda === 'USD'
-        ? this._fmtUSD(parseFloat(g.monto))
-        : this._fmtMon(parseFloat(g.monto), 'UYU');
+      const val = parseFloat(g.monto);
+      const montoStr = g.moneda === 'USD' ? this._fmtUSD(val) : this._fmtMon(val, 'UYU');
+      const montoColored = val < 0
+        ? `<span style="color:#10b981">${montoStr}</span>`
+        : montoStr;
       const tipoIcon = g.tipo_gasto === 'recurrente' ? '🔁' : '💳';
       return `<tr style="border-top:1px solid rgba(255,255,255,.04)">
         <td style="white-space:nowrap;font-size:.72rem;color:var(--text-sec);padding:4px 8px">${fmtDate(g.fecha)}</td>
-        <td style="font-size:.72rem;font-family:'DM Mono',monospace;white-space:nowrap;padding:4px 8px">${montoStr}</td>
+        <td style="font-size:.72rem;font-family:'DM Mono',monospace;white-space:nowrap;padding:4px 8px">${montoColored}</td>
         <td style="font-size:.7rem;color:var(--text-sec);padding:4px 8px">${g.moneda}</td>
         <td style="font-size:.72rem;padding:4px 8px">${catLabel}</td>
         <td style="font-size:.7rem;color:var(--text-sec);padding:4px 8px">${tipoIcon}</td>
