@@ -10,6 +10,8 @@ window.Mods.gastos = {
   _histCat:      '',
   _histMoneda:   'UYU',   // 'UYU' | 'USD' | 'TOTAL_USD'
   _histTipo:     '',
+  _histSearch:   '',
+  _histView:     'gastos',  // 'gastos' | 'comercios'
   _cuotasMoneda: 'UYU',   // 'UYU' | 'USD' | 'TOTAL_USD'
   _resDesde:     null,
   _resHasta:     null,
@@ -236,11 +238,23 @@ window.Mods.gastos = {
         if (!resp.ok || result.error) throw new Error(result.error || result.detail || 'Error desconocido');
 
         // Aplicar override local con merchant_categorias aprendidos (más confiable que la IA)
+        const restId  = this._cats.find(c => c.nombre === 'Restaurantes')?.id ?? null;
+        const otrosId = this._cats.find(c => c.nombre === 'Otros')?.id ?? null;
         let overrides = 0;
         this._pending = result.transactions.map((t, i) => {
           const norm = this._normMerchant(t.descripcion);
           const learnedCat = this._learned[norm];
-          const aiCat = this._cats.find(c => c.nombre === t.categoria)?.id ?? null;
+          let aiCat = this._cats.find(c => c.nombre === t.categoria)?.id ?? null;
+
+          // No sugerir Restaurantes para montos pequeños — bajar a Otros
+          // (los comercios ya aprendidos ganan siempre, no aplica)
+          if (!learnedCat && aiCat === restId && restId !== null) {
+            const monto = parseFloat(t.monto) || 0;
+            const tooSmall = (t.moneda === 'UYU' && monto < 1300)
+                          || (t.moneda === 'USD' && monto < 30);
+            if (tooSmall) aiCat = otrosId;
+          }
+
           const finalCat = learnedCat ?? aiCat;
           if (learnedCat && learnedCat !== aiCat) overrides++;
           return {
@@ -592,7 +606,33 @@ window.Mods.gastos = {
   },
 
   // ── Historial ───────────────────────────────────────────────────────────
-  async _drawHistorial() {
+  _drawHistorial() {
+    if ((this._histView || 'gastos') === 'comercios') return this._drawHistorialComercios();
+    return this._drawHistorialGastos();
+  },
+
+  _histToggleHTML(view) {
+    const btn = (v, lbl) => `<button class="h-view-btn" data-view="${v}"
+      style="font-size:.78rem;padding:6px 14px;border-radius:6px;cursor:pointer;
+        ${v===view
+          ? 'background:var(--accent);border:1px solid var(--accent);color:#fff'
+          : 'background:var(--surface);border:1px solid var(--border);color:var(--text-sec)'}">${lbl}</button>`;
+    return `<div style="display:flex;gap:6px;margin-bottom:.75rem">
+      ${btn('gastos', '📋 Gastos')}
+      ${btn('comercios', '🏷️ Comercios')}
+    </div>`;
+  },
+
+  _attachViewToggle() {
+    document.querySelectorAll('.h-view-btn').forEach(b =>
+      b.addEventListener('click', () => {
+        this._histView = b.dataset.view;
+        this._drawHistorial();
+      })
+    );
+  },
+
+  async _drawHistorialGastos() {
     const gc = document.getElementById('g-content');
     gc.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
 
@@ -647,6 +687,8 @@ window.Mods.gastos = {
     const selSt = `font-size:.82rem;padding:5px 10px;border-radius:6px;border:1px solid var(--border);background:var(--surface);color:var(--text)`;
 
     gc.innerHTML = `
+      ${this._histToggleHTML('gastos')}
+
       <!-- Filtros -->
       <div class="form-card" style="padding:12px 16px;margin-bottom:.75rem">
         <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
@@ -725,8 +767,17 @@ window.Mods.gastos = {
 
       <!-- Tabla -->
       <div class="table-wrap">
-        <div class="table-header">
-          <span class="table-title">${gastos.length} gastos</span>
+        <div class="table-header" style="gap:10px;flex-wrap:wrap">
+          <span class="table-title"><span id="h-count">${gastos.length}</span> gastos</span>
+          <div style="position:relative;display:flex;align-items:center;flex:1;min-width:160px;max-width:280px">
+            <input id="h-search" type="search" placeholder="🔍 Buscar comercio…" value="${this._histSearch}"
+              style="width:100%;font-size:.78rem;padding:6px 28px 6px 10px;border-radius:6px;
+                border:1px solid var(--border);background:var(--surface);color:var(--text)">
+            <button id="h-search-clear" type="button"
+              style="position:absolute;right:6px;background:none;border:none;color:var(--text-sec);
+                cursor:pointer;font-size:.85rem;padding:2px 6px;
+                visibility:${this._histSearch?'visible':'hidden'}">✕</button>
+          </div>
           <span style="font-size:.68rem;color:var(--text-sec);font-family:'DM Mono',monospace">${mesFilter}</span>
         </div>
         ${gastos.length === 0 ? `
@@ -738,13 +789,17 @@ window.Mods.gastos = {
               <th>Fecha</th><th>Comercio</th><th>Categoría</th>
               <th>Mon.</th><th>Monto</th><th></th>
             </tr></thead>
-            <tbody id="g-hist-tbody">
-              ${gastos.map(g => this._histRow(g, catOpts, viewMode, tc)).join('')}
-            </tbody>
+            <tbody id="g-hist-tbody"></tbody>
           </table>
         `}
       </div>
     `;
+
+    // Cache para re-renderizar tbody al filtrar por búsqueda sin volver a la DB
+    this._gastosCache = { gastos, viewMode, tc, catOpts };
+    this._renderGastosTbody();
+
+    this._attachViewToggle();
 
     ['h-mes','h-cat','h-tipo'].forEach(id => {
       document.getElementById(id)?.addEventListener('change', () => {
@@ -763,7 +818,208 @@ window.Mods.gastos = {
       this._drawHistorial();
     });
 
+    // Búsqueda — re-renderiza tbody sin volver a la DB
+    const search = document.getElementById('h-search');
+    const clear  = document.getElementById('h-search-clear');
+    search?.addEventListener('input', e => {
+      this._histSearch = e.target.value;
+      clear.style.visibility = this._histSearch ? 'visible' : 'hidden';
+      this._renderGastosTbody();
+    });
+    clear?.addEventListener('click', () => {
+      this._histSearch = '';
+      search.value = '';
+      clear.style.visibility = 'hidden';
+      this._renderGastosTbody();
+      search.focus();
+    });
+
     this._attachHistHandlers(gastos, catOpts, viewMode, tc);
+  },
+
+  _renderGastosTbody() {
+    const tbody = document.getElementById('g-hist-tbody');
+    if (!tbody || !this._gastosCache) return;
+    const { gastos, viewMode, tc, catOpts } = this._gastosCache;
+    const q = (this._histSearch || '').toLowerCase().trim();
+    const filtered = q
+      ? gastos.filter(g => (g.comercio || '').toLowerCase().includes(q))
+      : gastos;
+    tbody.innerHTML = filtered.length
+      ? filtered.map(g => this._histRow(g, catOpts, viewMode, tc)).join('')
+      : `<tr><td colspan="6" style="text-align:center;color:var(--text-sec);padding:20px">Sin resultados</td></tr>`;
+    const counter = document.getElementById('h-count');
+    if (counter) counter.textContent = filtered.length;
+  },
+
+  // ── Comercios únicos (re-categorizar en bulk) ───────────────────────────
+  async _drawHistorialComercios() {
+    const gc = document.getElementById('g-content');
+    gc.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+
+    const { data: rows, error } = await getDB()
+      .from('gastos').select('id, comercio, moneda, monto, categoria_id, fecha')
+      .not('comercio', 'is', null)
+      .order('fecha', { ascending: false });
+    if (error) throw error;
+
+    // Agrupar por comercio normalizado
+    const groups = {};
+    for (const r of rows) {
+      const norm = this._normMerchant(r.comercio);
+      if (!norm) continue;
+      if (!groups[norm]) {
+        groups[norm] = {
+          norm, example: r.comercio, ids: [],
+          count: 0, totals: { UYU: 0, USD: 0 },
+          catCounts: {}, ultima: r.fecha,
+        };
+      }
+      const g = groups[norm];
+      g.ids.push(r.id);
+      g.count++;
+      g.totals[r.moneda === 'USD' ? 'USD' : 'UYU'] += parseFloat(r.monto);
+      const cid = r.categoria_id ?? 'sin';
+      g.catCounts[cid] = (g.catCounts[cid] || 0) + 1;
+    }
+    const items = Object.values(groups).map(g => {
+      const winner = Object.entries(g.catCounts).sort((a,b) => b[1] - a[1])[0]?.[0];
+      return { ...g, currentCat: winner === 'sin' ? null : +winner };
+    }).sort((a,b) => b.count - a.count);
+
+    this._comerciosCache = items;
+
+    gc.innerHTML = `
+      ${this._histToggleHTML('comercios')}
+
+      <div class="form-card" style="padding:12px 16px;margin-bottom:.75rem">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+          <div>
+            <div style="font-weight:600;font-size:.9rem">${items.length} comercios únicos</div>
+            <div style="font-size:.72rem;color:var(--text-sec);margin-top:2px">
+              Cambiá la categoría y se actualizarán todos los gastos del comercio + el aprendizaje futuro
+            </div>
+          </div>
+          <div style="position:relative;display:flex;align-items:center;min-width:200px;max-width:300px;flex:1">
+            <input id="c-search" type="search" placeholder="🔍 Buscar comercio…" value="${this._histSearch}"
+              style="width:100%;font-size:.78rem;padding:6px 28px 6px 10px;border-radius:6px;
+                border:1px solid var(--border);background:var(--surface);color:var(--text)">
+            <button id="c-search-clear" type="button"
+              style="position:absolute;right:6px;background:none;border:none;color:var(--text-sec);
+                cursor:pointer;font-size:.85rem;padding:2px 6px;
+                visibility:${this._histSearch?'visible':'hidden'}">✕</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        ${items.length === 0 ? `
+          <div class="empty"><div class="empty-icon">🏷️</div>
+          <div class="empty-text">Sin comercios registrados</div></div>
+        ` : `
+          <table>
+            <thead><tr>
+              <th>Comercio</th><th>Gastos</th><th>Última</th>
+              <th>Total UYU</th><th>Total USD</th><th>Categoría</th>
+            </tr></thead>
+            <tbody id="g-com-tbody"></tbody>
+          </table>
+        `}
+      </div>
+    `;
+
+    this._renderComerciosTbody();
+    this._attachViewToggle();
+
+    const search = document.getElementById('c-search');
+    const clear  = document.getElementById('c-search-clear');
+    search?.addEventListener('input', e => {
+      this._histSearch = e.target.value;
+      clear.style.visibility = this._histSearch ? 'visible' : 'hidden';
+      this._renderComerciosTbody();
+    });
+    clear?.addEventListener('click', () => {
+      this._histSearch = '';
+      search.value = '';
+      clear.style.visibility = 'hidden';
+      this._renderComerciosTbody();
+      search.focus();
+    });
+
+    const tbody = document.getElementById('g-com-tbody');
+    tbody?.addEventListener('change', async e => {
+      if (!e.target.classList.contains('c-cat-sel')) return;
+      const norm = e.target.dataset.norm;
+      const item = this._comerciosCache.find(i => i.norm === norm);
+      if (!item) return;
+      const newCatId = e.target.value ? +e.target.value : null;
+      if (newCatId === item.currentCat) return;
+      const catName = newCatId
+        ? this._cats.find(c => c.id === newCatId)?.nombre || ''
+        : 'Sin categoría';
+      if (!confirm(`¿Re-categorizar ${item.count} gasto(s) de "${item.example}" como ${catName}?`)) {
+        e.target.value = item.currentCat ?? '';
+        return;
+      }
+      try {
+        await Promise.all(item.ids.map(id =>
+          dbUpdate('gastos', { categoria_id: newCatId }, { id })
+        ));
+        if (newCatId) {
+          await dbUpsert('merchant_categorias', {
+            merchant_normalizado: norm,
+            categoria_id: newCatId,
+            ejemplo_original: item.example,
+            seen_count: item.count,
+            ultima_vez: new Date().toISOString(),
+          });
+          this._learned[norm] = newCatId;
+        }
+        item.currentCat = newCatId;
+        toast(`✅ ${item.count} gasto(s) actualizado(s)`);
+      } catch(err) {
+        toast('❌ ' + err.message, 'err');
+        e.target.value = item.currentCat ?? '';
+      }
+    });
+  },
+
+  _renderComerciosTbody() {
+    const tbody = document.getElementById('g-com-tbody');
+    if (!tbody || !this._comerciosCache) return;
+    const q = (this._histSearch || '').toLowerCase().trim();
+    const filtered = q
+      ? this._comerciosCache.filter(it =>
+          it.example.toLowerCase().includes(q) || it.norm.includes(q))
+      : this._comerciosCache;
+    tbody.innerHTML = filtered.length
+      ? filtered.map(it => this._comercioRow(it)).join('')
+      : `<tr><td colspan="6" style="text-align:center;color:var(--text-sec);padding:20px">Sin resultados</td></tr>`;
+  },
+
+  _comercioRow(it) {
+    const catOpts = this._cats.map(c =>
+      `<option value="${c.id}"${c.id===it.currentCat?' selected':''}>${c.icono} ${c.nombre}</option>`
+    ).join('');
+    const ttlUYU = it.totals.UYU > 0 ? this._fmtMon(it.totals.UYU, 'UYU') : '—';
+    const ttlUSD = it.totals.USD > 0 ? this._fmtUSD(it.totals.USD)        : '—';
+    return `
+      <tr data-norm="${it.norm}">
+        <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"
+          title="${it.example.replace(/"/g,'&quot;')}">${it.example}</td>
+        <td style="font-family:'DM Mono',monospace">${it.count}</td>
+        <td style="white-space:nowrap;font-size:.74rem;color:var(--text-sec)">${fmtDate(it.ultima)}</td>
+        <td style="font-family:'DM Mono',monospace;white-space:nowrap">${ttlUYU}</td>
+        <td style="font-family:'DM Mono',monospace;white-space:nowrap">${ttlUSD}</td>
+        <td>
+          <select class="c-cat-sel" data-norm="${it.norm}"
+            style="font-size:.74rem;padding:3px 6px;border-radius:4px;
+              border:1px solid var(--border);background:var(--surface);color:var(--text);max-width:160px">
+            <option value=""${it.currentCat==null?' selected':''}>—</option>
+            ${catOpts}
+          </select>
+        </td>
+      </tr>`;
   },
 
   _histRow(g, catOpts, viewMode, tc) {
