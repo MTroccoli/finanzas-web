@@ -1,6 +1,6 @@
 window.Mods = window.Mods || {};
 window.Mods.gastos = {
-  _tab:        'importar',
+  _tab:        'resumen',
   _cats:       [],
   _pending:    [],         // transacciones parseadas pendientes de confirmación
   _learned:    {},         // { merchant_normalizado: categoria_id }
@@ -11,6 +11,8 @@ window.Mods.gastos = {
   _histMoneda:   'UYU',   // 'UYU' | 'USD' | 'TOTAL_USD'
   _histTipo:     '',
   _cuotasMoneda: 'UYU',   // 'UYU' | 'USD' | 'TOTAL_USD'
+  _resDesde:     null,
+  _resHasta:     null,
   _tc:           '',      // TC UYU/USD — persiste en configuracion
 
   // Normalizar comercio para matching: lowercase, sin tildes, sin códigos de comercio
@@ -49,11 +51,20 @@ window.Mods.gastos = {
 
   _isSplitCat(catId) { return this._splitCatIds?.has(catId); },
 
-  // ── Helpers de moneda (usados en Historial y Cuotas) ────────────────────
+  // ── Helpers de moneda (usados en Historial, Cuotas y Resumen) ───────────
+
+  // Formato de USD con prefijo explícito "USD 1,234" para distinguirlo de UYU
+  _fmtUSD(n) {
+    if (n == null) return '—';
+    const dec = Math.abs(n) >= 100 ? 0 : 2;
+    return 'USD ' + new Intl.NumberFormat('en-US', {
+      minimumFractionDigits: dec, maximumFractionDigits: dec,
+    }).format(n);
+  },
 
   // Formatea en la moneda original del gasto
   _fmtMon(n, mon) {
-    if (mon === 'USD') return fmtUSD(n);
+    if (mon === 'USD') return this._fmtUSD(n);
     return new Intl.NumberFormat('es-UY', {
       style: 'currency', currency: mon || 'UYU', maximumFractionDigits: 0,
     }).format(n);
@@ -67,7 +78,7 @@ window.Mods.gastos = {
 
   // Muestra el monto según el modo de vista
   _fmtView(n, mon, viewMode, tc) {
-    if (viewMode === 'TOTAL_USD') return fmtUSD(this._toUSD(n, mon, tc));
+    if (viewMode === 'TOTAL_USD') return this._fmtUSD(this._toUSD(n, mon, tc));
     return this._fmtMon(n, mon);
   },
 
@@ -100,7 +111,13 @@ window.Mods.gastos = {
 
   _drawShell() {
     const c = document.getElementById('content');
-    const tabs = [['importar','📤 Importar EDC'],['manual','✚ Nuevo gasto'],['historial','📋 Historial'],['cuotas','📅 Cuotas']];
+    const tabs = [
+      ['resumen',  '📊 Resumen'],
+      ['historial','📋 Historial'],
+      ['cuotas',   '📅 Cuotas'],
+      ['importar', '📤 Importar EDC'],
+      ['manual',   '✚ Nuevo gasto'],
+    ];
     c.innerHTML = `
       <h1>Gastos</h1>
       <p class="page-subtitle">Control de egresos · importación automática de EDC</p>
@@ -120,10 +137,11 @@ window.Mods.gastos = {
 
   _drawTab() {
     switch (this._tab) {
-      case 'importar':  return this._drawImportar();
-      case 'manual':    return this._drawManual();
+      case 'resumen':   return this._drawResumen();
       case 'historial': return this._drawHistorial();
       case 'cuotas':    return this._drawCuotas();
+      case 'importar':  return this._drawImportar();
+      case 'manual':    return this._drawManual();
     }
   },
 
@@ -611,7 +629,7 @@ window.Mods.gastos = {
       ? this._toUSD(monto, mon, tc)
       : parseFloat(monto);
 
-    const fmtTotal = n => viewMode === 'TOTAL_USD' ? fmtUSD(n) : this._fmtMon(n, viewMode);
+    const fmtTotal = n => viewMode === 'TOTAL_USD' ? this._fmtUSD(n) : this._fmtMon(n, viewMode);
 
     const totalMes = gastos.reduce((s, g) => s + toVal(g.monto, g.moneda), 0);
     const bycat = {};
@@ -951,7 +969,7 @@ window.Mods.gastos = {
         : parseFloat(g.monto);
       return s + m * (g.cuotas_totales - g.cuota_actual);
     }, 0);
-    const fmtTotalPend = viewMode === 'TOTAL_USD' ? fmtUSD(totalPend) : this._fmtMon(totalPend, viewMode);
+    const fmtTotalPend = viewMode === 'TOTAL_USD' ? this._fmtUSD(totalPend) : this._fmtMon(totalPend, viewMode);
 
     const maxProj = Math.max(1, ...proj.map(p => p.total));
     const selSt   = `font-size:.82rem;padding:5px 10px;border-radius:6px;border:1px solid var(--border);background:var(--surface);color:var(--text)`;
@@ -999,7 +1017,7 @@ window.Mods.gastos = {
         <div style="font-weight:600;font-size:.9rem;margin-bottom:12px">Proyección próximos 12 meses</div>
         ${proj.filter(p => p.total > 0).map(p => {
           const pct = Math.max(2, (p.total / maxProj) * 100);
-          const label = viewMode === 'TOTAL_USD' ? fmtUSD(p.total) : this._fmtMon(p.total, viewMode);
+          const label = viewMode === 'TOTAL_USD' ? this._fmtUSD(p.total) : this._fmtMon(p.total, viewMode);
           return `
             <div style="margin-bottom:8px">
               <div style="display:flex;justify-content:space-between;font-size:.76rem;margin-bottom:3px">
@@ -1066,5 +1084,170 @@ window.Mods.gastos = {
         this._drawCuotas();
       })
     );
+  },
+
+  // ── Resumen (gráficos) ──────────────────────────────────────────────────
+  async _drawResumen() {
+    const gc = document.getElementById('g-content');
+    gc.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+
+    const now = new Date();
+    if (!this._resDesde || !this._resHasta) {
+      const [yr, mo] = [now.getFullYear(), now.getMonth() + 1];
+      this._resDesde = `${yr}-${String(mo).padStart(2,'0')}-01`;
+      this._resHasta = `${yr}-${String(mo).padStart(2,'0')}-${new Date(yr, mo, 0).getDate()}`;
+    }
+    const tc = parseFloat(this._tc) || 0;
+
+    // Construir últimos 12 meses
+    const months = [];
+    for (let i = 11; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      months.push({
+        ym:    `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`,
+        label: d.toLocaleDateString('es-UY', { month: 'short', year: '2-digit' }),
+      });
+    }
+    const firstMonthDate = `${months[0].ym}-01`;
+
+    const sb = getDB();
+    const [barRows, pieRows] = await Promise.all([
+      sb.from('gastos').select('fecha, monto, moneda').gte('fecha', firstMonthDate),
+      sb.from('gastos').select('monto, moneda, categoria_id').gte('fecha', this._resDesde).lte('fecha', this._resHasta),
+    ]);
+    const barData = barRows.data || [];
+    const pieData = pieRows.data || [];
+
+    // Buckets por mes (UYU y USD nativos)
+    const byMonth = {};
+    for (const m of months) byMonth[m.ym] = { UYU: 0, USD: 0 };
+    for (const r of barData) {
+      const ym = r.fecha.slice(0, 7);
+      if (byMonth[ym]) byMonth[ym][r.moneda === 'USD' ? 'USD' : 'UYU'] += parseFloat(r.monto);
+    }
+
+    // Buckets por categoría — todo convertido a USD
+    const byCat = {};
+    for (const r of pieData) {
+      const k = r.categoria_id ?? 'sin';
+      const v = r.moneda === 'USD' ? parseFloat(r.monto)
+                                   : (tc ? parseFloat(r.monto) / tc : 0);
+      byCat[k] = (byCat[k] || 0) + v;
+    }
+    const totalPie = Object.values(byCat).reduce((s, v) => s + v, 0);
+
+    gc.innerHTML = `
+      <div class="form-card" style="padding:12px 16px;margin-bottom:.75rem">
+        <div style="display:flex;align-items:center;gap:6px">
+          <label style="font-size:.78rem;color:var(--text-sec)">TC UYU/USD</label>
+          <input id="r-tc" type="number" min="1" step="0.1" placeholder="43.5" value="${this._tc}"
+            style="width:90px;font-size:.78rem;padding:4px 8px;border-radius:6px;
+              border:1px solid var(--border);background:var(--surface);color:var(--text);
+              font-family:'DM Mono',monospace">
+        </div>
+        ${!tc ? '<div style="margin-top:8px;font-size:.75rem;color:var(--red)">⚠ Ingresá el TC UYU/USD para ver los totales convertidos a USD.</div>' : ''}
+      </div>
+
+      <div class="form-card" style="padding:14px 16px;margin-bottom:.75rem">
+        <div style="font-weight:600;font-size:.9rem;margin-bottom:8px">
+          Evolución mensual (últimos 12 meses · en USD)
+        </div>
+        <div id="g-bar-chart" style="height:340px"></div>
+      </div>
+
+      <div class="form-card" style="padding:14px 16px;margin-bottom:.75rem">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:10px">
+          <div style="font-weight:600;font-size:.9rem">Gastos por categoría (en USD)</div>
+          <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+            <label style="font-size:.72rem;color:var(--text-sec)">Desde</label>
+            <input id="r-desde" type="date" value="${this._resDesde}"
+              style="font-size:.78rem;padding:4px 7px;border-radius:5px;
+                border:1px solid var(--border);background:var(--surface);color:var(--text)">
+            <label style="font-size:.72rem;color:var(--text-sec)">Hasta</label>
+            <input id="r-hasta" type="date" value="${this._resHasta}"
+              style="font-size:.78rem;padding:4px 7px;border-radius:5px;
+                border:1px solid var(--border);background:var(--surface);color:var(--text)">
+          </div>
+        </div>
+        <div style="font-size:.78rem;color:var(--text-sec);margin-bottom:8px">
+          Total del período: <span style="color:var(--accent);font-family:'DM Mono',monospace;font-weight:600">${this._fmtUSD(totalPie)}</span>
+        </div>
+        <div id="g-pie-chart" style="height:360px"></div>
+      </div>
+    `;
+
+    // ── Bar chart (apilado por moneda, todo en USD) ─────────────────────
+    const uyuY    = months.map(m => tc ? byMonth[m.ym].UYU / tc : 0);
+    const usdY    = months.map(m => byMonth[m.ym].USD);
+    const xLabels = months.map(m => m.label);
+
+    const layoutBase = {
+      paper_bgcolor: 'rgba(0,0,0,0)',
+      plot_bgcolor:  'rgba(0,0,0,0)',
+      font: { color: '#cfcfcf', family: 'DM Sans, sans-serif', size: 11 },
+    };
+
+    Plotly.newPlot('g-bar-chart', [
+      {
+        x: xLabels, y: uyuY, type: 'bar', name: 'UYU (convertido)',
+        marker: { color: '#3b82f6' },
+        hovertemplate: '<b>%{x}</b><br>UYU → USD %{y:,.0f}<extra></extra>',
+      },
+      {
+        x: xLabels, y: usdY, type: 'bar', name: 'USD',
+        marker: { color: '#10b981' },
+        hovertemplate: '<b>%{x}</b><br>USD %{y:,.0f}<extra></extra>',
+      },
+    ], {
+      ...layoutBase,
+      barmode: 'stack',
+      margin: { t: 10, r: 10, b: 70, l: 70 },
+      xaxis: { tickangle: -30, gridcolor: 'rgba(255,255,255,.05)' },
+      yaxis: { tickprefix: 'USD ', tickformat: ',d', gridcolor: 'rgba(255,255,255,.05)', zerolinecolor: 'rgba(255,255,255,.1)' },
+      legend: { orientation: 'h', y: -0.25, x: 0 },
+    }, { displayModeBar: false, responsive: true });
+
+    // ── Pie chart por categoría ─────────────────────────────────────────
+    const palette = ['#3b82f6','#10b981','#f59e0b','#ef4444','#a855f7','#06b6d4','#ec4899','#84cc16','#f97316','#6366f1','#14b8a6','#eab308'];
+    const entries = Object.entries(byCat).filter(([, v]) => v > 0).sort((a,b) => b[1] - a[1]);
+    if (!entries.length) {
+      document.getElementById('g-pie-chart').innerHTML =
+        '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text-sec);font-size:.85rem">Sin datos en el rango seleccionado</div>';
+    } else {
+      const pieLabels = entries.map(([id]) => {
+        if (id === 'sin') return 'Sin categoría';
+        const c = this._cats.find(c => c.id === +id);
+        return c ? `${c.icono} ${c.nombre}` : 'Otros';
+      });
+      const pieValues = entries.map(([, v]) => v);
+      Plotly.newPlot('g-pie-chart', [{
+        values: pieValues,
+        labels: pieLabels,
+        type: 'pie',
+        hole: 0.45,
+        textinfo: 'label+percent',
+        textposition: 'outside',
+        textfont: { size: 11, color: '#cfcfcf' },
+        marker: { colors: palette.slice(0, pieValues.length), line: { color: 'rgba(0,0,0,.2)', width: 1 } },
+        hovertemplate: '<b>%{label}</b><br>USD %{value:,.0f}<br>%{percent}<extra></extra>',
+      }], {
+        ...layoutBase,
+        showlegend: false,
+        margin: { t: 20, r: 20, b: 20, l: 20 },
+      }, { displayModeBar: false, responsive: true });
+    }
+
+    // Handlers
+    document.getElementById('r-tc')?.addEventListener('change', e => {
+      this._saveTC(e.target.value.trim());
+      this._drawResumen();
+    });
+    ['r-desde','r-hasta'].forEach(id => {
+      document.getElementById(id)?.addEventListener('change', () => {
+        this._resDesde = document.getElementById('r-desde').value;
+        this._resHasta = document.getElementById('r-hasta').value;
+        this._drawResumen();
+      });
+    });
   },
 };
