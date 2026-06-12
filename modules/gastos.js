@@ -16,6 +16,8 @@ window.Mods.gastos = {
   _resDesde:     null,
   _resHasta:     null,
   _tc:           '',      // TC UYU/USD — persiste en configuracion
+  _edcMes:       '',      // Mes del EDC (YYYY-MM) — corrige fechas de cuotas > 1
+  _resCat:       '',      // Filtro de categoría en Resumen
 
   // Normalizar comercio para matching: lowercase, sin tildes, sin códigos de comercio
   _normMerchant(s) {
@@ -169,6 +171,19 @@ window.Mods.gastos = {
             Se excluyen sus compras y los descuentos/beneficios asociados
           </div>
         </div>
+        <div style="margin:0 0 14px">
+          <label style="display:block;font-size:.78rem;color:var(--text-sec);margin-bottom:4px">
+            Mes del estado de cuenta
+          </label>
+          <input id="g-edc-mes" type="month"
+            value="${this._edcMes || (d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`)(new Date())}"
+            style="font-size:.82rem;padding:5px 8px;border-radius:6px;
+              border:1px solid var(--border);background:var(--surface);color:var(--text);
+              font-family:'DM Mono',monospace">
+          <div style="font-size:.7rem;color:var(--text-sec);margin-top:3px">
+            Para corregir la fecha de cuotas que no son la primera (cuota 2/6 → usa el mes del EDC)
+          </div>
+        </div>
         <div class="g-upload-zone" id="g-drop-zone">
           <div style="font-size:2rem;line-height:1;margin-bottom:8px">📄</div>
           <div style="font-size:.88rem;color:var(--text-sec)">Arrastrá el archivo acá<br>o tocá para seleccionar</div>
@@ -217,6 +232,8 @@ window.Mods.gastos = {
           this._excludedCards = excludeVal;
           setConfig('gastos_tarjetas_excluidas', excludeVal).catch(() => {});
         }
+        const edcMesVal = document.getElementById('g-edc-mes').value;
+        if (edcMesVal) this._edcMes = edcMesVal;
 
         const fd = new FormData();
         fd.append('file', selFile);
@@ -426,8 +443,14 @@ window.Mods.gastos = {
       for (const t of toSave) {
         const N = Math.max(1, t._dividirEntre || 1);
         const monto = t.monto / N;
+        let fecha = t.fecha;
+        if ((t._cuotaActual ?? 0) > 1 && this._edcMes) {
+          const dd = String(t.fecha).slice(8, 10);
+          const [yyyy, mm] = this._edcMes.split('-');
+          fecha = `${yyyy}-${mm}-${dd}`;
+        }
         await dbInsert('gastos', {
-          fecha: t.fecha, monto, moneda: t.moneda || 'UYU',
+          fecha, monto, moneda: t.moneda || 'UYU',
           comercio: t.descripcion,
           categoria_id: t._catId || null,
           usuario: 'compartido',
@@ -858,7 +881,7 @@ window.Mods.gastos = {
     gc.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
 
     const { data: rows, error } = await getDB()
-      .from('gastos').select('id, comercio, moneda, monto, categoria_id, fecha')
+      .from('gastos').select('id, comercio, moneda, monto, categoria_id, fecha, tipo_gasto')
       .not('comercio', 'is', null)
       .order('fecha', { ascending: false });
     if (error) throw error;
@@ -872,7 +895,7 @@ window.Mods.gastos = {
         groups[norm] = {
           norm, example: r.comercio, ids: [],
           count: 0, totals: { UYU: 0, USD: 0 },
-          catCounts: {}, ultima: r.fecha,
+          catCounts: {}, tipoCounts: {}, ultima: r.fecha,
         };
       }
       const g = groups[norm];
@@ -881,10 +904,13 @@ window.Mods.gastos = {
       g.totals[r.moneda === 'USD' ? 'USD' : 'UYU'] += parseFloat(r.monto);
       const cid = r.categoria_id ?? 'sin';
       g.catCounts[cid] = (g.catCounts[cid] || 0) + 1;
+      const tid = r.tipo_gasto || 'casual';
+      g.tipoCounts[tid] = (g.tipoCounts[tid] || 0) + 1;
     }
     const items = Object.values(groups).map(g => {
-      const winner = Object.entries(g.catCounts).sort((a,b) => b[1] - a[1])[0]?.[0];
-      return { ...g, currentCat: winner === 'sin' ? null : +winner };
+      const winner     = Object.entries(g.catCounts).sort((a,b) => b[1] - a[1])[0]?.[0];
+      const tipoWinner = Object.entries(g.tipoCounts).sort((a,b) => b[1] - a[1])[0]?.[0] || 'casual';
+      return { ...g, currentCat: winner === 'sin' ? null : +winner, currentTipo: tipoWinner };
     }).sort((a,b) => b.count - a.count);
 
     this._comerciosCache = items;
@@ -920,7 +946,7 @@ window.Mods.gastos = {
           <table>
             <thead><tr>
               <th>Comercio</th><th>Gastos</th><th>Última</th>
-              <th>Total UYU</th><th>Total USD</th><th>Categoría</th>
+              <th>Total UYU</th><th>Total USD</th><th>Categoría</th><th>Tipo</th>
             </tr></thead>
             <tbody id="g-com-tbody"></tbody>
           </table>
@@ -948,6 +974,29 @@ window.Mods.gastos = {
 
     const tbody = document.getElementById('g-com-tbody');
     tbody?.addEventListener('change', async e => {
+      if (e.target.classList.contains('c-tipo-sel')) {
+        const norm = e.target.dataset.norm;
+        const item = this._comerciosCache.find(i => i.norm === norm);
+        if (!item) return;
+        const newTipo = e.target.value;
+        if (newTipo === item.currentTipo) return;
+        const tipoLabel = newTipo === 'recurrente' ? '🔁 Recurrente' : '💳 Casual';
+        if (!confirm(`¿Marcar ${item.count} gasto(s) de "${item.example}" como ${tipoLabel}?`)) {
+          e.target.value = item.currentTipo;
+          return;
+        }
+        try {
+          await Promise.all(item.ids.map(id =>
+            dbUpdate('gastos', { tipo_gasto: newTipo }, { id })
+          ));
+          item.currentTipo = newTipo;
+          toast(`✅ ${item.count} gasto(s) actualizado(s)`);
+        } catch(err) {
+          toast('❌ ' + err.message, 'err');
+          e.target.value = item.currentTipo;
+        }
+        return;
+      }
       if (!e.target.classList.contains('c-cat-sel')) return;
       const norm = e.target.dataset.norm;
       const item = this._comerciosCache.find(i => i.norm === norm);
@@ -994,7 +1043,7 @@ window.Mods.gastos = {
       : this._comerciosCache;
     tbody.innerHTML = filtered.length
       ? filtered.map(it => this._comercioRow(it)).join('')
-      : `<tr><td colspan="6" style="text-align:center;color:var(--text-sec);padding:20px">Sin resultados</td></tr>`;
+      : `<tr><td colspan="7" style="text-align:center;color:var(--text-sec);padding:20px">Sin resultados</td></tr>`;
   },
 
   _comercioRow(it) {
@@ -1017,6 +1066,14 @@ window.Mods.gastos = {
               border:1px solid var(--border);background:var(--surface);color:var(--text);max-width:160px">
             <option value=""${it.currentCat==null?' selected':''}>—</option>
             ${catOpts}
+          </select>
+        </td>
+        <td>
+          <select class="c-tipo-sel" data-norm="${it.norm}"
+            style="font-size:.74rem;padding:3px 6px;border-radius:4px;
+              border:1px solid var(--border);background:var(--surface);color:var(--text)">
+            <option value="casual"${it.currentTipo!=='recurrente'?' selected':''}>💳 Casual</option>
+            <option value="recurrente"${it.currentTipo==='recurrente'?' selected':''}>🔁 Recurrente</option>
           </select>
         </td>
       </tr>`;
@@ -1348,91 +1405,133 @@ window.Mods.gastos = {
     gc.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
 
     const now = new Date();
-    if (!this._resDesde || !this._resHasta) {
-      const [yr, mo] = [now.getFullYear(), now.getMonth() + 1];
-      this._resDesde = `${yr}-${String(mo).padStart(2,'0')}-01`;
-      this._resHasta = `${yr}-${String(mo).padStart(2,'0')}-${new Date(yr, mo, 0).getDate()}`;
+    // Default: año móvil (12 meses hacia atrás hasta hoy)
+    if (!this._resDesde) {
+      const d = new Date(now.getFullYear(), now.getMonth() - 11, 1);
+      this._resDesde = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-01`;
+    }
+    if (!this._resHasta) {
+      this._resHasta = now.toISOString().slice(0, 10);
     }
     const tc = parseFloat(this._tc) || 0;
 
-    // Construir últimos 12 meses
+    // Meses en el rango seleccionado (para el bar chart)
     const months = [];
-    for (let i = 11; i >= 0; i--) {
-      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const startD = new Date(this._resDesde + 'T00:00:00');
+    const endD   = new Date(this._resHasta + 'T00:00:00');
+    let cur = new Date(startD.getFullYear(), startD.getMonth(), 1);
+    while (cur <= endD) {
       months.push({
-        ym:    `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`,
-        label: d.toLocaleDateString('es-UY', { month: 'short', year: '2-digit' }),
+        ym:    `${cur.getFullYear()}-${String(cur.getMonth()+1).padStart(2,'0')}`,
+        label: cur.toLocaleDateString('es-UY', { month: 'short', year: '2-digit' }),
       });
+      cur = new Date(cur.getFullYear(), cur.getMonth() + 1, 1);
     }
-    const firstMonthDate = `${months[0].ym}-01`;
 
-    const sb = getDB();
-    const [barRows, pieRows] = await Promise.all([
-      sb.from('gastos').select('fecha, monto, moneda').gte('fecha', firstMonthDate),
-      sb.from('gastos').select('monto, moneda, categoria_id').gte('fecha', this._resDesde).lte('fecha', this._resHasta),
-    ]);
-    const barData = barRows.data || [];
-    const pieData = pieRows.data || [];
+    // Una sola query con todos los campos necesarios
+    let q = getDB().from('gastos')
+      .select('fecha, monto, moneda, categoria_id')
+      .gte('fecha', this._resDesde)
+      .lte('fecha', this._resHasta);
+    if (this._resCat) q = q.eq('categoria_id', +this._resCat);
+    const { data: allData = [] } = await q;
 
-    // Buckets por mes (UYU y USD nativos)
+    // Buckets por mes
     const byMonth = {};
     for (const m of months) byMonth[m.ym] = { UYU: 0, USD: 0 };
-    for (const r of barData) {
+    for (const r of allData) {
       const ym = r.fecha.slice(0, 7);
       if (byMonth[ym]) byMonth[ym][r.moneda === 'USD' ? 'USD' : 'UYU'] += parseFloat(r.monto);
     }
 
-    // Buckets por categoría — todo convertido a USD
+    // Buckets por categoría en USD
     const byCat = {};
-    for (const r of pieData) {
+    for (const r of allData) {
       const k = r.categoria_id ?? 'sin';
-      const v = r.moneda === 'USD' ? parseFloat(r.monto)
-                                   : (tc ? parseFloat(r.monto) / tc : 0);
+      const v = r.moneda === 'USD' ? parseFloat(r.monto) : (tc ? parseFloat(r.monto) / tc : 0);
       byCat[k] = (byCat[k] || 0) + v;
     }
-    const totalPie = Object.values(byCat).reduce((s, v) => s + v, 0);
+
+    // Tarjetas resumen
+    const totalUSD = Object.values(byCat).reduce((s, v) => s + v, 0);
+
+    const topCatEntry = Object.entries(byCat).filter(([,v]) => v > 0).sort((a,b) => b[1]-a[1])[0];
+    const topCatName = topCatEntry
+      ? (topCatEntry[0] === 'sin' ? 'Sin categoría'
+         : (() => { const c = this._cats.find(c => c.id === +topCatEntry[0]); return c ? `${c.icono} ${c.nombre}` : 'Otros'; })())
+      : '—';
+
+    const topMonthEntry = months
+      .map(m => ({ label: m.label, total: (tc ? byMonth[m.ym].UYU / tc : 0) + byMonth[m.ym].USD }))
+      .filter(m => m.total > 0)
+      .sort((a,b) => b.total - a.total)[0];
+
+    const selSt  = `font-size:.82rem;padding:5px 8px;border-radius:6px;border:1px solid var(--border);background:var(--surface);color:var(--text)`;
+    const catOpts = this._cats.map(c =>
+      `<option value="${c.id}"${String(c.id)===String(this._resCat)?' selected':''}>${c.icono} ${c.nombre}</option>`
+    ).join('');
 
     gc.innerHTML = `
+      <!-- Filtros -->
       <div class="form-card" style="padding:12px 16px;margin-bottom:.75rem">
-        <div style="display:flex;align-items:center;gap:6px">
-          <label style="font-size:.78rem;color:var(--text-sec)">TC UYU/USD</label>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <label style="font-size:.78rem;color:var(--text-sec);white-space:nowrap">TC UYU/USD</label>
           <input id="r-tc" type="number" min="1" step="0.1" placeholder="43.5" value="${this._tc}"
-            style="width:90px;font-size:.78rem;padding:4px 8px;border-radius:6px;
+            style="width:82px;font-size:.78rem;padding:4px 8px;border-radius:6px;
               border:1px solid var(--border);background:var(--surface);color:var(--text);
               font-family:'DM Mono',monospace">
+          <input id="r-desde" type="date" value="${this._resDesde}" style="${selSt}">
+          <span style="font-size:.78rem;color:var(--text-sec)">→</span>
+          <input id="r-hasta" type="date" value="${this._resHasta}" style="${selSt}">
+          <select id="r-cat" style="${selSt}">
+            <option value="">Todos los rubros</option>
+            ${catOpts}
+          </select>
         </div>
         ${!tc ? '<div style="margin-top:8px;font-size:.75rem;color:var(--red)">⚠ Ingresá el TC UYU/USD para ver los totales convertidos a USD.</div>' : ''}
       </div>
 
+      <!-- Tarjetas resumen -->
+      ${totalUSD > 0 ? `
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:.75rem">
+        <div class="form-card" style="padding:14px 16px;text-align:center">
+          <div style="font-size:.65rem;color:var(--text-sec);margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em">Total gastado</div>
+          <div style="font-family:'DM Mono',monospace;font-size:1.1rem;font-weight:700;color:var(--accent)">${this._fmtUSD(totalUSD)}</div>
+          <div style="font-size:.65rem;color:var(--text-sec);margin-top:3px">${this._resDesde.slice(0,7)} → ${this._resHasta.slice(0,7)}</div>
+        </div>
+        <div class="form-card" style="padding:14px 16px;text-align:center">
+          <div style="font-size:.65rem;color:var(--text-sec);margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em">Rubro top</div>
+          <div style="font-size:.9rem;font-weight:600">${topCatName}</div>
+          <div style="font-family:'DM Mono',monospace;font-size:.8rem;color:var(--accent);margin-top:3px">${this._fmtUSD(topCatEntry?.[1] ?? 0)}</div>
+        </div>
+        <div class="form-card" style="padding:14px 16px;text-align:center">
+          <div style="font-size:.65rem;color:var(--text-sec);margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em">Mes top</div>
+          <div style="font-size:.9rem;font-weight:600;text-transform:capitalize">${topMonthEntry?.label ?? '—'}</div>
+          <div style="font-family:'DM Mono',monospace;font-size:.8rem;color:var(--accent);margin-top:3px">${topMonthEntry ? this._fmtUSD(topMonthEntry.total) : '—'}</div>
+        </div>
+      </div>` : ''}
+
+      <!-- Bar chart -->
       <div class="form-card" style="padding:14px 16px;margin-bottom:.75rem">
         <div style="font-weight:600;font-size:.9rem;margin-bottom:8px">
-          Evolución mensual (últimos 12 meses · en USD)
+          Evolución mensual · en USD${this._resCat ? ` · ${this._cats.find(c=>c.id===+this._resCat)?.nombre||''}` : ''}
         </div>
-        <div id="g-bar-chart" style="height:340px"></div>
+        <div id="g-bar-chart" style="height:300px"></div>
       </div>
 
+      <!-- Pie chart -->
       <div class="form-card" style="padding:14px 16px;margin-bottom:.75rem">
-        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:10px">
-          <div style="font-weight:600;font-size:.9rem">Gastos por categoría (en USD)</div>
-          <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
-            <label style="font-size:.72rem;color:var(--text-sec)">Desde</label>
-            <input id="r-desde" type="date" value="${this._resDesde}"
-              style="font-size:.78rem;padding:4px 7px;border-radius:5px;
-                border:1px solid var(--border);background:var(--surface);color:var(--text)">
-            <label style="font-size:.72rem;color:var(--text-sec)">Hasta</label>
-            <input id="r-hasta" type="date" value="${this._resHasta}"
-              style="font-size:.78rem;padding:4px 7px;border-radius:5px;
-                border:1px solid var(--border);background:var(--surface);color:var(--text)">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:6px">
+          <div style="font-weight:600;font-size:.9rem">Gastos por categoría · en USD</div>
+          <div style="font-size:.78rem;color:var(--text-sec)">
+            Total: <span style="color:var(--accent);font-family:'DM Mono',monospace;font-weight:600">${this._fmtUSD(totalUSD)}</span>
           </div>
         </div>
-        <div style="font-size:.78rem;color:var(--text-sec);margin-bottom:8px">
-          Total del período: <span style="color:var(--accent);font-family:'DM Mono',monospace;font-weight:600">${this._fmtUSD(totalPie)}</span>
-        </div>
-        <div id="g-pie-chart" style="height:360px"></div>
+        <div id="g-pie-chart" style="height:340px"></div>
       </div>
     `;
 
-    // ── Bar chart (apilado por moneda, todo en USD) ─────────────────────
+    // ── Bar chart ─────────────────────────────────────────────────────────
     const uyuY    = months.map(m => tc ? byMonth[m.ym].UYU / tc : 0);
     const usdY    = months.map(m => byMonth[m.ym].USD);
     const xLabels = months.map(m => m.label);
@@ -1463,7 +1562,7 @@ window.Mods.gastos = {
       legend: { orientation: 'h', y: -0.25, x: 0 },
     }, { displayModeBar: false, responsive: true });
 
-    // ── Pie chart por categoría ─────────────────────────────────────────
+    // ── Pie chart ─────────────────────────────────────────────────────────
     const palette = ['#3b82f6','#10b981','#f59e0b','#ef4444','#a855f7','#06b6d4','#ec4899','#84cc16','#f97316','#6366f1','#14b8a6','#eab308'];
     const entries = Object.entries(byCat).filter(([, v]) => v > 0).sort((a,b) => b[1] - a[1]);
     if (!entries.length) {
@@ -1496,6 +1595,10 @@ window.Mods.gastos = {
     // Handlers
     document.getElementById('r-tc')?.addEventListener('change', e => {
       this._saveTC(e.target.value.trim());
+      this._drawResumen();
+    });
+    document.getElementById('r-cat')?.addEventListener('change', e => {
+      this._resCat = e.target.value;
       this._drawResumen();
     });
     ['r-desde','r-hasta'].forEach(id => {
