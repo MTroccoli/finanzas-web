@@ -279,8 +279,6 @@ window.Mods.gastos = {
           this._excludedCards = excludeVal;
           setConfig('gastos_tarjetas_excluidas', excludeVal).catch(() => {});
         }
-        const edcMesVal = document.getElementById('g-edc-mes').value;
-        if (edcMesVal) this._edcMes = edcMesVal;
 
         const fd = new FormData();
         fd.append('file', selFile);
