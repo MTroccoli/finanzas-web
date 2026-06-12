@@ -185,21 +185,9 @@ window.Mods.gastos = {
       <div class="form-card">
         <h3>Importar Estado de Cuenta VISA</h3>
         <p style="font-size:.82rem;color:var(--text-sec);margin:0 0 16px">
-          Subí el PDF del resumen o una captura. Claude extrae y categoriza todas las transacciones automáticamente.
+          Subí el PDF del resumen o una captura. Claude extrae y categoriza todas las transacciones automáticamente,
+          incluyendo las tarjetas adicionales detectadas en el documento.
         </p>
-        <div style="margin:0 0 14px">
-          <label style="display:block;font-size:.78rem;color:var(--text-sec);margin-bottom:4px">
-            Tarjetas adicionales (últimos 4 dígitos, separados por coma)
-          </label>
-          <input id="g-exclude-cards" type="text" value="${this._excludedCards}"
-            placeholder="ej: 7084, 1234"
-            style="width:100%;max-width:280px;font-size:.82rem;padding:6px 10px;border-radius:6px;
-              border:1px solid var(--border);background:var(--surface);color:var(--text);
-              font-family:'DM Mono',monospace">
-          <div style="font-size:.7rem;color:var(--text-sec);margin-top:3px">
-            Sus transacciones se incluyen en la vista previa pero sin marcar — podés decidir cuáles importar
-          </div>
-        </div>
         <div class="g-upload-zone" id="g-drop-zone">
           <div style="font-size:2rem;line-height:1;margin-bottom:8px">📄</div>
           <div style="font-size:.88rem;color:var(--text-sec)">Arrastrá el archivo acá<br>o tocá para seleccionar</div>
@@ -290,16 +278,8 @@ window.Mods.gastos = {
       btnParse.textContent = '⏳ Procesando…';
       log.textContent = 'Enviando a Claude…';
       try {
-        // Persistir cambios al campo de tarjetas excluidas
-        const excludeVal = document.getElementById('g-exclude-cards').value.trim();
-        if (excludeVal !== this._excludedCards) {
-          this._excludedCards = excludeVal;
-          setConfig('gastos_tarjetas_excluidas', excludeVal).catch(() => {});
-        }
-
         const fd = new FormData();
         fd.append('file', selFile);
-        if (excludeVal) fd.append('exclude_cards', excludeVal);
 
         // Enviar top-50 ejemplos aprendidos como hints few-shot
         const topLearned = (this._learnedRows || []).slice(0, 50).map(r => ({
@@ -352,6 +332,7 @@ window.Mods.gastos = {
             _tipoGasto:     t.tipo_gasto     ?? 'casual',
             _normMerchant: norm,
             _overridden: learnedCat && learnedCat !== aiCat,
+            _manualCard: null, // asignación manual a tarjeta adicional
           };
         });
         // Guardar tarjetas adicionales detectadas (con nombre editable)
@@ -476,10 +457,12 @@ window.Mods.gastos = {
   _drawReview() {
     const catOpts    = this._cats.map(c => `<option value="${c.id}">${c.icono} ${c.nombre}</option>`).join('');
     const adicCards  = this._adicCards || [];
+    const hasAdics   = adicCards.length > 0;
     const tableHead  = `<thead><tr>
       <th></th><th>Fecha</th><th>Descripción</th><th>Monto</th><th>Mon.</th>
       <th>Categoría</th><th title="Tipo de gasto">Tipo</th>
       <th style="white-space:nowrap" title="Dividir entre N personas">÷N</th>
+      ${hasAdics ? '<th title="Asignar a tarjeta">TDC</th>' : ''}
     </tr></thead>`;
 
     // Clasificar pendientes
@@ -630,7 +613,7 @@ window.Mods.gastos = {
       });
     });
 
-    // Mes EDC — re-renderiza todas las filas
+    // Mes EDC — re-renderiza todas las filas (sin re-attachar handlers)
     document.getElementById('g-review-edc-mes')?.addEventListener('change', e => {
       this._edcMes = e.target.value;
       document.getElementById('g-main-tbody').innerHTML = mainRows.map(t => this._reviewRow(t, catOpts)).join('');
@@ -639,31 +622,71 @@ window.Mods.gastos = {
         const tbody = document.querySelector(`.g-adic-tbody[data-digits="${card.digits}"]`);
         if (tbody) tbody.innerHTML = all.map(t => this._reviewRow(t, catOpts)).join('');
       });
-      this._attachReviewBodyHandlers(refreshCounts);
     });
 
-    this._attachReviewBodyHandlers(refreshCounts);
+    this._attachReviewBodyHandlers(refreshCounts, getCardRows);
 
     document.getElementById('g-btn-cancel').addEventListener('click', () => {
       this._pending = [];
       this._adicCards = [];
+      this._reviewChangeHandler = null;
+      this._reviewInputHandler  = null;
       this._drawImportar();
     });
     document.getElementById('g-btn-confirm').addEventListener('click', () => this._confirmImport());
   },
 
-  _attachReviewBodyHandlers(refreshCounts) {
-    // Usamos el contenedor padre para capturar eventos de todos los tbodys
+  _attachReviewBodyHandlers(refreshCounts, getCardRows) {
     const gc = document.getElementById('g-content');
-    gc.addEventListener('change', e => {
+    // Eliminar listeners anteriores si existen (evita duplicados en re-renders)
+    if (this._reviewChangeHandler) gc.removeEventListener('change', this._reviewChangeHandler);
+    if (this._reviewInputHandler)  gc.removeEventListener('input',  this._reviewInputHandler);
+
+    this._reviewChangeHandler = (e) => {
       const id = e.target.dataset.id !== undefined ? +e.target.dataset.id : null;
       const t  = id != null ? this._pending.find(p => p._id === id) : null;
       if (!t) return;
 
+      // Reasignación manual de tarjeta
+      if (e.target.classList.contains('g-card-sel')) {
+        const digits = e.target.value || null;
+        if (t.descuento_de_adicional) {
+          t._adicCardDigits = digits;
+        } else {
+          t._manualCard         = digits;
+          t.tarjeta_adicional   = !!digits;
+          t.adicional_card_digits = digits;
+        }
+        // Sincronizar descuentos vinculados si es una compra
+        if (!t.descuento_de_adicional) {
+          const tNorm = this._normMerchant(t.descripcion);
+          this._pending
+            .filter(d => d.descuento_de_adicional && this._normMerchant(d.ref_comercio || '') === tNorm)
+            .forEach(d => {
+              d._adicCardDigits = digits;
+              d._include = !digits;
+              const discChk = document.querySelector(`.g-row-chk[data-id="${d._id}"]`);
+              if (discChk) discChk.checked = d._include;
+              const discRow = document.querySelector(`tr[data-pending-id="${d._id}"]`);
+              if (discRow) discRow.style.opacity = d._include ? 1 : 0.4;
+              // Update discount's card-sel too
+              const discSel = document.querySelector(`.g-card-sel[data-id="${d._id}"]`);
+              if (discSel) discSel.value = digits || '';
+            });
+        }
+        t._include = !digits;
+        const chk = document.querySelector(`.g-row-chk[data-id="${id}"]`);
+        if (chk) chk.checked = t._include;
+        const row = document.querySelector(`tr[data-pending-id="${id}"]`);
+        if (row) row.style.opacity = t._include ? 1 : 0.4;
+        refreshCounts();
+        return;
+      }
+
       if (e.target.classList.contains('g-row-chk')) {
         t._include = e.target.checked;
-        // Si es una compra de adicional, sincronizar sus descuentos vinculados
-        if (t.tarjeta_adicional) {
+        // Sincronizar descuentos vinculados cuando se togglea una compra de adicional
+        if (t.tarjeta_adicional || t._manualCard) {
           const tNorm = this._normMerchant(t.descripcion);
           this._pending
             .filter(d => d.descuento_de_adicional && this._normMerchant(d.ref_comercio || '') === tNorm)
@@ -687,13 +710,16 @@ window.Mods.gastos = {
       if (e.target.classList.contains('g-tipo-sel')) {
         t._tipoGasto = e.target.value;
       }
-    });
+    };
 
-    gc.addEventListener('input', e => {
+    this._reviewInputHandler = (e) => {
       if (!e.target.classList.contains('g-monto-inp')) return;
       const t = this._pending.find(p => p._id === +e.target.dataset.id);
       if (t) t.monto = parseFloat(e.target.value) || t.monto;
-    });
+    };
+
+    gc.addEventListener('change', this._reviewChangeHandler);
+    gc.addEventListener('input',  this._reviewInputHandler);
   },
 
   _divCellHTML(t) {
@@ -760,14 +786,28 @@ window.Mods.gastos = {
           </select>
         </td>
         <td class="g-div-cell" data-id="${t._id}" style="text-align:center">${this._divCellHTML(t)}</td>
+        ${(this._adicCards||[]).length > 0 ? `
+        <td>
+          <select class="g-card-sel" data-id="${t._id}"
+            style="font-size:.66rem;padding:2px 4px;border-radius:4px;max-width:80px;
+              border:1px solid var(--border);background:var(--surface);color:var(--text)">
+            <option value="">Titular</option>
+            ${(this._adicCards||[]).map(c => {
+              const selDigits = t.adicional_card_digits || t._adicCardDigits || t._manualCard;
+              return `<option value="${c.digits}" ${selDigits===c.digits?'selected':''}>
+                **** ${c.digits}${c.editedName ? ' — ' + c.editedName.split(' ')[0] : ''}
+              </option>`;
+            }).join('')}
+          </select>
+        </td>` : ''}
       </tr>`;
   },
 
   async _confirmImport() {
-    // Checked items = "mis gastos". Unchecked adicional items = tracking. Unchecked main = skip.
+    // Checked items = "mis gastos". Unchecked adicional/manual items = tracking. Unchecked main = skip.
     const toSave   = this._pending.filter(t => t._include);
     const adicTrack = this._pending.filter(t =>
-      !t._include && (t.tarjeta_adicional || t.descuento_de_adicional)
+      !t._include && (t.tarjeta_adicional || t._manualCard || t.descuento_de_adicional || t._adicCardDigits)
     );
     const allToInsert = [...toSave, ...adicTrack];
     if (!toSave.length && !adicTrack.length) { toast('Seleccioná al menos una transacción', 'warn'); return; }
@@ -802,7 +842,7 @@ window.Mods.gastos = {
         if (isTracking && t.descuento_de_adicional && t.ref_comercio) {
           notas = `desc_adic:${t.ref_comercio}`;
         }
-        const digits = t.adicional_card_digits || t._adicCardDigits || null;
+        const digits = t._manualCard || t.adicional_card_digits || t._adicCardDigits || null;
         await dbInsert('gastos', {
           fecha, monto, moneda: t.moneda || 'UYU',
           comercio: t.descripcion,
