@@ -27,6 +27,7 @@ window.Mods.gastos = {
   _adicTitular:  '',      // Nombre titular adicional asignado en la vista previa
   _adicMes:      null,    // Filtro mes en panel Adicional
   _adicTitularFiltro: '', // Filtro titular en panel Adicional
+  _adicCards:    [],      // [{ digits, name, editedName }] — tarjetas adicionales detectadas en el EDC
 
   // Normalizar comercio para matching: lowercase, sin tildes, sin códigos de comercio
   _normMerchant(s) {
@@ -353,6 +354,20 @@ window.Mods.gastos = {
             _overridden: learnedCat && learnedCat !== aiCat,
           };
         });
+        // Guardar tarjetas adicionales detectadas (con nombre editable)
+        this._adicCards = (result.adicionales || []).map(a => ({
+          digits: a.digits, name: a.name || null, editedName: a.name || '',
+        }));
+        // Vincular descuentos de adicional a su tarjeta (por ref_comercio → purchase.descripcion)
+        const adicPurchases = this._pending.filter(t => t.tarjeta_adicional);
+        for (const disc of this._pending.filter(t => t.descuento_de_adicional)) {
+          const refNorm = this._normMerchant(disc.ref_comercio || '');
+          const linked  = adicPurchases.find(p => {
+            const pn = this._normMerchant(p.descripcion);
+            return pn === refNorm || pn.includes(refNorm) || refNorm.includes(pn);
+          });
+          if (linked) disc._adicCardDigits = linked.adicional_card_digits || null;
+        }
         // Auto-aplicar mes detectado por la IA
         if (result.fecha_cierre) {
           this._edcMes = result.fecha_cierre;
@@ -459,14 +474,94 @@ window.Mods.gastos = {
   },
 
   _drawReview() {
-    const catOpts = this._cats.map(c =>
-      `<option value="${c.id}">${c.icono} ${c.nombre}</option>`).join('');
-    const sel     = this._pending.filter(t => t._include).length;
-    const hasAdic = this._pending.some(t => t.tarjeta_adicional);
+    const catOpts    = this._cats.map(c => `<option value="${c.id}">${c.icono} ${c.nombre}</option>`).join('');
+    const adicCards  = this._adicCards || [];
+    const tableHead  = `<thead><tr>
+      <th></th><th>Fecha</th><th>Descripción</th><th>Monto</th><th>Mon.</th>
+      <th>Categoría</th><th title="Tipo de gasto">Tipo</th>
+      <th style="white-space:nowrap" title="Dividir entre N personas">÷N</th>
+    </tr></thead>`;
+
+    // Clasificar pendientes
+    const linkedDiscIds = new Set(
+      adicCards.flatMap(card => {
+        const cardNorms = new Set(
+          this._pending.filter(t => t.tarjeta_adicional && t.adicional_card_digits === card.digits)
+            .map(t => this._normMerchant(t.descripcion))
+        );
+        return this._pending
+          .filter(t => t.descuento_de_adicional && cardNorms.has(this._normMerchant(t.ref_comercio || '')))
+          .map(t => t._id);
+      })
+    );
+    const mainRows = this._pending.filter(t => !t.tarjeta_adicional && !linkedDiscIds.has(t._id));
+
+    const getCardRows = (digits) => {
+      const purchases = this._pending.filter(t => t.tarjeta_adicional && t.adicional_card_digits === digits);
+      const pNorms    = new Set(purchases.map(t => this._normMerchant(t.descripcion)));
+      const discounts = this._pending.filter(t => t.descuento_de_adicional && pNorms.has(this._normMerchant(t.ref_comercio || '')));
+      return { purchases, discounts, all: [...purchases, ...discounts] };
+    };
+
+    const sel = this._pending.filter(t => t._include).length;
+
+    // Sección tarjeta titular
+    const mainSection = `
+      <div class="form-card" style="padding-bottom:12px;margin-bottom:.75rem">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+          <input type="checkbox" id="g-chk-main-all" ${mainRows.every(t=>t._include)?'checked':''} style="width:15px;height:15px;cursor:pointer">
+          <span style="font-size:.82rem;font-weight:600">💳 Tarjeta titular</span>
+          <span style="font-size:.7rem;color:var(--text-sec)">${mainRows.length} transacciones</span>
+        </div>
+        <div style="overflow-x:auto">
+          <table style="font-size:.78rem">${tableHead}
+            <tbody id="g-main-tbody">
+              ${mainRows.map(t => this._reviewRow(t, catOpts)).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>`;
+
+    // Secciones por tarjeta adicional
+    const adicSections = adicCards.map(card => {
+      const { purchases, discounts, all } = getCardRows(card.digits);
+      if (!all.length) return '';
+      const allChecked = all.every(t => t._include);
+      return `
+        <div class="form-card" style="padding-bottom:12px;margin-bottom:.75rem;border-left:3px solid rgba(16,185,129,.5)">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap">
+            <input type="checkbox" class="g-adic-card-all" data-digits="${card.digits}"
+              ${allChecked?'checked':''} style="width:15px;height:15px;cursor:pointer">
+            <div>
+              <span style="font-size:.82rem;font-weight:600">👤 Tarjeta adicional **** ${card.digits}</span>
+              <span style="font-size:.68rem;color:var(--text-sec);margin-left:6px">
+                ${purchases.length} compras · ${discounts.length} descuentos
+              </span>
+            </div>
+            <div style="display:flex;align-items:center;gap:6px;margin-left:auto;flex-wrap:wrap">
+              <span style="font-size:.72rem;color:var(--text-sec)">Titular:</span>
+              <input type="text" class="g-adic-name" data-digits="${card.digits}"
+                value="${card.editedName}" placeholder="Nombre del titular"
+                style="font-size:.74rem;padding:3px 8px;border-radius:5px;width:130px;
+                  border:1px solid rgba(16,185,129,.4);background:rgba(16,185,129,.07);color:var(--text)">
+            </div>
+            <span style="font-size:.68rem;color:var(--text-sec)">
+              ☐ Sin marcar → pestaña Adicional para cobrarle
+            </span>
+          </div>
+          <div style="overflow-x:auto">
+            <table style="font-size:.78rem">${tableHead}
+              <tbody class="g-adic-tbody" data-digits="${card.digits}">
+                ${all.map(t => this._reviewRow(t, catOpts)).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>`;
+    }).join('');
 
     document.getElementById('g-content').innerHTML = `
-      <div class="form-card" style="padding-bottom:12px">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+      <div class="form-card" style="padding:10px 16px;margin-bottom:.75rem">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
           <div>
             <h3 style="margin:0 0 4px">${this._pending.length} transacciones · <span id="g-sel-count">${sel}</span> seleccionadas</h3>
             <div style="display:flex;align-items:center;gap:12px;font-size:.75rem;color:var(--text-sec);flex-wrap:wrap">
@@ -483,14 +578,6 @@ window.Mods.gastos = {
                   style="font-size:.74rem;padding:2px 8px;border-radius:5px;width:130px;
                     border:1px solid var(--border);background:var(--surface);color:var(--text)">
               </span>
-              ${hasAdic ? `
-              <span style="display:flex;align-items:center;gap:6px">
-                👤 Titular adicional:
-                <input id="g-review-titular-adic" type="text" value="${this._adicTitular}" placeholder="ej: María"
-                  style="font-size:.74rem;padding:2px 8px;border-radius:5px;width:110px;
-                    border:1px solid rgba(16,185,129,.4);background:rgba(16,185,129,.07);color:var(--text)">
-                <span style="font-size:.65rem;color:#10b981">${this._pending.filter(t=>t.tarjeta_adicional).length} compras de adicional</span>
-              </span>` : ''}
               <span style="font-size:.68rem;color:var(--text-sec)">Editá si la IA se equivocó</span>
             </div>
           </div>
@@ -501,70 +588,97 @@ window.Mods.gastos = {
             </button>
           </div>
         </div>
-        <div style="overflow-x:auto">
-          <table style="font-size:.78rem">
-            <thead>
-              <tr>
-                <th><input type="checkbox" id="g-chk-all" checked></th>
-                <th>Fecha</th><th>Descripción</th><th>Monto</th><th>Mon.</th>
-                <th>Categoría</th><th title="Tipo de gasto">Tipo</th><th style="white-space:nowrap" title="Dividir entre N personas">÷N</th>
-              </tr>
-            </thead>
-            <tbody id="g-review-tbody">
-              ${this._pending.map(t => this._reviewRow(t, catOpts)).join('')}
-            </tbody>
-          </table>
-        </div>
       </div>
+      ${mainSection}
+      ${adicSections}
     `;
 
     const refreshCounts = () => {
       const n = this._pending.filter(t => t._include).length;
-      document.getElementById('g-sel-count').textContent   = n;
-      document.getElementById('g-confirm-n').textContent   = n;
-      document.querySelectorAll('#g-review-tbody tr').forEach((tr, i) => {
-        tr.style.opacity = this._pending[i]?._include ? 1 : 0.4;
+      document.getElementById('g-sel-count').textContent = n;
+      document.getElementById('g-confirm-n').textContent = n;
+      this._pending.forEach(t => {
+        const row = document.querySelector(`tr[data-pending-id="${t._id}"]`);
+        if (row) row.style.opacity = t._include ? 1 : 0.4;
       });
     };
 
-    document.getElementById('g-chk-all').addEventListener('change', e => {
-      this._pending.forEach(t => { t._include = e.target.checked; });
-      document.querySelectorAll('.g-row-chk').forEach(c => { c.checked = e.target.checked; });
+    // Bulk toggle tarjeta titular
+    document.getElementById('g-chk-main-all')?.addEventListener('change', e => {
+      mainRows.forEach(t => { t._include = e.target.checked; });
+      document.querySelectorAll('#g-main-tbody .g-row-chk').forEach(c => { c.checked = e.target.checked; });
       refreshCounts();
     });
 
-    // Si el usuario corrige el mes del EDC, re-renderiza el tbody con fechas actualizadas
-    document.getElementById('g-review-edc-mes')?.addEventListener('change', e => {
-      this._edcMes = e.target.value;
-      tbody.innerHTML = this._pending.map(t => this._reviewRow(t, catOpts)).join('');
-      this._attachReviewBodyHandlers(tbody, catOpts, refreshCounts);
+    // Bulk toggle por tarjeta adicional
+    document.querySelectorAll('.g-adic-card-all').forEach(chk => {
+      chk.addEventListener('change', e => {
+        const digits = e.target.dataset.digits;
+        const { all } = getCardRows(digits);
+        all.forEach(t => { t._include = e.target.checked; });
+        document.querySelectorAll(`.g-adic-tbody[data-digits="${digits}"] .g-row-chk`)
+          .forEach(c => { c.checked = e.target.checked; });
+        refreshCounts();
+      });
     });
 
-    const tbody = document.getElementById('g-review-tbody');
+    // Nombre editable del titular de adicional
+    document.querySelectorAll('.g-adic-name').forEach(inp => {
+      inp.addEventListener('input', e => {
+        const card = (this._adicCards || []).find(c => c.digits === e.target.dataset.digits);
+        if (card) card.editedName = e.target.value;
+      });
+    });
 
-    this._attachReviewBodyHandlers(tbody, catOpts, refreshCounts);
+    // Mes EDC — re-renderiza todas las filas
+    document.getElementById('g-review-edc-mes')?.addEventListener('change', e => {
+      this._edcMes = e.target.value;
+      document.getElementById('g-main-tbody').innerHTML = mainRows.map(t => this._reviewRow(t, catOpts)).join('');
+      adicCards.forEach(card => {
+        const { all } = getCardRows(card.digits);
+        const tbody = document.querySelector(`.g-adic-tbody[data-digits="${card.digits}"]`);
+        if (tbody) tbody.innerHTML = all.map(t => this._reviewRow(t, catOpts)).join('');
+      });
+      this._attachReviewBodyHandlers(refreshCounts);
+    });
+
+    this._attachReviewBodyHandlers(refreshCounts);
 
     document.getElementById('g-btn-cancel').addEventListener('click', () => {
       this._pending = [];
+      this._adicCards = [];
       this._drawImportar();
     });
     document.getElementById('g-btn-confirm').addEventListener('click', () => this._confirmImport());
   },
 
-  _attachReviewBodyHandlers(tbody, catOpts, refreshCounts) {
-    tbody.addEventListener('change', e => {
+  _attachReviewBodyHandlers(refreshCounts) {
+    // Usamos el contenedor padre para capturar eventos de todos los tbodys
+    const gc = document.getElementById('g-content');
+    gc.addEventListener('change', e => {
       const id = e.target.dataset.id !== undefined ? +e.target.dataset.id : null;
       const t  = id != null ? this._pending.find(p => p._id === id) : null;
       if (!t) return;
 
       if (e.target.classList.contains('g-row-chk')) {
         t._include = e.target.checked;
+        // Si es una compra de adicional, sincronizar sus descuentos vinculados
+        if (t.tarjeta_adicional) {
+          const tNorm = this._normMerchant(t.descripcion);
+          this._pending
+            .filter(d => d.descuento_de_adicional && this._normMerchant(d.ref_comercio || '') === tNorm)
+            .forEach(d => {
+              d._include = e.target.checked;
+              const discChk = document.querySelector(`.g-row-chk[data-id="${d._id}"]`);
+              if (discChk) discChk.checked = e.target.checked;
+            });
+        }
         refreshCounts();
       }
       if (e.target.classList.contains('g-cat-sel')) {
         t._catId = e.target.value ? +e.target.value : null;
         t.categoria = this._cats.find(c => c.id === t._catId)?.nombre ?? 'Otros';
-        const divCell = tbody.querySelector(`.g-div-cell[data-id="${id}"]`);
+        const divCell = document.querySelector(`.g-div-cell[data-id="${id}"]`);
         if (divCell) divCell.innerHTML = this._divCellHTML(t);
       }
       if (e.target.classList.contains('g-div-sel')) {
@@ -575,7 +689,7 @@ window.Mods.gastos = {
       }
     });
 
-    tbody.addEventListener('input', e => {
+    gc.addEventListener('input', e => {
       if (!e.target.classList.contains('g-monto-inp')) return;
       const t = this._pending.find(p => p._id === +e.target.dataset.id);
       if (t) t.monto = parseFloat(e.target.value) || t.monto;
@@ -595,16 +709,14 @@ window.Mods.gastos = {
     const aiBadge = t._overridden
       ? ' <span style="font-size:.6rem;color:var(--accent)" title="Re-categorizado según tu historial">✦</span>'
       : '';
-    const adicionalBadge = t.tarjeta_adicional
-      ? ' <span style="font-size:.6rem;color:var(--text-sec);background:rgba(255,255,255,.07);padding:1px 5px;border-radius:3px" title="Tarjeta adicional — incluida sin marcar">🔲 Adicional</span>'
-      : t.descuento_de_adicional
-        ? ` <span style="font-size:.6rem;color:#10b981;background:rgba(16,185,129,.1);padding:1px 5px;border-radius:3px" title="Descuento/beneficio de una compra de tarjeta adicional${t.ref_comercio ? ' en ' + t.ref_comercio : ''}">🔗 Desc. adicional</span>`
-        : '';
+    const discBadge = t.descuento_de_adicional
+      ? ` <span style="font-size:.6rem;color:#10b981;background:rgba(16,185,129,.1);padding:1px 5px;border-radius:3px"
+          title="Descuento vinculado a compra de adicional${t.ref_comercio ? ' en ' + t.ref_comercio : ''}">🔗 Desc.</span>`
+      : '';
     const cuotaBadge = (t._cuotaActual && t._cuotasTotales)
       ? ` <span style="font-size:.62rem;color:var(--text-sec);background:rgba(255,255,255,.06);padding:1px 5px;border-radius:3px"
           title="Cuota ${t._cuotaActual} de ${t._cuotasTotales}">📅 ${t._cuotaActual}/${t._cuotasTotales}</span>`
       : '';
-    // Computar fecha final que se guardará (corregida para cuotas > 1)
     let displayFecha = t.fecha;
     let fechaCorrected = false;
     if ((t._cuotaActual ?? 0) > 1 && this._edcMes) {
@@ -616,11 +728,13 @@ window.Mods.gastos = {
     const fechaHTML = fechaCorrected
       ? `<span style="color:var(--accent)" title="Fecha corregida (original: ${t.fecha})">${displayFecha}</span>`
       : displayFecha;
+    const rowBg = t.descuento_de_adicional ? 'background:rgba(16,185,129,.05);' : '';
     return `
-      <tr style="opacity:${t._include?1:.4}">
+      <tr data-pending-id="${t._id}" style="opacity:${t._include?1:.4};${rowBg}">
         <td><input type="checkbox" class="g-row-chk" data-id="${t._id}" ${t._include?'checked':''}></td>
         <td style="white-space:nowrap;font-family:'DM Mono',monospace;font-size:.72rem">${fechaHTML}</td>
-        <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${descEsc}">${t.descripcion}${aiBadge}${adicionalBadge}${cuotaBadge}</td>
+        <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${descEsc}">
+          ${t.descripcion}${aiBadge}${discBadge}${cuotaBadge}</td>
         <td><input type="number" class="g-monto-inp" data-id="${t._id}" value="${t.monto}"
           style="width:88px;font-size:.75rem;padding:3px 6px;border-radius:4px;
             border:1px solid var(--border);background:var(--surface);color:var(--text);
@@ -642,6 +756,7 @@ window.Mods.gastos = {
               border:1px solid var(--border);background:var(--surface);color:var(--text)">
             <option value="casual"${(t._tipoGasto||'casual')==='casual'?' selected':''}>💳 Casual</option>
             <option value="recurrente"${t._tipoGasto==='recurrente'?' selected':''}>🔁 Recurrente</option>
+            <option value="tdc"${t._tipoGasto==='tdc'?' selected':''}>🏦 Cargo TDC</option>
           </select>
         </td>
         <td class="g-div-cell" data-id="${t._id}" style="text-align:center">${this._divCellHTML(t)}</td>
@@ -649,24 +764,31 @@ window.Mods.gastos = {
   },
 
   async _confirmImport() {
-    const toSave = this._pending.filter(t => t._include);
-    if (!toSave.length) { toast('Seleccioná al menos una transacción', 'warn'); return; }
+    // Checked items = "mis gastos". Unchecked adicional items = tracking. Unchecked main = skip.
+    const toSave   = this._pending.filter(t => t._include);
+    const adicTrack = this._pending.filter(t =>
+      !t._include && (t.tarjeta_adicional || t.descuento_de_adicional)
+    );
+    const allToInsert = [...toSave, ...adicTrack];
+    if (!toSave.length && !adicTrack.length) { toast('Seleccioná al menos una transacción', 'warn'); return; }
     const btn = document.getElementById('g-btn-confirm');
     btn.disabled = true; btn.textContent = 'Guardando…';
+
+    const getAdicName = (digits) => {
+      if (!digits) return null;
+      const card = (this._adicCards || []).find(c => c.digits === digits);
+      return (card?.editedName?.trim()) || (card?.name) || `**** ${digits}`;
+    };
+
     try {
       const bancoVal = (document.getElementById('g-review-banco')?.value?.trim() || this._bancotarjeta) || null;
-      const adicTitularVal = document.getElementById('g-review-titular-adic')?.value?.trim() || this._adicTitular || null;
-      // Also save adicional rows (unchecked ones) if there's a titular set
-      const adicRows = adicTitularVal
-        ? this._pending.filter(t => t.tarjeta_adicional && !t._include)
-        : [];
       const imp = await dbInsert('importaciones', {
         tipo: 'pdf', nombre_archivo: 'edc_visa', registros_importados: toSave.length,
         banco_tarjeta: bancoVal,
       });
-      const allToInsert = [...toSave, ...adicRows];
+
       for (const t of allToInsert) {
-        const isAdic = t.tarjeta_adicional && !t._include;
+        const isTracking = !t._include; // unchecked adicional → tracking
         const N = Math.max(1, t._dividirEntre || 1);
         const monto = t.monto / N;
         let fecha = t.fecha;
@@ -676,9 +798,11 @@ window.Mods.gastos = {
           fecha = `${yyyy}-${mm}-${dd}`;
         }
         let notas = N > 1 ? `Dividido entre ${N} · total original: ${t.monto} ${t.moneda}` : null;
-        if (t.descuento_de_adicional && t.ref_comercio) {
+        // Discounts going to tracking carry the ref so Adicional tab can link them
+        if (isTracking && t.descuento_de_adicional && t.ref_comercio) {
           notas = `desc_adic:${t.ref_comercio}`;
         }
+        const digits = t.adicional_card_digits || t._adicCardDigits || null;
         await dbInsert('gastos', {
           fecha, monto, moneda: t.moneda || 'UYU',
           comercio: t.descripcion,
@@ -691,7 +815,7 @@ window.Mods.gastos = {
           cuota_actual:   t._cuotaActual   || null,
           cuotas_totales: t._cuotasTotales || null,
           banco_tarjeta:  bancoVal,
-          titular_adicional: isAdic ? (adicTitularVal || null) : null,
+          titular_adicional: isTracking ? getAdicName(digits) : null,
           notas,
         });
       }
@@ -711,8 +835,9 @@ window.Mods.gastos = {
       }
       this._bancotarjeta = '';
       this._adicTitular  = '';
+      this._adicCards    = [];
 
-      toast(`✅ ${toSave.length} gastos importados`);
+      toast(`✅ ${toSave.length} gastos importados${adicTrack.length ? ` · ${adicTrack.length} al Adicional` : ''}`);
       this._pending = [];
       this._tab = 'historial';
       await this.render();
@@ -974,6 +1099,7 @@ window.Mods.gastos = {
             <option value=""${!tipoFilter?' selected':''}>Todos</option>
             <option value="casual"${tipoFilter==='casual'?' selected':''}>💳 Casual</option>
             <option value="recurrente"${tipoFilter==='recurrente'?' selected':''}>🔁 Recurrente</option>
+            <option value="tdc"${tipoFilter==='tdc'?' selected':''}>🏦 Cargo TDC</option>
             <option value="cuotas"${tipoFilter==='cuotas'?' selected':''}>📅 Solo cuotas</option>
           </select>
           ${bancosHist.length > 0 ? `
@@ -1426,6 +1552,7 @@ window.Mods.gastos = {
   _histRow(g, catOpts, viewMode, tc) {
     const monBadge = `<span style="font-size:.7rem;font-family:'DM Mono',monospace;color:var(--text-sec)">${g.moneda}</span>`;
     const badges = (g.tipo_gasto === 'recurrente' ? ' <span style="font-size:.6rem;color:var(--accent)">🔁</span>' : '')
+      + (g.tipo_gasto === 'tdc' ? ' <span style="font-size:.6rem;color:#f59e0b;background:rgba(245,158,11,.12);padding:1px 5px;border-radius:3px">🏦 TDC</span>' : '')
       + (g.dividido_entre > 1 ? ` <span style="font-size:.65rem;color:var(--text-sec)">÷${g.dividido_entre}</span>` : '')
       + (g.cuota_actual && g.cuotas_totales ? ` <span style="font-size:.62rem;color:var(--text-sec);background:rgba(255,255,255,.06);padding:1px 5px;border-radius:3px">📅 ${g.cuota_actual}/${g.cuotas_totales}</span>` : '');
     const catC = this._cats.find(c => c.id === g.categoria_id);
