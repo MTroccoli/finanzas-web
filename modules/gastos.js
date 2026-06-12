@@ -2316,23 +2316,36 @@ window.Mods.gastos = {
     gc.innerHTML = `
       <!-- Filtros -->
       <div class="form-card" style="padding:12px 16px;margin-bottom:.75rem">
-        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
-          <label style="font-size:.78rem;color:var(--text-sec);white-space:nowrap">TC UYU/USD</label>
-          <input id="r-tc" type="number" min="1" step="0.1" placeholder="43.5" value="${this._tc}"
-            style="width:82px;font-size:.78rem;padding:4px 8px;border-radius:6px;
-              border:1px solid var(--border);background:var(--surface);color:var(--text);
-              font-family:'DM Mono',monospace">
-          <input id="r-desde" type="date" value="${this._resDesde}" style="${selSt}">
-          <span style="font-size:.78rem;color:var(--text-sec)">→</span>
-          <input id="r-hasta" type="date" value="${this._resHasta}" style="${selSt}">
-          <select id="r-cat" style="${selSt}">
-            <option value="">Todos los rubros</option>
-            ${catOpts}
-          </select>
-          <select id="r-banco" style="${selSt};min-width:120px">
-            <option value="">Todas las TDC</option>
-            ${bancos.map(b => `<option value="${b}"${b===this._resBanco?' selected':''}>${b}</option>`).join('')}
-          </select>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end">
+          <div>
+            <div style="font-size:.68rem;color:var(--text-sec);margin-bottom:2px">T/C UYU/USD</div>
+            <input id="r-tc" type="number" min="1" step="0.1" placeholder="43.5" value="${this._tc}"
+              style="width:82px;font-size:.78rem;padding:5px 8px;border-radius:6px;
+                border:1px solid var(--border);background:var(--surface);color:var(--text);
+                font-family:'DM Mono',monospace">
+          </div>
+          <div>
+            <div style="font-size:.68rem;color:var(--text-sec);margin-bottom:2px">Desde</div>
+            <input id="r-desde" type="date" value="${this._resDesde}" style="${selSt}">
+          </div>
+          <div>
+            <div style="font-size:.68rem;color:var(--text-sec);margin-bottom:2px">Hasta</div>
+            <input id="r-hasta" type="date" value="${this._resHasta}" style="${selSt}">
+          </div>
+          <div>
+            <div style="font-size:.68rem;color:var(--text-sec);margin-bottom:2px">Categoría</div>
+            <select id="r-cat" style="${selSt}">
+              <option value="">Todos los rubros</option>
+              ${catOpts}
+            </select>
+          </div>
+          <div>
+            <div style="font-size:.68rem;color:var(--text-sec);margin-bottom:2px">Tarjeta</div>
+            <select id="r-banco" style="${selSt};min-width:120px">
+              <option value="">Todas las TDC</option>
+              ${bancos.map(b => `<option value="${b}"${b===this._resBanco?' selected':''}>${b}</option>`).join('')}
+            </select>
+          </div>
         </div>
         ${!tc ? '<div style="margin-top:8px;font-size:.75rem;color:var(--red)">⚠ Ingresá el TC UYU/USD para ver los totales convertidos a USD.</div>' : ''}
       </div>
