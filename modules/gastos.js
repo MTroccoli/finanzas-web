@@ -131,6 +131,8 @@ window.Mods.gastos = {
       ['resumen',  '📊 Resumen'],
       ['historial','📋 Historial'],
       ['cuotas',   '📅 Cuotas'],
+      ['comercios','🏷️ Comercios'],
+      ['adicional','👤 Adicional'],
       ['importar', '📤 Importar EDC'],
       ['manual',   '✚ Nuevo gasto'],
     ];
@@ -154,8 +156,10 @@ window.Mods.gastos = {
   _drawTab() {
     switch (this._tab) {
       case 'resumen':   return this._drawResumen();
-      case 'historial': return this._drawHistorial();
+      case 'historial': return this._drawHistorialGastos();
       case 'cuotas':    return this._drawCuotas();
+      case 'comercios': return this._drawHistorialComercios();
+      case 'adicional': return this._drawHistorialAdicional();
       case 'importar':  return this._drawImportar();
       case 'manual':    return this._drawManual();
     }
@@ -1026,34 +1030,6 @@ window.Mods.gastos = {
   },
 
   // ── Historial ───────────────────────────────────────────────────────────
-  _drawHistorial() {
-    const v = this._histView || 'gastos';
-    if (v === 'comercios') return this._drawHistorialComercios();
-    if (v === 'adicional') return this._drawHistorialAdicional();
-    return this._drawHistorialGastos();
-  },
-
-  _histToggleHTML(view) {
-    const btn = (v, lbl) => `<button class="h-view-btn" data-view="${v}"
-      style="font-size:.78rem;padding:6px 14px;border-radius:6px;cursor:pointer;
-        ${v===view
-          ? 'background:var(--accent);border:1px solid var(--accent);color:#fff'
-          : 'background:var(--surface);border:1px solid var(--border);color:var(--text-sec)'}">${lbl}</button>`;
-    return `<div style="display:flex;gap:6px;margin-bottom:.75rem">
-      ${btn('gastos', '📋 Gastos')}
-      ${btn('comercios', '🏷️ Comercios')}
-      ${btn('adicional', '👤 Adicional')}
-    </div>`;
-  },
-
-  _attachViewToggle() {
-    document.querySelectorAll('.h-view-btn').forEach(b =>
-      b.addEventListener('click', () => {
-        this._histView = b.dataset.view;
-        this._drawHistorial();
-      })
-    );
-  },
 
   async _drawHistorialGastos() {
     const gc = document.getElementById('g-content');
@@ -1117,8 +1093,6 @@ window.Mods.gastos = {
     const selSt = `font-size:.82rem;padding:5px 10px;border-radius:6px;border:1px solid var(--border);background:var(--surface);color:var(--text)`;
 
     gc.innerHTML = `
-      ${this._histToggleHTML('gastos')}
-
       <!-- Filtros -->
       <div class="form-card" style="padding:12px 16px;margin-bottom:.75rem">
         <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
@@ -1236,24 +1210,22 @@ window.Mods.gastos = {
     this._gastosCache = { gastos, viewMode, tc, catOpts };
     this._renderGastosTbody();
 
-    this._attachViewToggle();
-
     ['h-mes','h-cat','h-tipo','h-banco'].forEach(id => {
       document.getElementById(id)?.addEventListener('change', () => {
         this._histMes   = document.getElementById('h-mes').value;
         this._histCat   = document.getElementById('h-cat').value;
         this._histTipo  = document.getElementById('h-tipo').value;
         this._histBanco = document.getElementById('h-banco')?.value || '';
-        this._drawHistorial();
+        this._drawHistorialGastos();
       });
     });
     document.getElementById('h-moneda')?.addEventListener('change', e => {
       this._histMoneda = e.target.value;
-      this._drawHistorial();
+      this._drawHistorialGastos();
     });
     document.getElementById('h-tc')?.addEventListener('change', e => {
       this._saveTC(e.target.value.trim());
-      this._drawHistorial();
+      this._drawHistorialGastos();
     });
 
     // Búsqueda — re-renderiza tbody sin volver a la DB
@@ -1341,8 +1313,6 @@ window.Mods.gastos = {
     const bancosComercio = [...new Set(items.flatMap(it => [...it.bancos]))].sort();
 
     gc.innerHTML = `
-      ${this._histToggleHTML('comercios')}
-
       <div class="form-card" style="padding:12px 16px;margin-bottom:.75rem">
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
           <div>
@@ -1398,7 +1368,6 @@ window.Mods.gastos = {
     `;
 
     this._renderComerciosTbody();
-    this._attachViewToggle();
 
     const search = document.getElementById('c-search');
     const clear  = document.getElementById('c-search-clear');
@@ -1595,10 +1564,16 @@ window.Mods.gastos = {
     const catC = this._cats.find(c => c.id === g.categoria_id);
     const catLabel = catC ? `${catC.icono} ${catC.nombre}` : '—';
     const montoDisplay = this._fmtView(parseFloat(g.monto), g.moneda, viewMode, tc);
+    const titBadge = g.titular_adicional
+      ? `<div style="margin-top:2px"><span style="font-size:.58rem;color:#a78bfa;background:rgba(167,139,250,.12);padding:1px 5px;border-radius:3px">👤 ${g.titular_adicional}</span></div>`
+      : '';
     return `
       <tr data-id="${g.id}">
         <td style="white-space:nowrap">${fmtDate(g.fecha)}</td>
-        <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${g.comercio ?? '—'}${badges}</td>
+        <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis">
+          <div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${g.comercio ?? '—'}${badges}</div>
+          ${titBadge}
+        </td>
         <td>${catLabel}</td>
         <td>${monBadge}</td>
         <td style="font-family:'DM Mono',monospace;font-weight:600;white-space:nowrap">${montoDisplay}</td>
@@ -1684,7 +1659,7 @@ window.Mods.gastos = {
         if (!confirm('¿Eliminar este gasto?')) return;
         await dbDelete('gastos', { id });
         toast('Eliminado');
-        this._drawHistorial();
+        this._drawHistorialGastos();
         return;
       }
 
@@ -1723,7 +1698,7 @@ window.Mods.gastos = {
             tipo_gasto:  editRow.querySelector('.ge-tipo').value,
           }, { id });
           toast('✅ Guardado');
-          this._drawHistorial();
+          this._drawHistorialGastos();
         } catch(err) { toast('❌ ' + err.message, 'err'); }
       }
     });
@@ -1909,8 +1884,6 @@ window.Mods.gastos = {
     }).join('');
 
     gc.innerHTML = `
-      ${this._histToggleHTML('adicional')}
-
       <div class="form-card" style="padding:12px 16px;margin-bottom:.75rem">
         <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
           ${titulares.length > 1 ? `
@@ -1946,8 +1919,6 @@ window.Mods.gastos = {
         </div>
       ` : titularesSections}
     `;
-
-    this._attachViewToggle();
 
     document.getElementById('adic-titular')?.addEventListener('change', e => {
       this._adicTitularFiltro = e.target.value;
