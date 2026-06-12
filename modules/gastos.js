@@ -37,6 +37,7 @@ window.Mods.gastos = {
     if (!s) return '';
     return s.toLowerCase()
       .normalize('NFD').replace(/[̀-ͯ]/g, '')         // quitar tildes
+      .replace(/\b\d{1,2}\/\d{1,2}\b/g, '')                     // quitar cuotas 1/12, 2/6, etc.
       .replace(/\b\d{3,}\b/g, '')                               // quitar números largos (códigos)
       .replace(/\*+\d+/g, '')                                   // quitar *1234
       .replace(/[^a-z0-9 ]+/g, ' ')                             // solo alfanumérico
@@ -379,7 +380,22 @@ window.Mods.gastos = {
         const otrosId = this._cats.find(c => c.nombre === 'Otros')?.id ?? null;
         let overrides = 0;
         this._pending = result.transactions.map((t, i) => {
-          const norm = this._normMerchant(t.descripcion);
+          // Auto-detectar cuotas del patrón N/M en la descripción si la IA no las set
+          let cuotaActual   = t.cuota_actual   ?? null;
+          let cuotasTotales = t.cuotas_totales ?? null;
+          let descripcion   = t.descripcion;
+          if (!cuotaActual) {
+            const cm = descripcion.match(/\b(\d{1,2})\/(\d{1,2})\b/);
+            if (cm) {
+              const n = parseInt(cm[1], 10), tot = parseInt(cm[2], 10);
+              if (tot >= 2 && tot <= 60 && n >= 1 && n <= tot) {
+                cuotaActual   = n;
+                cuotasTotales = tot;
+                descripcion   = descripcion.replace(/\s*\b\d{1,2}\/\d{1,2}\b\s*/g, ' ').trim();
+              }
+            }
+          }
+          const norm = this._normMerchant(descripcion);
           const learnedCat = this._learnedFuzzy(norm);
           let aiCat = this._cats.find(c => c.nombre === t.categoria)?.id ?? null;
 
@@ -401,16 +417,18 @@ window.Mods.gastos = {
           const finalCat = learnedCat ?? aiCat;
           if (learnedCat && learnedCat !== aiCat) overrides++;
           return {
-            ...t, _id: i,
+            ...t,
+            descripcion,         // descripción limpia sin el N/M de cuota
+            _id: i,
             _include: t.tarjeta_adicional !== true && t.descuento_de_adicional !== true,
             _dividirEntre: 1,
             _catId: finalCat,
-            _cuotaActual:   t.cuota_actual   ?? null,
-            _cuotasTotales: t.cuotas_totales ?? null,
-            _tipoGasto:     t.tipo_gasto     ?? 'casual',
+            _cuotaActual:   cuotaActual,
+            _cuotasTotales: cuotasTotales,
+            _tipoGasto:     t.tipo_gasto ?? 'casual',
             _normMerchant: norm,
             _overridden: learnedCat && learnedCat !== aiCat,
-            _manualCard: null, // asignación manual a tarjeta adicional
+            _manualCard: null,
           };
         });
         // Guardar tarjetas adicionales detectadas (con nombre editable)
