@@ -362,7 +362,8 @@ window.Mods.gastos = {
         const mesInfo   = result.fecha_cierre  ? ` · EDC: ${result.fecha_cierre}` : '';
         const addInfo   = addCount  > 0 ? ` · ${addCount} adicional` : '';
         const descInfo  = descCount > 0 ? ` · ${descCount} desc. asociado` : '';
-        log.textContent = `✅ ${result.count} transacciones${bancoInfo}${mesInfo}${addInfo}${descInfo} (sin marcar) · ${overrides} re-categorizadas. Revisá y confirmá.`;
+        const truncWarn = result.truncated ? ' ⚠ Respuesta truncada — revisá que estén todas.' : '';
+        log.textContent = `✅ ${result.count} transacciones${bancoInfo}${mesInfo}${addInfo}${descInfo} · ${overrides} re-categorizadas. Revisá y confirmá.${truncWarn}`;
         setTimeout(() => this._drawReview(), 900);
       } catch(e) {
         log.textContent = `❌ ${e.message}`;
