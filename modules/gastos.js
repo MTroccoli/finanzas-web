@@ -52,6 +52,8 @@ window.Mods.gastos = {
     ]);
     this._cats = cats;
     this._learned = {};
+    this._histMoneda   = 'UYU';
+    this._cuotasMoneda = 'UYU';
     for (const r of learnedRows) this._learned[r.merchant_normalizado] = r.categoria_id;
     this._learnedRows = learnedRows;
     this._excludedCards = excludedCards || '';
@@ -1811,8 +1813,6 @@ window.Mods.gastos = {
       const monthSections = Object.entries(mesesData)
         .sort((a,b) => b[0].localeCompare(a[0]))
         .map(([mes, gastos]) => {
-          const totalUYU = gastos.filter(g => g.moneda !== 'USD').reduce((s,g) => s + parseFloat(g.monto), 0);
-          const totalUSD = gastos.filter(g => g.moneda === 'USD').reduce((s,g) => s + parseFloat(g.monto), 0);
           const mesLabel = new Date(mes + '-15').toLocaleDateString('es-UY', { month: 'long', year: 'numeric' });
 
           const rows = gastos.map(g => {
@@ -1854,18 +1854,6 @@ window.Mods.gastos = {
               </tr>`;
           }).join('');
 
-          // Totals for month
-          const discTotUYU = gastos.reduce((s, g) => {
-            if (g.moneda === 'USD') return s;
-            return s + matchDiscount(g.comercio||'').filter(d=>d.moneda!=='USD').reduce((ss,d)=>ss+parseFloat(d.monto),0);
-          }, 0);
-          const discTotUSD = gastos.reduce((s, g) => {
-            if (g.moneda !== 'USD') return s;
-            return s + matchDiscount(g.comercio||'').filter(d=>d.moneda==='USD').reduce((ss,d)=>ss+parseFloat(d.monto),0);
-          }, 0);
-          const netMesUYU = totalUYU + discTotUYU;
-          const netMesUSD = totalUSD + discTotUSD;
-
           return `
             <div style="margin-bottom:14px">
               <div style="font-size:.78rem;font-weight:600;color:var(--text-sec);text-transform:capitalize;
@@ -1878,23 +1866,6 @@ window.Mods.gastos = {
                 </tr></thead>
                 <tbody>${rows}</tbody>
               </table>
-              <div style="display:flex;gap:16px;flex-wrap:wrap;font-size:.78rem;padding:6px 0;
-                          border-top:1px solid var(--border)">
-                ${totalUYU > 0 ? `
-                <div>
-                  <span style="color:var(--text-sec)">Total UYU:</span>
-                  <strong style="font-family:'DM Mono',monospace;margin:0 4px">${this._fmtMon(totalUYU,'UYU')}</strong>
-                  ${discTotUYU < 0 ? `<span style="color:#10b981">− ${this._fmtMon(Math.abs(discTotUYU),'UYU')} desc</span>` : ''}
-                  <span style="color:var(--accent);font-weight:600;margin-left:4px">= ${this._fmtMon(netMesUYU,'UYU')}</span>
-                </div>` : ''}
-                ${totalUSD > 0 ? `
-                <div>
-                  <span style="color:var(--text-sec)">Total USD:</span>
-                  <strong style="font-family:'DM Mono',monospace;margin:0 4px">${this._fmtMon(totalUSD,'USD')}</strong>
-                  ${discTotUSD < 0 ? `<span style="color:#10b981">− ${this._fmtMon(Math.abs(discTotUSD),'USD')} desc</span>` : ''}
-                  <span style="color:var(--accent);font-weight:600;margin-left:4px">= ${this._fmtMon(netMesUSD,'USD')}</span>
-                </div>` : ''}
-              </div>
             </div>`;
         }).join('');
 
