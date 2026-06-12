@@ -12,6 +12,8 @@ window.Mods.gastos = {
   _histTipo:     '',
   _histSearch:   '',
   _histTitular:  '',      // Filtro por tarjetahabiente en Historial
+  _histSort:     { col: 'fecha', dir: 'desc' },
+  _reviewSort:   { col: 'fecha', dir: 'asc' },
   _histView:     'gastos',  // 'gastos' | 'comercios'
   _cuotasMoneda: 'UYU',   // 'UYU' | 'USD' | 'TOTAL_USD'
   _resDesde:     null,
@@ -168,6 +170,58 @@ window.Mods.gastos = {
       case 'importar':  return this._drawImportar();
       case 'manual':    return this._drawManual();
     }
+  },
+
+  // ── Sort helpers ────────────────────────────────────────────────────────
+
+  _thSort(col, label, s) {
+    const cur = s.col === col;
+    const arrow = cur
+      ? (s.dir === 'asc' ? ' ↑' : ' ↓')
+      : ' <span style="opacity:.25;font-size:.75em">⇅</span>';
+    return `<th data-sort="${col}" data-lbl="${label}" style="cursor:pointer;user-select:none;white-space:nowrap">${label}${arrow}</th>`;
+  },
+
+  _refreshSortArrows(containerEl, sortState) {
+    containerEl.querySelectorAll('th[data-sort]').forEach(th => {
+      const col = th.dataset.sort;
+      const lbl = th.dataset.lbl;
+      const cur = sortState.col === col;
+      th.innerHTML = cur
+        ? lbl + (sortState.dir === 'asc' ? ' ↑' : ' ↓')
+        : lbl + ' <span style="opacity:.25;font-size:.75em">⇅</span>';
+    });
+  },
+
+  _sortPending(arr) {
+    const { col, dir } = this._reviewSort;
+    const asc = dir === 'asc';
+    return [...arr].sort((a, b) => {
+      let va, vb;
+      switch (col) {
+        case 'fecha': va = a.fecha || '';  vb = b.fecha || ''; break;
+        case 'desc':  va = (a.descripcion||'').toLowerCase(); vb = (b.descripcion||'').toLowerCase(); break;
+        case 'monto': va = Math.abs(parseFloat(a.monto||0)); vb = Math.abs(parseFloat(b.monto||0)); break;
+        case 'tipo':  va = a._tipoGasto||''; vb = b._tipoGasto||''; break;
+        default: return 0;
+      }
+      return va < vb ? (asc ? -1 : 1) : va > vb ? (asc ? 1 : -1) : 0;
+    });
+  },
+
+  _sortGastos(arr) {
+    const { col, dir } = this._histSort;
+    const asc = dir === 'asc';
+    return [...arr].sort((a, b) => {
+      let va, vb;
+      switch (col) {
+        case 'fecha':    va = a.fecha||'';    vb = b.fecha||''; break;
+        case 'comercio': va = (a.comercio||'').toLowerCase(); vb = (b.comercio||'').toLowerCase(); break;
+        case 'monto':    va = parseFloat(a.monto||0); vb = parseFloat(b.monto||0); break;
+        default: return 0;
+      }
+      return va < vb ? (asc ? -1 : 1) : va > vb ? (asc ? 1 : -1) : 0;
+    });
   },
 
   // ── Importar EDC ────────────────────────────────────────────────────────
@@ -469,9 +523,15 @@ window.Mods.gastos = {
     const catOpts    = this._cats.map(c => `<option value="${c.id}">${c.icono} ${c.nombre}</option>`).join('');
     const adicCards  = this._adicCards || [];
     const hasAdics   = adicCards.length > 0;
-    const tableHead  = `<thead><tr>
-      <th></th><th>Fecha</th><th>Descripción</th><th>Monto</th><th>Mon.</th>
-      <th>Categoría</th><th title="Tipo de gasto">Tipo</th>
+    const rs         = this._reviewSort;
+    const tableHead  = `<thead class="review-thead"><tr>
+      <th></th>
+      ${this._thSort('fecha', 'Fecha', rs)}
+      ${this._thSort('desc',  'Descripción', rs)}
+      ${this._thSort('monto', 'Monto', rs)}
+      <th>Mon.</th>
+      <th>Categoría</th>
+      ${this._thSort('tipo',  'Tipo', rs)}
       <th style="white-space:nowrap" title="Dividir entre N personas">÷N</th>
       ${hasAdics ? '<th title="Asignar a tarjeta">TDC</th>' : ''}
     </tr></thead>`;
@@ -481,13 +541,15 @@ window.Mods.gastos = {
     const linkedDiscIds = new Set(
       this._pending.filter(t => t.descuento_de_adicional && t._adicCardDigits).map(t => t._id)
     );
-    const mainRows = this._pending.filter(t => !t.tarjeta_adicional && !linkedDiscIds.has(t._id));
+    const mainRowsAll = this._pending.filter(t => !t.tarjeta_adicional && !linkedDiscIds.has(t._id));
+    const mainRows = this._sortPending(mainRowsAll);
 
     const getCardRows = (digits) => {
       const purchases = this._pending.filter(t => t.tarjeta_adicional && t.adicional_card_digits === digits);
       const pNorms    = new Set(purchases.map(t => this._normMerchant(t.descripcion)));
       const discounts = this._pending.filter(t => t.descuento_de_adicional && (pNorms.has(this._normMerchant(t.ref_comercio || '')) || t._adicCardDigits === digits));
-      return { purchases, discounts, all: [...purchases, ...discounts] };
+      const all       = [...purchases, ...discounts];
+      return { purchases, discounts, all, sorted: this._sortPending(all) };
     };
 
     const sel = this._pending.filter(t => t._include).length;
@@ -511,7 +573,7 @@ window.Mods.gastos = {
 
     // Secciones por tarjeta adicional
     const adicSections = adicCards.map(card => {
-      const { purchases, discounts, all } = getCardRows(card.digits);
+      const { purchases, discounts, all, sorted } = getCardRows(card.digits);
       if (!all.length) return '';
       const allChecked = all.every(t => t._include);
       return `
@@ -539,7 +601,7 @@ window.Mods.gastos = {
           <div style="overflow-x:auto">
             <table style="font-size:.78rem">${tableHead}
               <tbody class="g-adic-tbody" data-digits="${card.digits}">
-                ${all.map(t => this._reviewRow(t, catOpts)).join('')}
+                ${sorted.map(t => this._reviewRow(t, catOpts)).join('')}
               </tbody>
             </table>
           </div>
@@ -620,15 +682,29 @@ window.Mods.gastos = {
     // Mes EDC — re-renderiza todas las filas (sin re-attachar handlers)
     document.getElementById('g-review-edc-mes')?.addEventListener('change', e => {
       this._edcMes = e.target.value;
-      document.getElementById('g-main-tbody').innerHTML = mainRows.map(t => this._reviewRow(t, catOpts)).join('');
+      document.getElementById('g-main-tbody').innerHTML = this._sortPending(mainRowsAll).map(t => this._reviewRow(t, catOpts)).join('');
       adicCards.forEach(card => {
         const { all } = getCardRows(card.digits);
         const tbody = document.querySelector(`.g-adic-tbody[data-digits="${card.digits}"]`);
-        if (tbody) tbody.innerHTML = all.map(t => this._reviewRow(t, catOpts)).join('');
+        if (tbody) tbody.innerHTML = this._sortPending(all).map(t => this._reviewRow(t, catOpts)).join('');
       });
     });
 
     this._attachReviewBodyHandlers(refreshCounts, getCardRows);
+
+    // Sort por columna — re-renderiza la pantalla de revisión completa
+    document.querySelectorAll('.review-thead th[data-sort]').forEach(th => {
+      th.addEventListener('click', () => {
+        const col = th.dataset.sort;
+        if (this._reviewSort.col === col) {
+          this._reviewSort.dir = this._reviewSort.dir === 'asc' ? 'desc' : 'asc';
+        } else {
+          this._reviewSort.col = col;
+          this._reviewSort.dir = 'asc';
+        }
+        this._drawReview();
+      });
+    });
 
     document.getElementById('g-btn-cancel').addEventListener('click', () => {
       this._pending = [];
@@ -1228,9 +1304,13 @@ window.Mods.gastos = {
           <div class="empty-text">Sin gastos para este período</div></div>
         ` : `
           <table>
-            <thead><tr>
-              <th>Fecha</th><th>Comercio</th><th>Categoría</th>
-              <th>Mon.</th><th>Monto</th><th></th>
+            <thead id="g-hist-thead"><tr>
+              ${this._thSort('fecha',    'Fecha',    this._histSort)}
+              ${this._thSort('comercio', 'Comercio', this._histSort)}
+              <th>Categoría</th>
+              <th>Mon.</th>
+              ${this._thSort('monto',    'Monto',    this._histSort)}
+              <th></th>
             </tr></thead>
             <tbody id="g-hist-tbody"></tbody>
           </table>
@@ -1277,6 +1357,22 @@ window.Mods.gastos = {
       search.focus();
     });
 
+    // Sort por columna en historial
+    document.querySelectorAll('#g-hist-thead th[data-sort]').forEach(th => {
+      th.addEventListener('click', () => {
+        const col = th.dataset.sort;
+        if (this._histSort.col === col) {
+          this._histSort.dir = this._histSort.dir === 'asc' ? 'desc' : 'asc';
+        } else {
+          this._histSort.col = col;
+          this._histSort.dir = col === 'fecha' ? 'desc' : 'asc';
+        }
+        const thead = document.getElementById('g-hist-thead');
+        if (thead) this._refreshSortArrows(thead, this._histSort);
+        this._renderGastosTbody();
+      });
+    });
+
     this._attachHistHandlers(gastos, catOpts, viewMode, tc);
   },
 
@@ -1285,9 +1381,10 @@ window.Mods.gastos = {
     if (!tbody || !this._gastosCache) return;
     const { gastos, viewMode, tc, catOpts } = this._gastosCache;
     const q = (this._histSearch || '').toLowerCase().trim();
-    const filtered = q
+    let filtered = q
       ? gastos.filter(g => (g.comercio || '').toLowerCase().includes(q))
       : gastos;
+    filtered = this._sortGastos(filtered);
     tbody.innerHTML = filtered.length
       ? filtered.map(g => this._histRow(g, catOpts, viewMode, tc)).join('')
       : `<tr><td colspan="6" style="text-align:center;color:var(--text-sec);padding:20px">Sin resultados</td></tr>`;
