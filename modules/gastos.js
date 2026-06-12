@@ -11,6 +11,7 @@ window.Mods.gastos = {
   _histMoneda:   'UYU',   // 'UYU' | 'USD' | 'TOTAL_USD'
   _histTipo:     '',
   _histSearch:   '',
+  _histTitular:  '',      // Filtro por tarjetahabiente en Historial
   _histView:     'gastos',  // 'gastos' | 'comercios'
   _cuotasMoneda: 'UYU',   // 'UYU' | 'USD' | 'TOTAL_USD'
   _resDesde:     null,
@@ -102,21 +103,25 @@ window.Mods.gastos = {
   _renderMonedaFilter(idPfx, current, tc) {
     const sel = `font-size:.82rem;padding:5px 10px;border-radius:6px;
       border:1px solid var(--border);background:var(--surface);color:var(--text)`;
+    const lbl = `font-size:.68rem;color:var(--text-sec);margin-bottom:2px`;
     return `
-      <select id="${idPfx}-moneda" style="${sel}">
-        <option value="UYU"${current==='UYU'?' selected':''}>UYU — Pesos</option>
-        <option value="USD"${current==='USD'?' selected':''}>USD — Dólares</option>
-        <option value="TOTAL_USD"${current==='TOTAL_USD'?' selected':''}>≈ Total en USD</option>
-      </select>
+      <div>
+        <div style="${lbl}">Importes</div>
+        <select id="${idPfx}-moneda" style="${sel}">
+          <option value="UYU"${current==='UYU'?' selected':''}>UYU — Pesos</option>
+          <option value="USD"${current==='USD'?' selected':''}>USD — Dólares</option>
+          <option value="TOTAL_USD"${current==='TOTAL_USD'?' selected':''}>≈ Total en USD</option>
+        </select>
+      </div>
       ${current === 'TOTAL_USD' ? `
-        <div style="display:flex;align-items:center;gap:6px">
-          <label style="font-size:.78rem;color:var(--text-sec);white-space:nowrap">TC UYU/USD</label>
-          <input id="${idPfx}-tc" type="number" min="1" step="0.1" placeholder="43.5"
-            value="${tc}"
-            style="width:78px;font-size:.78rem;padding:4px 8px;border-radius:6px;
-              border:1px solid var(--border);background:var(--surface);color:var(--text);
-              font-family:'DM Mono',monospace">
-        </div>` : ''}`;
+      <div>
+        <div style="${lbl}">T/C UYU/USD</div>
+        <input id="${idPfx}-tc" type="number" min="1" step="0.1" placeholder="43.5"
+          value="${tc}"
+          style="width:78px;font-size:.82rem;padding:5px 8px;border-radius:6px;
+            border:1px solid var(--border);background:var(--surface);color:var(--text);
+            font-family:'DM Mono',monospace">
+      </div>` : ''}`;
   },
 
   // Guarda el TC en configuracion (fire-and-forget)
@@ -1068,10 +1073,12 @@ window.Mods.gastos = {
     const { data: gastosRaw, error } = await q.order('fecha', { ascending: false });
     if (error) throw error;
 
-    const bancosHist = [...new Set((gastosRaw || []).map(g => g.banco_tarjeta).filter(Boolean))].sort();
-    const gastos = this._histBanco
-      ? (gastosRaw || []).filter(g => g.banco_tarjeta === this._histBanco)
-      : (gastosRaw || []);
+    const bancosHist    = [...new Set((gastosRaw || []).map(g => g.banco_tarjeta).filter(Boolean))].sort();
+    const titularesHist = [...new Set((gastosRaw || []).map(g => g.titular_adicional).filter(Boolean))].sort();
+    let gastos = gastosRaw || [];
+    if (this._histBanco) gastos = gastos.filter(g => g.banco_tarjeta === this._histBanco);
+    if (this._histTitular === '__titular__')  gastos = gastos.filter(g => !g.titular_adicional);
+    else if (this._histTitular)              gastos = gastos.filter(g => g.titular_adicional === this._histTitular);
 
     const needsTC = viewMode === 'TOTAL_USD' && !tc;
 
@@ -1099,28 +1106,49 @@ window.Mods.gastos = {
     gc.innerHTML = `
       <!-- Filtros -->
       <div class="form-card" style="padding:12px 16px;margin-bottom:.75rem">
-        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
-          <select id="h-mes" style="${selSt}">
-            ${meses.map(m => `<option value="${m.val}"${m.val===mesFilter?' selected':''}>${m.lbl}</option>`).join('')}
-          </select>
-          <select id="h-cat" style="${selSt}">
-            <option value="">Todas las categorías</option>
-            ${this._cats.map(c =>
-              `<option value="${c.id}"${String(c.id)===catFilter?' selected':''}>${c.icono} ${c.nombre}</option>`
-            ).join('')}
-          </select>
-          <select id="h-tipo" style="${selSt}">
-            <option value=""${!tipoFilter?' selected':''}>Todos</option>
-            <option value="casual"${tipoFilter==='casual'?' selected':''}>💳 Casual</option>
-            <option value="recurrente"${tipoFilter==='recurrente'?' selected':''}>🔁 Recurrente</option>
-            <option value="tdc"${tipoFilter==='tdc'?' selected':''}>🏦 Cargo TDC</option>
-            <option value="cuotas"${tipoFilter==='cuotas'?' selected':''}>📅 Solo cuotas</option>
-          </select>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end">
+          <div>
+            <div style="font-size:.68rem;color:var(--text-sec);margin-bottom:2px">Mes</div>
+            <select id="h-mes" style="${selSt}">
+              ${meses.map(m => `<option value="${m.val}"${m.val===mesFilter?' selected':''}>${m.lbl}</option>`).join('')}
+            </select>
+          </div>
+          <div>
+            <div style="font-size:.68rem;color:var(--text-sec);margin-bottom:2px">Categoría</div>
+            <select id="h-cat" style="${selSt}">
+              <option value="">Todas</option>
+              ${this._cats.map(c =>
+                `<option value="${c.id}"${String(c.id)===catFilter?' selected':''}>${c.icono} ${c.nombre}</option>`
+              ).join('')}
+            </select>
+          </div>
+          <div>
+            <div style="font-size:.68rem;color:var(--text-sec);margin-bottom:2px">Tipo de gasto</div>
+            <select id="h-tipo" style="${selSt}">
+              <option value=""${!tipoFilter?' selected':''}>Todos</option>
+              <option value="casual"${tipoFilter==='casual'?' selected':''}>💳 Casual</option>
+              <option value="recurrente"${tipoFilter==='recurrente'?' selected':''}>🔁 Recurrente</option>
+              <option value="tdc"${tipoFilter==='tdc'?' selected':''}>🏦 Cargo TDC</option>
+              <option value="cuotas"${tipoFilter==='cuotas'?' selected':''}>📅 Solo cuotas</option>
+            </select>
+          </div>
           ${bancosHist.length > 0 ? `
+          <div>
+            <div style="font-size:.68rem;color:var(--text-sec);margin-bottom:2px">Tarjeta</div>
             <select id="h-banco" style="${selSt}">
               <option value="">Todas las TDC</option>
               ${bancosHist.map(b => `<option value="${b}"${b===this._histBanco?' selected':''}>${b}</option>`).join('')}
-            </select>` : ''}
+            </select>
+          </div>` : ''}
+          ${titularesHist.length > 0 ? `
+          <div>
+            <div style="font-size:.68rem;color:var(--text-sec);margin-bottom:2px">Tarjetahabiente</div>
+            <select id="h-titular" style="${selSt}">
+              <option value="">Todos</option>
+              <option value="__titular__"${this._histTitular==='__titular__'?' selected':''}>💳 Titular</option>
+              ${titularesHist.map(t => `<option value="${t}"${t===this._histTitular?' selected':''}>👤 ${t}</option>`).join('')}
+            </select>
+          </div>` : ''}
           ${this._renderMonedaFilter('h', viewMode, this._tc)}
         </div>
         ${needsTC ? `<div style="margin-top:8px;font-size:.75rem;color:var(--red)">
@@ -1214,12 +1242,13 @@ window.Mods.gastos = {
     this._gastosCache = { gastos, viewMode, tc, catOpts };
     this._renderGastosTbody();
 
-    ['h-mes','h-cat','h-tipo','h-banco'].forEach(id => {
+    ['h-mes','h-cat','h-tipo','h-banco','h-titular'].forEach(id => {
       document.getElementById(id)?.addEventListener('change', () => {
-        this._histMes   = document.getElementById('h-mes').value;
-        this._histCat   = document.getElementById('h-cat').value;
-        this._histTipo  = document.getElementById('h-tipo').value;
-        this._histBanco = document.getElementById('h-banco')?.value || '';
+        this._histMes      = document.getElementById('h-mes').value;
+        this._histCat      = document.getElementById('h-cat').value;
+        this._histTipo     = document.getElementById('h-tipo').value;
+        this._histBanco    = document.getElementById('h-banco')?.value    || '';
+        this._histTitular  = document.getElementById('h-titular')?.value  || '';
         this._drawHistorialGastos();
       });
     });
@@ -1642,6 +1671,16 @@ window.Mods.gastos = {
                 <option value="recurrente"${g.tipo_gasto==='recurrente'?' selected':''}>🔁 Recurrente</option>
               </select>
             </div>
+            <div>
+              <div style="font-size:.68rem;color:var(--text-sec);margin-bottom:2px">Dividir entre</div>
+              <select class="ge-div" style="font-size:.78rem;padding:4px 7px;border-radius:5px;
+                border:1px solid var(--border);background:var(--surface);color:var(--text)">
+                <option value="1"${(g.dividido_entre||1)===1?' selected':''}>1 persona</option>
+                <option value="2"${(g.dividido_entre||1)===2?' selected':''}>÷ 2</option>
+                <option value="3"${(g.dividido_entre||1)===3?' selected':''}>÷ 3</option>
+                <option value="4"${(g.dividido_entre||1)===4?' selected':''}>÷ 4</option>
+              </select>
+            </div>
             <div style="display:flex;gap:6px;align-items:flex-end;padding-bottom:1px">
               <button class="btn btn-primary ge-save" data-id="${g.id}"
                 style="font-size:.75rem;padding:5px 12px">✓ Guardar</button>
@@ -1699,9 +1738,10 @@ window.Mods.gastos = {
             fecha:       editRow.querySelector('.ge-fecha').value,
             comercio:    editRow.querySelector('.ge-comercio').value.trim() || null,
             monto,
-            moneda:      editRow.querySelector('.ge-moneda').value,
-            categoria_id: editRow.querySelector('.ge-cat').value ? +editRow.querySelector('.ge-cat').value : null,
-            tipo_gasto:  editRow.querySelector('.ge-tipo').value,
+            moneda:        editRow.querySelector('.ge-moneda').value,
+            categoria_id:  editRow.querySelector('.ge-cat').value ? +editRow.querySelector('.ge-cat').value : null,
+            tipo_gasto:    editRow.querySelector('.ge-tipo').value,
+            dividido_entre: +editRow.querySelector('.ge-div').value || 1,
           }, { id });
           toast('✅ Guardado');
           this._drawHistorialGastos();
@@ -2125,6 +2165,11 @@ window.Mods.gastos = {
                   <td>${g.comercio ?? '—'}
                     <div style="font-size:.68rem;color:var(--text-sec);font-family:'DM Mono',monospace">
                       ${fmtDate(g.fecha)} · ${g.moneda}
+                    </div>
+                    <div style="margin-top:2px">
+                      ${g.titular_adicional
+                        ? `<span style="font-size:.58rem;color:#a78bfa;background:rgba(167,139,250,.12);padding:1px 5px;border-radius:3px">👤 ${g.titular_adicional}</span>`
+                        : `<span style="font-size:.58rem;color:var(--text-sec);background:rgba(255,255,255,.05);padding:1px 5px;border-radius:3px">💳 Titular</span>`}
                     </div>
                   </td>
                   <td>${catBadge(g.categoria_id)}</td>
