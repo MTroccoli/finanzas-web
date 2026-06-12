@@ -18,6 +18,8 @@ window.Mods.gastos = {
   _tc:           '',      // TC UYU/USD — persiste en configuracion
   _edcMes:       '',      // Mes del EDC (YYYY-MM) — corrige fechas de cuotas > 1
   _resCat:       '',      // Filtro de categoría en Resumen
+  _comTipo:      '',      // Filtro tipo en panel Comercios
+  _pendingFile:  null,    // Archivo PDF pendiente de subir a storage tras confirmar import
 
   // Normalizar comercio para matching: lowercase, sin tildes, sin códigos de comercio
   _normMerchant(s) {
@@ -156,7 +158,7 @@ window.Mods.gastos = {
     // Cargar importaciones anteriores para el panel de gestión
     const sb = getDB();
     const [impsRes, gastosRes] = await Promise.all([
-      sb.from('importaciones').select('id, registros_importados').order('id', { ascending: false }),
+      sb.from('importaciones').select('id, registros_importados, archivo_path').order('id', { ascending: false }),
       sb.from('gastos').select('importacion_id, fecha').not('importacion_id', 'is', null),
     ]);
     const impsRaw = impsRes.data || [];
@@ -179,7 +181,7 @@ window.Mods.gastos = {
         </p>
         <div style="margin:0 0 14px">
           <label style="display:block;font-size:.78rem;color:var(--text-sec);margin-bottom:4px">
-            Tarjetas adicionales a excluir (últimos 4 dígitos, separados por coma)
+            Tarjetas adicionales (últimos 4 dígitos, separados por coma)
           </label>
           <input id="g-exclude-cards" type="text" value="${this._excludedCards}"
             placeholder="ej: 7084, 1234"
@@ -187,7 +189,7 @@ window.Mods.gastos = {
               border:1px solid var(--border);background:var(--surface);color:var(--text);
               font-family:'DM Mono',monospace">
           <div style="font-size:.7rem;color:var(--text-sec);margin-top:3px">
-            Se excluyen sus compras y los descuentos/beneficios asociados
+            Sus transacciones se incluyen en la vista previa pero sin marcar — podés decidir cuáles importar
           </div>
         </div>
         <div class="g-upload-zone" id="g-drop-zone">
@@ -216,7 +218,7 @@ window.Mods.gastos = {
             <th style="width:40px">
               <input type="checkbox" id="g-imp-chk-all" title="Seleccionar todos">
             </th>
-            <th>#</th><th>Período</th><th>Gastos</th><th></th>
+            <th>#</th><th>Período</th><th>Gastos</th><th colspan="2"></th>
           </tr></thead>
           <tbody>
             ${imps.map(imp => `
@@ -230,6 +232,12 @@ window.Mods.gastos = {
                 <td>
                   <button class="btn btn-ghost g-imp-del-btn" data-id="${imp.id}" data-n="${imp.count}"
                     style="font-size:.72rem;padding:2px 8px;color:var(--red)">✕ Eliminar</button>
+                </td>
+                <td>
+                  ${imp.archivo_path ? `
+                    <button class="btn btn-ghost g-imp-reparse-btn" data-path="${imp.archivo_path}"
+                      style="font-size:.72rem;padding:2px 8px">↺ Re-parsear</button>
+                  ` : ''}
                 </td>
               </tr>`).join('')}
           </tbody>
@@ -326,7 +334,7 @@ window.Mods.gastos = {
           const finalCat = learnedCat ?? aiCat;
           if (learnedCat && learnedCat !== aiCat) overrides++;
           return {
-            ...t, _id: i, _include: true, _dividirEntre: 1,
+            ...t, _id: i, _include: t.tarjeta_adicional !== true, _dividirEntre: 1,
             _catId: finalCat,
             _cuotaActual:   t.cuota_actual   ?? null,
             _cuotasTotales: t.cuotas_totales ?? null,
@@ -341,8 +349,11 @@ window.Mods.gastos = {
           const inp = document.getElementById('g-edc-mes');
           if (inp) inp.value = result.fecha_cierre;
         }
+        this._pendingFile = selFile;
+        const addCount = this._pending.filter(p => p.tarjeta_adicional).length;
         const mesInfo = result.fecha_cierre ? ` · EDC: ${result.fecha_cierre}` : '';
-        log.textContent = `✅ ${result.count} transacciones${mesInfo} · ${overrides} re-categorizadas con tu historial. Revisá y confirmá.`;
+        const addInfo = addCount > 0 ? ` · ${addCount} de tarjeta adicional (sin marcar)` : '';
+        log.textContent = `✅ ${result.count} transacciones${mesInfo}${addInfo} · ${overrides} re-categorizadas. Revisá y confirmá.`;
         setTimeout(() => this._drawReview(), 900);
       } catch(e) {
         log.textContent = `❌ ${e.message}`;
@@ -369,6 +380,29 @@ window.Mods.gastos = {
       btn.addEventListener('click', () =>
         deleteImport([+btn.dataset.id], `${btn.dataset.n} gastos del batch #${btn.dataset.id}`)
       )
+    );
+
+    // Re-parsear: descargar archivo guardado y relanzar el parseo
+    document.querySelectorAll('.g-imp-reparse-btn').forEach(btn =>
+      btn.addEventListener('click', async () => {
+        const path = btn.dataset.path;
+        if (!path) return;
+        btn.disabled = true; btn.textContent = '⏳ Descargando…';
+        try {
+          const { data, error } = await getDB().storage.from('edcs').download(path);
+          if (error) throw error;
+          const ext = path.split('.').pop() || 'pdf';
+          const mime = ext === 'pdf' ? 'application/pdf' : `image/${ext}`;
+          selFile = new File([data], path, { type: mime });
+          nameEl.textContent = selFile.name;
+          nameEl.style.display = 'block';
+          btnParse.style.display = 'inline-flex';
+          btnParse.click();
+        } catch(err) {
+          toast('❌ ' + err.message, 'err');
+          btn.disabled = false; btn.textContent = '↺ Re-parsear';
+        }
+      })
     );
 
     // Select all checkbox
@@ -529,6 +563,9 @@ window.Mods.gastos = {
     const aiBadge = t._overridden
       ? ' <span style="font-size:.6rem;color:var(--accent)" title="Re-categorizado según tu historial">✦</span>'
       : '';
+    const adicionalBadge = t.tarjeta_adicional
+      ? ' <span style="font-size:.6rem;color:var(--text-sec);background:rgba(255,255,255,.07);padding:1px 5px;border-radius:3px" title="Tarjeta adicional — incluida sin marcar">🔲 Adicional</span>'
+      : '';
     const cuotaBadge = (t._cuotaActual && t._cuotasTotales)
       ? ` <span style="font-size:.62rem;color:var(--text-sec);background:rgba(255,255,255,.06);padding:1px 5px;border-radius:3px"
           title="Cuota ${t._cuotaActual} de ${t._cuotasTotales}">📅 ${t._cuotaActual}/${t._cuotasTotales}</span>`
@@ -549,7 +586,7 @@ window.Mods.gastos = {
       <tr style="opacity:${t._include?1:.4}">
         <td><input type="checkbox" class="g-row-chk" data-id="${t._id}" checked></td>
         <td style="white-space:nowrap;font-family:'DM Mono',monospace;font-size:.72rem">${fechaHTML}</td>
-        <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${descEsc}">${t.descripcion}${aiBadge}${cuotaBadge}</td>
+        <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${descEsc}">${t.descripcion}${aiBadge}${adicionalBadge}${cuotaBadge}</td>
         <td><input type="number" class="g-monto-inp" data-id="${t._id}" value="${t.monto}"
           style="width:88px;font-size:.75rem;padding:3px 6px;border-radius:4px;
             border:1px solid var(--border);background:var(--surface);color:var(--text);
@@ -612,6 +649,17 @@ window.Mods.gastos = {
 
       // Aprender merchants categorizados
       await this._learnMerchants(toSave);
+
+      // Guardar archivo fuente en storage para re-parseos futuros
+      if (this._pendingFile) {
+        const ext = (this._pendingFile.name.split('.').pop() || 'pdf').toLowerCase();
+        const storagePath = `${imp.id}.${ext}`;
+        const { error: upErr } = await getDB().storage.from('edcs').upload(storagePath, this._pendingFile);
+        if (!upErr) {
+          await getDB().from('importaciones').update({ archivo_path: storagePath }).eq('id', imp.id);
+        }
+        this._pendingFile = null;
+      }
 
       toast(`✅ ${toSave.length} gastos importados`);
       this._pending = [];
@@ -1021,7 +1069,7 @@ window.Mods.gastos = {
     gc.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
 
     const { data: rows, error } = await getDB()
-      .from('gastos').select('id, comercio, moneda, monto, categoria_id, fecha, tipo_gasto')
+      .from('gastos').select('id, comercio, moneda, monto, categoria_id, fecha, tipo_gasto, cuota_actual')
       .not('comercio', 'is', null)
       .order('fecha', { ascending: false });
     if (error) throw error;
@@ -1034,7 +1082,7 @@ window.Mods.gastos = {
       if (!groups[norm]) {
         groups[norm] = {
           norm, example: r.comercio, ids: [],
-          gastos: [],
+          gastos: [], hasQuotas: false,
           count: 0, totals: { UYU: 0, USD: 0 },
           catCounts: {}, tipoCounts: {}, ultima: r.fecha,
         };
@@ -1042,6 +1090,7 @@ window.Mods.gastos = {
       const g = groups[norm];
       g.ids.push(r.id);
       g.gastos.push(r);
+      if (r.cuota_actual) g.hasQuotas = true;
       g.count++;
       g.totals[r.moneda === 'USD' ? 'USD' : 'UYU'] += parseFloat(r.monto);
       const cid = r.categoria_id ?? 'sin';
@@ -1078,6 +1127,17 @@ window.Mods.gastos = {
                 visibility:${this._histSearch?'visible':'hidden'}">✕</button>
           </div>
         </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px">
+          ${[['', 'Todos'], ['casual', '💳 Casual'], ['recurrente', '🔁 Recurrente'], ['cuotas', '📅 Cuotas']].map(([val, lbl]) => {
+            const active = this._comTipo === val;
+            return `<button class="c-tipo-btn" data-tipo="${val}"
+              style="font-size:.74rem;padding:4px 11px;border-radius:6px;cursor:pointer;
+                ${active
+                  ? 'background:var(--accent);border:1px solid var(--accent);color:#fff'
+                  : 'background:var(--surface);border:1px solid var(--border);color:var(--text-sec)'}">
+              ${lbl}</button>`;
+          }).join('')}
+        </div>
       </div>
 
       <div class="table-wrap">
@@ -1113,6 +1173,13 @@ window.Mods.gastos = {
       this._renderComerciosTbody();
       search.focus();
     });
+
+    gc.querySelectorAll('.c-tipo-btn').forEach(btn =>
+      btn.addEventListener('click', () => {
+        this._comTipo = btn.dataset.tipo;
+        this._drawHistorialComercios();
+      })
+    );
 
     const tbody = document.getElementById('g-com-tbody');
     tbody?.addEventListener('click', e => {
@@ -1190,13 +1257,15 @@ window.Mods.gastos = {
   _renderComerciosTbody() {
     const tbody = document.getElementById('g-com-tbody');
     if (!tbody || !this._comerciosCache) return;
-    const q = (this._histSearch || '').toLowerCase().trim();
-    const filtered = q
-      ? this._comerciosCache.filter(it =>
-          it.example.toLowerCase().includes(q) || it.norm.includes(q))
-      : this._comerciosCache;
-    tbody.innerHTML = filtered.length
-      ? filtered.map(it => this._comercioRow(it)).join('')
+    const q    = (this._histSearch || '').toLowerCase().trim();
+    const tipo = this._comTipo || '';
+    let items = this._comerciosCache;
+    if (tipo === 'cuotas')     items = items.filter(it => it.hasQuotas);
+    else if (tipo === 'recurrente') items = items.filter(it => it.currentTipo === 'recurrente');
+    else if (tipo === 'casual')     items = items.filter(it => it.currentTipo !== 'recurrente');
+    if (q) items = items.filter(it => it.example.toLowerCase().includes(q) || it.norm.includes(q));
+    tbody.innerHTML = items.length
+      ? items.map(it => this._comercioRow(it)).join('')
       : `<tr><td colspan="7" style="text-align:center;color:var(--text-sec);padding:20px">Sin resultados</td></tr>`;
   },
 
