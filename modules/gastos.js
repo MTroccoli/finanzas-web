@@ -1366,6 +1366,7 @@ window.Mods.gastos = {
         </div>
         ${bancosComercio.length > 0 ? `
         <div style="margin-top:10px">
+          <div style="font-size:.68rem;color:var(--text-sec);margin-bottom:2px">Tarjeta</div>
           <select id="c-banco" style="font-size:.76rem;padding:4px 9px;border-radius:6px;border:1px solid var(--border);background:var(--surface);color:var(--text)">
             <option value="">Todas las TDC</option>
             ${bancosComercio.map(b => `<option value="${b}"${b===this._histBanco?' selected':''}>${b}</option>`).join('')}
@@ -1931,16 +1932,22 @@ window.Mods.gastos = {
 
     gc.innerHTML = `
       <div class="form-card" style="padding:12px 16px;margin-bottom:.75rem">
-        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end">
           ${titulares.length > 1 ? `
+          <div>
+            <div style="font-size:.68rem;color:var(--text-sec);margin-bottom:2px">Tarjetahabiente</div>
             <select id="adic-titular" style="${selSt}">
-              <option value="">Todos los titulares</option>
+              <option value="">Todos</option>
               ${titulares.map(t => `<option value="${t}"${t===filtTitular?' selected':''}>${t}</option>`).join('')}
-            </select>` : ''}
-          <select id="adic-mes" style="${selSt}">
-            <option value="">Todos los meses</option>
-            ${meses.map(m => `<option value="${m.val}"${m.val===filtMes?' selected':''}>${m.lbl}</option>`).join('')}
-          </select>
+            </select>
+          </div>` : ''}
+          <div>
+            <div style="font-size:.68rem;color:var(--text-sec);margin-bottom:2px">Mes</div>
+            <select id="adic-mes" style="${selSt}">
+              <option value="">Todos los meses</option>
+              ${meses.map(m => `<option value="${m.val}"${m.val===filtMes?' selected':''}>${m.lbl}</option>`).join('')}
+            </select>
+          </div>
         </div>
         <div style="font-size:.72rem;color:var(--text-sec);margin-top:8px">
           Los gastos de tarjeta adicional se registran cuando importás el EDC y asignás un titular.
@@ -2090,13 +2097,16 @@ window.Mods.gastos = {
     gc.innerHTML = `
       <!-- Filtro moneda -->
       <div class="form-card" style="padding:12px 16px;margin-bottom:.75rem">
-        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end">
           ${this._renderMonedaFilter('c', viewMode, this._tc)}
           ${bancosCuotas.length > 0 ? `
+          <div>
+            <div style="font-size:.68rem;color:var(--text-sec);margin-bottom:2px">Tarjeta</div>
             <select id="c-banco-cuotas" style="${selSt}">
               <option value="">Todas las TDC</option>
               ${bancosCuotas.map(b => `<option value="${b}"${b===this._cuotasBanco?' selected':''}>${b}</option>`).join('')}
-            </select>` : ''}
+            </select>
+          </div>` : ''}
         </div>
         ${needsTC ? `<div style="margin-top:8px;font-size:.75rem;color:var(--red)">
           ⚠ Ingresá el TC UYU/USD para convertir a dólares.</div>` : ''}
