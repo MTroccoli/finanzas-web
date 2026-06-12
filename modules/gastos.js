@@ -1084,7 +1084,8 @@ window.Mods.gastos = {
       };
     });
 
-    let q = getDB().from('gastos').select('*').gte('fecha', desde).lte('fecha', hasta);
+    let q = getDB().from('gastos').select('*').gte('fecha', desde).lte('fecha', hasta)
+                   .or('titular_adicional.is.null,incluido_en_gastos.eq.true');
     if (catFilter)                   q = q.eq('categoria_id', +catFilter);
     if (tipoFilter === 'cuotas')     q = q.not('cuota_actual', 'is', null);
     else if (tipoFilter)             q = q.eq('tipo_gasto', tipoFilter);
@@ -1302,6 +1303,7 @@ window.Mods.gastos = {
     const { data: rows, error } = await getDB()
       .from('gastos').select('id, comercio, moneda, monto, categoria_id, fecha, tipo_gasto, cuota_actual, banco_tarjeta')
       .not('comercio', 'is', null)
+      .or('titular_adicional.is.null,incluido_en_gastos.eq.true')
       .order('fecha', { ascending: false });
     if (error) throw error;
 
@@ -1740,11 +1742,11 @@ window.Mods.gastos = {
     const sb = getDB();
     const [adicRes, descRes] = await Promise.all([
       sb.from('gastos')
-        .select('id, fecha, monto, moneda, comercio, categoria_id, titular_adicional, banco_tarjeta')
+        .select('id, fecha, monto, moneda, comercio, categoria_id, titular_adicional, banco_tarjeta, incluido_en_gastos')
         .not('titular_adicional', 'is', null)
         .order('fecha', { ascending: false }),
       sb.from('gastos')
-        .select('id, fecha, monto, moneda, comercio, notas')
+        .select('id, fecha, monto, moneda, comercio, notas, titular_adicional, incluido_en_gastos')
         .ilike('notas', 'desc_adic:%')
         .order('fecha', { ascending: false }),
     ]);
@@ -1822,10 +1824,14 @@ window.Mods.gastos = {
               ? parseFloat(g.monto) + descUYU
               : parseFloat(g.monto) + descUSD;
             const catC = this._cats.find(c => c.id === g.categoria_id);
+            const included = !!g.incluido_en_gastos;
+            const inclBtnSt = included
+              ? 'background:rgba(16,185,129,.15);border:1px solid #10b981;color:#10b981'
+              : 'background:var(--surface);border:1px solid var(--border);color:var(--text-sec)';
             return `
-              <tr>
+              <tr style="opacity:${included ? 1 : 0.75}">
                 <td style="white-space:nowrap;font-size:.72rem;font-family:'DM Mono',monospace">${fmtDate(g.fecha)}</td>
-                <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
+                <td style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
                   ${g.comercio ?? '—'}
                   ${catC ? `<span style="font-size:.62rem;color:var(--text-sec);margin-left:4px">${catC.icono}</span>` : ''}
                   ${hasDisc ? `<span style="font-size:.62rem;color:#10b981;margin-left:3px">🔗</span>` : ''}
@@ -1838,6 +1844,12 @@ window.Mods.gastos = {
                 </td>
                 <td style="font-family:'DM Mono',monospace;font-size:.8rem;font-weight:600;white-space:nowrap${hasDisc ? ';color:var(--accent)' : ''}">
                   ${this._fmtMon(netAmount, g.moneda)}
+                </td>
+                <td>
+                  <button class="adic-incl-btn" data-id="${g.id}" data-val="${!included}"
+                    style="font-size:.65rem;padding:3px 8px;border-radius:4px;cursor:pointer;white-space:nowrap;${inclBtnSt}">
+                    ${included ? '✓ Incluido' : '+ Incluir'}
+                  </button>
                 </td>
               </tr>`;
           }).join('');
@@ -1862,7 +1874,7 @@ window.Mods.gastos = {
               </div>
               <table style="font-size:.8rem;margin-bottom:6px">
                 <thead><tr>
-                  <th>Fecha</th><th>Comercio</th><th>Monto</th><th>Descuento</th><th>Total</th>
+                  <th>Fecha</th><th>Comercio</th><th>Monto</th><th>Descuento</th><th>Total</th><th></th>
                 </tr></thead>
                 <tbody>${rows}</tbody>
               </table>
@@ -1886,12 +1898,49 @@ window.Mods.gastos = {
             </div>`;
         }).join('');
 
+      // Grand totals for this titular across all months
+      const allTitRows = purchaseRows.filter(r => r.titular_adicional === tit);
+      const grandTotUYU = allTitRows.filter(r => r.moneda !== 'USD').reduce((s,r) => s + parseFloat(r.monto), 0);
+      const grandTotUSD = allTitRows.filter(r => r.moneda === 'USD').reduce((s,r) => s + parseFloat(r.monto), 0);
+      const grandDescUYU = allTitRows.reduce((s,r) => s + matchDiscount(r.comercio||'').filter(d=>d.moneda!=='USD').reduce((ss,d)=>ss+parseFloat(d.monto),0), 0);
+      const grandDescUSD = allTitRows.reduce((s,r) => s + matchDiscount(r.comercio||'').filter(d=>d.moneda==='USD').reduce((ss,d)=>ss+parseFloat(d.monto),0), 0);
+      const allIncluded = allTitRows.length > 0 && allTitRows.every(r => r.incluido_en_gastos);
+      const bulkVal     = !allIncluded;
+      const bulkBtnSt   = allIncluded
+        ? 'background:rgba(16,185,129,.15);border:1px solid #10b981;color:#10b981'
+        : 'background:var(--surface);border:1px solid var(--border);color:var(--text-sec)';
+
       return `
         <div class="form-card" style="padding:14px 16px;margin-bottom:.75rem">
-          <div style="font-size:.95rem;font-weight:700;margin-bottom:12px">
-            👤 ${tit}
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+            <div style="font-size:.95rem;font-weight:700">👤 ${tit}</div>
+            <button class="adic-bulk-btn"
+              data-titular="${tit.replace(/"/g,'&quot;')}" data-val="${bulkVal}"
+              style="font-size:.72rem;padding:4px 12px;border-radius:5px;cursor:pointer;${bulkBtnSt}">
+              ${allIncluded ? '✓ Incluidos en gastos' : '+ Incluir todos en gastos'}
+            </button>
           </div>
           ${monthSections}
+          ${(grandTotUYU > 0 || grandTotUSD > 0) ? `
+          <div style="border-top:2px solid var(--border);padding-top:10px;margin-top:4px">
+            <div style="font-size:.7rem;color:var(--text-sec);font-weight:600;margin-bottom:4px;letter-spacing:.03em">
+              TOTAL ${tit.toUpperCase()}
+            </div>
+            <div style="display:flex;gap:16px;flex-wrap:wrap;font-size:.82rem">
+              ${grandTotUYU > 0 ? `<div>
+                <span style="color:var(--text-sec)">UYU:</span>
+                <strong style="font-family:'DM Mono',monospace;margin:0 4px">${this._fmtMon(grandTotUYU,'UYU')}</strong>
+                ${grandDescUYU < 0 ? `<span style="color:#10b981">− ${this._fmtMon(Math.abs(grandDescUYU),'UYU')} desc</span>` : ''}
+                <span style="color:var(--accent);font-weight:700;margin-left:4px">= ${this._fmtMon(grandTotUYU+grandDescUYU,'UYU')}</span>
+              </div>` : ''}
+              ${grandTotUSD > 0 ? `<div>
+                <span style="color:var(--text-sec)">USD:</span>
+                <strong style="font-family:'DM Mono',monospace;margin:0 4px">${this._fmtMon(grandTotUSD,'USD')}</strong>
+                ${grandDescUSD < 0 ? `<span style="color:#10b981">− ${this._fmtMon(Math.abs(grandDescUSD),'USD')} desc</span>` : ''}
+                <span style="color:var(--accent);font-weight:700;margin-left:4px">= ${this._fmtMon(grandTotUSD+grandDescUSD,'USD')}</span>
+              </div>` : ''}
+            </div>
+          </div>` : ''}
         </div>`;
     }).join('');
 
@@ -1944,6 +1993,40 @@ window.Mods.gastos = {
       this._adicMes = e.target.value;
       this._drawHistorialAdicional();
     });
+
+    if (this._adicClickHandler) gc.removeEventListener('click', this._adicClickHandler);
+    this._adicClickHandler = async (e) => {
+      const inclBtn = e.target.closest('.adic-incl-btn');
+      const bulkBtn = e.target.closest('.adic-bulk-btn');
+      if (!inclBtn && !bulkBtn) return;
+
+      if (inclBtn) {
+        const id = +inclBtn.dataset.id;
+        const newVal = inclBtn.dataset.val === 'true';
+        const purchase = purchaseRows.find(r => r.id === id);
+        if (!purchase) return;
+        const linkedIds = matchDiscount(purchase.comercio || '').map(d => d.id);
+        inclBtn.disabled = true;
+        inclBtn.textContent = '…';
+        await getDB().from('gastos').update({ incluido_en_gastos: newVal }).in('id', [id, ...linkedIds]);
+        this._drawHistorialAdicional();
+        return;
+      }
+
+      if (bulkBtn) {
+        const tit = bulkBtn.dataset.titular;
+        const newVal = bulkBtn.dataset.val === 'true';
+        const titPurchases = purchaseRows.filter(r => r.titular_adicional === tit);
+        const titDiscIds   = descRows.filter(d => d.titular_adicional === tit).map(d => d.id);
+        const allIds = [...titPurchases.map(r => r.id), ...titDiscIds];
+        if (!allIds.length) return;
+        bulkBtn.disabled = true;
+        bulkBtn.textContent = '…';
+        await getDB().from('gastos').update({ incluido_en_gastos: newVal }).in('id', allIds);
+        this._drawHistorialAdicional();
+      }
+    };
+    gc.addEventListener('click', this._adicClickHandler);
   },
 
   // ── Cuotas (proyección de gastos futuros) ───────────────────────────────
