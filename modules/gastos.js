@@ -61,11 +61,13 @@ window.Mods.gastos = {
   async render() {
     const c = document.getElementById('content');
     c.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
-    const [cats, learnedRows, excludedCards, savedTC] = await Promise.all([
+    const [cats, learnedRows, excludedCards, savedTC, divRows] = await Promise.all([
       dbFetch('categorias_gastos', { filters: { activo: 1 }, order: { col: 'nombre', asc: true } }),
       dbFetch('merchant_categorias', { order: { col: 'seen_count', asc: false } }).catch(() => []),
       getConfig('gastos_tarjetas_excluidas').catch(() => ''),
       getConfig('gastos_tc').catch(() => ''),
+      getDB().from('gastos').select('comercio,dividido_entre').gt('dividido_entre', 1).not('comercio', 'is', null)
+        .then(r => r.data || []).catch(() => []),
     ]);
     this._cats = cats;
     this._learned = {};
@@ -73,6 +75,18 @@ window.Mods.gastos = {
     this._cuotasMoneda = 'TOTAL_USD';
     for (const r of learnedRows) this._learned[r.merchant_normalizado] = r.categoria_id;
     this._learnedRows = learnedRows;
+    // Aprender "dividido entre" del historial: por comercio normalizado, el valor más frecuente
+    this._learnedDiv = {};
+    const divCounts = {};
+    for (const r of divRows) {
+      const k = this._normMerchant(r.comercio);
+      if (!k) continue;
+      divCounts[k] = divCounts[k] || {};
+      divCounts[k][r.dividido_entre] = (divCounts[k][r.dividido_entre] || 0) + 1;
+    }
+    for (const [k, counts] of Object.entries(divCounts)) {
+      this._learnedDiv[k] = +Object.entries(counts).sort((a, b) => b[1] - a[1])[0][0];
+    }
     this._excludedCards = excludedCards || '';
     if (savedTC && !this._tc) this._tc = savedTC;
     this._splitCatIds = new Set(
@@ -360,7 +374,10 @@ window.Mods.gastos = {
         const fd = new FormData();
         fd.append('file', selFile);
 
-        // Enviar todos los ejemplos aprendidos como hints few-shot (sin límite artificial)
+        // Enviar categorías disponibles para que la IA use nombres exactos
+        fd.append('categorias', JSON.stringify(this._cats.map(c => c.nombre)));
+
+        // Enviar todos los ejemplos aprendidos como hints few-shot
         const topLearned = (this._learnedRows || []).map(r => ({
           ejemplo: r.ejemplo_original || r.merchant_normalizado,
           categoria: this._cats.find(c => c.id === r.categoria_id)?.nombre || 'Otros',
@@ -397,7 +414,16 @@ window.Mods.gastos = {
           }
           const norm = this._normMerchant(descripcion);
           const learnedCat = this._learnedFuzzy(norm);
-          let aiCat = this._cats.find(c => c.nombre === t.categoria)?.id ?? null;
+          const nc = s => (s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').trim();
+          const aiCatName = nc(t.categoria || '');
+          let aiCat = this._cats.find(c => nc(c.nombre) === aiCatName)?.id ?? null;
+          // Fuzzy: si el AI devolvió nombre parcial (ej "Farmacia" ≈ "Farmacia y Salud")
+          if (!aiCat && aiCatName.length >= 4) {
+            aiCat = this._cats.find(c => {
+              const cn = nc(c.nombre);
+              return cn.includes(aiCatName) || aiCatName.includes(cn);
+            })?.id ?? null;
+          }
 
           // No sugerir Restaurantes para montos pequeños — bajar a Otros
           // (los comercios ya aprendidos ganan siempre, no aplica)
@@ -421,7 +447,7 @@ window.Mods.gastos = {
             descripcion,         // descripción limpia sin el N/M de cuota
             _id: i,
             _include: t.tarjeta_adicional !== true && t.descuento_de_adicional !== true,
-            _dividirEntre: 1,
+            _dividirEntre: this._learnedDiv[norm] || 1,
             _catId: finalCat,
             _cuotaActual:   cuotaActual,
             _cuotasTotales: cuotasTotales,
