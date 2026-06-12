@@ -350,7 +350,14 @@ window.Mods.gastos = {
             _overridden: learnedCat && learnedCat !== aiCat,
           };
         });
-        log.textContent = `✅ ${result.count} transacciones · ${overrides} re-categorizadas con tu historial. Revisá y confirmá.`;
+        // Auto-aplicar mes detectado por la IA
+        if (result.fecha_cierre) {
+          this._edcMes = result.fecha_cierre;
+          const inp = document.getElementById('g-edc-mes');
+          if (inp) inp.value = result.fecha_cierre;
+        }
+        const mesInfo = result.fecha_cierre ? ` · EDC: ${result.fecha_cierre}` : '';
+        log.textContent = `✅ ${result.count} transacciones${mesInfo} · ${overrides} re-categorizadas con tu historial. Revisá y confirmá.`;
         setTimeout(() => this._drawReview(), 900);
       } catch(e) {
         log.textContent = `❌ ${e.message}`;
@@ -522,10 +529,22 @@ window.Mods.gastos = {
       ? ` <span style="font-size:.62rem;color:var(--text-sec);background:rgba(255,255,255,.06);padding:1px 5px;border-radius:3px"
           title="Cuota ${t._cuotaActual} de ${t._cuotasTotales}">📅 ${t._cuotaActual}/${t._cuotasTotales}</span>`
       : '';
+    // Computar fecha final que se guardará (corregida para cuotas > 1)
+    let displayFecha = t.fecha;
+    let fechaCorrected = false;
+    if ((t._cuotaActual ?? 0) > 1 && this._edcMes) {
+      const dd = String(t.fecha).slice(8, 10);
+      const [yyyy, mm] = this._edcMes.split('-');
+      const corrected = `${yyyy}-${mm}-${dd}`;
+      if (corrected !== t.fecha) { displayFecha = corrected; fechaCorrected = true; }
+    }
+    const fechaHTML = fechaCorrected
+      ? `<span style="color:var(--accent)" title="Fecha corregida (original: ${t.fecha})">${displayFecha}</span>`
+      : displayFecha;
     return `
       <tr style="opacity:${t._include?1:.4}">
         <td><input type="checkbox" class="g-row-chk" data-id="${t._id}" checked></td>
-        <td style="white-space:nowrap;font-family:'DM Mono',monospace;font-size:.72rem">${t.fecha}</td>
+        <td style="white-space:nowrap;font-family:'DM Mono',monospace;font-size:.72rem">${fechaHTML}</td>
         <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${descEsc}">${t.descripcion}${aiBadge}${cuotaBadge}</td>
         <td><input type="number" class="g-monto-inp" data-id="${t._id}" value="${t.monto}"
           style="width:88px;font-size:.75rem;padding:3px 6px;border-radius:4px;
