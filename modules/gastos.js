@@ -20,6 +20,8 @@ window.Mods.gastos = {
   _resCat:       '',      // Filtro de categoría en Resumen
   _comTipo:      '',      // Filtro tipo en panel Comercios
   _pendingFile:  null,    // Archivo PDF pendiente de subir a storage tras confirmar import
+  _bancotarjeta: '',      // Banco/tarjeta detectado por la IA en el EDC activo
+  _resBanco:     '',      // Filtro por banco/tarjeta en Resumen
 
   // Normalizar comercio para matching: lowercase, sin tildes, sin códigos de comercio
   _normMerchant(s) {
@@ -158,7 +160,7 @@ window.Mods.gastos = {
     // Cargar importaciones anteriores para el panel de gestión
     const sb = getDB();
     const [impsRes, gastosRes] = await Promise.all([
-      sb.from('importaciones').select('id, registros_importados, archivo_path').order('id', { ascending: false }),
+      sb.from('importaciones').select('id, registros_importados, archivo_path, banco_tarjeta').order('id', { ascending: false }),
       sb.from('gastos').select('importacion_id, fecha').not('importacion_id', 'is', null),
     ]);
     const impsRaw = impsRes.data || [];
@@ -218,13 +220,14 @@ window.Mods.gastos = {
             <th style="width:40px">
               <input type="checkbox" id="g-imp-chk-all" title="Seleccionar todos">
             </th>
-            <th>#</th><th>Período</th><th>Gastos</th><th colspan="2"></th>
+            <th>#</th><th>Banco/Tarjeta</th><th>Período</th><th>Gastos</th><th colspan="2"></th>
           </tr></thead>
           <tbody>
             ${imps.map(imp => `
               <tr data-imp-id="${imp.id}">
                 <td><input type="checkbox" class="g-imp-chk" data-id="${imp.id}"></td>
                 <td style="font-family:'DM Mono',monospace;color:var(--text-sec)">#${imp.id}</td>
+                <td style="white-space:nowrap;font-size:.78rem">${imp.banco_tarjeta || '—'}</td>
                 <td style="white-space:nowrap">
                   ${imp.desde ? `${fmtDate(imp.desde)} → ${fmtDate(imp.hasta)}` : '—'}
                 </td>
@@ -352,12 +355,14 @@ window.Mods.gastos = {
           if (inp) inp.value = result.fecha_cierre;
         }
         this._pendingFile = selFile;
+        if (result.banco_tarjeta) this._bancotarjeta = result.banco_tarjeta;
         const addCount  = this._pending.filter(p => p.tarjeta_adicional).length;
         const descCount = this._pending.filter(p => p.descuento_de_adicional).length;
-        const mesInfo  = result.fecha_cierre ? ` · EDC: ${result.fecha_cierre}` : '';
-        const addInfo  = addCount  > 0 ? ` · ${addCount} tarjeta adicional` : '';
-        const descInfo = descCount > 0 ? ` · ${descCount} desc. asociado` : '';
-        log.textContent = `✅ ${result.count} transacciones${mesInfo}${addInfo}${descInfo} (sin marcar) · ${overrides} re-categorizadas. Revisá y confirmá.`;
+        const bancoInfo = result.banco_tarjeta ? ` · 🏦 ${result.banco_tarjeta}` : '';
+        const mesInfo   = result.fecha_cierre  ? ` · EDC: ${result.fecha_cierre}` : '';
+        const addInfo   = addCount  > 0 ? ` · ${addCount} adicional` : '';
+        const descInfo  = descCount > 0 ? ` · ${descCount} desc. asociado` : '';
+        log.textContent = `✅ ${result.count} transacciones${bancoInfo}${mesInfo}${addInfo}${descInfo} (sin marcar) · ${overrides} re-categorizadas. Revisá y confirmá.`;
         setTimeout(() => this._drawReview(), 900);
       } catch(e) {
         log.textContent = `❌ ${e.message}`;
@@ -457,13 +462,21 @@ window.Mods.gastos = {
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
           <div>
             <h3 style="margin:0 0 4px">${this._pending.length} transacciones · <span id="g-sel-count">${sel}</span> seleccionadas</h3>
-            <div style="display:flex;align-items:center;gap:6px;font-size:.75rem;color:var(--text-sec)">
-              📅 EDC:
-              <input id="g-review-edc-mes" type="month" value="${this._edcMes}"
-                style="font-size:.74rem;padding:2px 6px;border-radius:5px;
-                  border:1px solid var(--border);background:var(--surface);color:var(--text);
-                  font-family:'DM Mono',monospace">
-              <span style="font-size:.68rem;color:var(--text-sec)">Corregí si la IA se equivocó</span>
+            <div style="display:flex;align-items:center;gap:12px;font-size:.75rem;color:var(--text-sec);flex-wrap:wrap">
+              <span style="display:flex;align-items:center;gap:6px">
+                📅 EDC:
+                <input id="g-review-edc-mes" type="month" value="${this._edcMes}"
+                  style="font-size:.74rem;padding:2px 6px;border-radius:5px;
+                    border:1px solid var(--border);background:var(--surface);color:var(--text);
+                    font-family:'DM Mono',monospace">
+              </span>
+              <span style="display:flex;align-items:center;gap:6px">
+                🏦 Banco/Tarjeta:
+                <input id="g-review-banco" type="text" value="${this._bancotarjeta}" placeholder="ej: BBVA Visa"
+                  style="font-size:.74rem;padding:2px 8px;border-radius:5px;width:130px;
+                    border:1px solid var(--border);background:var(--surface);color:var(--text)">
+              </span>
+              <span style="font-size:.68rem;color:var(--text-sec)">Editá si la IA se equivocó</span>
             </div>
           </div>
           <div style="display:flex;gap:8px">
@@ -626,8 +639,10 @@ window.Mods.gastos = {
     const btn = document.getElementById('g-btn-confirm');
     btn.disabled = true; btn.textContent = 'Guardando…';
     try {
+      const bancoVal = (document.getElementById('g-review-banco')?.value?.trim() || this._bancotarjeta) || null;
       const imp = await dbInsert('importaciones', {
         tipo: 'pdf', nombre_archivo: 'edc_visa', registros_importados: toSave.length,
+        banco_tarjeta: bancoVal,
       });
       for (const t of toSave) {
         const N = Math.max(1, t._dividirEntre || 1);
@@ -649,6 +664,7 @@ window.Mods.gastos = {
           importacion_id: imp.id,
           cuota_actual:   t._cuotaActual   || null,
           cuotas_totales: t._cuotasTotales || null,
+          banco_tarjeta:  bancoVal,
           notas: N > 1 ? `Dividido entre ${N} · total original: ${t.monto} ${t.moneda}` : null,
         });
       }
@@ -666,6 +682,7 @@ window.Mods.gastos = {
         }
         this._pendingFile = null;
       }
+      this._bancotarjeta = '';
 
       toast(`✅ ${toSave.length} gastos importados`);
       this._pending = [];
@@ -1707,11 +1724,19 @@ window.Mods.gastos = {
 
     // Una sola query con todos los campos necesarios
     let q = getDB().from('gastos')
-      .select('fecha, monto, moneda, categoria_id')
+      .select('fecha, monto, moneda, categoria_id, banco_tarjeta')
       .gte('fecha', this._resDesde)
       .lte('fecha', this._resHasta);
     if (this._resCat) q = q.eq('categoria_id', +this._resCat);
-    const { data: allData = [] } = await q;
+    const { data: allDataRaw = [] } = await q;
+
+    // Lista única de bancos/tarjetas para el filtro
+    const bancos = [...new Set(allDataRaw.map(r => r.banco_tarjeta).filter(Boolean))].sort();
+
+    // Aplicar filtro banco en JS (así siempre tenemos la lista completa de bancos disponibles)
+    const allData = this._resBanco
+      ? allDataRaw.filter(r => r.banco_tarjeta === this._resBanco)
+      : allDataRaw;
 
     // Categorías de beneficio (excluir de gastos)
     const benefitCatIds = new Set(
@@ -1773,6 +1798,10 @@ window.Mods.gastos = {
           <select id="r-cat" style="${selSt}">
             <option value="">Todos los rubros</option>
             ${catOpts}
+          </select>
+          <select id="r-banco" style="${selSt};min-width:120px">
+            <option value="">Todas las TDC</option>
+            ${bancos.map(b => `<option value="${b}"${b===this._resBanco?' selected':''}>${b}</option>`).join('')}
           </select>
         </div>
         ${!tc ? '<div style="margin-top:8px;font-size:.75rem;color:var(--red)">⚠ Ingresá el TC UYU/USD para ver los totales convertidos a USD.</div>' : ''}
@@ -1893,6 +1922,10 @@ window.Mods.gastos = {
     });
     document.getElementById('r-cat')?.addEventListener('change', e => {
       this._resCat = e.target.value;
+      this._drawResumen();
+    });
+    document.getElementById('r-banco')?.addEventListener('change', e => {
+      this._resBanco = e.target.value;
       this._drawResumen();
     });
     ['r-desde','r-hasta'].forEach(id => {
