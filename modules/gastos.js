@@ -500,7 +500,6 @@ window.Mods.gastos = {
         t.categoria = this._cats.find(c => c.id === t._catId)?.nombre ?? 'Otros';
         const divCell = tbody.querySelector(`.g-div-cell[data-id="${id}"]`);
         if (divCell) divCell.innerHTML = this._divCellHTML(t);
-        if (!this._isSplitCat(t._catId)) t._dividirEntre = 1;
       }
       if (e.target.classList.contains('g-div-sel')) {
         t._dividirEntre = +e.target.value || 1;
@@ -518,7 +517,6 @@ window.Mods.gastos = {
   },
 
   _divCellHTML(t) {
-    if (!this._isSplitCat(t._catId)) return '—';
     const opts = [1, 2, 3, 4, 5, 6, 7, 8].map(n =>
       `<option value="${n}"${n===(t._dividirEntre||1)?' selected':''}>${n===1?'No':'÷'+n}</option>`).join('');
     return `<select class="g-div-sel" data-id="${t._id}"
@@ -703,7 +701,7 @@ window.Mods.gastos = {
               </select>
             </div>
           </div>
-          <div id="g-div-wrap" style="display:none;margin-bottom:14px">
+          <div id="g-div-wrap" style="margin-bottom:14px">
             <label style="font-size:.84rem;margin-bottom:5px;display:block">Dividir entre N personas</label>
             <select id="g-dividir-entre" style="font-size:.84rem;padding:5px 10px;border-radius:6px;
               border:1px solid var(--border);background:var(--surface);color:var(--text)">
@@ -730,13 +728,6 @@ window.Mods.gastos = {
         </form>
       </div>
     `;
-
-    document.getElementById('g-categoria').addEventListener('change', e => {
-      const catId = e.target.value ? +e.target.value : null;
-      const split = this._isSplitCat(catId);
-      document.getElementById('g-div-wrap').style.display = split ? 'block' : 'none';
-      if (!split) document.getElementById('g-dividir-entre').value = '1';
-    });
 
     document.getElementById('form-gasto').addEventListener('submit', async e => {
       e.preventDefault();
@@ -771,7 +762,6 @@ window.Mods.gastos = {
         toast('✅ Gasto registrado');
         e.target.reset();
         document.getElementById('g-fecha').value = new Date().toISOString().slice(0,10);
-        document.getElementById('g-div-wrap').style.display = 'none';
       } catch(err) { toast('❌ ' + err.message, 'err'); }
     });
   },
@@ -1044,12 +1034,14 @@ window.Mods.gastos = {
       if (!groups[norm]) {
         groups[norm] = {
           norm, example: r.comercio, ids: [],
+          gastos: [],
           count: 0, totals: { UYU: 0, USD: 0 },
           catCounts: {}, tipoCounts: {}, ultima: r.fecha,
         };
       }
       const g = groups[norm];
       g.ids.push(r.id);
+      g.gastos.push(r);
       g.count++;
       g.totals[r.moneda === 'USD' ? 'USD' : 'UYU'] += parseFloat(r.monto);
       const cid = r.categoria_id ?? 'sin';
@@ -1123,6 +1115,18 @@ window.Mods.gastos = {
     });
 
     const tbody = document.getElementById('g-com-tbody');
+    tbody?.addEventListener('click', e => {
+      const btn = e.target.closest('.g-com-expand');
+      if (!btn) return;
+      const norm = btn.dataset.norm;
+      const detailRow = tbody.querySelector(`tr.g-com-detail[data-norm="${CSS.escape(norm)}"]`);
+      if (!detailRow) return;
+      const isOpen = detailRow.style.display !== 'none';
+      detailRow.style.display = isOpen ? 'none' : 'table-row';
+      btn.textContent = isOpen ? '▶' : '▼';
+      btn.style.color = isOpen ? 'var(--text-sec)' : 'var(--accent)';
+    });
+
     tbody?.addEventListener('change', async e => {
       if (e.target.classList.contains('c-tipo-sel')) {
         const norm = e.target.dataset.norm;
@@ -1202,10 +1206,33 @@ window.Mods.gastos = {
     ).join('');
     const ttlUYU = it.totals.UYU > 0 ? this._fmtMon(it.totals.UYU, 'UYU') : '—';
     const ttlUSD = it.totals.USD > 0 ? this._fmtUSD(it.totals.USD)        : '—';
+
+    const sortedGastos = [...(it.gastos || [])].sort((a, b) => b.fecha.localeCompare(a.fecha));
+    const detailRows = sortedGastos.map(g => {
+      const catC = this._cats.find(c => c.id === g.categoria_id);
+      const catLabel = catC ? `${catC.icono} ${catC.nombre}` : '—';
+      const montoStr = g.moneda === 'USD'
+        ? this._fmtUSD(parseFloat(g.monto))
+        : this._fmtMon(parseFloat(g.monto), 'UYU');
+      const tipoIcon = g.tipo_gasto === 'recurrente' ? '🔁' : '💳';
+      return `<tr style="border-top:1px solid rgba(255,255,255,.04)">
+        <td style="white-space:nowrap;font-size:.72rem;color:var(--text-sec);padding:4px 8px">${fmtDate(g.fecha)}</td>
+        <td style="font-size:.72rem;font-family:'DM Mono',monospace;white-space:nowrap;padding:4px 8px">${montoStr}</td>
+        <td style="font-size:.7rem;color:var(--text-sec);padding:4px 8px">${g.moneda}</td>
+        <td style="font-size:.72rem;padding:4px 8px">${catLabel}</td>
+        <td style="font-size:.7rem;color:var(--text-sec);padding:4px 8px">${tipoIcon}</td>
+      </tr>`;
+    }).join('');
+
     return `
       <tr data-norm="${it.norm}">
         <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"
-          title="${it.example.replace(/"/g,'&quot;')}">${it.example}</td>
+          title="${it.example.replace(/"/g,'&quot;')}">
+          <button class="g-com-expand" data-norm="${it.norm}"
+            style="background:none;border:none;cursor:pointer;color:var(--text-sec);
+              font-size:.72rem;margin-right:5px;padding:1px 4px;border-radius:3px;
+              line-height:1;vertical-align:middle">▶</button>${it.example}
+        </td>
         <td style="font-family:'DM Mono',monospace">${it.count}</td>
         <td style="white-space:nowrap;font-size:.74rem;color:var(--text-sec)">${fmtDate(it.ultima)}</td>
         <td style="font-family:'DM Mono',monospace;white-space:nowrap">${ttlUYU}</td>
@@ -1225,6 +1252,13 @@ window.Mods.gastos = {
             <option value="casual"${it.currentTipo!=='recurrente'?' selected':''}>💳 Casual</option>
             <option value="recurrente"${it.currentTipo==='recurrente'?' selected':''}>🔁 Recurrente</option>
           </select>
+        </td>
+      </tr>
+      <tr class="g-com-detail" data-norm="${it.norm}" style="display:none">
+        <td colspan="7" style="padding:0 8px 10px 36px;background:rgba(255,255,255,.02)">
+          <table style="width:100%;border-collapse:collapse">
+            ${detailRows}
+          </table>
         </td>
       </tr>`;
   },
