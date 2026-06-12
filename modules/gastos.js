@@ -190,19 +190,6 @@ window.Mods.gastos = {
             Se excluyen sus compras y los descuentos/beneficios asociados
           </div>
         </div>
-        <div style="margin:0 0 14px">
-          <label style="display:block;font-size:.78rem;color:var(--text-sec);margin-bottom:4px">
-            Mes del estado de cuenta
-          </label>
-          <input id="g-edc-mes" type="month"
-            value="${this._edcMes || (d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`)(new Date())}"
-            style="font-size:.82rem;padding:5px 8px;border-radius:6px;
-              border:1px solid var(--border);background:var(--surface);color:var(--text);
-              font-family:'DM Mono',monospace">
-          <div style="font-size:.7rem;color:var(--text-sec);margin-top:3px">
-            Para corregir la fecha de cuotas que no son la primera (cuota 2/6 → usa el mes del EDC)
-          </div>
-        </div>
         <div class="g-upload-zone" id="g-drop-zone">
           <div style="font-size:2rem;line-height:1;margin-bottom:8px">📄</div>
           <div style="font-size:.88rem;color:var(--text-sec)">Arrastrá el archivo acá<br>o tocá para seleccionar</div>
@@ -432,7 +419,17 @@ window.Mods.gastos = {
     document.getElementById('g-content').innerHTML = `
       <div class="form-card" style="padding-bottom:12px">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
-          <h3 style="margin:0">${this._pending.length} transacciones · <span id="g-sel-count">${sel}</span> seleccionadas</h3>
+          <div>
+            <h3 style="margin:0 0 4px">${this._pending.length} transacciones · <span id="g-sel-count">${sel}</span> seleccionadas</h3>
+            <div style="display:flex;align-items:center;gap:6px;font-size:.75rem;color:var(--text-sec)">
+              📅 EDC:
+              <input id="g-review-edc-mes" type="month" value="${this._edcMes}"
+                style="font-size:.74rem;padding:2px 6px;border-radius:5px;
+                  border:1px solid var(--border);background:var(--surface);color:var(--text);
+                  font-family:'DM Mono',monospace">
+              <span style="font-size:.68rem;color:var(--text-sec)">Corregí si la IA se equivocó</span>
+            </div>
+          </div>
           <div style="display:flex;gap:8px">
             <button id="g-btn-cancel" class="btn btn-ghost" style="font-size:.78rem">✕ Cancelar</button>
             <button id="g-btn-confirm" class="btn btn-primary" style="font-size:.78rem">
@@ -472,8 +469,25 @@ window.Mods.gastos = {
       refreshCounts();
     });
 
+    // Si el usuario corrige el mes del EDC, re-renderiza el tbody con fechas actualizadas
+    document.getElementById('g-review-edc-mes')?.addEventListener('change', e => {
+      this._edcMes = e.target.value;
+      tbody.innerHTML = this._pending.map(t => this._reviewRow(t, catOpts)).join('');
+      this._attachReviewBodyHandlers(tbody, catOpts, refreshCounts);
+    });
+
     const tbody = document.getElementById('g-review-tbody');
 
+    this._attachReviewBodyHandlers(tbody, catOpts, refreshCounts);
+
+    document.getElementById('g-btn-cancel').addEventListener('click', () => {
+      this._pending = [];
+      this._drawImportar();
+    });
+    document.getElementById('g-btn-confirm').addEventListener('click', () => this._confirmImport());
+  },
+
+  _attachReviewBodyHandlers(tbody, catOpts, refreshCounts) {
     tbody.addEventListener('change', e => {
       const id = e.target.dataset.id !== undefined ? +e.target.dataset.id : null;
       const t  = id != null ? this._pending.find(p => p._id === id) : null;
@@ -503,12 +517,6 @@ window.Mods.gastos = {
       const t = this._pending.find(p => p._id === +e.target.dataset.id);
       if (t) t.monto = parseFloat(e.target.value) || t.monto;
     });
-
-    document.getElementById('g-btn-cancel').addEventListener('click', () => {
-      this._pending = [];
-      this._drawImportar();
-    });
-    document.getElementById('g-btn-confirm').addEventListener('click', () => this._confirmImport());
   },
 
   _divCellHTML(t) {
