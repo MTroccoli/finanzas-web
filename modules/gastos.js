@@ -1751,6 +1751,7 @@ window.Mods.gastos = {
 
     const adicRows = adicRes.data || [];
     const descRows = descRes.data || [];
+    const discountIds = new Set(descRows.map(d => d.id));
 
     // Build discount lookup: ref_comercio → { monto, fecha, id, notas }
     const descByRef = {};
@@ -1771,13 +1772,14 @@ window.Mods.gastos = {
       return [];
     };
 
-    // Get all titulares for filter
-    const titulares = [...new Set(adicRows.map(r => r.titular_adicional).filter(Boolean))].sort();
+    // Get all titulares for filter (exclude discount-only rows)
+    const purchaseRows = adicRows.filter(r => !discountIds.has(r.id));
+    const titulares = [...new Set(purchaseRows.map(r => r.titular_adicional).filter(Boolean))].sort();
 
     // Apply filters
     const filtTitular = this._adicTitularFiltro || '';
     const filtMes     = this._adicMes || '';
-    let rows = adicRows;
+    let rows = purchaseRows;
     if (filtTitular) rows = rows.filter(r => r.titular_adicional === filtTitular);
     if (filtMes)     rows = rows.filter(r => (r.fecha || '').startsWith(filtMes));
 
@@ -1815,30 +1817,27 @@ window.Mods.gastos = {
             const discounts = matchDiscount(g.comercio || '');
             const descUYU = discounts.filter(d => d.moneda !== 'USD').reduce((s,d) => s + parseFloat(d.monto), 0);
             const descUSD = discounts.filter(d => d.moneda === 'USD').reduce((s,d) => s + parseFloat(d.monto), 0);
-            const netUYU = parseFloat(g.monto) + (g.moneda !== 'USD' ? 0 : 0) + (g.moneda !== 'USD' ? descUYU : 0);
-            const netUSD = parseFloat(g.monto) + (g.moneda === 'USD' ? descUSD : 0);
+            const hasDisc = discounts.length > 0;
+            const netAmount = g.moneda !== 'USD'
+              ? parseFloat(g.monto) + descUYU
+              : parseFloat(g.monto) + descUSD;
             const catC = this._cats.find(c => c.id === g.categoria_id);
-            const discountLine = discounts.length > 0
-              ? `<div style="font-size:.68rem;color:#10b981;margin-top:2px">
-                  🔗 Desc.: ${discounts.map(d => this._fmtMon(parseFloat(d.monto), d.moneda)).join(', ')}
-                  → Neto: ${g.moneda !== 'USD'
-                    ? this._fmtMon(netUYU, 'UYU')
-                    : this._fmtMon(netUSD, 'USD')}
-                </div>`
-              : '';
             return `
               <tr>
                 <td style="white-space:nowrap;font-size:.72rem;font-family:'DM Mono',monospace">${fmtDate(g.fecha)}</td>
                 <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
                   ${g.comercio ?? '—'}
                   ${catC ? `<span style="font-size:.62rem;color:var(--text-sec);margin-left:4px">${catC.icono}</span>` : ''}
-                  ${discountLine}
+                  ${hasDisc ? `<span style="font-size:.62rem;color:#10b981;margin-left:3px">🔗</span>` : ''}
                 </td>
                 <td style="font-family:'DM Mono',monospace;white-space:nowrap">${this._fmtMon(parseFloat(g.monto), g.moneda)}</td>
                 <td style="font-family:'DM Mono',monospace;font-size:.72rem;color:#10b981;white-space:nowrap">
-                  ${discounts.length > 0
+                  ${hasDisc
                     ? (g.moneda !== 'USD' ? this._fmtMon(descUYU, 'UYU') : this._fmtMon(descUSD, 'USD'))
                     : '—'}
+                </td>
+                <td style="font-family:'DM Mono',monospace;font-size:.8rem;font-weight:600;white-space:nowrap${hasDisc ? ';color:var(--accent)' : ''}">
+                  ${this._fmtMon(netAmount, g.moneda)}
                 </td>
               </tr>`;
           }).join('');
@@ -1863,7 +1862,7 @@ window.Mods.gastos = {
               </div>
               <table style="font-size:.8rem;margin-bottom:6px">
                 <thead><tr>
-                  <th>Fecha</th><th>Comercio</th><th>Monto</th><th>Descuento</th>
+                  <th>Fecha</th><th>Comercio</th><th>Monto</th><th>Descuento</th><th>Total</th>
                 </tr></thead>
                 <tbody>${rows}</tbody>
               </table>
