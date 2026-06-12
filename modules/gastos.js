@@ -19,9 +19,14 @@ window.Mods.gastos = {
   _edcMes:       '',      // Mes del EDC (YYYY-MM) — corrige fechas de cuotas > 1
   _resCat:       '',      // Filtro de categoría en Resumen
   _comTipo:      '',      // Filtro tipo en panel Comercios
+  _histBanco:    '',      // Filtro banco/tarjeta en Historial
+  _cuotasBanco:  '',      // Filtro banco/tarjeta en Cuotas
   _pendingFile:  null,    // Archivo PDF pendiente de subir a storage tras confirmar import
   _bancotarjeta: '',      // Banco/tarjeta detectado por la IA en el EDC activo
   _resBanco:     '',      // Filtro por banco/tarjeta en Resumen
+  _adicTitular:  '',      // Nombre titular adicional asignado en la vista previa
+  _adicMes:      null,    // Filtro mes en panel Adicional
+  _adicTitularFiltro: '', // Filtro titular en panel Adicional
 
   // Normalizar comercio para matching: lowercase, sin tildes, sin códigos de comercio
   _normMerchant(s) {
@@ -457,6 +462,7 @@ window.Mods.gastos = {
     const catOpts = this._cats.map(c =>
       `<option value="${c.id}">${c.icono} ${c.nombre}</option>`).join('');
     const sel     = this._pending.filter(t => t._include).length;
+    const hasAdic = this._pending.some(t => t.tarjeta_adicional);
 
     document.getElementById('g-content').innerHTML = `
       <div class="form-card" style="padding-bottom:12px">
@@ -477,6 +483,14 @@ window.Mods.gastos = {
                   style="font-size:.74rem;padding:2px 8px;border-radius:5px;width:130px;
                     border:1px solid var(--border);background:var(--surface);color:var(--text)">
               </span>
+              ${hasAdic ? `
+              <span style="display:flex;align-items:center;gap:6px">
+                👤 Titular adicional:
+                <input id="g-review-titular-adic" type="text" value="${this._adicTitular}" placeholder="ej: María"
+                  style="font-size:.74rem;padding:2px 8px;border-radius:5px;width:110px;
+                    border:1px solid rgba(16,185,129,.4);background:rgba(16,185,129,.07);color:var(--text)">
+                <span style="font-size:.65rem;color:#10b981">${this._pending.filter(t=>t.tarjeta_adicional).length} compras de adicional</span>
+              </span>` : ''}
               <span style="font-size:.68rem;color:var(--text-sec)">Editá si la IA se equivocó</span>
             </div>
           </div>
@@ -604,7 +618,7 @@ window.Mods.gastos = {
       : displayFecha;
     return `
       <tr style="opacity:${t._include?1:.4}">
-        <td><input type="checkbox" class="g-row-chk" data-id="${t._id}" checked></td>
+        <td><input type="checkbox" class="g-row-chk" data-id="${t._id}" ${t._include?'checked':''}></td>
         <td style="white-space:nowrap;font-family:'DM Mono',monospace;font-size:.72rem">${fechaHTML}</td>
         <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${descEsc}">${t.descripcion}${aiBadge}${adicionalBadge}${cuotaBadge}</td>
         <td><input type="number" class="g-monto-inp" data-id="${t._id}" value="${t.monto}"
@@ -641,11 +655,18 @@ window.Mods.gastos = {
     btn.disabled = true; btn.textContent = 'Guardando…';
     try {
       const bancoVal = (document.getElementById('g-review-banco')?.value?.trim() || this._bancotarjeta) || null;
+      const adicTitularVal = document.getElementById('g-review-titular-adic')?.value?.trim() || this._adicTitular || null;
+      // Also save adicional rows (unchecked ones) if there's a titular set
+      const adicRows = adicTitularVal
+        ? this._pending.filter(t => t.tarjeta_adicional && !t._include)
+        : [];
       const imp = await dbInsert('importaciones', {
         tipo: 'pdf', nombre_archivo: 'edc_visa', registros_importados: toSave.length,
         banco_tarjeta: bancoVal,
       });
-      for (const t of toSave) {
+      const allToInsert = [...toSave, ...adicRows];
+      for (const t of allToInsert) {
+        const isAdic = t.tarjeta_adicional && !t._include;
         const N = Math.max(1, t._dividirEntre || 1);
         const monto = t.monto / N;
         let fecha = t.fecha;
@@ -653,6 +674,10 @@ window.Mods.gastos = {
           const dd = String(t.fecha).slice(8, 10);
           const [yyyy, mm] = this._edcMes.split('-');
           fecha = `${yyyy}-${mm}-${dd}`;
+        }
+        let notas = N > 1 ? `Dividido entre ${N} · total original: ${t.monto} ${t.moneda}` : null;
+        if (t.descuento_de_adicional && t.ref_comercio) {
+          notas = `desc_adic:${t.ref_comercio}`;
         }
         await dbInsert('gastos', {
           fecha, monto, moneda: t.moneda || 'UYU',
@@ -666,7 +691,8 @@ window.Mods.gastos = {
           cuota_actual:   t._cuotaActual   || null,
           cuotas_totales: t._cuotasTotales || null,
           banco_tarjeta:  bancoVal,
-          notas: N > 1 ? `Dividido entre ${N} · total original: ${t.monto} ${t.moneda}` : null,
+          titular_adicional: isAdic ? (adicTitularVal || null) : null,
+          notas,
         });
       }
 
@@ -684,6 +710,7 @@ window.Mods.gastos = {
         this._pendingFile = null;
       }
       this._bancotarjeta = '';
+      this._adicTitular  = '';
 
       toast(`✅ ${toSave.length} gastos importados`);
       this._pending = [];
@@ -840,7 +867,9 @@ window.Mods.gastos = {
 
   // ── Historial ───────────────────────────────────────────────────────────
   _drawHistorial() {
-    if ((this._histView || 'gastos') === 'comercios') return this._drawHistorialComercios();
+    const v = this._histView || 'gastos';
+    if (v === 'comercios') return this._drawHistorialComercios();
+    if (v === 'adicional') return this._drawHistorialAdicional();
     return this._drawHistorialGastos();
   },
 
@@ -853,6 +882,7 @@ window.Mods.gastos = {
     return `<div style="display:flex;gap:6px;margin-bottom:.75rem">
       ${btn('gastos', '📋 Gastos')}
       ${btn('comercios', '🏷️ Comercios')}
+      ${btn('adicional', '👤 Adicional')}
     </div>`;
   },
 
@@ -894,8 +924,13 @@ window.Mods.gastos = {
     if (tipoFilter === 'cuotas')     q = q.not('cuota_actual', 'is', null);
     else if (tipoFilter)             q = q.eq('tipo_gasto', tipoFilter);
     if (viewMode !== 'TOTAL_USD')    q = q.eq('moneda', viewMode);
-    const { data: gastos, error } = await q.order('fecha', { ascending: false });
+    const { data: gastosRaw, error } = await q.order('fecha', { ascending: false });
     if (error) throw error;
+
+    const bancosHist = [...new Set((gastosRaw || []).map(g => g.banco_tarjeta).filter(Boolean))].sort();
+    const gastos = this._histBanco
+      ? (gastosRaw || []).filter(g => g.banco_tarjeta === this._histBanco)
+      : (gastosRaw || []);
 
     const needsTC = viewMode === 'TOTAL_USD' && !tc;
 
@@ -941,6 +976,11 @@ window.Mods.gastos = {
             <option value="recurrente"${tipoFilter==='recurrente'?' selected':''}>🔁 Recurrente</option>
             <option value="cuotas"${tipoFilter==='cuotas'?' selected':''}>📅 Solo cuotas</option>
           </select>
+          ${bancosHist.length > 0 ? `
+            <select id="h-banco" style="${selSt}">
+              <option value="">Todas las TDC</option>
+              ${bancosHist.map(b => `<option value="${b}"${b===this._histBanco?' selected':''}>${b}</option>`).join('')}
+            </select>` : ''}
           ${this._renderMonedaFilter('h', viewMode, this._tc)}
         </div>
         ${needsTC ? `<div style="margin-top:8px;font-size:.75rem;color:var(--red)">
@@ -1036,11 +1076,12 @@ window.Mods.gastos = {
 
     this._attachViewToggle();
 
-    ['h-mes','h-cat','h-tipo'].forEach(id => {
+    ['h-mes','h-cat','h-tipo','h-banco'].forEach(id => {
       document.getElementById(id)?.addEventListener('change', () => {
-        this._histMes  = document.getElementById('h-mes').value;
-        this._histCat  = document.getElementById('h-cat').value;
-        this._histTipo = document.getElementById('h-tipo').value;
+        this._histMes   = document.getElementById('h-mes').value;
+        this._histCat   = document.getElementById('h-cat').value;
+        this._histTipo  = document.getElementById('h-tipo').value;
+        this._histBanco = document.getElementById('h-banco')?.value || '';
         this._drawHistorial();
       });
     });
@@ -1093,7 +1134,7 @@ window.Mods.gastos = {
     gc.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
 
     const { data: rows, error } = await getDB()
-      .from('gastos').select('id, comercio, moneda, monto, categoria_id, fecha, tipo_gasto, cuota_actual')
+      .from('gastos').select('id, comercio, moneda, monto, categoria_id, fecha, tipo_gasto, cuota_actual, banco_tarjeta')
       .not('comercio', 'is', null)
       .order('fecha', { ascending: false });
     if (error) throw error;
@@ -1106,7 +1147,7 @@ window.Mods.gastos = {
       if (!groups[norm]) {
         groups[norm] = {
           norm, example: r.comercio, ids: [],
-          gastos: [], hasQuotas: false,
+          gastos: [], hasQuotas: false, bancos: new Set(),
           count: 0, totals: { UYU: 0, USD: 0 }, negs: { UYU: 0, USD: 0 },
           catCounts: {}, tipoCounts: {}, ultima: r.fecha,
         };
@@ -1115,6 +1156,7 @@ window.Mods.gastos = {
       g.ids.push(r.id);
       g.gastos.push(r);
       if (r.cuota_actual) g.hasQuotas = true;
+      if (r.banco_tarjeta) g.bancos.add(r.banco_tarjeta);
       g.count++;
       const monto = parseFloat(r.monto);
       const mon = r.moneda === 'USD' ? 'USD' : 'UYU';
@@ -1132,6 +1174,8 @@ window.Mods.gastos = {
     }).sort((a,b) => b.count - a.count);
 
     this._comerciosCache = items;
+
+    const bancosComercio = [...new Set(items.flatMap(it => [...it.bancos]))].sort();
 
     gc.innerHTML = `
       ${this._histToggleHTML('comercios')}
@@ -1154,6 +1198,13 @@ window.Mods.gastos = {
                 visibility:${this._histSearch?'visible':'hidden'}">✕</button>
           </div>
         </div>
+        ${bancosComercio.length > 0 ? `
+        <div style="margin-top:10px">
+          <select id="c-banco" style="font-size:.76rem;padding:4px 9px;border-radius:6px;border:1px solid var(--border);background:var(--surface);color:var(--text)">
+            <option value="">Todas las TDC</option>
+            ${bancosComercio.map(b => `<option value="${b}"${b===this._histBanco?' selected':''}>${b}</option>`).join('')}
+          </select>
+        </div>` : ''}
         <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px">
           ${[['', 'Todos'], ['casual', '💳 Casual'], ['recurrente', '🔁 Recurrente'], ['cuotas', '📅 Cuotas']].map(([val, lbl]) => {
             const active = this._comTipo === val;
@@ -1207,6 +1258,10 @@ window.Mods.gastos = {
         this._drawHistorialComercios();
       })
     );
+    document.getElementById('c-banco')?.addEventListener('change', e => {
+      this._histBanco = e.target.value;
+      this._renderComerciosTbody();
+    });
 
     const tbody = document.getElementById('g-com-tbody');
     tbody?.addEventListener('click', e => {
@@ -1287,9 +1342,10 @@ window.Mods.gastos = {
     const q    = (this._histSearch || '').toLowerCase().trim();
     const tipo = this._comTipo || '';
     let items = this._comerciosCache;
-    if (tipo === 'cuotas')     items = items.filter(it => it.hasQuotas);
+    if (tipo === 'cuotas')          items = items.filter(it => it.hasQuotas);
     else if (tipo === 'recurrente') items = items.filter(it => it.currentTipo === 'recurrente');
     else if (tipo === 'casual')     items = items.filter(it => it.currentTipo !== 'recurrente');
+    if (this._histBanco) items = items.filter(it => it.bancos.has(this._histBanco));
     if (q) items = items.filter(it => it.example.toLowerCase().includes(q) || it.norm.includes(q));
     tbody.innerHTML = items.length
       ? items.map(it => this._comercioRow(it)).join('')
@@ -1509,6 +1565,221 @@ window.Mods.gastos = {
     });
   },
 
+  // ── Adicional (resumen de gastos de tarjeta adicional para cobrar) ──────
+  async _drawHistorialAdicional() {
+    const gc = document.getElementById('g-content');
+    gc.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+
+    const sb = getDB();
+    const [adicRes, descRes] = await Promise.all([
+      sb.from('gastos')
+        .select('id, fecha, monto, moneda, comercio, categoria_id, titular_adicional, banco_tarjeta')
+        .not('titular_adicional', 'is', null)
+        .order('fecha', { ascending: false }),
+      sb.from('gastos')
+        .select('id, fecha, monto, moneda, comercio, notas')
+        .ilike('notas', 'desc_adic:%')
+        .order('fecha', { ascending: false }),
+    ]);
+
+    const adicRows = adicRes.data || [];
+    const descRows = descRes.data || [];
+
+    // Build discount lookup: ref_comercio → { monto, fecha, id, notas }
+    const descByRef = {};
+    for (const d of descRows) {
+      const ref = (d.notas || '').replace(/^desc_adic:/, '').trim();
+      if (!descByRef[ref]) descByRef[ref] = [];
+      descByRef[ref].push(d);
+    }
+
+    // Match discounts to purchases by normalized merchant name
+    const matchDiscount = (comercio) => {
+      const norm = this._normMerchant(comercio);
+      for (const [ref, dlist] of Object.entries(descByRef)) {
+        if (this._normMerchant(ref) === norm || norm.includes(this._normMerchant(ref)) || this._normMerchant(ref).includes(norm)) {
+          return dlist;
+        }
+      }
+      return [];
+    };
+
+    // Get all titulares for filter
+    const titulares = [...new Set(adicRows.map(r => r.titular_adicional).filter(Boolean))].sort();
+
+    // Apply filters
+    const filtTitular = this._adicTitularFiltro || '';
+    const filtMes     = this._adicMes || '';
+    let rows = adicRows;
+    if (filtTitular) rows = rows.filter(r => r.titular_adicional === filtTitular);
+    if (filtMes)     rows = rows.filter(r => (r.fecha || '').startsWith(filtMes));
+
+    // Group by titular → month → purchases
+    const byTitular = {};
+    for (const r of rows) {
+      const tit = r.titular_adicional;
+      const mes = (r.fecha || '').slice(0, 7);
+      if (!byTitular[tit]) byTitular[tit] = {};
+      if (!byTitular[tit][mes]) byTitular[tit][mes] = [];
+      byTitular[tit][mes].push(r);
+    }
+
+    // Months for dropdown (12 months back)
+    const now = new Date();
+    const meses = Array.from({ length: 12 }, (_, i) => {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      return {
+        val: `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`,
+        lbl: d.toLocaleDateString('es-UY', { month: 'long', year: 'numeric' }),
+      };
+    });
+
+    const selSt = `font-size:.82rem;padding:5px 10px;border-radius:6px;border:1px solid var(--border);background:var(--surface);color:var(--text)`;
+
+    const titularesSections = Object.entries(byTitular).map(([tit, mesesData]) => {
+      const monthSections = Object.entries(mesesData)
+        .sort((a,b) => b[0].localeCompare(a[0]))
+        .map(([mes, gastos]) => {
+          const totalUYU = gastos.filter(g => g.moneda !== 'USD').reduce((s,g) => s + parseFloat(g.monto), 0);
+          const totalUSD = gastos.filter(g => g.moneda === 'USD').reduce((s,g) => s + parseFloat(g.monto), 0);
+          const mesLabel = new Date(mes + '-15').toLocaleDateString('es-UY', { month: 'long', year: 'numeric' });
+
+          const rows = gastos.map(g => {
+            const discounts = matchDiscount(g.comercio || '');
+            const descUYU = discounts.filter(d => d.moneda !== 'USD').reduce((s,d) => s + parseFloat(d.monto), 0);
+            const descUSD = discounts.filter(d => d.moneda === 'USD').reduce((s,d) => s + parseFloat(d.monto), 0);
+            const netUYU = parseFloat(g.monto) + (g.moneda !== 'USD' ? 0 : 0) + (g.moneda !== 'USD' ? descUYU : 0);
+            const netUSD = parseFloat(g.monto) + (g.moneda === 'USD' ? descUSD : 0);
+            const catC = this._cats.find(c => c.id === g.categoria_id);
+            const discountLine = discounts.length > 0
+              ? `<div style="font-size:.68rem;color:#10b981;margin-top:2px">
+                  🔗 Desc.: ${discounts.map(d => this._fmtMon(parseFloat(d.monto), d.moneda)).join(', ')}
+                  → Neto: ${g.moneda !== 'USD'
+                    ? this._fmtMon(netUYU, 'UYU')
+                    : this._fmtMon(netUSD, 'USD')}
+                </div>`
+              : '';
+            return `
+              <tr>
+                <td style="white-space:nowrap;font-size:.72rem;font-family:'DM Mono',monospace">${fmtDate(g.fecha)}</td>
+                <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
+                  ${g.comercio ?? '—'}
+                  ${catC ? `<span style="font-size:.62rem;color:var(--text-sec);margin-left:4px">${catC.icono}</span>` : ''}
+                  ${discountLine}
+                </td>
+                <td style="font-family:'DM Mono',monospace;white-space:nowrap">${this._fmtMon(parseFloat(g.monto), g.moneda)}</td>
+                <td style="font-family:'DM Mono',monospace;font-size:.72rem;color:#10b981;white-space:nowrap">
+                  ${discounts.length > 0
+                    ? (g.moneda !== 'USD' ? this._fmtMon(descUYU, 'UYU') : this._fmtMon(descUSD, 'USD'))
+                    : '—'}
+                </td>
+              </tr>`;
+          }).join('');
+
+          // Totals for month
+          const discTotUYU = gastos.reduce((s, g) => {
+            if (g.moneda === 'USD') return s;
+            return s + matchDiscount(g.comercio||'').filter(d=>d.moneda!=='USD').reduce((ss,d)=>ss+parseFloat(d.monto),0);
+          }, 0);
+          const discTotUSD = gastos.reduce((s, g) => {
+            if (g.moneda !== 'USD') return s;
+            return s + matchDiscount(g.comercio||'').filter(d=>d.moneda==='USD').reduce((ss,d)=>ss+parseFloat(d.monto),0);
+          }, 0);
+          const netMesUYU = totalUYU + discTotUYU;
+          const netMesUSD = totalUSD + discTotUSD;
+
+          return `
+            <div style="margin-bottom:14px">
+              <div style="font-size:.78rem;font-weight:600;color:var(--text-sec);text-transform:capitalize;
+                          margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid var(--border)">
+                ${mesLabel}
+              </div>
+              <table style="font-size:.8rem;margin-bottom:6px">
+                <thead><tr>
+                  <th>Fecha</th><th>Comercio</th><th>Monto</th><th>Descuento</th>
+                </tr></thead>
+                <tbody>${rows}</tbody>
+              </table>
+              <div style="display:flex;gap:16px;flex-wrap:wrap;font-size:.78rem;padding:6px 0;
+                          border-top:1px solid var(--border)">
+                ${totalUYU > 0 ? `
+                <div>
+                  <span style="color:var(--text-sec)">Total UYU:</span>
+                  <strong style="font-family:'DM Mono',monospace;margin:0 4px">${this._fmtMon(totalUYU,'UYU')}</strong>
+                  ${discTotUYU < 0 ? `<span style="color:#10b981">− ${this._fmtMon(Math.abs(discTotUYU),'UYU')} desc</span>` : ''}
+                  <span style="color:var(--accent);font-weight:600;margin-left:4px">= ${this._fmtMon(netMesUYU,'UYU')}</span>
+                </div>` : ''}
+                ${totalUSD > 0 ? `
+                <div>
+                  <span style="color:var(--text-sec)">Total USD:</span>
+                  <strong style="font-family:'DM Mono',monospace;margin:0 4px">${this._fmtMon(totalUSD,'USD')}</strong>
+                  ${discTotUSD < 0 ? `<span style="color:#10b981">− ${this._fmtMon(Math.abs(discTotUSD),'USD')} desc</span>` : ''}
+                  <span style="color:var(--accent);font-weight:600;margin-left:4px">= ${this._fmtMon(netMesUSD,'USD')}</span>
+                </div>` : ''}
+              </div>
+            </div>`;
+        }).join('');
+
+      return `
+        <div class="form-card" style="padding:14px 16px;margin-bottom:.75rem">
+          <div style="font-size:.95rem;font-weight:700;margin-bottom:12px">
+            👤 ${tit}
+          </div>
+          ${monthSections}
+        </div>`;
+    }).join('');
+
+    gc.innerHTML = `
+      ${this._histToggleHTML('adicional')}
+
+      <div class="form-card" style="padding:12px 16px;margin-bottom:.75rem">
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          ${titulares.length > 1 ? `
+            <select id="adic-titular" style="${selSt}">
+              <option value="">Todos los titulares</option>
+              ${titulares.map(t => `<option value="${t}"${t===filtTitular?' selected':''}>${t}</option>`).join('')}
+            </select>` : ''}
+          <select id="adic-mes" style="${selSt}">
+            <option value="">Todos los meses</option>
+            ${meses.map(m => `<option value="${m.val}"${m.val===filtMes?' selected':''}>${m.lbl}</option>`).join('')}
+          </select>
+        </div>
+        <div style="font-size:.72rem;color:var(--text-sec);margin-top:8px">
+          Los gastos de tarjeta adicional se registran cuando importás el EDC y asignás un titular.
+          Los descuentos asociados se muestran vinculados automáticamente.
+        </div>
+      </div>
+
+      ${adicRows.length === 0 ? `
+        <div class="form-card">
+          <div class="empty"><div class="empty-icon">👤</div>
+          <div class="empty-text">Sin gastos de tarjeta adicional</div>
+          <div style="font-size:.75rem;color:var(--text-sec);margin-top:6px">
+            Al importar un EDC, asigná un nombre al titular de la tarjeta adicional<br>
+            para hacer seguimiento de sus gastos acá.
+          </div></div>
+        </div>
+      ` : Object.keys(byTitular).length === 0 ? `
+        <div class="form-card">
+          <div style="text-align:center;color:var(--text-sec);padding:20px;font-size:.82rem">
+            Sin resultados para los filtros seleccionados
+          </div>
+        </div>
+      ` : titularesSections}
+    `;
+
+    this._attachViewToggle();
+
+    document.getElementById('adic-titular')?.addEventListener('change', e => {
+      this._adicTitularFiltro = e.target.value;
+      this._drawHistorialAdicional();
+    });
+    document.getElementById('adic-mes')?.addEventListener('change', e => {
+      this._adicMes = e.target.value;
+      this._drawHistorialAdicional();
+    });
+  },
+
   // ── Cuotas (proyección de gastos futuros) ───────────────────────────────
   async _drawCuotas() {
     const gc = document.getElementById('g-content');
@@ -1532,7 +1803,11 @@ window.Mods.gastos = {
       if (!byPurchase[key] || (g.cuota_actual ?? 0) > (byPurchase[key].cuota_actual ?? 0))
         byPurchase[key] = g;
     }
-    const allActivas = Object.values(byPurchase).filter(g => g.cuota_actual < g.cuotas_totales);
+    const bancosCuotas = [...new Set((rows || []).map(r => r.banco_tarjeta).filter(Boolean))].sort();
+    const allActivasRaw = Object.values(byPurchase).filter(g => g.cuota_actual < g.cuotas_totales);
+    const allActivas = this._cuotasBanco
+      ? allActivasRaw.filter(g => g.banco_tarjeta === this._cuotasBanco)
+      : allActivasRaw;
     const activas = viewMode === 'TOTAL_USD'
       ? allActivas
       : allActivas.filter(g => g.moneda === viewMode);
@@ -1587,6 +1862,11 @@ window.Mods.gastos = {
       <div class="form-card" style="padding:12px 16px;margin-bottom:.75rem">
         <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
           ${this._renderMonedaFilter('c', viewMode, this._tc)}
+          ${bancosCuotas.length > 0 ? `
+            <select id="c-banco-cuotas" style="${selSt}">
+              <option value="">Todas las TDC</option>
+              ${bancosCuotas.map(b => `<option value="${b}"${b===this._cuotasBanco?' selected':''}>${b}</option>`).join('')}
+            </select>` : ''}
         </div>
         ${needsTC ? `<div style="margin-top:8px;font-size:.75rem;color:var(--red)">
           ⚠ Ingresá el TC UYU/USD para convertir a dólares.</div>` : ''}
@@ -1681,6 +1961,10 @@ window.Mods.gastos = {
     });
     document.getElementById('c-tc')?.addEventListener('change', e => {
       this._saveTC(e.target.value.trim());
+      this._drawCuotas();
+    });
+    document.getElementById('c-banco-cuotas')?.addEventListener('change', e => {
+      this._cuotasBanco = e.target.value;
       this._drawCuotas();
     });
 
