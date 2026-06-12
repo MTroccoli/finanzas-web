@@ -8,7 +8,7 @@ window.Mods.gastos = {
   _splitCatNames: new Set(['Restaurantes', 'Viajes']),
   _histMes:    null,
   _histCat:    '',
-  _histMoneda: 'ARS',
+  _histMoneda: 'UYU',
 
   // Normalizar comercio para matching: lowercase, sin tildes, sin códigos de comercio
   _normMerchant(s) {
@@ -176,6 +176,7 @@ window.Mods.gastos = {
             _catId: finalCat,
             _cuotaActual:   t.cuota_actual   ?? null,
             _cuotasTotales: t.cuotas_totales ?? null,
+            _tipoGasto:     t.tipo_gasto     ?? 'casual',
             _normMerchant: norm,
             _overridden: learnedCat && learnedCat !== aiCat,
           };
@@ -212,7 +213,7 @@ window.Mods.gastos = {
               <tr>
                 <th><input type="checkbox" id="g-chk-all" checked></th>
                 <th>Fecha</th><th>Descripción</th><th>Monto</th><th>Mon.</th>
-                <th>Categoría</th><th style="white-space:nowrap" title="Dividir entre N personas">÷N</th>
+                <th>Categoría</th><th title="Tipo de gasto">Tipo</th><th style="white-space:nowrap" title="Dividir entre N personas">÷N</th>
               </tr>
             </thead>
             <tbody id="g-review-tbody">
@@ -258,6 +259,9 @@ window.Mods.gastos = {
       }
       if (e.target.classList.contains('g-div-sel')) {
         t._dividirEntre = +e.target.value || 1;
+      }
+      if (e.target.classList.contains('g-tipo-sel')) {
+        t._tipoGasto = e.target.value;
       }
     });
 
@@ -312,6 +316,14 @@ window.Mods.gastos = {
             ).join('')}
           </select>
         </td>
+        <td>
+          <select class="g-tipo-sel" data-id="${t._id}"
+            style="font-size:.72rem;padding:3px 6px;border-radius:4px;
+              border:1px solid var(--border);background:var(--surface);color:var(--text)">
+            <option value="casual"${(t._tipoGasto||'casual')==='casual'?' selected':''}>💳 Casual</option>
+            <option value="recurrente"${t._tipoGasto==='recurrente'?' selected':''}>🔁 Recurrente</option>
+          </select>
+        </td>
         <td class="g-div-cell" data-id="${t._id}" style="text-align:center">${this._divCellHTML(t)}</td>
       </tr>`;
   },
@@ -329,11 +341,12 @@ window.Mods.gastos = {
         const N = Math.max(1, t._dividirEntre || 1);
         const monto = t.monto / N;
         await dbInsert('gastos', {
-          fecha: t.fecha, monto, moneda: t.moneda || 'ARS',
+          fecha: t.fecha, monto, moneda: t.moneda || 'UYU',
           comercio: t.descripcion,
           categoria_id: t._catId || null,
           usuario: 'compartido',
           fuente: 'edc_visa',
+          tipo_gasto: t._tipoGasto || 'casual',
           dividido_entre: N,
           importacion_id: imp.id,
           cuota_actual:   t._cuotaActual   || null,
@@ -402,8 +415,9 @@ window.Mods.gastos = {
             <div class="form-group">
               <label>Moneda</label>
               <select id="g-moneda">
-                <option value="ARS">ARS — Pesos</option>
+                <option value="UYU">UYU — Pesos uruguayos</option>
                 <option value="USD">USD — Dólares</option>
+                <option value="ARS">ARS — Pesos argentinos</option>
               </select>
             </div>
             <div class="form-group">
@@ -415,6 +429,13 @@ window.Mods.gastos = {
               <select id="g-categoria">
                 <option value="">Sin categoría</option>
                 ${catOpts}
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Tipo de gasto</label>
+              <select id="g-tipo-gasto">
+                <option value="casual">💳 Casual</option>
+                <option value="recurrente">🔁 Recurrente</option>
               </select>
             </div>
             <div class="form-group">
@@ -484,6 +505,7 @@ window.Mods.gastos = {
           monto, moneda: document.getElementById('g-moneda').value,
           comercio:     document.getElementById('g-comercio').value.trim() || null,
           categoria_id: catId ? +catId : null,
+          tipo_gasto:   document.getElementById('g-tipo-gasto').value,
           usuario:      document.getElementById('g-usuario').value,
           dividido_entre: N, fuente: 'manual',
           cuota_actual:   cuotaA,
@@ -507,7 +529,8 @@ window.Mods.gastos = {
     const mesAct  = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
     const mesFilter   = this._histMes    || mesAct;
     const catFilter   = this._histCat    || '';
-    const monedaFilter= this._histMoneda || 'ARS';
+    const monedaFilter= this._histMoneda || 'UYU';
+    const tipoFilter  = this._histTipo   || '';
 
     const [yr, mo] = mesFilter.split('-').map(Number);
     const desde = `${yr}-${String(mo).padStart(2,'0')}-01`;
@@ -526,6 +549,7 @@ window.Mods.gastos = {
     let q = getDB().from('gastos').select('*').gte('fecha', desde).lte('fecha', hasta);
     if (catFilter)    q = q.eq('categoria_id', +catFilter);
     if (monedaFilter) q = q.eq('moneda', monedaFilter);
+    if (tipoFilter)   q = q.eq('tipo_gasto', tipoFilter);
     const { data: gastos, error } = await q.order('fecha', { ascending: false });
     if (error) throw error;
 
@@ -539,7 +563,7 @@ window.Mods.gastos = {
 
     const fmtAmt = (n, mon = monedaFilter) => mon === 'USD'
       ? fmtUSD(n)
-      : new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(n);
+      : new Intl.NumberFormat('es-UY', { style: 'currency', currency: mon || 'UYU', maximumFractionDigits: 0 }).format(n);
 
     const catBadge = id => {
       const c = this._cats.find(c => c.id === (id === 'sin' ? null : +id));
@@ -563,8 +587,15 @@ window.Mods.gastos = {
           </select>
           <select id="h-moneda" style="font-size:.82rem;padding:5px 10px;border-radius:6px;
             border:1px solid var(--border);background:var(--surface);color:var(--text)">
-            <option value="ARS"${monedaFilter==='ARS'?' selected':''}>ARS</option>
+            <option value="UYU"${monedaFilter==='UYU'?' selected':''}>UYU</option>
             <option value="USD"${monedaFilter==='USD'?' selected':''}>USD</option>
+            <option value="ARS"${monedaFilter==='ARS'?' selected':''}>ARS</option>
+          </select>
+          <select id="h-tipo" style="font-size:.82rem;padding:5px 10px;border-radius:6px;
+            border:1px solid var(--border);background:var(--surface);color:var(--text)">
+            <option value=""${!tipoFilter?' selected':''}>Todos</option>
+            <option value="casual"${tipoFilter==='casual'?' selected':''}>💳 Casual</option>
+            <option value="recurrente"${tipoFilter==='recurrente'?' selected':''}>🔁 Recurrente</option>
           </select>
         </div>
       </div>
@@ -595,6 +626,29 @@ window.Mods.gastos = {
         }).join('')}
       </div>`}
 
+      <!-- Recurrente vs Casual -->
+      ${(() => {
+        const rec  = gastos.filter(g => g.tipo_gasto === 'recurrente').reduce((s, g) => s + parseFloat(g.monto), 0);
+        const cas  = gastos.filter(g => g.tipo_gasto !== 'recurrente').reduce((s, g) => s + parseFloat(g.monto), 0);
+        if (!rec && !cas) return '';
+        const pctRec = totalMes > 0 ? (rec / totalMes * 100) : 0;
+        return `
+        <div class="form-card" style="padding:12px 16px;margin-bottom:.75rem">
+          <div style="display:flex;gap:16px;flex-wrap:wrap">
+            <div style="flex:1;min-width:120px">
+              <div style="font-size:.7rem;color:var(--text-sec);margin-bottom:2px">🔁 Recurrente</div>
+              <div style="font-family:'DM Mono',monospace;font-weight:600">${fmtAmt(rec)}</div>
+              <div style="font-size:.7rem;color:var(--text-sec)">${pctRec.toFixed(0)}% del total</div>
+            </div>
+            <div style="flex:1;min-width:120px">
+              <div style="font-size:.7rem;color:var(--text-sec);margin-bottom:2px">💳 Casual</div>
+              <div style="font-family:'DM Mono',monospace;font-weight:600">${fmtAmt(cas)}</div>
+              <div style="font-size:.7rem;color:var(--text-sec)">${(100-pctRec).toFixed(0)}% del total</div>
+            </div>
+          </div>
+        </div>`;
+      })()}
+
       <!-- Tabla -->
       <div class="table-wrap">
         <div class="table-header">
@@ -613,7 +667,8 @@ window.Mods.gastos = {
               ${gastos.map(g => `
                 <tr>
                   <td style="white-space:nowrap">${fmtDate(g.fecha)}</td>
-                  <td>${g.comercio ?? '—'}${(g.dividido_entre > 1)
+                  <td>${g.comercio ?? '—'}${g.tipo_gasto === 'recurrente'
+                    ? ' <span style="font-size:.62rem;color:var(--accent)">🔁</span>' : ''}${(g.dividido_entre > 1)
                     ? ` <span style="font-size:.65rem;color:var(--text-sec)">÷${g.dividido_entre}</span>` : ''}${(g.cuota_actual && g.cuotas_totales)
                     ? ` <span style="font-size:.62rem;color:var(--text-sec);background:rgba(255,255,255,.06);padding:1px 5px;border-radius:3px">📅 ${g.cuota_actual}/${g.cuotas_totales}</span>` : ''}</td>
                   <td>${catBadge(g.categoria_id)}</td>
@@ -629,11 +684,12 @@ window.Mods.gastos = {
       </div>
     `;
 
-    ['h-mes','h-cat','h-moneda'].forEach(id => {
+    ['h-mes','h-cat','h-moneda','h-tipo'].forEach(id => {
       document.getElementById(id)?.addEventListener('change', () => {
         this._histMes    = document.getElementById('h-mes').value;
         this._histCat    = document.getElementById('h-cat').value;
         this._histMoneda = document.getElementById('h-moneda').value;
+        this._histTipo   = document.getElementById('h-tipo').value;
         this._drawHistorial();
       });
     });
@@ -668,18 +724,18 @@ window.Mods.gastos = {
     };
     const fmtAmt = (n, mon) => mon === 'USD'
       ? fmtUSD(n)
-      : new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(n);
+      : new Intl.NumberFormat('es-UY', { style: 'currency', currency: mon || 'UYU', maximumFractionDigits: 0 }).format(n);
 
     // Proyección: para cada gasto activo, sumar la cuota en los próximos 12 meses
     const now = new Date();
-    const proj = []; // [{ym, label, ARS, USD}]
+    const proj = []; // [{ym, label, byMon:{UYU:0, USD:0, ...}}]
     for (let i = 1; i <= 12; i++) {
       const d = new Date(now.getFullYear(), now.getMonth() + i, 1);
       const ym = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
       proj.push({
         ym,
-        label: d.toLocaleDateString('es-AR', { month: 'short', year: '2-digit' }),
-        ARS: 0, USD: 0,
+        label: d.toLocaleDateString('es-UY', { month: 'short', year: '2-digit' }),
+        byMon: {},
       });
     }
 
@@ -688,19 +744,22 @@ window.Mods.gastos = {
       const [yr, mo] = g.fecha.split('-').map(Number);
       const baseDate = new Date(yr, mo - 1, 1);
       const monto = parseFloat(g.monto);
-      const mon = (g.moneda === 'USD') ? 'USD' : 'ARS';
+      const mon = g.moneda || 'UYU';
       for (let k = 1; k <= restantes; k++) {
         const d = new Date(baseDate.getFullYear(), baseDate.getMonth() + k, 1);
         const ym = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
         const slot = proj.find(p => p.ym === ym);
-        if (slot) slot[mon] += monto;
+        if (slot) slot.byMon[mon] = (slot.byMon[mon] || 0) + monto;
       }
     }
 
-    const totalARS = activas.filter(g => g.moneda !== 'USD').reduce((s, g) => s + parseFloat(g.monto) * (g.cuotas_totales - g.cuota_actual), 0);
-    const totalUSD = activas.filter(g => g.moneda === 'USD').reduce((s, g) => s + parseFloat(g.monto) * (g.cuotas_totales - g.cuota_actual), 0);
+    const totalByMon = {};
+    for (const g of activas) {
+      const mon = g.moneda || 'UYU';
+      totalByMon[mon] = (totalByMon[mon] || 0) + parseFloat(g.monto) * (g.cuotas_totales - g.cuota_actual);
+    }
 
-    const maxProj = Math.max(1, ...proj.map(p => Math.max(p.ARS, p.USD)));
+    const maxProj = Math.max(1, ...proj.map(p => Math.max(0, ...Object.values(p.byMon))));
 
     gc.innerHTML = `
       <!-- Totales -->
@@ -713,9 +772,9 @@ window.Mods.gastos = {
             </div>
           </div>
           <div style="text-align:right;font-family:'DM Mono',monospace;font-size:.85rem">
-            ${totalARS > 0 ? `<div>${fmtAmt(totalARS, 'ARS')}</div>` : ''}
-            ${totalUSD > 0 ? `<div style="color:var(--accent)">${fmtAmt(totalUSD, 'USD')}</div>` : ''}
-            ${(!totalARS && !totalUSD) ? `<div style="color:var(--text-sec)">—</div>` : ''}
+            ${Object.entries(totalByMon).map(([mon, tot]) =>
+              `<div${mon==='USD'?' style="color:var(--accent)"':''}>${fmtAmt(tot, mon)}</div>`
+            ).join('') || '<div style="color:var(--text-sec)">—</div>'}
           </div>
         </div>
       </div>
@@ -733,16 +792,18 @@ window.Mods.gastos = {
       <div class="form-card" style="padding:14px 16px;margin-bottom:.75rem">
         <div style="font-weight:600;font-size:.9rem;margin-bottom:12px">Proyección próximos 12 meses</div>
         ${proj.map(p => {
-          const tot = p.ARS + (p.USD * 1000); // mezcla solo para sizing visual
-          const pct = Math.max(2, (Math.max(p.ARS, p.USD) / maxProj) * 100);
-          if (p.ARS === 0 && p.USD === 0) return '';
+          const monEntries = Object.entries(p.byMon).filter(([,v]) => v > 0);
+          if (!monEntries.length) return '';
+          const maxVal = Math.max(...monEntries.map(([,v]) => v));
+          const pct = Math.max(2, (maxVal / maxProj) * 100);
           return `
             <div style="margin-bottom:8px">
               <div style="display:flex;justify-content:space-between;font-size:.76rem;margin-bottom:3px">
                 <span style="text-transform:capitalize">${p.label}</span>
                 <span style="font-family:'DM Mono',monospace">
-                  ${p.ARS > 0 ? fmtAmt(p.ARS, 'ARS') : ''}
-                  ${p.USD > 0 ? `<span style="color:var(--accent);margin-left:6px">${fmtAmt(p.USD, 'USD')}</span>` : ''}
+                  ${monEntries.map(([mon, val]) =>
+                    `<span${mon==='USD'?' style="color:var(--accent);margin-left:6px"':''}>${fmtAmt(val, mon)}</span>`
+                  ).join('')}
                 </span>
               </div>
               <div style="height:4px;background:var(--border);border-radius:2px">
