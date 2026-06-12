@@ -467,24 +467,17 @@ window.Mods.gastos = {
       ${hasAdics ? '<th title="Asignar a tarjeta">TDC</th>' : ''}
     </tr></thead>`;
 
-    // Clasificar pendientes
+    // Clasificar pendientes: usar _adicCardDigits (ya calculado en el linking step)
+    // en lugar de re-hacer el matching por nombre (que falla con variantes como "LAS MARGARITAS 2")
     const linkedDiscIds = new Set(
-      adicCards.flatMap(card => {
-        const cardNorms = new Set(
-          this._pending.filter(t => t.tarjeta_adicional && t.adicional_card_digits === card.digits)
-            .map(t => this._normMerchant(t.descripcion))
-        );
-        return this._pending
-          .filter(t => t.descuento_de_adicional && cardNorms.has(this._normMerchant(t.ref_comercio || '')))
-          .map(t => t._id);
-      })
+      this._pending.filter(t => t.descuento_de_adicional && t._adicCardDigits).map(t => t._id)
     );
     const mainRows = this._pending.filter(t => !t.tarjeta_adicional && !linkedDiscIds.has(t._id));
 
     const getCardRows = (digits) => {
       const purchases = this._pending.filter(t => t.tarjeta_adicional && t.adicional_card_digits === digits);
       const pNorms    = new Set(purchases.map(t => this._normMerchant(t.descripcion)));
-      const discounts = this._pending.filter(t => t.descuento_de_adicional && pNorms.has(this._normMerchant(t.ref_comercio || '')));
+      const discounts = this._pending.filter(t => t.descuento_de_adicional && (pNorms.has(this._normMerchant(t.ref_comercio || '')) || t._adicCardDigits === digits));
       return { purchases, discounts, all: [...purchases, ...discounts] };
     };
 
