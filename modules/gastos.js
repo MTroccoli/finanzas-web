@@ -9,6 +9,8 @@ window.Mods.gastos = {
   _histMes:    null,
   _histCat:    '',
   _histMoneda: 'UYU',
+  _histTipo:   '',
+  _histTC:     '',
 
   // Normalizar comercio para matching: lowercase, sin tildes, sin códigos de comercio
   _normMerchant(s) {
@@ -417,7 +419,6 @@ window.Mods.gastos = {
               <select id="g-moneda">
                 <option value="UYU">UYU — Pesos uruguayos</option>
                 <option value="USD">USD — Dólares</option>
-                <option value="ARS">ARS — Pesos argentinos</option>
               </select>
             </div>
             <div class="form-group">
@@ -525,50 +526,64 @@ window.Mods.gastos = {
     const gc = document.getElementById('g-content');
     gc.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
 
-    const now     = new Date();
-    const mesAct  = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+    const now         = new Date();
+    const mesAct      = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
     const mesFilter   = this._histMes    || mesAct;
     const catFilter   = this._histCat    || '';
     const monedaFilter= this._histMoneda || 'UYU';
     const tipoFilter  = this._histTipo   || '';
+    const tc          = parseFloat(this._histTC) || 0;  // tipo de cambio UYU→USD
 
     const [yr, mo] = mesFilter.split('-').map(Number);
     const desde = `${yr}-${String(mo).padStart(2,'0')}-01`;
     const hasta = `${yr}-${String(mo).padStart(2,'0')}-${new Date(yr, mo, 0).getDate()}`;
 
-    // Build 12-month dropdown
     const meses = Array.from({ length: 12 }, (_, i) => {
       const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
       return {
         val: `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`,
-        lbl: d.toLocaleDateString('es-AR', { month: 'long', year: 'numeric' }),
+        lbl: d.toLocaleDateString('es-UY', { month: 'long', year: 'numeric' }),
       };
     });
 
-    // Fetch with date range via Supabase client directly
+    // Fetch — cuando hay TC mostramos todo (sin filtro moneda) para la vista en USD
     let q = getDB().from('gastos').select('*').gte('fecha', desde).lte('fecha', hasta);
-    if (catFilter)    q = q.eq('categoria_id', +catFilter);
-    if (monedaFilter) q = q.eq('moneda', monedaFilter);
-    if (tipoFilter)   q = q.eq('tipo_gasto', tipoFilter);
+    if (catFilter)              q = q.eq('categoria_id', +catFilter);
+    if (tipoFilter)             q = q.eq('tipo_gasto', tipoFilter);
+    if (!tc && monedaFilter)    q = q.eq('moneda', monedaFilter);
     const { data: gastos, error } = await q.order('fecha', { ascending: false });
     if (error) throw error;
 
-    // Totals by category
-    const bycat = {};
-    for (const g of gastos) {
-      const k = g.categoria_id ?? 'sin';
-      bycat[k] = (bycat[k] || 0) + parseFloat(g.monto);
-    }
-    const totalMes = gastos.reduce((s, g) => s + parseFloat(g.monto), 0);
+    const toUSD = (monto, mon) => {
+      if (mon === 'USD') return parseFloat(monto);
+      if (tc > 0)        return parseFloat(monto) / tc;
+      return parseFloat(monto);
+    };
 
     const fmtAmt = (n, mon = monedaFilter) => mon === 'USD'
       ? fmtUSD(n)
       : new Intl.NumberFormat('es-UY', { style: 'currency', currency: mon || 'UYU', maximumFractionDigits: 0 }).format(n);
 
+    // Totals — en USD si hay TC, en moneda local si no
+    const totalMes = tc
+      ? gastos.reduce((s, g) => s + toUSD(g.monto, g.moneda), 0)
+      : gastos.reduce((s, g) => s + parseFloat(g.monto), 0);
+
+    const bycat = {};
+    for (const g of gastos) {
+      const k = g.categoria_id ?? 'sin';
+      bycat[k] = (bycat[k] || 0) + (tc ? toUSD(g.monto, g.moneda) : parseFloat(g.monto));
+    }
+
+    const fmtTotal = n => tc ? fmtUSD(n) : fmtAmt(n);
+
     const catBadge = id => {
       const c = this._cats.find(c => c.id === (id === 'sin' ? null : +id));
       return c ? `${c.icono} ${c.nombre}` : '—';
     };
+
+    const catOpts = this._cats.map(c =>
+      `<option value="${c.id}">${c.icono} ${c.nombre}</option>`).join('');
 
     gc.innerHTML = `
       <!-- Filtros -->
@@ -585,18 +600,25 @@ window.Mods.gastos = {
               `<option value="${c.id}"${String(c.id)===catFilter?' selected':''}>${c.icono} ${c.nombre}</option>`
             ).join('')}
           </select>
-          <select id="h-moneda" style="font-size:.82rem;padding:5px 10px;border-radius:6px;
+          ${!tc ? `<select id="h-moneda" style="font-size:.82rem;padding:5px 10px;border-radius:6px;
             border:1px solid var(--border);background:var(--surface);color:var(--text)">
             <option value="UYU"${monedaFilter==='UYU'?' selected':''}>UYU</option>
             <option value="USD"${monedaFilter==='USD'?' selected':''}>USD</option>
-            <option value="ARS"${monedaFilter==='ARS'?' selected':''}>ARS</option>
-          </select>
+          </select>` : ''}
           <select id="h-tipo" style="font-size:.82rem;padding:5px 10px;border-radius:6px;
             border:1px solid var(--border);background:var(--surface);color:var(--text)">
             <option value=""${!tipoFilter?' selected':''}>Todos</option>
             <option value="casual"${tipoFilter==='casual'?' selected':''}>💳 Casual</option>
             <option value="recurrente"${tipoFilter==='recurrente'?' selected':''}>🔁 Recurrente</option>
           </select>
+          <div style="display:flex;align-items:center;gap:6px">
+            <label style="font-size:.78rem;color:var(--text-sec);white-space:nowrap">TC UYU/USD</label>
+            <input id="h-tc" type="number" min="1" step="0.1" placeholder="ej: 43.5"
+              value="${this._histTC}"
+              style="width:82px;font-size:.78rem;padding:4px 8px;border-radius:6px;
+                border:1px solid var(--border);background:var(--surface);color:var(--text);
+                font-family:'DM Mono',monospace">
+          </div>
         </div>
       </div>
 
@@ -604,9 +626,9 @@ window.Mods.gastos = {
       ${Object.keys(bycat).length === 0 ? '' : `
       <div class="form-card" style="padding:14px 16px;margin-bottom:.75rem">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-          <span style="font-weight:600;font-size:.9rem">Resumen del mes</span>
+          <span style="font-weight:600;font-size:.9rem">Resumen del mes${tc?' <span style="font-size:.7rem;color:var(--accent);font-weight:400">· en USD (TC ${tc})</span>':''}</span>
           <span style="font-family:'DM Mono',monospace;font-size:.85rem;color:var(--accent);font-weight:600">
-            Total: ${fmtAmt(totalMes)}
+            Total: ${fmtTotal(totalMes)}
           </span>
         </div>
         ${Object.entries(bycat).sort((a,b) => b[1]-a[1]).map(([id, tot]) => {
@@ -616,7 +638,7 @@ window.Mods.gastos = {
               <div style="display:flex;justify-content:space-between;font-size:.78rem;margin-bottom:3px">
                 <span>${catBadge(id)}</span>
                 <span style="font-family:'DM Mono',monospace">
-                  ${fmtAmt(tot)} <span style="color:var(--text-sec)">(${pct.toFixed(0)}%)</span>
+                  ${fmtTotal(tot)} <span style="color:var(--text-sec)">(${pct.toFixed(0)}%)</span>
                 </span>
               </div>
               <div style="height:4px;background:var(--border);border-radius:2px">
@@ -628,8 +650,10 @@ window.Mods.gastos = {
 
       <!-- Recurrente vs Casual -->
       ${(() => {
-        const rec  = gastos.filter(g => g.tipo_gasto === 'recurrente').reduce((s, g) => s + parseFloat(g.monto), 0);
-        const cas  = gastos.filter(g => g.tipo_gasto !== 'recurrente').reduce((s, g) => s + parseFloat(g.monto), 0);
+        const rec = gastos.filter(g => g.tipo_gasto === 'recurrente')
+          .reduce((s, g) => s + (tc ? toUSD(g.monto, g.moneda) : parseFloat(g.monto)), 0);
+        const cas = gastos.filter(g => g.tipo_gasto !== 'recurrente')
+          .reduce((s, g) => s + (tc ? toUSD(g.monto, g.moneda) : parseFloat(g.monto)), 0);
         if (!rec && !cas) return '';
         const pctRec = totalMes > 0 ? (rec / totalMes * 100) : 0;
         return `
@@ -637,12 +661,12 @@ window.Mods.gastos = {
           <div style="display:flex;gap:16px;flex-wrap:wrap">
             <div style="flex:1;min-width:120px">
               <div style="font-size:.7rem;color:var(--text-sec);margin-bottom:2px">🔁 Recurrente</div>
-              <div style="font-family:'DM Mono',monospace;font-weight:600">${fmtAmt(rec)}</div>
+              <div style="font-family:'DM Mono',monospace;font-weight:600">${fmtTotal(rec)}</div>
               <div style="font-size:.7rem;color:var(--text-sec)">${pctRec.toFixed(0)}% del total</div>
             </div>
             <div style="flex:1;min-width:120px">
               <div style="font-size:.7rem;color:var(--text-sec);margin-bottom:2px">💳 Casual</div>
-              <div style="font-family:'DM Mono',monospace;font-weight:600">${fmtAmt(cas)}</div>
+              <div style="font-family:'DM Mono',monospace;font-weight:600">${fmtTotal(cas)}</div>
               <div style="font-size:.7rem;color:var(--text-sec)">${(100-pctRec).toFixed(0)}% del total</div>
             </div>
           </div>
@@ -653,31 +677,19 @@ window.Mods.gastos = {
       <div class="table-wrap">
         <div class="table-header">
           <span class="table-title">${gastos.length} gastos</span>
-          <span style="font-size:.68rem;color:var(--text-sec);font-family:'DM Mono',monospace">
-            ${mesFilter}
-          </span>
+          <span style="font-size:.68rem;color:var(--text-sec);font-family:'DM Mono',monospace">${mesFilter}</span>
         </div>
         ${gastos.length === 0 ? `
           <div class="empty"><div class="empty-icon">💸</div>
           <div class="empty-text">Sin gastos para este período</div></div>
         ` : `
           <table>
-            <thead><tr><th>Fecha</th><th>Comercio</th><th>Categoría</th><th>Monto</th><th></th></tr></thead>
-            <tbody>
-              ${gastos.map(g => `
-                <tr>
-                  <td style="white-space:nowrap">${fmtDate(g.fecha)}</td>
-                  <td>${g.comercio ?? '—'}${g.tipo_gasto === 'recurrente'
-                    ? ' <span style="font-size:.62rem;color:var(--accent)">🔁</span>' : ''}${(g.dividido_entre > 1)
-                    ? ` <span style="font-size:.65rem;color:var(--text-sec)">÷${g.dividido_entre}</span>` : ''}${(g.cuota_actual && g.cuotas_totales)
-                    ? ` <span style="font-size:.62rem;color:var(--text-sec);background:rgba(255,255,255,.06);padding:1px 5px;border-radius:3px">📅 ${g.cuota_actual}/${g.cuotas_totales}</span>` : ''}</td>
-                  <td>${catBadge(g.categoria_id)}</td>
-                  <td style="font-family:'DM Mono',monospace;font-weight:600;white-space:nowrap">
-                    ${fmtAmt(parseFloat(g.monto), g.moneda)}
-                  </td>
-                  <td><button class="btn btn-ghost btn-del-g" data-id="${g.id}"
-                    style="font-size:.7rem;padding:2px 7px;color:var(--red)">✕</button></td>
-                </tr>`).join('')}
+            <thead><tr>
+              <th>Fecha</th><th>Comercio</th><th>Categoría</th>
+              <th>Mon.</th><th>Monto</th><th></th>
+            </tr></thead>
+            <tbody id="g-hist-tbody">
+              ${gastos.map(g => this._histRow(g, catOpts, tc, fmtAmt)).join('')}
             </tbody>
           </table>
         `}
@@ -688,20 +700,162 @@ window.Mods.gastos = {
       document.getElementById(id)?.addEventListener('change', () => {
         this._histMes    = document.getElementById('h-mes').value;
         this._histCat    = document.getElementById('h-cat').value;
-        this._histMoneda = document.getElementById('h-moneda').value;
+        this._histMoneda = document.getElementById('h-moneda')?.value || this._histMoneda;
         this._histTipo   = document.getElementById('h-tipo').value;
         this._drawHistorial();
       });
     });
 
-    document.querySelectorAll('.btn-del-g').forEach(btn =>
-      btn.addEventListener('click', async () => {
+    document.getElementById('h-tc')?.addEventListener('change', e => {
+      this._histTC = e.target.value.trim();
+      this._drawHistorial();
+    });
+
+    this._attachHistHandlers(gastos, catOpts, tc, fmtAmt);
+  },
+
+  _histRow(g, catOpts, tc, fmtAmt) {
+    const monBadge = `<span style="font-size:.7rem;font-family:'DM Mono',monospace;color:var(--text-sec)">${g.moneda}</span>`;
+    const badges = (g.tipo_gasto === 'recurrente' ? ' <span style="font-size:.6rem;color:var(--accent)">🔁</span>' : '')
+      + (g.dividido_entre > 1 ? ` <span style="font-size:.65rem;color:var(--text-sec)">÷${g.dividido_entre}</span>` : '')
+      + (g.cuota_actual && g.cuotas_totales ? ` <span style="font-size:.62rem;color:var(--text-sec);background:rgba(255,255,255,.06);padding:1px 5px;border-radius:3px">📅 ${g.cuota_actual}/${g.cuotas_totales}</span>` : '');
+    const catC = this._cats.find(c => c.id === g.categoria_id);
+    const catLabel = catC ? `${catC.icono} ${catC.nombre}` : '—';
+    const montoDisplay = tc
+      ? fmtUSD(g.moneda === 'USD' ? parseFloat(g.monto) : parseFloat(g.monto) / tc)
+      : fmtAmt(parseFloat(g.monto), g.moneda);
+    return `
+      <tr data-id="${g.id}">
+        <td style="white-space:nowrap">${fmtDate(g.fecha)}</td>
+        <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${g.comercio ?? '—'}${badges}</td>
+        <td>${catLabel}</td>
+        <td>${monBadge}</td>
+        <td style="font-family:'DM Mono',monospace;font-weight:600;white-space:nowrap">${montoDisplay}</td>
+        <td style="white-space:nowrap">
+          <button class="btn btn-ghost btn-edit-g" data-id="${g.id}"
+            style="font-size:.7rem;padding:2px 7px">✏️</button>
+          <button class="btn btn-ghost btn-del-g" data-id="${g.id}"
+            style="font-size:.7rem;padding:2px 7px;color:var(--red)">✕</button>
+        </td>
+      </tr>`;
+  },
+
+  _histEditRow(g, catOpts) {
+    return `
+      <tr class="g-editing" data-id="${g.id}" style="background:rgba(255,255,255,.04)">
+        <td colspan="6" style="padding:10px 8px">
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end">
+            <div>
+              <div style="font-size:.68rem;color:var(--text-sec);margin-bottom:2px">Fecha</div>
+              <input class="ge-fecha" type="date" value="${g.fecha}"
+                style="font-size:.78rem;padding:4px 7px;border-radius:5px;
+                  border:1px solid var(--border);background:var(--surface);color:var(--text)">
+            </div>
+            <div style="flex:1;min-width:120px">
+              <div style="font-size:.68rem;color:var(--text-sec);margin-bottom:2px">Comercio</div>
+              <input class="ge-comercio" type="text" value="${(g.comercio||'').replace(/"/g,'&quot;')}"
+                style="width:100%;font-size:.78rem;padding:4px 7px;border-radius:5px;
+                  border:1px solid var(--border);background:var(--surface);color:var(--text)">
+            </div>
+            <div>
+              <div style="font-size:.68rem;color:var(--text-sec);margin-bottom:2px">Monto</div>
+              <input class="ge-monto" type="number" step="0.01" value="${g.monto}"
+                style="width:90px;font-size:.78rem;padding:4px 7px;border-radius:5px;
+                  border:1px solid var(--border);background:var(--surface);color:var(--text);
+                  font-family:'DM Mono',monospace">
+            </div>
+            <div>
+              <div style="font-size:.68rem;color:var(--text-sec);margin-bottom:2px">Moneda</div>
+              <select class="ge-moneda" style="font-size:.78rem;padding:4px 7px;border-radius:5px;
+                border:1px solid var(--border);background:var(--surface);color:var(--text)">
+                <option value="UYU"${g.moneda==='UYU'?' selected':''}>UYU</option>
+                <option value="USD"${g.moneda==='USD'?' selected':''}>USD</option>
+              </select>
+            </div>
+            <div>
+              <div style="font-size:.68rem;color:var(--text-sec);margin-bottom:2px">Categoría</div>
+              <select class="ge-cat" style="font-size:.78rem;padding:4px 7px;border-radius:5px;
+                border:1px solid var(--border);background:var(--surface);color:var(--text)">
+                <option value="">—</option>
+                ${this._cats.map(c =>
+                  `<option value="${c.id}"${c.id===g.categoria_id?' selected':''}>${c.icono} ${c.nombre}</option>`
+                ).join('')}
+              </select>
+            </div>
+            <div>
+              <div style="font-size:.68rem;color:var(--text-sec);margin-bottom:2px">Tipo</div>
+              <select class="ge-tipo" style="font-size:.78rem;padding:4px 7px;border-radius:5px;
+                border:1px solid var(--border);background:var(--surface);color:var(--text)">
+                <option value="casual"${g.tipo_gasto!=='recurrente'?' selected':''}>💳 Casual</option>
+                <option value="recurrente"${g.tipo_gasto==='recurrente'?' selected':''}>🔁 Recurrente</option>
+              </select>
+            </div>
+            <div style="display:flex;gap:6px;align-items:flex-end;padding-bottom:1px">
+              <button class="btn btn-primary ge-save" data-id="${g.id}"
+                style="font-size:.75rem;padding:5px 12px">✓ Guardar</button>
+              <button class="btn btn-ghost ge-cancel" data-id="${g.id}"
+                style="font-size:.75rem;padding:5px 10px">✕</button>
+            </div>
+          </div>
+        </td>
+      </tr>`;
+  },
+
+  _attachHistHandlers(gastos, catOpts, tc, fmtAmt) {
+    const tbody = document.getElementById('g-hist-tbody');
+    if (!tbody) return;
+
+    tbody.addEventListener('click', async e => {
+      const id = +e.target.dataset.id;
+
+      // Eliminar
+      if (e.target.classList.contains('btn-del-g')) {
         if (!confirm('¿Eliminar este gasto?')) return;
-        await dbDelete('gastos', { id: +btn.dataset.id });
+        await dbDelete('gastos', { id });
         toast('Eliminado');
         this._drawHistorial();
-      })
-    );
+        return;
+      }
+
+      // Abrir edición
+      if (e.target.classList.contains('btn-edit-g')) {
+        const existing = tbody.querySelector('tr.g-editing');
+        if (existing) existing.remove();
+        const dataRow = tbody.querySelector(`tr[data-id="${id}"]:not(.g-editing)`);
+        if (!dataRow) return;
+        const g = gastos.find(x => x.id === id);
+        if (!g) return;
+        dataRow.insertAdjacentHTML('afterend', this._histEditRow(g, catOpts));
+        tbody.querySelector(`.ge-comercio`).focus();
+        return;
+      }
+
+      // Cancelar edición
+      if (e.target.classList.contains('ge-cancel')) {
+        tbody.querySelector('tr.g-editing')?.remove();
+        return;
+      }
+
+      // Guardar edición
+      if (e.target.classList.contains('ge-save')) {
+        const editRow = tbody.querySelector('tr.g-editing');
+        if (!editRow) return;
+        const monto = parseFloat(editRow.querySelector('.ge-monto').value);
+        if (!monto || monto <= 0) { toast('Monto inválido', 'err'); return; }
+        try {
+          await dbUpdate('gastos', {
+            fecha:       editRow.querySelector('.ge-fecha').value,
+            comercio:    editRow.querySelector('.ge-comercio').value.trim() || null,
+            monto,
+            moneda:      editRow.querySelector('.ge-moneda').value,
+            categoria_id: editRow.querySelector('.ge-cat').value ? +editRow.querySelector('.ge-cat').value : null,
+            tipo_gasto:  editRow.querySelector('.ge-tipo').value,
+          }, { id });
+          toast('✅ Guardado');
+          this._drawHistorial();
+        } catch(err) { toast('❌ ' + err.message, 'err'); }
+      }
+    });
   },
 
   // ── Cuotas (proyección de gastos futuros) ───────────────────────────────
