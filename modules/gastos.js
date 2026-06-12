@@ -272,6 +272,12 @@ window.Mods.gastos = {
             if (tooSmall) aiCat = otrosId;
           }
 
+          // Montos negativos sin categoría aprendida → sugerir Beneficio
+          if (!learnedCat && parseFloat(t.monto) < 0) {
+            const beneficioId = this._cats.find(c => c.nombre === 'Beneficio')?.id ?? null;
+            if (beneficioId) aiCat = beneficioId;
+          }
+
           const finalCat = learnedCat ?? aiCat;
           if (learnedCat && learnedCat !== aiCat) overrides++;
           return {
@@ -681,7 +687,8 @@ window.Mods.gastos = {
 
     let q = getDB().from('gastos').select('*').gte('fecha', desde).lte('fecha', hasta);
     if (catFilter)                   q = q.eq('categoria_id', +catFilter);
-    if (tipoFilter)                  q = q.eq('tipo_gasto', tipoFilter);
+    if (tipoFilter === 'cuotas')     q = q.not('cuota_actual', 'is', null);
+    else if (tipoFilter)             q = q.eq('tipo_gasto', tipoFilter);
     if (viewMode !== 'TOTAL_USD')    q = q.eq('moneda', viewMode);
     const { data: gastos, error } = await q.order('fecha', { ascending: false });
     if (error) throw error;
@@ -728,6 +735,7 @@ window.Mods.gastos = {
             <option value=""${!tipoFilter?' selected':''}>Todos</option>
             <option value="casual"${tipoFilter==='casual'?' selected':''}>💳 Casual</option>
             <option value="recurrente"${tipoFilter==='recurrente'?' selected':''}>🔁 Recurrente</option>
+            <option value="cuotas"${tipoFilter==='cuotas'?' selected':''}>📅 Solo cuotas</option>
           </select>
           ${this._renderMonedaFilter('h', viewMode, this._tc)}
         </div>
@@ -1204,7 +1212,7 @@ window.Mods.gastos = {
         const editRow = tbody.querySelector('tr.g-editing');
         if (!editRow) return;
         const monto = parseFloat(editRow.querySelector('.ge-monto').value);
-        if (!monto || monto <= 0) { toast('Monto inválido', 'err'); return; }
+        if (!monto || monto === 0) { toast('Monto inválido', 'err'); return; }
         try {
           await dbUpdate('gastos', {
             fecha:       editRow.querySelector('.ge-fecha').value,
@@ -1236,8 +1244,15 @@ window.Mods.gastos = {
     const tc       = parseFloat(this._tc) || 0;
     const needsTC  = viewMode === 'TOTAL_USD' && !tc;
 
-    // Filtrar según viewMode
-    const allActivas = (rows || []).filter(g => g.cuota_actual < g.cuotas_totales);
+    // Deduplicar: por cada compra en cuotas quedarse solo con la cuota más reciente
+    const purchaseKey = g => `${g.comercio}|${g.cuotas_totales}|${g.monto}|${g.moneda}`;
+    const byPurchase = {};
+    for (const g of rows || []) {
+      const key = purchaseKey(g);
+      if (!byPurchase[key] || (g.cuota_actual ?? 0) > (byPurchase[key].cuota_actual ?? 0))
+        byPurchase[key] = g;
+    }
+    const allActivas = Object.values(byPurchase).filter(g => g.cuota_actual < g.cuotas_totales);
     const activas = viewMode === 'TOTAL_USD'
       ? allActivas
       : allActivas.filter(g => g.moneda === viewMode);
@@ -1436,24 +1451,34 @@ window.Mods.gastos = {
     if (this._resCat) q = q.eq('categoria_id', +this._resCat);
     const { data: allData = [] } = await q;
 
-    // Buckets por mes
+    // Categorías de beneficio (excluir de gastos)
+    const benefitCatIds = new Set(
+      this._cats.filter(c => ['Beneficio','Puntos BBVA'].includes(c.nombre)).map(c => c.id)
+    );
+    const isBenefit = r => r.categoria_id != null && benefitCatIds.has(r.categoria_id);
+
+    // Buckets por mes (solo gastos, sin beneficios)
     const byMonth = {};
     for (const m of months) byMonth[m.ym] = { UYU: 0, USD: 0 };
     for (const r of allData) {
+      if (isBenefit(r)) continue;
       const ym = r.fecha.slice(0, 7);
       if (byMonth[ym]) byMonth[ym][r.moneda === 'USD' ? 'USD' : 'UYU'] += parseFloat(r.monto);
     }
 
-    // Buckets por categoría en USD
-    const byCat = {};
+    // Buckets por categoría en USD — separados en gastos y beneficios
+    const byCat  = {};
+    const bySave = {};
     for (const r of allData) {
       const k = r.categoria_id ?? 'sin';
       const v = r.moneda === 'USD' ? parseFloat(r.monto) : (tc ? parseFloat(r.monto) / tc : 0);
-      byCat[k] = (byCat[k] || 0) + v;
+      if (isBenefit(r)) bySave[k] = (bySave[k] || 0) + v;
+      else              byCat[k]  = (byCat[k]  || 0) + v;
     }
 
     // Tarjetas resumen
-    const totalUSD = Object.values(byCat).reduce((s, v) => s + v, 0);
+    const totalUSD   = Object.values(byCat).reduce((s, v) => s + v, 0);
+    const totalSaved = -Object.values(bySave).reduce((s, v) => s + v, 0); // negativo → positivo
 
     const topCatEntry = Object.entries(byCat).filter(([,v]) => v > 0).sort((a,b) => b[1]-a[1])[0];
     const topCatName = topCatEntry
@@ -1492,7 +1517,7 @@ window.Mods.gastos = {
       </div>
 
       <!-- Tarjetas resumen -->
-      ${totalUSD > 0 ? `
+      ${totalUSD > 0 || totalSaved > 0 ? `
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:.75rem">
         <div class="form-card" style="padding:14px 16px;text-align:center">
           <div style="font-size:.65rem;color:var(--text-sec);margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em">Total gastado</div>
@@ -1509,6 +1534,12 @@ window.Mods.gastos = {
           <div style="font-size:.9rem;font-weight:600;text-transform:capitalize">${topMonthEntry?.label ?? '—'}</div>
           <div style="font-family:'DM Mono',monospace;font-size:.8rem;color:var(--accent);margin-top:3px">${topMonthEntry ? this._fmtUSD(topMonthEntry.total) : '—'}</div>
         </div>
+        ${totalSaved > 0 ? `
+        <div class="form-card" style="padding:14px 16px;text-align:center;border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.05)">
+          <div style="font-size:.65rem;color:#10b981;margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em">Ahorro / beneficios</div>
+          <div style="font-family:'DM Mono',monospace;font-size:1.1rem;font-weight:700;color:#10b981">${this._fmtUSD(totalSaved)}</div>
+          <div style="font-size:.65rem;color:var(--text-sec);margin-top:3px">🎁 Beneficio · 💎 Puntos BBVA</div>
+        </div>` : ''}
       </div>` : ''}
 
       <!-- Bar chart -->
@@ -1524,7 +1555,8 @@ window.Mods.gastos = {
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:6px">
           <div style="font-weight:600;font-size:.9rem">Gastos por categoría · en USD</div>
           <div style="font-size:.78rem;color:var(--text-sec)">
-            Total: <span style="color:var(--accent);font-family:'DM Mono',monospace;font-weight:600">${this._fmtUSD(totalUSD)}</span>
+            Total gastos: <span style="color:var(--accent);font-family:'DM Mono',monospace;font-weight:600">${this._fmtUSD(totalUSD)}</span>
+            ${totalSaved > 0 ? ` · <span style="color:#10b981;font-family:'DM Mono',monospace">Ahorro: ${this._fmtUSD(totalSaved)}</span>` : ''}
           </div>
         </div>
         <div id="g-pie-chart" style="height:340px"></div>
