@@ -6,11 +6,12 @@ window.Mods.gastos = {
   _learned:    {},         // { merchant_normalizado: categoria_id }
   _excludedCards: '',
   _splitCatNames: new Set(['Restaurantes', 'Viajes']),
-  _histMes:    null,
-  _histCat:    '',
-  _histMoneda: 'UYU',
-  _histTipo:   '',
-  _histTC:     '',
+  _histMes:      null,
+  _histCat:      '',
+  _histMoneda:   'UYU',   // 'UYU' | 'USD' | 'TOTAL_USD'
+  _histTipo:     '',
+  _cuotasMoneda: 'UYU',   // 'UYU' | 'USD' | 'TOTAL_USD'
+  _tc:           '',      // TC UYU/USD — persiste en configuracion
 
   // Normalizar comercio para matching: lowercase, sin tildes, sin códigos de comercio
   _normMerchant(s) {
@@ -27,16 +28,18 @@ window.Mods.gastos = {
   async render() {
     const c = document.getElementById('content');
     c.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
-    const [cats, learnedRows, excludedCards] = await Promise.all([
+    const [cats, learnedRows, excludedCards, savedTC] = await Promise.all([
       dbFetch('categorias_gastos', { filters: { activo: 1 }, order: { col: 'nombre', asc: true } }),
       dbFetch('merchant_categorias', { order: { col: 'seen_count', asc: false } }).catch(() => []),
       getConfig('gastos_tarjetas_excluidas').catch(() => ''),
+      getConfig('gastos_tc').catch(() => ''),
     ]);
     this._cats = cats;
     this._learned = {};
     for (const r of learnedRows) this._learned[r.merchant_normalizado] = r.categoria_id;
     this._learnedRows = learnedRows;
     this._excludedCards = excludedCards || '';
+    if (savedTC && !this._tc) this._tc = savedTC;
     this._splitCatIds = new Set(
       cats.filter(c => this._splitCatNames.has(c.nombre)).map(c => c.id)
     );
@@ -45,6 +48,55 @@ window.Mods.gastos = {
   },
 
   _isSplitCat(catId) { return this._splitCatIds?.has(catId); },
+
+  // ── Helpers de moneda (usados en Historial y Cuotas) ────────────────────
+
+  // Formatea en la moneda original del gasto
+  _fmtMon(n, mon) {
+    if (mon === 'USD') return fmtUSD(n);
+    return new Intl.NumberFormat('es-UY', {
+      style: 'currency', currency: mon || 'UYU', maximumFractionDigits: 0,
+    }).format(n);
+  },
+
+  // Convierte a USD usando el TC; si no hay TC devuelve el número sin convertir
+  _toUSD(n, mon, tc) {
+    if (mon === 'USD') return parseFloat(n);
+    return tc > 0 ? parseFloat(n) / tc : parseFloat(n);
+  },
+
+  // Muestra el monto según el modo de vista
+  _fmtView(n, mon, viewMode, tc) {
+    if (viewMode === 'TOTAL_USD') return fmtUSD(this._toUSD(n, mon, tc));
+    return this._fmtMon(n, mon);
+  },
+
+  // Render del selector de moneda + campo TC (compartido entre Historial y Cuotas)
+  _renderMonedaFilter(idPfx, current, tc) {
+    const sel = `font-size:.82rem;padding:5px 10px;border-radius:6px;
+      border:1px solid var(--border);background:var(--surface);color:var(--text)`;
+    return `
+      <select id="${idPfx}-moneda" style="${sel}">
+        <option value="UYU"${current==='UYU'?' selected':''}>UYU — Pesos</option>
+        <option value="USD"${current==='USD'?' selected':''}>USD — Dólares</option>
+        <option value="TOTAL_USD"${current==='TOTAL_USD'?' selected':''}>≈ Total en USD</option>
+      </select>
+      ${current === 'TOTAL_USD' ? `
+        <div style="display:flex;align-items:center;gap:6px">
+          <label style="font-size:.78rem;color:var(--text-sec);white-space:nowrap">TC UYU/USD</label>
+          <input id="${idPfx}-tc" type="number" min="1" step="0.1" placeholder="43.5"
+            value="${tc}"
+            style="width:78px;font-size:.78rem;padding:4px 8px;border-radius:6px;
+              border:1px solid var(--border);background:var(--surface);color:var(--text);
+              font-family:'DM Mono',monospace">
+        </div>` : ''}`;
+  },
+
+  // Guarda el TC en configuracion (fire-and-forget)
+  _saveTC(val) {
+    this._tc = val;
+    setConfig('gastos_tc', val).catch(() => {});
+  },
 
   _drawShell() {
     const c = document.getElementById('content');
@@ -526,13 +578,13 @@ window.Mods.gastos = {
     const gc = document.getElementById('g-content');
     gc.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
 
-    const now         = new Date();
-    const mesAct      = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
-    const mesFilter   = this._histMes    || mesAct;
-    const catFilter   = this._histCat    || '';
-    const monedaFilter= this._histMoneda || 'UYU';
-    const tipoFilter  = this._histTipo   || '';
-    const tc          = parseFloat(this._histTC) || 0;  // tipo de cambio UYU→USD
+    const now       = new Date();
+    const mesAct    = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+    const mesFilter = this._histMes    || mesAct;
+    const catFilter = this._histCat    || '';
+    const viewMode  = this._histMoneda || 'UYU';   // 'UYU' | 'USD' | 'TOTAL_USD'
+    const tipoFilter= this._histTipo   || '';
+    const tc        = parseFloat(this._tc) || 0;
 
     const [yr, mo] = mesFilter.split('-').map(Number);
     const desde = `${yr}-${String(mo).padStart(2,'0')}-01`;
@@ -546,87 +598,69 @@ window.Mods.gastos = {
       };
     });
 
-    // Fetch — cuando hay TC mostramos todo (sin filtro moneda) para la vista en USD
     let q = getDB().from('gastos').select('*').gte('fecha', desde).lte('fecha', hasta);
-    if (catFilter)              q = q.eq('categoria_id', +catFilter);
-    if (tipoFilter)             q = q.eq('tipo_gasto', tipoFilter);
-    if (!tc && monedaFilter)    q = q.eq('moneda', monedaFilter);
+    if (catFilter)                   q = q.eq('categoria_id', +catFilter);
+    if (tipoFilter)                  q = q.eq('tipo_gasto', tipoFilter);
+    if (viewMode !== 'TOTAL_USD')    q = q.eq('moneda', viewMode);
     const { data: gastos, error } = await q.order('fecha', { ascending: false });
     if (error) throw error;
 
-    const toUSD = (monto, mon) => {
-      if (mon === 'USD') return parseFloat(monto);
-      if (tc > 0)        return parseFloat(monto) / tc;
-      return parseFloat(monto);
-    };
+    const needsTC = viewMode === 'TOTAL_USD' && !tc;
 
-    const fmtAmt = (n, mon = monedaFilter) => mon === 'USD'
-      ? fmtUSD(n)
-      : new Intl.NumberFormat('es-UY', { style: 'currency', currency: mon || 'UYU', maximumFractionDigits: 0 }).format(n);
+    const toVal = (monto, mon) => viewMode === 'TOTAL_USD'
+      ? this._toUSD(monto, mon, tc)
+      : parseFloat(monto);
 
-    // Totals — en USD si hay TC, en moneda local si no
-    const totalMes = tc
-      ? gastos.reduce((s, g) => s + toUSD(g.monto, g.moneda), 0)
-      : gastos.reduce((s, g) => s + parseFloat(g.monto), 0);
+    const fmtTotal = n => viewMode === 'TOTAL_USD' ? fmtUSD(n) : this._fmtMon(n, viewMode);
 
+    const totalMes = gastos.reduce((s, g) => s + toVal(g.monto, g.moneda), 0);
     const bycat = {};
     for (const g of gastos) {
       const k = g.categoria_id ?? 'sin';
-      bycat[k] = (bycat[k] || 0) + (tc ? toUSD(g.monto, g.moneda) : parseFloat(g.monto));
+      bycat[k] = (bycat[k] || 0) + toVal(g.monto, g.moneda);
     }
-
-    const fmtTotal = n => tc ? fmtUSD(n) : fmtAmt(n);
 
     const catBadge = id => {
       const c = this._cats.find(c => c.id === (id === 'sin' ? null : +id));
       return c ? `${c.icono} ${c.nombre}` : '—';
     };
-
     const catOpts = this._cats.map(c =>
       `<option value="${c.id}">${c.icono} ${c.nombre}</option>`).join('');
+    const selSt = `font-size:.82rem;padding:5px 10px;border-radius:6px;border:1px solid var(--border);background:var(--surface);color:var(--text)`;
 
     gc.innerHTML = `
       <!-- Filtros -->
       <div class="form-card" style="padding:12px 16px;margin-bottom:.75rem">
         <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
-          <select id="h-mes" style="font-size:.82rem;padding:5px 10px;border-radius:6px;
-            border:1px solid var(--border);background:var(--surface);color:var(--text)">
+          <select id="h-mes" style="${selSt}">
             ${meses.map(m => `<option value="${m.val}"${m.val===mesFilter?' selected':''}>${m.lbl}</option>`).join('')}
           </select>
-          <select id="h-cat" style="font-size:.82rem;padding:5px 10px;border-radius:6px;
-            border:1px solid var(--border);background:var(--surface);color:var(--text)">
+          <select id="h-cat" style="${selSt}">
             <option value="">Todas las categorías</option>
             ${this._cats.map(c =>
               `<option value="${c.id}"${String(c.id)===catFilter?' selected':''}>${c.icono} ${c.nombre}</option>`
             ).join('')}
           </select>
-          ${!tc ? `<select id="h-moneda" style="font-size:.82rem;padding:5px 10px;border-radius:6px;
-            border:1px solid var(--border);background:var(--surface);color:var(--text)">
-            <option value="UYU"${monedaFilter==='UYU'?' selected':''}>UYU</option>
-            <option value="USD"${monedaFilter==='USD'?' selected':''}>USD</option>
-          </select>` : ''}
-          <select id="h-tipo" style="font-size:.82rem;padding:5px 10px;border-radius:6px;
-            border:1px solid var(--border);background:var(--surface);color:var(--text)">
+          <select id="h-tipo" style="${selSt}">
             <option value=""${!tipoFilter?' selected':''}>Todos</option>
             <option value="casual"${tipoFilter==='casual'?' selected':''}>💳 Casual</option>
             <option value="recurrente"${tipoFilter==='recurrente'?' selected':''}>🔁 Recurrente</option>
           </select>
-          <div style="display:flex;align-items:center;gap:6px">
-            <label style="font-size:.78rem;color:var(--text-sec);white-space:nowrap">TC UYU/USD</label>
-            <input id="h-tc" type="number" min="1" step="0.1" placeholder="ej: 43.5"
-              value="${this._histTC}"
-              style="width:82px;font-size:.78rem;padding:4px 8px;border-radius:6px;
-                border:1px solid var(--border);background:var(--surface);color:var(--text);
-                font-family:'DM Mono',monospace">
-          </div>
+          ${this._renderMonedaFilter('h', viewMode, this._tc)}
         </div>
+        ${needsTC ? `<div style="margin-top:8px;font-size:.75rem;color:var(--red)">
+          ⚠ Ingresá el TC UYU/USD para ver los totales convertidos.</div>` : ''}
       </div>
 
       <!-- Resumen por categoría -->
       ${Object.keys(bycat).length === 0 ? '' : `
       <div class="form-card" style="padding:14px 16px;margin-bottom:.75rem">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-          <span style="font-weight:600;font-size:.9rem">Resumen del mes${tc?' <span style="font-size:.7rem;color:var(--accent);font-weight:400">· en USD (TC ${tc})</span>':''}</span>
+          <span style="font-weight:600;font-size:.9rem">Resumen del mes
+            ${viewMode==='TOTAL_USD' && tc
+              ? `<span style="font-size:.7rem;color:var(--accent);font-weight:400"> · en USD (TC ${tc})</span>`
+              : ''}
+          </span>
           <span style="font-family:'DM Mono',monospace;font-size:.85rem;color:var(--accent);font-weight:600">
             Total: ${fmtTotal(totalMes)}
           </span>
@@ -650,10 +684,8 @@ window.Mods.gastos = {
 
       <!-- Recurrente vs Casual -->
       ${(() => {
-        const rec = gastos.filter(g => g.tipo_gasto === 'recurrente')
-          .reduce((s, g) => s + (tc ? toUSD(g.monto, g.moneda) : parseFloat(g.monto)), 0);
-        const cas = gastos.filter(g => g.tipo_gasto !== 'recurrente')
-          .reduce((s, g) => s + (tc ? toUSD(g.monto, g.moneda) : parseFloat(g.monto)), 0);
+        const rec = gastos.filter(g => g.tipo_gasto === 'recurrente').reduce((s, g) => s + toVal(g.monto, g.moneda), 0);
+        const cas = gastos.filter(g => g.tipo_gasto !== 'recurrente').reduce((s, g) => s + toVal(g.monto, g.moneda), 0);
         if (!rec && !cas) return '';
         const pctRec = totalMes > 0 ? (rec / totalMes * 100) : 0;
         return `
@@ -689,41 +721,41 @@ window.Mods.gastos = {
               <th>Mon.</th><th>Monto</th><th></th>
             </tr></thead>
             <tbody id="g-hist-tbody">
-              ${gastos.map(g => this._histRow(g, catOpts, tc, fmtAmt)).join('')}
+              ${gastos.map(g => this._histRow(g, catOpts, viewMode, tc)).join('')}
             </tbody>
           </table>
         `}
       </div>
     `;
 
-    ['h-mes','h-cat','h-moneda','h-tipo'].forEach(id => {
+    ['h-mes','h-cat','h-tipo'].forEach(id => {
       document.getElementById(id)?.addEventListener('change', () => {
-        this._histMes    = document.getElementById('h-mes').value;
-        this._histCat    = document.getElementById('h-cat').value;
-        this._histMoneda = document.getElementById('h-moneda')?.value || this._histMoneda;
-        this._histTipo   = document.getElementById('h-tipo').value;
+        this._histMes  = document.getElementById('h-mes').value;
+        this._histCat  = document.getElementById('h-cat').value;
+        this._histTipo = document.getElementById('h-tipo').value;
         this._drawHistorial();
       });
     });
-
+    document.getElementById('h-moneda')?.addEventListener('change', e => {
+      this._histMoneda = e.target.value;
+      this._drawHistorial();
+    });
     document.getElementById('h-tc')?.addEventListener('change', e => {
-      this._histTC = e.target.value.trim();
+      this._saveTC(e.target.value.trim());
       this._drawHistorial();
     });
 
-    this._attachHistHandlers(gastos, catOpts, tc, fmtAmt);
+    this._attachHistHandlers(gastos, catOpts, viewMode, tc);
   },
 
-  _histRow(g, catOpts, tc, fmtAmt) {
+  _histRow(g, catOpts, viewMode, tc) {
     const monBadge = `<span style="font-size:.7rem;font-family:'DM Mono',monospace;color:var(--text-sec)">${g.moneda}</span>`;
     const badges = (g.tipo_gasto === 'recurrente' ? ' <span style="font-size:.6rem;color:var(--accent)">🔁</span>' : '')
       + (g.dividido_entre > 1 ? ` <span style="font-size:.65rem;color:var(--text-sec)">÷${g.dividido_entre}</span>` : '')
       + (g.cuota_actual && g.cuotas_totales ? ` <span style="font-size:.62rem;color:var(--text-sec);background:rgba(255,255,255,.06);padding:1px 5px;border-radius:3px">📅 ${g.cuota_actual}/${g.cuotas_totales}</span>` : '');
     const catC = this._cats.find(c => c.id === g.categoria_id);
     const catLabel = catC ? `${catC.icono} ${catC.nombre}` : '—';
-    const montoDisplay = tc
-      ? fmtUSD(g.moneda === 'USD' ? parseFloat(g.monto) : parseFloat(g.monto) / tc)
-      : fmtAmt(parseFloat(g.monto), g.moneda);
+    const montoDisplay = this._fmtView(parseFloat(g.monto), g.moneda, viewMode, tc);
     return `
       <tr data-id="${g.id}">
         <td style="white-space:nowrap">${fmtDate(g.fecha)}</td>
@@ -801,7 +833,7 @@ window.Mods.gastos = {
       </tr>`;
   },
 
-  _attachHistHandlers(gastos, catOpts, tc, fmtAmt) {
+  _attachHistHandlers(gastos, catOpts, viewMode, tc) {
     const tbody = document.getElementById('g-hist-tbody');
     if (!tbody) return;
 
@@ -863,72 +895,92 @@ window.Mods.gastos = {
     const gc = document.getElementById('g-content');
     gc.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
 
-    // Traemos solo gastos con cuotas pendientes (cuota_actual < cuotas_totales)
     const sb = getDB();
     const { data: rows, error } = await sb.from('gastos')
-      .select('*')
-      .not('cuotas_totales', 'is', null)
+      .select('*').not('cuotas_totales', 'is', null)
       .order('fecha', { ascending: false });
     if (error) throw error;
 
-    const activas = (rows || []).filter(g => g.cuota_actual < g.cuotas_totales);
+    const viewMode = this._cuotasMoneda || 'UYU';   // 'UYU' | 'USD' | 'TOTAL_USD'
+    const tc       = parseFloat(this._tc) || 0;
+    const needsTC  = viewMode === 'TOTAL_USD' && !tc;
+
+    // Filtrar según viewMode
+    const allActivas = (rows || []).filter(g => g.cuota_actual < g.cuotas_totales);
+    const activas = viewMode === 'TOTAL_USD'
+      ? allActivas
+      : allActivas.filter(g => g.moneda === viewMode);
+
     const catBadge = id => {
       const c = this._cats.find(c => c.id === id);
       return c ? `${c.icono} ${c.nombre}` : '—';
     };
-    const fmtAmt = (n, mon) => mon === 'USD'
-      ? fmtUSD(n)
-      : new Intl.NumberFormat('es-UY', { style: 'currency', currency: mon || 'UYU', maximumFractionDigits: 0 }).format(n);
+    const fmtV = (n, mon) => this._fmtView(n, mon, viewMode, tc);
 
-    // Proyección: para cada gasto activo, sumar la cuota en los próximos 12 meses
+    // Proyección próximos 12 meses
     const now = new Date();
-    const proj = []; // [{ym, label, byMon:{UYU:0, USD:0, ...}}]
+    const proj = [];
     for (let i = 1; i <= 12; i++) {
       const d = new Date(now.getFullYear(), now.getMonth() + i, 1);
-      const ym = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
       proj.push({
-        ym,
+        ym:    `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`,
         label: d.toLocaleDateString('es-UY', { month: 'short', year: '2-digit' }),
-        byMon: {},
+        total: 0,
       });
     }
 
     for (const g of activas) {
       const restantes = g.cuotas_totales - g.cuota_actual;
       const [yr, mo] = g.fecha.split('-').map(Number);
-      const baseDate = new Date(yr, mo - 1, 1);
-      const monto = parseFloat(g.monto);
-      const mon = g.moneda || 'UYU';
+      const baseDate  = new Date(yr, mo - 1, 1);
+      const monto     = viewMode === 'TOTAL_USD'
+        ? this._toUSD(g.monto, g.moneda, tc)
+        : parseFloat(g.monto);
       for (let k = 1; k <= restantes; k++) {
-        const d = new Date(baseDate.getFullYear(), baseDate.getMonth() + k, 1);
+        const d  = new Date(baseDate.getFullYear(), baseDate.getMonth() + k, 1);
         const ym = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
         const slot = proj.find(p => p.ym === ym);
-        if (slot) slot.byMon[mon] = (slot.byMon[mon] || 0) + monto;
+        if (slot) slot.total += monto;
       }
     }
 
-    const totalByMon = {};
-    for (const g of activas) {
-      const mon = g.moneda || 'UYU';
-      totalByMon[mon] = (totalByMon[mon] || 0) + parseFloat(g.monto) * (g.cuotas_totales - g.cuota_actual);
-    }
+    // Total pendiente global
+    const totalPend = activas.reduce((s, g) => {
+      const m = viewMode === 'TOTAL_USD'
+        ? this._toUSD(g.monto, g.moneda, tc)
+        : parseFloat(g.monto);
+      return s + m * (g.cuotas_totales - g.cuota_actual);
+    }, 0);
+    const fmtTotalPend = viewMode === 'TOTAL_USD' ? fmtUSD(totalPend) : this._fmtMon(totalPend, viewMode);
 
-    const maxProj = Math.max(1, ...proj.map(p => Math.max(0, ...Object.values(p.byMon))));
+    const maxProj = Math.max(1, ...proj.map(p => p.total));
+    const selSt   = `font-size:.82rem;padding:5px 10px;border-radius:6px;border:1px solid var(--border);background:var(--surface);color:var(--text)`;
 
     gc.innerHTML = `
+      <!-- Filtro moneda -->
+      <div class="form-card" style="padding:12px 16px;margin-bottom:.75rem">
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          ${this._renderMonedaFilter('c', viewMode, this._tc)}
+        </div>
+        ${needsTC ? `<div style="margin-top:8px;font-size:.75rem;color:var(--red)">
+          ⚠ Ingresá el TC UYU/USD para convertir a dólares.</div>` : ''}
+      </div>
+
       <!-- Totales -->
       <div class="form-card" style="padding:14px 16px;margin-bottom:.75rem">
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
           <div>
-            <div style="font-weight:600;font-size:.9rem">Cuotas pendientes</div>
+            <div style="font-weight:600;font-size:.9rem">Cuotas pendientes
+              ${viewMode==='TOTAL_USD' && tc
+                ? `<span style="font-size:.7rem;color:var(--accent);font-weight:400"> · en USD (TC ${tc})</span>`
+                : ''}
+            </div>
             <div style="font-size:.74rem;color:var(--text-sec);margin-top:2px">
               ${activas.length} compras con cuotas restantes
             </div>
           </div>
-          <div style="text-align:right;font-family:'DM Mono',monospace;font-size:.85rem">
-            ${Object.entries(totalByMon).map(([mon, tot]) =>
-              `<div${mon==='USD'?' style="color:var(--accent)"':''}>${fmtAmt(tot, mon)}</div>`
-            ).join('') || '<div style="color:var(--text-sec)">—</div>'}
+          <div style="text-align:right;font-family:'DM Mono',monospace;font-size:.85rem;color:var(--accent);font-weight:600">
+            ${activas.length ? fmtTotalPend : '—'}
           </div>
         </div>
       </div>
@@ -945,33 +997,25 @@ window.Mods.gastos = {
       <!-- Proyección por mes -->
       <div class="form-card" style="padding:14px 16px;margin-bottom:.75rem">
         <div style="font-weight:600;font-size:.9rem;margin-bottom:12px">Proyección próximos 12 meses</div>
-        ${proj.map(p => {
-          const monEntries = Object.entries(p.byMon).filter(([,v]) => v > 0);
-          if (!monEntries.length) return '';
-          const maxVal = Math.max(...monEntries.map(([,v]) => v));
-          const pct = Math.max(2, (maxVal / maxProj) * 100);
+        ${proj.filter(p => p.total > 0).map(p => {
+          const pct = Math.max(2, (p.total / maxProj) * 100);
+          const label = viewMode === 'TOTAL_USD' ? fmtUSD(p.total) : this._fmtMon(p.total, viewMode);
           return `
             <div style="margin-bottom:8px">
               <div style="display:flex;justify-content:space-between;font-size:.76rem;margin-bottom:3px">
                 <span style="text-transform:capitalize">${p.label}</span>
-                <span style="font-family:'DM Mono',monospace">
-                  ${monEntries.map(([mon, val]) =>
-                    `<span${mon==='USD'?' style="color:var(--accent);margin-left:6px"':''}>${fmtAmt(val, mon)}</span>`
-                  ).join('')}
-                </span>
+                <span style="font-family:'DM Mono',monospace">${label}</span>
               </div>
               <div style="height:4px;background:var(--border);border-radius:2px">
                 <div style="height:4px;background:var(--accent);border-radius:2px;width:${pct.toFixed(1)}%"></div>
               </div>
             </div>`;
-        }).join('') || '<div style="color:var(--text-sec);font-size:.78rem">Sin proyección en los próximos 12 meses</div>'}
+        }).join('') || `<div style="color:var(--text-sec);font-size:.78rem">Sin proyección en los próximos 12 meses</div>`}
       </div>
 
-      <!-- Lista de compras con cuotas activas -->
+      <!-- Lista -->
       <div class="table-wrap">
-        <div class="table-header">
-          <span class="table-title">Compras en cuotas</span>
-        </div>
+        <div class="table-header"><span class="table-title">Compras en cuotas</span></div>
         <table>
           <thead><tr>
             <th>Compra</th><th>Categoría</th><th>Cuota</th><th>Por mes</th><th>Restante</th><th></th>
@@ -979,23 +1023,21 @@ window.Mods.gastos = {
           <tbody>
             ${activas.map(g => {
               const restantes = g.cuotas_totales - g.cuota_actual;
-              const monto = parseFloat(g.monto);
+              const monto     = parseFloat(g.monto);
               return `
                 <tr>
                   <td>${g.comercio ?? '—'}
                     <div style="font-size:.68rem;color:var(--text-sec);font-family:'DM Mono',monospace">
-                      ${fmtDate(g.fecha)}
+                      ${fmtDate(g.fecha)} · ${g.moneda}
                     </div>
                   </td>
                   <td>${catBadge(g.categoria_id)}</td>
-                  <td style="font-family:'DM Mono',monospace;font-size:.78rem">
-                    ${g.cuota_actual}/${g.cuotas_totales}
-                  </td>
+                  <td style="font-family:'DM Mono',monospace;font-size:.78rem">${g.cuota_actual}/${g.cuotas_totales}</td>
                   <td style="font-family:'DM Mono',monospace;font-weight:600;white-space:nowrap">
-                    ${fmtAmt(monto, g.moneda)}
+                    ${fmtV(monto, g.moneda)}
                   </td>
                   <td style="font-family:'DM Mono',monospace;color:var(--text-sec);white-space:nowrap">
-                    ${fmtAmt(monto * restantes, g.moneda)}
+                    ${fmtV(monto * restantes, g.moneda)}
                     <div style="font-size:.65rem">${restantes} cuotas</div>
                   </td>
                   <td><button class="btn btn-ghost btn-del-c" data-id="${g.id}"
@@ -1006,6 +1048,15 @@ window.Mods.gastos = {
         </table>
       </div>`}
     `;
+
+    document.getElementById('c-moneda')?.addEventListener('change', e => {
+      this._cuotasMoneda = e.target.value;
+      this._drawCuotas();
+    });
+    document.getElementById('c-tc')?.addEventListener('change', e => {
+      this._saveTC(e.target.value.trim());
+      this._drawCuotas();
+    });
 
     document.querySelectorAll('.btn-del-c').forEach(btn =>
       btn.addEventListener('click', async () => {
