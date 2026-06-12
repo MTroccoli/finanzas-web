@@ -282,7 +282,7 @@ window.Mods.gastos = {
       const log = document.getElementById('g-parse-log');
       btnParse.disabled = true;
       btnParse.textContent = '⏳ Procesando…';
-      log.textContent = 'Enviando a Claude…';
+      log.innerHTML = '<span class="spinner" style="width:13px;height:13px;border-width:2px;display:inline-block;vertical-align:middle;margin-right:7px"></span>Enviando a Claude…';
       try {
         const fd = new FormData();
         fd.append('file', selFile);
@@ -811,7 +811,8 @@ window.Mods.gastos = {
     const allToInsert = [...toSave, ...adicTrack];
     if (!toSave.length && !adicTrack.length) { toast('Seleccioná al menos una transacción', 'warn'); return; }
     const btn = document.getElementById('g-btn-confirm');
-    btn.disabled = true; btn.textContent = 'Guardando…';
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner" style="width:13px;height:13px;border-width:2px;display:inline-block;vertical-align:middle;margin-right:7px"></span>Guardando…';
 
     const getAdicName = (digits) => {
       if (!digits) return null;
@@ -854,7 +855,10 @@ window.Mods.gastos = {
           cuota_actual:   t._cuotaActual   || null,
           cuotas_totales: t._cuotasTotales || null,
           banco_tarjeta:  bancoVal,
-          titular_adicional: isTracking ? getAdicName(digits) : null,
+          // Adicional items always keep the cardholder name; if checked (not tracking)
+          // they're also flagged so the historial filter includes them with the badge.
+          titular_adicional:   digits ? getAdicName(digits) : null,
+          incluido_en_gastos:  !isTracking && !!digits,
           notas,
         });
       }
