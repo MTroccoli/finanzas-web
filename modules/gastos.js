@@ -57,6 +57,7 @@ window.Mods.gastos = {
   },
 
 
+  async render() {
     const c = document.getElementById('content');
     c.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
     const [cats, learnedRows, excludedCards, savedTC] = await Promise.all([
