@@ -150,8 +150,27 @@ window.Mods.gastos = {
   },
 
   // ── Importar EDC ────────────────────────────────────────────────────────
-  _drawImportar() {
+  async _drawImportar() {
     if (this._pending.length) return this._drawReview();
+
+    // Cargar importaciones anteriores para el panel de gestión
+    const sb = getDB();
+    const [impsRes, gastosRes] = await Promise.all([
+      sb.from('importaciones').select('id, registros_importados').order('id', { ascending: false }),
+      sb.from('gastos').select('importacion_id, fecha').not('importacion_id', 'is', null),
+    ]);
+    const impsRaw = impsRes.data || [];
+    const gastosAll = gastosRes.data || [];
+    const impMap = {};
+    for (const g of gastosAll) {
+      const id = g.importacion_id;
+      if (!impMap[id]) impMap[id] = { count: 0, desde: g.fecha, hasta: g.fecha };
+      impMap[id].count++;
+      if (g.fecha < impMap[id].desde) impMap[id].desde = g.fecha;
+      if (g.fecha > impMap[id].hasta) impMap[id].hasta = g.fecha;
+    }
+    const imps = impsRaw.map(i => ({ ...i, ...(impMap[i.id] || { count: 0, desde: null, hasta: null }) }));
+
     document.getElementById('g-content').innerHTML = `
       <div class="form-card">
         <h3>Importar Estado de Cuenta VISA</h3>
@@ -195,6 +214,47 @@ window.Mods.gastos = {
         </button>
         <div id="g-parse-log" style="margin-top:10px;font-family:'DM Mono',monospace;font-size:.72rem;color:var(--text-sec);min-height:18px"></div>
       </div>
+
+      ${imps.length === 0 ? '' : `
+      <div class="form-card" style="padding:14px 16px;margin-top:.75rem">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+          <h3 style="margin:0;font-size:.9rem">Importaciones anteriores</h3>
+          <button id="g-btn-del-all" class="btn btn-ghost"
+            style="font-size:.75rem;padding:4px 10px;color:var(--red);border-color:rgba(239,68,68,.3)">
+            🗑 Eliminar todo
+          </button>
+        </div>
+        <table style="font-size:.8rem">
+          <thead><tr>
+            <th style="width:40px">
+              <input type="checkbox" id="g-imp-chk-all" title="Seleccionar todos">
+            </th>
+            <th>#</th><th>Período</th><th>Gastos</th><th></th>
+          </tr></thead>
+          <tbody>
+            ${imps.map(imp => `
+              <tr data-imp-id="${imp.id}">
+                <td><input type="checkbox" class="g-imp-chk" data-id="${imp.id}"></td>
+                <td style="font-family:'DM Mono',monospace;color:var(--text-sec)">#${imp.id}</td>
+                <td style="white-space:nowrap">
+                  ${imp.desde ? `${fmtDate(imp.desde)} → ${fmtDate(imp.hasta)}` : '—'}
+                </td>
+                <td style="font-family:'DM Mono',monospace">${imp.count}</td>
+                <td>
+                  <button class="btn btn-ghost g-imp-del-btn" data-id="${imp.id}" data-n="${imp.count}"
+                    style="font-size:.72rem;padding:2px 8px;color:var(--red)">✕ Eliminar</button>
+                </td>
+              </tr>`).join('')}
+          </tbody>
+        </table>
+        <div id="g-imp-sel-bar" style="display:none;margin-top:10px;display:flex;gap:8px;align-items:center">
+          <span id="g-imp-sel-count" style="font-size:.78rem;color:var(--text-sec)"></span>
+          <button id="g-btn-del-sel" class="btn btn-ghost"
+            style="font-size:.75rem;padding:4px 10px;color:var(--red);border-color:rgba(239,68,68,.3)">
+            🗑 Eliminar seleccionados
+          </button>
+        </div>
+      </div>`}
     `;
 
     const zone     = document.getElementById('g-drop-zone');
@@ -297,6 +357,63 @@ window.Mods.gastos = {
         btnParse.disabled = false;
         btnParse.textContent = '✨ Parsear con IA';
       }
+    });
+
+    // ── Gestión de importaciones anteriores ───────────────────────────────
+    const deleteImport = async (ids, label) => {
+      if (!confirm(`¿Eliminar ${label}? Esta acción no se puede deshacer.`)) return;
+      try {
+        for (const id of ids) {
+          await getDB().from('gastos').delete().eq('importacion_id', id);
+          await getDB().from('importaciones').delete().eq('id', id);
+        }
+        toast(`✅ Eliminado${ids.length > 1 ? 's' : ''}`);
+        this._drawImportar();
+      } catch(err) { toast('❌ ' + err.message, 'err'); }
+    };
+
+    // Eliminar batch individual
+    document.querySelectorAll('.g-imp-del-btn').forEach(btn =>
+      btn.addEventListener('click', () =>
+        deleteImport([+btn.dataset.id], `${btn.dataset.n} gastos del batch #${btn.dataset.id}`)
+      )
+    );
+
+    // Select all checkbox
+    const chkAll = document.getElementById('g-imp-chk-all');
+    const selBar = document.getElementById('g-imp-sel-bar');
+    const selCount = document.getElementById('g-imp-sel-count');
+    const updateSelBar = () => {
+      const checked = [...document.querySelectorAll('.g-imp-chk:checked')];
+      if (selBar) {
+        selBar.style.display = checked.length ? 'flex' : 'none';
+        if (selCount) {
+          const total = checked.reduce((s, c) => s + (+(c.closest('tr')?.querySelector('.g-imp-del-btn')?.dataset.n || 0)), 0);
+          selCount.textContent = `${checked.length} batch${checked.length>1?'es':''} · ${total} gastos seleccionados`;
+        }
+      }
+    };
+    chkAll?.addEventListener('change', e => {
+      document.querySelectorAll('.g-imp-chk').forEach(c => { c.checked = e.target.checked; });
+      updateSelBar();
+    });
+    document.querySelectorAll('.g-imp-chk').forEach(c => c.addEventListener('change', updateSelBar));
+
+    // Eliminar seleccionados
+    document.getElementById('g-btn-del-sel')?.addEventListener('click', () => {
+      const ids = [...document.querySelectorAll('.g-imp-chk:checked')].map(c => +c.dataset.id);
+      if (!ids.length) return;
+      const total = [...document.querySelectorAll('.g-imp-chk:checked')].reduce(
+        (s, c) => s + (+(c.closest('tr')?.querySelector('.g-imp-del-btn')?.dataset.n || 0)), 0
+      );
+      deleteImport(ids, `${total} gastos de ${ids.length} batch${ids.length>1?'es':''}`);
+    });
+
+    // Eliminar TODO
+    document.getElementById('g-btn-del-all')?.addEventListener('click', () => {
+      const ids = imps.map(i => i.id);
+      const total = imps.reduce((s, i) => s + i.count, 0);
+      deleteImport(ids, `todos los ${total} gastos importados`);
     });
   },
 
