@@ -44,7 +44,19 @@ window.Mods.gastos = {
       .replace(/\s+/g, ' ').trim();
   },
 
-  async render() {
+  // Busca categoría aprendida para un merchant normalizado.
+  // Primero intenta exact match, luego substring bilateral (mínimo 5 chars).
+  _learnedFuzzy(norm) {
+    if (!norm) return null;
+    if (this._learned[norm]) return this._learned[norm];
+    for (const [key, catId] of Object.entries(this._learned)) {
+      if (key.length < 5 || norm.length < 5) continue;
+      if (norm.includes(key) || key.includes(norm)) return catId;
+    }
+    return null;
+  },
+
+
     const c = document.getElementById('content');
     c.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
     const [cats, learnedRows, excludedCards, savedTC] = await Promise.all([
@@ -346,8 +358,8 @@ window.Mods.gastos = {
         const fd = new FormData();
         fd.append('file', selFile);
 
-        // Enviar top-50 ejemplos aprendidos como hints few-shot
-        const topLearned = (this._learnedRows || []).slice(0, 50).map(r => ({
+        // Enviar todos los ejemplos aprendidos como hints few-shot (sin límite artificial)
+        const topLearned = (this._learnedRows || []).map(r => ({
           ejemplo: r.ejemplo_original || r.merchant_normalizado,
           categoria: this._cats.find(c => c.id === r.categoria_id)?.nombre || 'Otros',
         }));
@@ -367,7 +379,7 @@ window.Mods.gastos = {
         let overrides = 0;
         this._pending = result.transactions.map((t, i) => {
           const norm = this._normMerchant(t.descripcion);
-          const learnedCat = this._learned[norm];
+          const learnedCat = this._learnedFuzzy(norm);
           let aiCat = this._cats.find(c => c.nombre === t.categoria)?.id ?? null;
 
           // No sugerir Restaurantes para montos pequeños — bajar a Otros
@@ -930,7 +942,7 @@ window.Mods.gastos = {
           categoria_id: t._catId || null,
           usuario: 'compartido',
           fuente: 'edc_visa',
-          tipo_gasto: t._tipoGasto || 'casual',
+          tipo_gasto: ['casual','recurrente','tdc'].includes(t._tipoGasto) ? t._tipoGasto : 'casual',
           dividido_entre: N,
           importacion_id: imp.id,
           cuota_actual:   t._cuotaActual   || null,
