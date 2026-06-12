@@ -52,8 +52,8 @@ window.Mods.gastos = {
     ]);
     this._cats = cats;
     this._learned = {};
-    this._histMoneda   = 'UYU';
-    this._cuotasMoneda = 'UYU';
+    this._histMoneda   = 'TOTAL_USD';
+    this._cuotasMoneda = 'TOTAL_USD';
     for (const r of learnedRows) this._learned[r.merchant_normalizado] = r.categoria_id;
     this._learnedRows = learnedRows;
     this._excludedCards = excludedCards || '';
@@ -1563,20 +1563,22 @@ window.Mods.gastos = {
       + (g.cuota_actual && g.cuotas_totales ? ` <span style="font-size:.62rem;color:var(--text-sec);background:rgba(255,255,255,.06);padding:1px 5px;border-radius:3px">📅 ${g.cuota_actual}/${g.cuotas_totales}</span>` : '');
     const catC = this._cats.find(c => c.id === g.categoria_id);
     const catLabel = catC ? `${catC.icono} ${catC.nombre}` : '—';
-    const montoDisplay = this._fmtView(parseFloat(g.monto), g.moneda, viewMode, tc);
+    const monto = parseFloat(g.monto);
+    const montoDisplay = this._fmtView(monto, g.moneda, viewMode, tc);
+    const montoColor = monto < 0 ? 'color:#10b981;' : '';
     const titBadge = g.titular_adicional
-      ? `<div style="margin-top:2px"><span style="font-size:.58rem;color:#a78bfa;background:rgba(167,139,250,.12);padding:1px 5px;border-radius:3px">👤 ${g.titular_adicional}</span></div>`
-      : '';
+      ? `<span style="font-size:.58rem;color:#a78bfa;background:rgba(167,139,250,.12);padding:1px 5px;border-radius:3px">👤 ${g.titular_adicional}</span>`
+      : `<span style="font-size:.58rem;color:var(--text-sec);background:rgba(255,255,255,.05);padding:1px 5px;border-radius:3px">💳 Titular</span>`;
     return `
       <tr data-id="${g.id}">
         <td style="white-space:nowrap">${fmtDate(g.fecha)}</td>
         <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis">
           <div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${g.comercio ?? '—'}${badges}</div>
-          ${titBadge}
+          <div style="margin-top:2px">${titBadge}</div>
         </td>
         <td>${catLabel}</td>
         <td>${monBadge}</td>
-        <td style="font-family:'DM Mono',monospace;font-weight:600;white-space:nowrap">${montoDisplay}</td>
+        <td style="font-family:'DM Mono',monospace;font-weight:600;white-space:nowrap;${montoColor}">${montoDisplay}</td>
         <td style="white-space:nowrap">
           <button class="btn btn-ghost btn-edit-g" data-id="${g.id}"
             style="font-size:.7rem;padding:2px 7px">✏️</button>
