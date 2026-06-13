@@ -476,7 +476,7 @@ window.Mods.gastos = {
             _catId: finalCat,
             _cuotaActual:   cuotaActual,
             _cuotasTotales: cuotasTotales,
-            _tipoGasto:     t.tipo_gasto ?? 'casual',
+            _tipoGasto: ['casual','recurrente','tdc'].includes(t.tipo_gasto) ? t.tipo_gasto : 'casual',
             _normMerchant: norm,
             _overridden: learnedCat && learnedCat !== aiCat,
             _manualCard: null,
