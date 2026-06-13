@@ -28,6 +28,8 @@ window.Mods.gastos = {
   _pendingFile:  null,    // Archivo PDF pendiente de subir a storage tras confirmar import
   _reparsePath:  null,    // Ruta del PDF en storage cuando se re-parsea uno existente (evita duplicar)
   _comSort:      { col: 'count', dir: 'desc' },  // Sort activo en panel Comercios
+  _comSelected:  new Set(),                       // norms seleccionados para unificación masiva
+  _comSuggestOpen: false,                          // panel "detectar similares" abierto
   _adicOpenMonths: new Set(),                     // "titular|mes" abiertos en acordeón Adicional
   _bancotarjeta: '',      // Banco/tarjeta detectado por la IA en el EDC activo
   _resBanco:     '',      // Filtro por banco/tarjeta en Resumen
@@ -1678,6 +1680,21 @@ window.Mods.gastos = {
         </div>
       </div>
 
+      ${items.length === 0 ? '' : `
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:.5rem">
+        <button id="c-detect-btn" class="btn btn-ghost" style="font-size:.76rem;padding:5px 12px">
+          🔍 ${this._comSuggestOpen ? 'Ocultar similares' : 'Detectar similares'}
+        </button>
+        <div id="c-sel-bar" style="display:none;align-items:center;gap:8px">
+          <span id="c-sel-count" style="font-size:.78rem;color:var(--text-sec)"></span>
+          <button id="c-unify-btn" class="btn btn-primary" style="font-size:.76rem;padding:5px 12px">
+            🔗 Unificar seleccionados
+          </button>
+          <button id="c-sel-clear" class="btn btn-ghost" style="font-size:.76rem;padding:5px 10px">✕ Limpiar</button>
+        </div>
+      </div>
+      <div id="c-suggest-panel"></div>`}
+
       <div class="table-wrap">
         ${items.length === 0 ? `
           <div class="empty"><div class="empty-icon">🏷️</div>
@@ -1685,6 +1702,7 @@ window.Mods.gastos = {
         ` : `
           <table>
             <thead id="g-com-thead"><tr>
+              <th style="width:30px"><input type="checkbox" id="c-chk-all" title="Seleccionar todos los visibles"></th>
               ${this._thSort('nombre', 'Comercio',   this._comSort)}
               ${this._thSort('count',  'Gastos',     this._comSort)}
               <th>Última</th>
@@ -1715,6 +1733,26 @@ window.Mods.gastos = {
         this._renderComerciosTbody();
       });
     });
+
+    // Selección masiva: checkbox "todos los visibles"
+    document.getElementById('c-chk-all')?.addEventListener('change', e => {
+      const vis = this._visibleComNorms || [];
+      if (e.target.checked) vis.forEach(nm => this._comSelected.add(nm));
+      else                  vis.forEach(nm => this._comSelected.delete(nm));
+      this._renderComerciosTbody();
+    });
+    document.getElementById('c-sel-clear')?.addEventListener('click', () => {
+      this._comSelected.clear();
+      this._renderComerciosTbody();
+    });
+    document.getElementById('c-unify-btn')?.addEventListener('click', () => this._bulkUnifyComercios([...this._comSelected]));
+
+    // Asistente de similitud
+    document.getElementById('c-detect-btn')?.addEventListener('click', () => {
+      this._comSuggestOpen = !this._comSuggestOpen;
+      this._drawHistorialComercios();
+    });
+    if (this._comSuggestOpen) this._renderSuggestPanel();
 
     const search = document.getElementById('c-search');
     const clear  = document.getElementById('c-search-clear');
@@ -1761,6 +1799,13 @@ window.Mods.gastos = {
     });
 
     tbody?.addEventListener('change', async e => {
+      if (e.target.classList.contains('c-chk')) {
+        const norm = e.target.dataset.norm;
+        if (e.target.checked) this._comSelected.add(norm);
+        else                  this._comSelected.delete(norm);
+        this._updateComSelBar();
+        return;
+      }
       if (e.target.classList.contains('c-tipo-sel')) {
         const norm = e.target.dataset.norm;
         const item = this._comerciosCache.find(i => i.norm === norm);
@@ -1862,6 +1907,137 @@ window.Mods.gastos = {
     }
   },
 
+  // Unifica varios grupos de comercio bajo un único nombre canónico.
+  // Renombra el campo `comercio` de TODOS sus gastos, propaga la categoría
+  // dominante al aprendizaje y limpia los mapeos viejos huérfanos.
+  async _bulkUnifyComercios(norms, presetNombre) {
+    const items = (this._comerciosCache || []).filter(i => norms.includes(i.norm));
+    if (items.length < 1) { toast('Seleccioná al menos un comercio', 'warn'); return; }
+    // Sugerir el ejemplo del grupo con más gastos
+    const suggested = presetNombre
+      || [...items].sort((a,b) => b.count - a.count)[0].example;
+    const entrada = prompt(
+      `Unificar ${items.length} comercio/s en un solo nombre:\n\n` +
+      items.map(i => `· ${i.example} (${i.count})`).join('\n') +
+      `\n\nNombre final:`,
+      suggested
+    );
+    if (entrada == null) return;
+    const nuevo = this._cleanComercio(entrada.trim());
+    if (!nuevo) return;
+    const newNorm = this._normMerchant(nuevo);
+
+    const allIds   = items.flatMap(i => i.ids);
+    const totalGastos = items.reduce((s,i) => s + i.count, 0);
+    if (!confirm(`¿Renombrar ${totalGastos} gasto/s de ${items.length} comercio/s a "${nuevo}"?`)) return;
+
+    try {
+      // Update en lotes por id (dbUpdate por id, en paralelo acotado)
+      for (const id of allIds) {
+        await dbUpdate('gastos', { comercio: nuevo }, { id });
+      }
+      // Categoría dominante entre los grupos unificados (ponderada por count)
+      const catWeight = {};
+      for (const i of items) {
+        if (i.currentCat != null) catWeight[i.currentCat] = (catWeight[i.currentCat] || 0) + i.count;
+      }
+      const domCat = Object.entries(catWeight).sort((a,b) => b[1]-a[1])[0]?.[0];
+      if (domCat) {
+        await dbUpsert('merchant_categorias', {
+          merchant_normalizado: newNorm,
+          categoria_id: +domCat,
+          ejemplo_original: nuevo,
+          seen_count: totalGastos,
+          ultima_vez: new Date().toISOString(),
+        });
+        this._learned[newNorm] = +domCat;
+      }
+      // Limpiar mapeos aprendidos huérfanos (normalizaciones viejas que ya no existen)
+      const oldNorms = items.map(i => i.norm).filter(n => n !== newNorm);
+      if (oldNorms.length) {
+        await getDB().from('merchant_categorias').delete().in('merchant_normalizado', oldNorms);
+        for (const n of oldNorms) delete this._learned[n];
+      }
+      this._comSelected.clear();
+      toast(`✅ ${totalGastos} gasto/s unificados en "${nuevo}"`);
+      this._drawHistorialComercios();
+    } catch(err) {
+      toast('❌ ' + err.message, 'err');
+    }
+  },
+
+  // Clave base para detectar similares: primer token significativo (≥4 chars,
+  // sin dígitos) de la normalización. Ej: "amazon mktp us a1b2" → "amazon".
+  _comercioBaseKey(norm) {
+    const stop = new Set(['compra','pago','tienda','super','the','los','las','del']);
+    for (const tok of (norm || '').split(' ')) {
+      if (tok.length >= 4 && !/\d/.test(tok) && !stop.has(tok)) return tok;
+    }
+    return null;
+  },
+
+  // Agrupa los comercios por clave base; devuelve solo clusters con ≥2 variantes.
+  _buildSimilarClusters() {
+    const byKey = {};
+    for (const it of (this._comerciosCache || [])) {
+      const k = this._comercioBaseKey(it.norm);
+      if (!k) continue;
+      (byKey[k] = byKey[k] || []).push(it);
+    }
+    return Object.entries(byKey)
+      .filter(([, arr]) => arr.length >= 2)
+      .map(([key, arr]) => ({
+        key,
+        items: [...arr].sort((a,b) => b.count - a.count),
+        total: arr.reduce((s,i) => s + i.count, 0),
+      }))
+      .sort((a,b) => b.items.length - a.items.length);
+  },
+
+  _renderSuggestPanel() {
+    const panel = document.getElementById('c-suggest-panel');
+    if (!panel) return;
+    const clusters = this._buildSimilarClusters();
+    if (!clusters.length) {
+      panel.innerHTML = `<div class="form-card" style="padding:12px 16px;margin-bottom:.5rem;font-size:.8rem;color:var(--text-sec)">
+        No se detectaron comercios similares para agrupar.</div>`;
+      return;
+    }
+    panel.innerHTML = `
+      <div class="form-card" style="padding:12px 16px;margin-bottom:.5rem;border:1px solid rgba(59,130,246,.3)">
+        <div style="font-size:.82rem;font-weight:600;margin-bottom:8px">
+          🔍 ${clusters.length} grupo/s de posibles duplicados
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          ${clusters.map((c, idx) => {
+            const sugg = c.items[0].example;
+            return `
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;
+              padding:8px 10px;border-radius:6px;background:rgba(255,255,255,.03);border:1px solid var(--border)">
+              <div style="flex:1;min-width:200px">
+                <div style="font-size:.8rem;font-weight:600">${sugg}
+                  <span style="color:var(--text-sec);font-weight:400">· ${c.items.length} variantes · ${c.total} gastos</span></div>
+                <div style="font-size:.7rem;color:var(--text-sec);margin-top:3px">
+                  ${c.items.map(i => `${i.example} (${i.count})`).join(' · ')}
+                </div>
+              </div>
+              <button class="c-sugg-unify" data-idx="${idx}"
+                style="font-size:.74rem;padding:5px 12px;border-radius:5px;cursor:pointer;
+                  background:var(--accent);border:1px solid var(--accent);color:#fff;white-space:nowrap">
+                🔗 Unificar
+              </button>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>`;
+    panel.querySelectorAll('.c-sugg-unify').forEach(btn =>
+      btn.addEventListener('click', () => {
+        const c = clusters[+btn.dataset.idx];
+        if (c) this._bulkUnifyComercios(c.items.map(i => i.norm), c.items[0].example);
+      })
+    );
+  },
+
   _renderComerciosTbody() {
     const tbody = document.getElementById('g-com-tbody');
     if (!tbody || !this._comerciosCache) return;
@@ -1893,7 +2069,23 @@ window.Mods.gastos = {
     });
     tbody.innerHTML = items.length
       ? items.map(it => this._comercioRow(it)).join('')
-      : `<tr><td colspan="7" style="text-align:center;color:var(--text-sec);padding:20px">Sin resultados</td></tr>`;
+      : `<tr><td colspan="8" style="text-align:center;color:var(--text-sec);padding:20px">Sin resultados</td></tr>`;
+    this._visibleComNorms = items.map(it => it.norm);
+    this._updateComSelBar();
+  },
+
+  // Refresca la barra de selección y el estado del checkbox "todos"
+  _updateComSelBar() {
+    const bar   = document.getElementById('c-sel-bar');
+    const count = document.getElementById('c-sel-count');
+    const chkAll = document.getElementById('c-chk-all');
+    const n = this._comSelected.size;
+    if (bar)   bar.style.display = n ? 'flex' : 'none';
+    if (count) count.textContent = `${n} comercio${n!==1?'s':''} seleccionado${n!==1?'s':''}`;
+    if (chkAll) {
+      const vis = this._visibleComNorms || [];
+      chkAll.checked = vis.length > 0 && vis.every(nm => this._comSelected.has(nm));
+    }
   },
 
   _comercioRow(it) {
@@ -1928,8 +2120,10 @@ window.Mods.gastos = {
       </tr>`;
     }).join('');
 
+    const checked = this._comSelected.has(it.norm) ? ' checked' : '';
     return `
       <tr data-norm="${it.norm}">
+        <td style="text-align:center"><input type="checkbox" class="c-chk" data-norm="${it.norm}"${checked}></td>
         <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"
           title="${it.example.replace(/"/g,'&quot;')}">
           <button class="g-com-expand" data-norm="${it.norm}"
@@ -1963,7 +2157,7 @@ window.Mods.gastos = {
         </td>
       </tr>
       <tr class="g-com-detail" data-norm="${it.norm}" style="display:none">
-        <td colspan="7" style="padding:0 8px 10px 36px;background:rgba(255,255,255,.02)">
+        <td colspan="8" style="padding:0 8px 10px 36px;background:rgba(255,255,255,.02)">
           <table style="width:100%;border-collapse:collapse">
             ${detailRows}
           </table>
