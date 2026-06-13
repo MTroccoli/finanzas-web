@@ -26,6 +26,7 @@ window.Mods.gastos = {
   _histBanco:    '',      // Filtro banco/tarjeta en Historial
   _cuotasBanco:  '',      // Filtro banco/tarjeta en Cuotas
   _pendingFile:  null,    // Archivo PDF pendiente de subir a storage tras confirmar import
+  _reparsePath:  null,    // Ruta del PDF en storage cuando se re-parsea uno existente (evita duplicar)
   _bancotarjeta: '',      // Banco/tarjeta detectado por la IA en el EDC activo
   _resBanco:     '',      // Filtro por banco/tarjeta en Resumen
   _adicTitular:  '',      // Nombre titular adicional asignado en la vista previa
@@ -294,12 +295,20 @@ window.Mods.gastos = {
 
     // Cargar importaciones anteriores para el panel de gestión
     const sb = getDB();
-    const [impsRes, gastosRes] = await Promise.all([
+    const [impsRes, gastosRes, stoRes] = await Promise.all([
       sb.from('importaciones').select('id, registros_importados, archivo_path, banco_tarjeta').order('id', { ascending: false }),
       sb.from('gastos').select('importacion_id, fecha').not('importacion_id', 'is', null),
+      sb.storage.from('edcs').list('', { limit: 1000, sortBy: { column: 'name', order: 'asc' } }).catch(() => ({ data: [] })),
     ]);
     const impsRaw = impsRes.data || [];
     const gastosAll = gastosRes.data || [];
+    // PDFs en storage que no están enlazados a ninguna importación (huérfanos →
+    // recuperables tras un borrado accidental de la tabla gastos/importaciones).
+    const stoFiles = (stoRes?.data || []).filter(f => f?.name && /\.(pdf|png|jpe?g|webp|gif)$/i.test(f.name));
+    const referenced = new Set(impsRaw.map(i => i.archivo_path).filter(Boolean));
+    const orphanFiles = stoFiles
+      .filter(f => !referenced.has(f.name))
+      .sort((a, b) => (parseInt(b.name) || 0) - (parseInt(a.name) || 0));
     const impMap = {};
     for (const g of gastosAll) {
       const id = g.importacion_id;
@@ -376,6 +385,28 @@ window.Mods.gastos = {
           </button>
         </div>
       </div>`}
+
+      ${orphanFiles.length === 0 ? '' : `
+      <div class="form-card" style="padding:14px 16px;margin-top:.75rem;border:1px solid rgba(245,158,11,.35)">
+        <h3 style="margin:0 0 4px;font-size:.9rem">♻️ Recuperar EDCs sin importar</h3>
+        <p style="font-size:.78rem;color:var(--text-sec);margin:0 0 12px">
+          Estos ${orphanFiles.length} PDF${orphanFiles.length>1?'s están':' está'} en el storage pero no tienen gastos asociados
+          (quedaron tras un borrado). Re-parsealos para volver a cargarlos. Tus categorías aprendidas se aplican automáticamente.
+        </p>
+        <table style="font-size:.8rem">
+          <thead><tr><th>Archivo</th><th></th></tr></thead>
+          <tbody>
+            ${orphanFiles.map(f => `
+              <tr>
+                <td style="font-family:'DM Mono',monospace;color:var(--text-sec)">${f.name}</td>
+                <td style="text-align:right">
+                  <button class="btn btn-ghost g-imp-reparse-btn" data-path="${f.name}"
+                    style="font-size:.72rem;padding:2px 8px">↺ Re-parsear</button>
+                </td>
+              </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>`}
     `;
 
     const zone     = document.getElementById('g-drop-zone');
@@ -386,6 +417,7 @@ window.Mods.gastos = {
 
     const setFile = f => {
       selFile = f;
+      this._reparsePath = null;   // subida fresca, no es recuperación de un PDF existente
       nameEl.textContent = f.name;
       nameEl.style.display = 'block';
       btnParse.style.display = 'inline-flex';
@@ -573,6 +605,7 @@ window.Mods.gastos = {
           const ext = path.split('.').pop() || 'pdf';
           const mime = ext === 'pdf' ? 'application/pdf' : `image/${ext}`;
           selFile = new File([data], path, { type: mime });
+          this._reparsePath = path;   // marcar para enlazar (no duplicar) al confirmar
           nameEl.textContent = selFile.name;
           nameEl.style.display = 'block';
           btnParse.style.display = 'inline-flex';
@@ -1079,8 +1112,14 @@ window.Mods.gastos = {
       // Aprender merchants categorizados
       await this._learnMerchants(toSave);
 
-      // Guardar archivo fuente en storage para re-parseos futuros
-      if (this._pendingFile) {
+      // Guardar archivo fuente en storage para re-parseos futuros.
+      // Si vino de re-parsear un PDF ya existente (recuperación de huérfano),
+      // enlazamos esa ruta en vez de subir un duplicado.
+      if (this._reparsePath) {
+        await getDB().from('importaciones').update({ archivo_path: this._reparsePath }).eq('id', imp.id);
+        this._reparsePath = null;
+        this._pendingFile = null;
+      } else if (this._pendingFile) {
         const ext = (this._pendingFile.name.split('.').pop() || 'pdf').toLowerCase();
         const storagePath = `${imp.id}.${ext}`;
         const { error: upErr } = await getDB().storage.from('edcs').upload(storagePath, this._pendingFile);
