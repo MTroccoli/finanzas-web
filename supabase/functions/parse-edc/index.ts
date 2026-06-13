@@ -94,7 +94,7 @@ Inclui exactamente estos campos para cada transacción:
 - fecha: string YYYY-MM-DD
 - descripcion: string — nombre del comercio LIMPIO. NO incluyas el número de cuota (ej "04/04", "1/12") ni el bloque de moneda extranjera entre paréntesis (ej "(BR ,BRL, 166,16)"); esos datos van en sus campos. Ejemplos: "LOJAS RENNER 04/04" → "LOJAS RENNER"; "ALECRIM (BR ,BRL, 166,16)" → "ALECRIM".
 - monto: number (positivo=gasto/débito, negativo=crédito/devolución/beneficio/descuento)
-- moneda: "UYU" | "USD"
+- moneda: "UYU" | "USD" — ver la sección MONEDA más abajo, es CRÍTICO no equivocarse
 - es_pago: boolean — true SOLO si la transacción es un pago del titular hacia la tarjeta (ej "SU PAGO", "PAGO RECIBIDO", "PAGO - GRACIAS", "PAGO EN LINEA"). Estos NO son gastos. En cualquier otro caso false.
 - categoria: string — DEBÉS elegir EXACTAMENTE uno de estos nombres y copiarlo TAL CUAL (mismas tildes y mayúsculas): ${catListStr}. NUNCA inventes un nombre que no esté en esta lista. Si ninguno aplica claramente, usá "Otros".
 - tipo_gasto: "casual" | "recurrente" | "tdc"
@@ -122,6 +122,20 @@ Reconocé comercios uruguayos comunes y NO los dejes en "Otros" si son identific
 - Indumentaria: Zara, tiendas de ropa, calzado → concepto ropa
 - Tecnología / electrónica: tiendas de electrónica, Apple Store, Mercado Libre tech → concepto tecnología
 Si el comercio es claramente reconocible, asigná su categoría; sólo usá "Otros" cuando realmente no se pueda identificar.
+
+## MONEDA (CRÍTICO — NO ADIVINAR)
+Muchos EDC (ej. Santander) presentan el importe en DOS columnas separadas por moneda:
+una columna en pesos uruguayos (UYU, suele rotularse "$", "Pesos", "Importe $") y otra
+en dólares (USD, suele rotularse "U$S", "Dólares", "Importe U$S"). La moneda de CADA
+transacción se determina ÚNICAMENTE por la columna en la que aparece el importe:
+- Si el número está en la columna de pesos → moneda: "UYU"
+- Si el número está en la columna de dólares → moneda: "USD"
+Reglas estrictas:
+1. NUNCA infieras la moneda por el nombre del comercio ni porque "suene" internacional.
+2. Una misma fila tiene importe en UNA sola columna; esa columna define la moneda.
+3. Conceptos locales (telepeaje, peajes, ANTEL, UTE, OSE, supermercados, ómnibus/STM)
+   normalmente figuran en la columna de PESOS → "UYU".
+4. Ante la duda, mirá la alineación/columna del número, no el texto del comercio.
 
 ## DATOS DEL DOCUMENTO
 También extraé del encabezado/pie del documento:
