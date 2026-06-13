@@ -45,6 +45,26 @@ window.Mods.gastos = {
       .replace(/\s+/g, ' ').trim();
   },
 
+  // Limpia el nombre de comercio para mostrar/guardar (NO para matchear).
+  // Quita bloque de moneda extranjera "(BR ,BRL, 166,16)", número de cuota
+  // "04/04" y espacios sobrantes. Preserva mayúsculas/tildes del original.
+  _cleanComercio(s) {
+    if (!s) return s;
+    return String(s)
+      .replace(/\(\s*[A-Za-z]{2,3}\s*,[^)]*\)/g, ' ')   // (BR ,BRL, 166,16)
+      .replace(/\b\d{1,2}\/\d{1,2}\b/g, ' ')             // cuota 04/04, 1/12
+      .replace(/\s*([·\-–|])\s*$/,'')                    // separadores colgando al final
+      .replace(/\s{2,}/g, ' ')
+      .replace(/\s+([.,;])/g, '$1')
+      .trim();
+  },
+
+  // Detecta si una transacción es un pago del titular a la tarjeta (no es gasto).
+  _isPago(s) {
+    if (!s) return false;
+    return /\bsu\s+pago\b|\bpago\s+recibido\b|pago\s*[-·]?\s*gracias|\bpago\s+en\s+l[ií]nea\b/i.test(String(s));
+  },
+
   // Busca categoría aprendida para un merchant normalizado.
   // Primero intenta exact match, luego substring bilateral (mínimo 5 chars).
   _learnedFuzzy(norm) {
@@ -401,6 +421,8 @@ window.Mods.gastos = {
           let cuotaActual   = t.cuota_actual   ?? null;
           let cuotasTotales = t.cuotas_totales ?? null;
           let descripcion   = t.descripcion;
+          // Leer la cuota del patrón N/M si la IA no la marcó (la cuota se conserva
+          // en sus campos; el N/M se quita del nombre en el cleanComercio de abajo).
           if (!cuotaActual) {
             const cm = descripcion.match(/\b(\d{1,2})\/(\d{1,2})\b/);
             if (cm) {
@@ -408,10 +430,12 @@ window.Mods.gastos = {
               if (tot >= 2 && tot <= 60 && n >= 1 && n <= tot) {
                 cuotaActual   = n;
                 cuotasTotales = tot;
-                descripcion   = descripcion.replace(/\s*\b\d{1,2}\/\d{1,2}\b\s*/g, ' ').trim();
               }
             }
           }
+          // Limpiar SIEMPRE el nombre visible (cuota, moneda extranjera, espacios)
+          descripcion = this._cleanComercio(descripcion);
+          const esPago = t.es_pago === true || this._isPago(t.descripcion);
           const norm = this._normMerchant(descripcion);
           const learnedCat = this._learnedFuzzy(norm);
           const nc = s => (s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').trim();
@@ -446,7 +470,8 @@ window.Mods.gastos = {
             ...t,
             descripcion,         // descripción limpia sin el N/M de cuota
             _id: i,
-            _include: t.tarjeta_adicional !== true && t.descuento_de_adicional !== true,
+            _esPago: esPago,
+            _include: t.tarjeta_adicional !== true && t.descuento_de_adicional !== true && !esPago,
             _dividirEntre: this._learnedDiv[norm] || 1,
             _catId: finalCat,
             _cuotaActual:   cuotaActual,
@@ -850,9 +875,18 @@ window.Mods.gastos = {
     };
 
     this._reviewInputHandler = (e) => {
-      if (!e.target.classList.contains('g-monto-inp')) return;
-      const t = this._pending.find(p => p._id === +e.target.dataset.id);
-      if (t) t.monto = parseFloat(e.target.value) || t.monto;
+      if (e.target.classList.contains('g-monto-inp')) {
+        const t = this._pending.find(p => p._id === +e.target.dataset.id);
+        if (t) t.monto = parseFloat(e.target.value) || t.monto;
+        return;
+      }
+      if (e.target.classList.contains('g-desc-inp')) {
+        const t = this._pending.find(p => p._id === +e.target.dataset.id);
+        if (t) {
+          t.descripcion   = e.target.value;
+          t._normMerchant = this._normMerchant(e.target.value);
+        }
+      }
     };
 
     gc.addEventListener('change', this._reviewChangeHandler);
@@ -880,6 +914,10 @@ window.Mods.gastos = {
       ? ` <span style="font-size:.62rem;color:var(--text-sec);background:rgba(255,255,255,.06);padding:1px 5px;border-radius:3px"
           title="Cuota ${t._cuotaActual} de ${t._cuotasTotales}">📅 ${t._cuotaActual}/${t._cuotasTotales}</span>`
       : '';
+    const pagoBadge = t._esPago
+      ? ` <span style="font-size:.6rem;color:#f59e0b;background:rgba(245,158,11,.12);padding:1px 5px;border-radius:3px"
+          title="Pago de la tarjeta — no es un gasto (desmarcado)">💳 Pago</span>`
+      : '';
     let displayFecha = t.fecha;
     let fechaCorrected = false;
     if ((t._cuotaActual ?? 0) > 1 && this._edcMes) {
@@ -896,8 +934,12 @@ window.Mods.gastos = {
       <tr data-pending-id="${t._id}" style="opacity:${t._include?1:.4};${rowBg}">
         <td><input type="checkbox" class="g-row-chk" data-id="${t._id}" ${t._include?'checked':''}></td>
         <td style="white-space:nowrap;font-family:'DM Mono',monospace;font-size:.72rem">${fechaHTML}</td>
-        <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${descEsc}">
-          ${t.descripcion}${aiBadge}${discBadge}${cuotaBadge}</td>
+        <td style="min-width:170px">
+          <input type="text" class="g-desc-inp" data-id="${t._id}" value="${descEsc}"
+            title="Editá el nombre del comercio"
+            style="width:100%;min-width:150px;font-size:.74rem;padding:3px 6px;border-radius:4px;
+              border:1px solid var(--border);background:var(--surface);color:var(--text)">
+          <div style="margin-top:2px;line-height:1.4">${aiBadge}${discBadge}${cuotaBadge}${pagoBadge}</div></td>
         <td><input type="number" class="g-monto-inp" data-id="${t._id}" value="${t.monto}"
           style="width:88px;font-size:.75rem;padding:3px 6px;border-radius:4px;
             border:1px solid var(--border);background:var(--surface);color:var(--text);
@@ -1584,7 +1626,12 @@ window.Mods.gastos = {
     });
 
     const tbody = document.getElementById('g-com-tbody');
-    tbody?.addEventListener('click', e => {
+    tbody?.addEventListener('click', async e => {
+      const editBtn = e.target.closest('.g-com-edit');
+      if (editBtn) {
+        await this._renameComercio(editBtn.dataset.norm);
+        return;
+      }
       const btn = e.target.closest('.g-com-expand');
       if (!btn) return;
       const norm = btn.dataset.norm;
@@ -1656,6 +1703,48 @@ window.Mods.gastos = {
     });
   },
 
+  // Renombrar (y unificar) un comercio: actualiza el campo comercio de todos sus
+  // gastos. Si el nuevo nombre normaliza igual que otro comercio existente, se
+  // fusionan solos al re-renderizar (el agrupado es por nombre normalizado).
+  async _renameComercio(norm) {
+    const item = this._comerciosCache?.find(i => i.norm === norm);
+    if (!item) return;
+    const entrada = prompt(
+      `Nuevo nombre para "${item.example}" (${item.count} gasto/s).\n` +
+      `Tip: poné el mismo nombre que otro comercio para unificarlos.`,
+      item.example,
+    );
+    if (entrada == null) return;
+    const nuevo = this._cleanComercio(entrada.trim());
+    if (!nuevo || nuevo === item.example) return;
+
+    const newNorm = this._normMerchant(nuevo);
+    const existente = this._comerciosCache.find(i => i.norm === newNorm && i.norm !== norm);
+    const msg = existente
+      ? `¿Unificar "${item.example}" dentro de "${existente.example}"? Se renombrarán ${item.count} gasto/s.`
+      : `¿Renombrar ${item.count} gasto/s a "${nuevo}"?`;
+    if (!confirm(msg)) return;
+
+    try {
+      await Promise.all(item.ids.map(id => dbUpdate('gastos', { comercio: nuevo }, { id })));
+      // Propagar categoría aprendida al nuevo nombre si no pisa otra ya existente
+      if (item.currentCat && !this._learned[newNorm]) {
+        await dbUpsert('merchant_categorias', {
+          merchant_normalizado: newNorm,
+          categoria_id: item.currentCat,
+          ejemplo_original: nuevo,
+          seen_count: item.count,
+          ultima_vez: new Date().toISOString(),
+        });
+        this._learned[newNorm] = item.currentCat;
+      }
+      toast(`✅ ${item.count} gasto/s actualizado/s`);
+      this._drawHistorialComercios();
+    } catch(err) {
+      toast('❌ ' + err.message, 'err');
+    }
+  },
+
   _renderComerciosTbody() {
     const tbody = document.getElementById('g-com-tbody');
     if (!tbody || !this._comerciosCache) return;
@@ -1712,6 +1801,10 @@ window.Mods.gastos = {
             style="background:none;border:none;cursor:pointer;color:var(--text-sec);
               font-size:.72rem;margin-right:5px;padding:1px 4px;border-radius:3px;
               line-height:1;vertical-align:middle">▶</button>${it.example}
+          <button class="g-com-edit" data-norm="${it.norm}" title="Renombrar / unificar comercio"
+            style="background:none;border:none;cursor:pointer;color:var(--text-sec);
+              font-size:.7rem;margin-left:4px;padding:1px 4px;border-radius:3px;
+              line-height:1;vertical-align:middle">✏️</button>
         </td>
         <td style="font-family:'DM Mono',monospace">${it.count}</td>
         <td style="white-space:nowrap;font-size:.74rem;color:var(--text-sec)">${fmtDate(it.ultima)}</td>

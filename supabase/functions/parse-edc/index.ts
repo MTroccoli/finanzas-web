@@ -92,9 +92,10 @@ Muchos EDC incluyen secciones separadas por tarjeta adicional. Debés:
 ## CAMPOS POR TRANSACCIÓN
 Inclui exactamente estos campos para cada transacción:
 - fecha: string YYYY-MM-DD
-- descripcion: string (nombre del comercio / descripción exacta como aparece)
+- descripcion: string — nombre del comercio LIMPIO. NO incluyas el número de cuota (ej "04/04", "1/12") ni el bloque de moneda extranjera entre paréntesis (ej "(BR ,BRL, 166,16)"); esos datos van en sus campos. Ejemplos: "LOJAS RENNER 04/04" → "LOJAS RENNER"; "ALECRIM (BR ,BRL, 166,16)" → "ALECRIM".
 - monto: number (positivo=gasto/débito, negativo=crédito/devolución/beneficio/descuento)
 - moneda: "UYU" | "USD"
+- es_pago: boolean — true SOLO si la transacción es un pago del titular hacia la tarjeta (ej "SU PAGO", "PAGO RECIBIDO", "PAGO - GRACIAS", "PAGO EN LINEA"). Estos NO son gastos. En cualquier otro caso false.
 - categoria: string — DEBÉS elegir EXACTAMENTE uno de estos nombres y copiarlo TAL CUAL (mismas tildes y mayúsculas): ${catListStr}. NUNCA inventes un nombre que no esté en esta lista. Si ninguno aplica claramente, usá "Otros".
 - tipo_gasto: "casual" | "recurrente" | "tdc"
   * "recurrente": servicios que se cobran todos los meses — streaming (Netflix, Spotify, Disney+, HBO, Apple TV, YouTube Premium), gym/fitness, seguros externos, internet, telefonía, planes de datos, cualquier suscripción mensual automática
