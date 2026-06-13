@@ -27,6 +27,8 @@ window.Mods.gastos = {
   _cuotasBanco:  '',      // Filtro banco/tarjeta en Cuotas
   _pendingFile:  null,    // Archivo PDF pendiente de subir a storage tras confirmar import
   _reparsePath:  null,    // Ruta del PDF en storage cuando se re-parsea uno existente (evita duplicar)
+  _comSort:      { col: 'count', dir: 'desc' },  // Sort activo en panel Comercios
+  _adicOpenMonths: new Set(),                     // "titular|mes" abiertos en acordeón Adicional
   _bancotarjeta: '',      // Banco/tarjeta detectado por la IA en el EDC activo
   _resBanco:     '',      // Filtro por banco/tarjeta en Resumen
   _adicTitular:  '',      // Nombre titular adicional asignado en la vista previa
@@ -937,8 +939,8 @@ window.Mods.gastos = {
         const divCell = document.querySelector(`.g-div-cell[data-id="${id}"]`);
         if (divCell) divCell.innerHTML = this._divCellHTML(t);
       }
-      if (e.target.classList.contains('g-div-sel')) {
-        t._dividirEntre = +e.target.value || 1;
+      if (e.target.classList.contains('g-div-inp')) {
+        t._dividirEntre = Math.max(1, parseInt(e.target.value) || 1);
       }
       if (e.target.classList.contains('g-tipo-sel')) {
         t._tipoGasto = e.target.value;
@@ -969,11 +971,12 @@ window.Mods.gastos = {
   },
 
   _divCellHTML(t) {
-    const opts = [1, 2, 3, 4, 5, 6, 7, 8].map(n =>
-      `<option value="${n}"${n===(t._dividirEntre||1)?' selected':''}>${n===1?'No':'÷'+n}</option>`).join('');
-    return `<select class="g-div-sel" data-id="${t._id}"
-      style="font-size:.72rem;padding:3px 6px;border-radius:4px;
-        border:1px solid var(--border);background:var(--surface);color:var(--text)">${opts}</select>`;
+    const val = t._dividirEntre || 1;
+    return `<input type="number" class="g-div-inp" data-id="${t._id}"
+      min="1" step="1" value="${val}"
+      style="width:46px;font-size:.72rem;padding:3px 5px;border-radius:4px;text-align:center;
+        border:1px solid var(--border);background:var(--surface);color:var(--text);
+        -moz-appearance:textfield">`;
   },
 
   _reviewRow(t, catOpts) {
@@ -1245,12 +1248,11 @@ window.Mods.gastos = {
           </div>
           <div id="g-div-wrap" style="margin-bottom:14px">
             <label style="font-size:.84rem;margin-bottom:5px;display:block">Dividir entre N personas</label>
-            <select id="g-dividir-entre" style="font-size:.84rem;padding:5px 10px;border-radius:6px;
-              border:1px solid var(--border);background:var(--surface);color:var(--text)">
-              ${[1,2,3,4,5,6,7,8].map(n =>
-                `<option value="${n}"${n===1?' selected':''}>${n===1?'No dividir':'Dividir entre '+n}</option>`
-              ).join('')}
-            </select>
+            <input type="number" id="g-dividir-entre" min="1" step="1" value="1"
+              placeholder="1"
+              style="width:90px;font-size:.84rem;padding:5px 10px;border-radius:6px;
+                border:1px solid var(--border);background:var(--surface);color:var(--text);
+                -moz-appearance:textfield">
           </div>
           <div class="form-grid" style="margin-bottom:14px">
             <div class="form-group">
@@ -1682,9 +1684,14 @@ window.Mods.gastos = {
           <div class="empty-text">Sin comercios registrados</div></div>
         ` : `
           <table>
-            <thead><tr>
-              <th>Comercio</th><th>Gastos</th><th>Última</th>
-              <th>Total UYU</th><th>Total USD</th><th>Categoría</th><th>Tipo</th>
+            <thead id="g-com-thead"><tr>
+              ${this._thSort('nombre', 'Comercio',   this._comSort)}
+              ${this._thSort('count',  'Gastos',     this._comSort)}
+              <th>Última</th>
+              ${this._thSort('totUYU', 'Total UYU',  this._comSort)}
+              ${this._thSort('totUSD', 'Total USD',  this._comSort)}
+              ${this._thSort('cat',    'Categoría',  this._comSort)}
+              <th>Tipo</th>
             </tr></thead>
             <tbody id="g-com-tbody"></tbody>
           </table>
@@ -1693,6 +1700,21 @@ window.Mods.gastos = {
     `;
 
     this._renderComerciosTbody();
+
+    // Sort por columna en Comercios
+    document.getElementById('g-com-thead')?.querySelectorAll('th[data-sort]').forEach(th => {
+      th.addEventListener('click', () => {
+        const col = th.dataset.sort;
+        if (this._comSort.col === col) {
+          this._comSort.dir = this._comSort.dir === 'asc' ? 'desc' : 'asc';
+        } else {
+          this._comSort.col = col;
+          this._comSort.dir = (col === 'nombre' || col === 'cat') ? 'asc' : 'desc';
+        }
+        this._refreshSortArrows(document.getElementById('g-com-thead'), this._comSort);
+        this._renderComerciosTbody();
+      });
+    });
 
     const search = document.getElementById('c-search');
     const clear  = document.getElementById('c-search-clear');
@@ -1851,6 +1873,24 @@ window.Mods.gastos = {
     else if (tipo === 'casual')     items = items.filter(it => it.currentTipo !== 'recurrente');
     if (this._histBanco) items = items.filter(it => it.bancos.has(this._histBanco));
     if (q) items = items.filter(it => it.example.toLowerCase().includes(q) || it.norm.includes(q));
+    // Sort
+    const cs = this._comSort;
+    items = [...items].sort((a, b) => {
+      let va, vb;
+      switch (cs.col) {
+        case 'nombre': va = a.example.toLowerCase(); vb = b.example.toLowerCase(); break;
+        case 'count':  va = a.count; vb = b.count; break;
+        case 'totUYU': va = a.totals.UYU; vb = b.totals.UYU; break;
+        case 'totUSD': va = a.totals.USD; vb = b.totals.USD; break;
+        case 'cat': {
+          const ca = a.currentCat ? (this._cats.find(c => c.id === a.currentCat)?.nombre || '') : '';
+          const cb = b.currentCat ? (this._cats.find(c => c.id === b.currentCat)?.nombre || '') : '';
+          va = ca.toLowerCase(); vb = cb.toLowerCase(); break;
+        }
+        default: va = a.count; vb = b.count;
+      }
+      return va < vb ? (cs.dir === 'asc' ? -1 : 1) : va > vb ? (cs.dir === 'asc' ? 1 : -1) : 0;
+    });
     tbody.innerHTML = items.length
       ? items.map(it => this._comercioRow(it)).join('')
       : `<tr><td colspan="7" style="text-align:center;color:var(--text-sec);padding:20px">Sin resultados</td></tr>`;
@@ -2016,13 +2056,11 @@ window.Mods.gastos = {
             </div>
             <div>
               <div style="font-size:.68rem;color:var(--text-sec);margin-bottom:2px">Dividir entre</div>
-              <select class="ge-div" style="font-size:.78rem;padding:4px 7px;border-radius:5px;
-                border:1px solid var(--border);background:var(--surface);color:var(--text)">
-                <option value="1"${(g.dividido_entre||1)===1?' selected':''}>1 persona</option>
-                <option value="2"${(g.dividido_entre||1)===2?' selected':''}>÷ 2</option>
-                <option value="3"${(g.dividido_entre||1)===3?' selected':''}>÷ 3</option>
-                <option value="4"${(g.dividido_entre||1)===4?' selected':''}>÷ 4</option>
-              </select>
+              <input type="number" class="ge-div" min="1" step="1"
+                value="${g.dividido_entre || 1}"
+                style="width:60px;font-size:.78rem;padding:4px 7px;border-radius:5px;
+                  border:1px solid var(--border);background:var(--surface);color:var(--text);
+                  text-align:center;-moz-appearance:textfield">
             </div>
             <div style="display:flex;gap:6px;align-items:flex-end;padding-bottom:1px">
               <button class="btn btn-primary ge-save" data-id="${g.id}"
@@ -2171,17 +2209,45 @@ window.Mods.gastos = {
         .sort((a,b) => b[0].localeCompare(a[0]))
         .map(([mes, gastos]) => {
           const mesLabel = new Date(mes + '-15').toLocaleDateString('es-UY', { month: 'long', year: 'numeric' });
+          const openKey  = `${tit}|${mes}`;
+          const isOpen   = this._adicOpenMonths.has(openKey);
 
-          const rows = gastos.map(g => {
+          // Pre-calc summary for the accordion header
+          let sumUYU = 0, sumUSD = 0, descUYU_sum = 0, descUSD_sum = 0;
+          for (const g of gastos) {
+            const discs = matchDiscount(g.comercio || '');
+            if (g.moneda !== 'USD') {
+              sumUYU   += parseFloat(g.monto);
+              descUYU_sum += discs.filter(d=>d.moneda!=='USD').reduce((s,d)=>s+parseFloat(d.monto),0);
+            } else {
+              sumUSD   += parseFloat(g.monto);
+              descUSD_sum += discs.filter(d=>d.moneda==='USD').reduce((s,d)=>s+parseFloat(d.monto),0);
+            }
+          }
+          const summaryParts = [];
+          if (sumUYU > 0) {
+            summaryParts.push(
+              `<span style="font-family:'DM Mono',monospace;font-size:.76rem">${this._fmtMon(sumUYU,'UYU')}</span>` +
+              (descUYU_sum < 0 ? `<span style="color:#10b981;font-size:.7rem;margin-left:2px">−${this._fmtMon(Math.abs(descUYU_sum),'UYU')}</span>` +
+                `<span style="color:var(--accent);font-size:.76rem;font-weight:600;margin-left:2px">=${this._fmtMon(sumUYU+descUYU_sum,'UYU')}</span>` : '')
+            );
+          }
+          if (sumUSD > 0) {
+            summaryParts.push(
+              `<span style="font-family:'DM Mono',monospace;font-size:.76rem">${this._fmtMon(sumUSD,'USD')}</span>` +
+              (descUSD_sum < 0 ? `<span style="color:#10b981;font-size:.7rem;margin-left:2px">−${this._fmtMon(Math.abs(descUSD_sum),'USD')}</span>` +
+                `<span style="color:var(--accent);font-size:.76rem;font-weight:600;margin-left:2px">=${this._fmtMon(sumUSD+descUSD_sum,'USD')}</span>` : '')
+            );
+          }
+
+          const tableRows = gastos.map(g => {
             const discounts = matchDiscount(g.comercio || '');
-            const descUYU = discounts.filter(d => d.moneda !== 'USD').reduce((s,d) => s + parseFloat(d.monto), 0);
-            const descUSD = discounts.filter(d => d.moneda === 'USD').reduce((s,d) => s + parseFloat(d.monto), 0);
-            const hasDisc = discounts.length > 0;
-            const netAmount = g.moneda !== 'USD'
-              ? parseFloat(g.monto) + descUYU
-              : parseFloat(g.monto) + descUSD;
-            const catC = this._cats.find(c => c.id === g.categoria_id);
-            const included = !!g.incluido_en_gastos;
+            const dUYU = discounts.filter(d => d.moneda !== 'USD').reduce((s,d) => s + parseFloat(d.monto), 0);
+            const dUSD = discounts.filter(d => d.moneda === 'USD').reduce((s,d) => s + parseFloat(d.monto), 0);
+            const hasDisc   = discounts.length > 0;
+            const netAmount = g.moneda !== 'USD' ? parseFloat(g.monto) + dUYU : parseFloat(g.monto) + dUSD;
+            const catC      = this._cats.find(c => c.id === g.categoria_id);
+            const included  = !!g.incluido_en_gastos;
             const inclBtnSt = included
               ? 'background:rgba(16,185,129,.15);border:1px solid #10b981;color:#10b981'
               : 'background:var(--surface);border:1px solid var(--border);color:var(--text-sec)';
@@ -2195,11 +2261,9 @@ window.Mods.gastos = {
                 </td>
                 <td style="font-family:'DM Mono',monospace;white-space:nowrap">${this._fmtMon(parseFloat(g.monto), g.moneda)}</td>
                 <td style="font-family:'DM Mono',monospace;font-size:.72rem;color:#10b981;white-space:nowrap">
-                  ${hasDisc
-                    ? (g.moneda !== 'USD' ? this._fmtMon(descUYU, 'UYU') : this._fmtMon(descUSD, 'USD'))
-                    : '—'}
+                  ${hasDisc ? (g.moneda !== 'USD' ? this._fmtMon(dUYU,'UYU') : this._fmtMon(dUSD,'USD')) : '—'}
                 </td>
-                <td style="font-family:'DM Mono',monospace;font-size:.8rem;font-weight:600;white-space:nowrap${hasDisc ? ';color:var(--accent)' : ''}">
+                <td style="font-family:'DM Mono',monospace;font-size:.8rem;font-weight:600;white-space:nowrap${hasDisc?';color:var(--accent)':''}">
                   ${this._fmtMon(netAmount, g.moneda)}
                 </td>
                 <td>
@@ -2212,45 +2276,60 @@ window.Mods.gastos = {
           }).join('');
 
           return `
-            <div style="margin-bottom:14px">
-              <div style="font-size:.78rem;font-weight:600;color:var(--text-sec);text-transform:capitalize;
-                          margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid var(--border)">
-                ${mesLabel}
+            <div style="margin-bottom:6px">
+              <div class="adic-month-hdr" data-key="${openKey.replace(/"/g,'&quot;')}"
+                style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;
+                  padding:8px 10px;border-radius:6px;cursor:pointer;user-select:none;
+                  background:rgba(255,255,255,.04);border:1px solid var(--border)">
+                <span style="font-size:.78rem;font-weight:600;text-transform:capitalize">${mesLabel}</span>
+                <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+                  <span style="font-size:.7rem;color:var(--text-sec)">${gastos.length} gasto${gastos.length!==1?'s':''}</span>
+                  ${summaryParts.map(p=>`<span>${p}</span>`).join('')}
+                  <span class="adic-arrow" style="color:var(--text-sec);font-size:.78rem;min-width:10px">${isOpen?'▼':'▶'}</span>
+                </div>
               </div>
-              <table style="font-size:.8rem;margin-bottom:6px">
-                <thead><tr>
-                  <th>Fecha</th><th>Comercio</th><th>Monto</th><th>Descuento</th><th>Total</th><th></th>
-                </tr></thead>
-                <tbody>${rows}</tbody>
-              </table>
+              <div class="adic-month-detail" data-key="${openKey.replace(/"/g,'&quot;')}"
+                style="display:${isOpen?'block':'none'};padding:8px 4px 0">
+                <table style="font-size:.8rem;margin-bottom:4px">
+                  <thead><tr>
+                    <th>Fecha</th><th>Comercio</th><th>Monto</th><th>Descuento</th><th>Total</th><th></th>
+                  </tr></thead>
+                  <tbody>${tableRows}</tbody>
+                </table>
+              </div>
             </div>`;
         }).join('');
 
       // Grand totals for this titular across all months
       const allTitRows = purchaseRows.filter(r => r.titular_adicional === tit);
-      const grandTotUYU = allTitRows.filter(r => r.moneda !== 'USD').reduce((s,r) => s + parseFloat(r.monto), 0);
-      const grandTotUSD = allTitRows.filter(r => r.moneda === 'USD').reduce((s,r) => s + parseFloat(r.monto), 0);
+      const grandTotUYU  = allTitRows.filter(r => r.moneda !== 'USD').reduce((s,r) => s + parseFloat(r.monto), 0);
+      const grandTotUSD  = allTitRows.filter(r => r.moneda === 'USD').reduce((s,r) => s + parseFloat(r.monto), 0);
       const grandDescUYU = allTitRows.reduce((s,r) => s + matchDiscount(r.comercio||'').filter(d=>d.moneda!=='USD').reduce((ss,d)=>ss+parseFloat(d.monto),0), 0);
       const grandDescUSD = allTitRows.reduce((s,r) => s + matchDiscount(r.comercio||'').filter(d=>d.moneda==='USD').reduce((ss,d)=>ss+parseFloat(d.monto),0), 0);
-      const allIncluded = allTitRows.length > 0 && allTitRows.every(r => r.incluido_en_gastos);
-      const bulkVal     = !allIncluded;
-      const bulkBtnSt   = allIncluded
+      const allIncluded  = allTitRows.length > 0 && allTitRows.every(r => r.incluido_en_gastos);
+      const bulkVal      = !allIncluded;
+      const bulkBtnSt    = allIncluded
         ? 'background:rgba(16,185,129,.15);border:1px solid #10b981;color:#10b981'
         : 'background:var(--surface);border:1px solid var(--border);color:var(--text-sec)';
+      const titEsc = tit.replace(/"/g,'&quot;');
 
       return `
         <div class="form-card" style="padding:14px 16px;margin-bottom:.75rem">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
-            <div style="font-size:.95rem;font-weight:700">👤 ${tit}</div>
-            <button class="adic-bulk-btn"
-              data-titular="${tit.replace(/"/g,'&quot;')}" data-val="${bulkVal}"
+            <div style="font-size:.95rem;font-weight:700;display:flex;align-items:center;gap:6px">
+              👤 ${tit}
+              <button class="adic-rename-btn" data-titular="${titEsc}" title="Renombrar titular"
+                style="background:none;border:none;cursor:pointer;color:var(--text-sec);
+                  font-size:.7rem;padding:2px 5px;border-radius:3px;vertical-align:middle">✏️</button>
+            </div>
+            <button class="adic-bulk-btn" data-titular="${titEsc}" data-val="${bulkVal}"
               style="font-size:.72rem;padding:4px 12px;border-radius:5px;cursor:pointer;${bulkBtnSt}">
               ${allIncluded ? '✓ Incluidos en gastos' : '+ Incluir todos en gastos'}
             </button>
           </div>
           ${monthSections}
           ${(grandTotUYU > 0 || grandTotUSD > 0) ? `
-          <div style="border-top:2px solid var(--border);padding-top:10px;margin-top:4px">
+          <div style="border-top:2px solid var(--border);padding-top:10px;margin-top:8px">
             <div style="font-size:.7rem;color:var(--text-sec);font-weight:600;margin-bottom:4px;letter-spacing:.03em">
               TOTAL ${tit.toUpperCase()}
             </div>
@@ -2326,6 +2405,48 @@ window.Mods.gastos = {
 
     if (this._adicClickHandler) gc.removeEventListener('click', this._adicClickHandler);
     this._adicClickHandler = async (e) => {
+      // Acordeón: toggle mes
+      const hdr = e.target.closest('.adic-month-hdr');
+      if (hdr) {
+        const key    = hdr.dataset.key;
+        const detail = gc.querySelector(`.adic-month-detail[data-key="${CSS.escape(key)}"]`);
+        const arrow  = hdr.querySelector('.adic-arrow');
+        if (this._adicOpenMonths.has(key)) {
+          this._adicOpenMonths.delete(key);
+          if (detail) detail.style.display = 'none';
+          if (arrow)  arrow.textContent = '▶';
+        } else {
+          this._adicOpenMonths.add(key);
+          if (detail) detail.style.display = 'block';
+          if (arrow)  arrow.textContent = '▼';
+        }
+        return;
+      }
+
+      // Renombrar titular
+      const renameBtn = e.target.closest('.adic-rename-btn');
+      if (renameBtn) {
+        const oldName = renameBtn.dataset.titular;
+        const newName = prompt(`Renombrar titular:\n"${oldName}"\n\nNuevo nombre:`, oldName)?.trim();
+        if (!newName || newName === oldName) return;
+        renameBtn.disabled = true;
+        try {
+          await getDB().from('gastos').update({ titular_adicional: newName }).eq('titular_adicional', oldName);
+          // Actualizar claves de acordeón abiertas para que preserven su estado
+          const updated = new Set();
+          for (const k of this._adicOpenMonths) {
+            updated.add(k.startsWith(`${oldName}|`) ? k.replace(`${oldName}|`, `${newName}|`) : k);
+          }
+          this._adicOpenMonths = updated;
+          toast(`✅ Titular renombrado a "${newName}"`);
+          this._drawHistorialAdicional();
+        } catch(err) {
+          toast('❌ ' + err.message, 'err');
+          renameBtn.disabled = false;
+        }
+        return;
+      }
+
       const inclBtn = e.target.closest('.adic-incl-btn');
       const bulkBtn = e.target.closest('.adic-bulk-btn');
       if (!inclBtn && !bulkBtn) return;
