@@ -30,6 +30,9 @@ window.Mods.gastos = {
   _comSort:      { col: 'count', dir: 'desc' },  // Sort activo en panel Comercios
   _comSelected:  new Set(),                       // norms seleccionados para unificación masiva
   _comSuggestOpen: false,                          // panel "detectar similares" abierto
+  _suggestOpenKeys: new Set(),               // cluster keys con acordeón abierto
+  _suggestExcluded: {},                      // { clusterKey: Set<gastoId> } excluidos de unify
+  _suggestSearch:   '',                      // búsqueda activa en suggest panel
   _adicOpenMonths: new Set(),                     // "titular|mes" abiertos en acordeón Adicional
   _bancotarjeta: '',      // Banco/tarjeta detectado por la IA en el EDC activo
   _resBanco:     '',      // Filtro por banco/tarjeta en Resumen
@@ -1910,7 +1913,7 @@ window.Mods.gastos = {
   // Unifica varios grupos de comercio bajo un único nombre canónico.
   // Renombra el campo `comercio` de TODOS sus gastos, propaga la categoría
   // dominante al aprendizaje y limpia los mapeos viejos huérfanos.
-  async _bulkUnifyComercios(norms, presetNombre) {
+  async _bulkUnifyComercios(norms, presetNombre, excludedIds = []) {
     const items = (this._comerciosCache || []).filter(i => norms.includes(i.norm));
     if (items.length < 1) { toast('Seleccioná al menos un comercio', 'warn'); return; }
     // Sugerir el ejemplo del grupo con más gastos
@@ -1927,8 +1930,9 @@ window.Mods.gastos = {
     if (!nuevo) return;
     const newNorm = this._normMerchant(nuevo);
 
-    const allIds   = items.flatMap(i => i.ids);
-    const totalGastos = items.reduce((s,i) => s + i.count, 0);
+    const allIds   = items.flatMap(i => i.ids).filter(id => !excludedIds.includes(id));
+    const totalGastos = allIds.length;
+    if (totalGastos < 1) { toast('Todos los gastos están excluidos', 'warn'); return; }
     if (!confirm(`¿Renombrar ${totalGastos} gasto/s de ${items.length} comercio/s a "${nuevo}"?`)) return;
 
     try {
@@ -1969,7 +1973,13 @@ window.Mods.gastos = {
   // Clave base para detectar similares: primer token significativo (≥4 chars,
   // sin dígitos) de la normalización. Ej: "amazon mktp us a1b2" → "amazon".
   _comercioBaseKey(norm) {
-    const stop = new Set(['compra','pago','tienda','super','the','los','las','del']);
+    const stop = new Set([
+      'compra','pago','tienda','super','the','los','las','del',
+      // prefijos genéricos de beneficios/descuentos/finanzas — no son identificadores de comercio
+      'benef','bono','bonus','desc','punt','premio','cargo','cobr',
+      'prem','cash','back','acum','reem','canc','anul','devol',
+      'tasa','mora','cred','deb','inter','serv','servi','aplic',
+    ]);
     for (const tok of (norm || '').split(' ')) {
       if (tok.length >= 4 && !/\d/.test(tok) && !stop.has(tok)) return tok;
     }
@@ -2003,39 +2013,134 @@ window.Mods.gastos = {
         No se detectaron comercios similares para agrupar.</div>`;
       return;
     }
+    const q = (this._suggestSearch || '').toLowerCase().trim();
+    const visible = q
+      ? clusters.filter(c => c.items.some(i =>
+          i.example.toLowerCase().includes(q) || i.norm.includes(q)))
+      : clusters;
+
     panel.innerHTML = `
       <div class="form-card" style="padding:12px 16px;margin-bottom:.5rem;border:1px solid rgba(59,130,246,.3)">
-        <div style="font-size:.82rem;font-weight:600;margin-bottom:8px">
-          🔍 ${clusters.length} grupo/s de posibles duplicados
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+          <div style="font-size:.82rem;font-weight:600;flex:1">
+            🔍 ${clusters.length} grupo${clusters.length !== 1 ? 's' : ''} de posibles duplicados
+            ${q && visible.length !== clusters.length
+              ? `<span style="color:var(--text-sec);font-weight:400"> · ${visible.length} mostrado${visible.length !== 1 ? 's' : ''}</span>`
+              : ''}
+          </div>
         </div>
-        <div style="display:flex;flex-direction:column;gap:8px">
-          ${clusters.map((c, idx) => {
-            const sugg = c.items[0].example;
-            return `
-            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;
-              padding:8px 10px;border-radius:6px;background:rgba(255,255,255,.03);border:1px solid var(--border)">
-              <div style="flex:1;min-width:200px">
-                <div style="font-size:.8rem;font-weight:600">${sugg}
-                  <span style="color:var(--text-sec);font-weight:400">· ${c.items.length} variantes · ${c.total} gastos</span></div>
-                <div style="font-size:.7rem;color:var(--text-sec);margin-top:3px">
-                  ${c.items.map(i => `${i.example} (${i.count})`).join(' · ')}
-                </div>
-              </div>
-              <button class="c-sugg-unify" data-idx="${idx}"
-                style="font-size:.74rem;padding:5px 12px;border-radius:5px;cursor:pointer;
-                  background:var(--accent);border:1px solid var(--accent);color:#fff;white-space:nowrap">
-                🔗 Unificar
-              </button>
-            </div>`;
-          }).join('')}
+        <div style="margin-bottom:10px">
+          <input id="c-suggest-search" type="search" placeholder="Buscar comercio..."
+            value="${q.replace(/"/g, '&quot;')}"
+            style="width:100%;box-sizing:border-box;padding:6px 10px;border-radius:5px;
+              border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:.78rem">
+        </div>
+        <div id="c-suggest-list" style="display:flex;flex-direction:column;gap:6px">
+          ${visible.length
+            ? visible.map(c => this._renderClusterAccordion(c)).join('')
+            : `<div style="font-size:.78rem;color:var(--text-sec);padding:8px 0">Sin resultados para "${q}"</div>`
+          }
         </div>
       </div>`;
-    panel.querySelectorAll('.c-sugg-unify').forEach(btn =>
-      btn.addEventListener('click', () => {
-        const c = clusters[+btn.dataset.idx];
-        if (c) this._bulkUnifyComercios(c.items.map(i => i.norm), c.items[0].example);
+
+    document.getElementById('c-suggest-search')?.addEventListener('input', e => {
+      this._suggestSearch = e.target.value;
+      this._renderSuggestPanel();
+    });
+
+    panel.querySelectorAll('.c-cluster-hdr').forEach(hdr =>
+      hdr.addEventListener('click', e => {
+        if (e.target.closest('.c-sugg-unify')) return;
+        const key = hdr.dataset.key;
+        if (this._suggestOpenKeys.has(key)) this._suggestOpenKeys.delete(key);
+        else this._suggestOpenKeys.add(key);
+        this._renderSuggestPanel();
       })
     );
+
+    panel.querySelectorAll('.c-gasto-chk').forEach(chk =>
+      chk.addEventListener('change', () => {
+        const key = chk.dataset.key;
+        const gid = +chk.dataset.gid;
+        if (!this._suggestExcluded[key]) this._suggestExcluded[key] = new Set();
+        if (chk.checked) this._suggestExcluded[key].delete(gid);
+        else             this._suggestExcluded[key].add(gid);
+      })
+    );
+
+    panel.querySelectorAll('.c-sugg-unify').forEach(btn =>
+      btn.addEventListener('click', () => {
+        const key = btn.dataset.key;
+        const c = clusters.find(cl => cl.key === key);
+        if (!c) return;
+        const excluded = [...(this._suggestExcluded[key] || new Set())];
+        this._bulkUnifyComercios(c.items.map(i => i.norm), c.items[0].example, excluded);
+      })
+    );
+  },
+
+  _renderClusterAccordion(c) {
+    const isOpen  = this._suggestOpenKeys.has(c.key);
+    const excl    = this._suggestExcluded[c.key] || new Set();
+    const allGastos = c.items.flatMap(i => i.gastos)
+      .sort((a, b) => a.fecha < b.fecha ? 1 : -1);
+    const includedCount = allGastos.filter(g => !excl.has(g.id)).length;
+
+    const body = isOpen ? `
+      <div class="c-cluster-body" style="padding:8px 6px 4px;border-top:1px solid var(--border);margin-top:4px">
+        <table style="width:100%;border-collapse:collapse;font-size:.7rem">
+          <thead>
+            <tr style="color:var(--text-sec)">
+              <th style="padding:2px 4px;text-align:left;font-weight:500;width:24px"></th>
+              <th style="padding:2px 4px;text-align:left;font-weight:500">Fecha</th>
+              <th style="padding:2px 4px;text-align:left;font-weight:500">Comercio</th>
+              <th style="padding:2px 4px;text-align:right;font-weight:500">Monto</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${allGastos.map(g => `
+              <tr style="border-top:1px solid rgba(255,255,255,.04);${excl.has(g.id) ? 'opacity:.45' : ''}">
+                <td style="padding:2px 4px">
+                  <input type="checkbox" class="c-gasto-chk"
+                    data-key="${c.key}" data-gid="${g.id}"
+                    ${excl.has(g.id) ? '' : 'checked'}>
+                </td>
+                <td style="padding:2px 4px;white-space:nowrap">${fmtDate(g.fecha)}</td>
+                <td style="padding:2px 4px;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"
+                  title="${(g.comercio || '').replace(/"/g, '&quot;')}">${g.comercio || ''}</td>
+                <td style="padding:2px 4px;text-align:right;white-space:nowrap">${fmt(g.monto, 2)} ${g.moneda}</td>
+              </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>` : '';
+
+    return `
+      <div style="border:1px solid var(--border);border-radius:6px;overflow:hidden">
+        <div class="c-cluster-hdr" data-key="${c.key}"
+          style="display:flex;align-items:center;gap:8px;padding:8px 10px;
+            background:rgba(255,255,255,.03);cursor:pointer;user-select:none">
+          <span style="color:var(--text-sec);font-size:.75rem;flex-shrink:0">${isOpen ? '▾' : '▸'}</span>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:.79rem;font-weight:600">${c.items[0].example}
+              <span style="color:var(--text-sec);font-weight:400">
+                · ${c.items.length} variantes
+                · ${includedCount}/${c.total} incl.
+              </span>
+            </div>
+            <div style="font-size:.68rem;color:var(--text-sec);margin-top:2px;
+              overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
+              ${c.items.map(i => `${i.example} (${i.count})`).join(' · ')}
+            </div>
+          </div>
+          <button class="c-sugg-unify" data-key="${c.key}"
+            style="font-size:.72rem;padding:4px 10px;border-radius:5px;cursor:pointer;
+              background:var(--accent);border:1px solid var(--accent);color:#fff;
+              white-space:nowrap;flex-shrink:0">
+            🔗 Unificar
+          </button>
+        </div>
+        ${body}
+      </div>`;
   },
 
   _renderComerciosTbody() {
