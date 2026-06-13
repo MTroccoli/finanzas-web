@@ -342,10 +342,6 @@ window.Mods.gastos = {
       <div class="form-card" style="padding:14px 16px;margin-top:.75rem">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
           <h3 style="margin:0;font-size:.9rem">Importaciones anteriores</h3>
-          <button id="g-btn-del-all" class="btn btn-ghost"
-            style="font-size:.75rem;padding:4px 10px;color:var(--red);border-color:rgba(239,68,68,.3)">
-            🗑 Eliminar todo
-          </button>
         </div>
         <table style="font-size:.8rem">
           <thead><tr>
@@ -406,6 +402,20 @@ window.Mods.gastos = {
               </tr>`).join('')}
           </tbody>
         </table>
+      </div>`}
+
+      ${imps.length === 0 ? '' : `
+      <div class="form-card" style="padding:14px 16px;margin-top:.75rem;
+        border:1px solid rgba(239,68,68,.35);background:rgba(239,68,68,.04)">
+        <h3 style="margin:0 0 4px;font-size:.88rem;color:var(--red)">⚠️ Zona de peligro</h3>
+        <p style="font-size:.76rem;color:var(--text-sec);margin:0 0 12px">
+          Esta acción elimina todos los gastos e importaciones. Los PDFs quedan en storage y
+          se pueden recuperar, pero los ajustes manuales se pierden. No se puede deshacer.
+        </p>
+        <button id="g-btn-del-all" class="btn btn-ghost"
+          style="font-size:.8rem;padding:6px 16px;color:var(--red);border-color:rgba(239,68,68,.45)">
+          🗑 Eliminar todos los gastos importados
+        </button>
       </div>`}
     `;
 
@@ -647,11 +657,18 @@ window.Mods.gastos = {
       deleteImport(ids, `${total} gastos de ${ids.length} batch${ids.length>1?'es':''}`);
     });
 
-    // Eliminar TODO
+    // Eliminar TODO — confirmación explícita con cantidad exacta
     document.getElementById('g-btn-del-all')?.addEventListener('click', () => {
-      const ids = imps.map(i => i.id);
+      const ids   = imps.map(i => i.id);
       const total = imps.reduce((s, i) => s + i.count, 0);
-      deleteImport(ids, `todos los ${total} gastos importados`);
+      const ok = confirm(
+        `⚠️ ELIMINAR TODOS LOS GASTOS\n\n` +
+        `Se van a borrar ${total} gastos de ${ids.length} importaciones.\n\n` +
+        `Los PDFs originales quedan en storage y se pueden recuperar, ` +
+        `pero los ajustes manuales (nombres, divisiones, etc.) no.\n\n` +
+        `¿Confirmás?`
+      );
+      if (ok) deleteImport(ids, `los ${total} gastos importados`);
     });
   },
 
