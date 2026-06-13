@@ -872,6 +872,9 @@ window.Mods.gastos = {
       if (e.target.classList.contains('g-tipo-sel')) {
         t._tipoGasto = e.target.value;
       }
+      if (e.target.classList.contains('g-mon-sel')) {
+        t.moneda = e.target.value;
+      }
     };
 
     this._reviewInputHandler = (e) => {
@@ -944,7 +947,15 @@ window.Mods.gastos = {
           style="width:88px;font-size:.75rem;padding:3px 6px;border-radius:4px;
             border:1px solid var(--border);background:var(--surface);color:var(--text);
             font-family:'DM Mono',monospace"></td>
-        <td style="font-family:'DM Mono',monospace;font-size:.72rem">${t.moneda}</td>
+        <td>
+          <select class="g-mon-sel" data-id="${t._id}"
+            style="font-size:.72rem;padding:3px 5px;border-radius:4px;
+              border:1px solid var(--border);background:var(--surface);color:var(--text);
+              font-family:'DM Mono',monospace">
+            <option value="UYU"${t.moneda!=='USD'?' selected':''}>UYU</option>
+            <option value="USD"${t.moneda==='USD'?' selected':''}>USD</option>
+          </select>
+        </td>
         <td>
           <select class="g-cat-sel" data-id="${t._id}"
             style="font-size:.72rem;padding:3px 6px;border-radius:4px;
