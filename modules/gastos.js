@@ -4,6 +4,7 @@ window.Mods.gastos = {
   _cats:       [],
   _pending:    [],         // transacciones parseadas pendientes de confirmación
   _learned:    {},         // { merchant_normalizado: categoria_id }
+  _learnedMoneda: {},     // { merchant_normalizado: 'UYU'|'USD' } — aprendido de correcciones
   _excludedCards: '',
   _splitCatNames: new Set(['Restaurantes', 'Viajes']),
   _histMes:      null,
@@ -77,6 +78,17 @@ window.Mods.gastos = {
     return null;
   },
 
+  // Busca moneda aprendida para un merchant (UYU/USD corregido manualmente).
+  _learnedMonedaFuzzy(norm) {
+    if (!norm) return null;
+    if (this._learnedMoneda[norm]) return this._learnedMoneda[norm];
+    for (const [key, mon] of Object.entries(this._learnedMoneda)) {
+      if (key.length < 5 || norm.length < 5) continue;
+      if (norm.includes(key) || key.includes(norm)) return mon;
+    }
+    return null;
+  },
+
 
   async render() {
     const c = document.getElementById('content');
@@ -91,9 +103,13 @@ window.Mods.gastos = {
     ]);
     this._cats = cats;
     this._learned = {};
+    this._learnedMoneda = {};
     this._histMoneda   = 'TOTAL_USD';
     this._cuotasMoneda = 'TOTAL_USD';
-    for (const r of learnedRows) this._learned[r.merchant_normalizado] = r.categoria_id;
+    for (const r of learnedRows) {
+      this._learned[r.merchant_normalizado] = r.categoria_id;
+      if (r.moneda) this._learnedMoneda[r.merchant_normalizado] = r.moneda;
+    }
     this._learnedRows = learnedRows;
     // Aprender "dividido entre" del historial: por comercio normalizado, el valor más frecuente
     this._learnedDiv = {};
@@ -466,9 +482,13 @@ window.Mods.gastos = {
 
           const finalCat = learnedCat ?? aiCat;
           if (learnedCat && learnedCat !== aiCat) overrides++;
+          // Aplicar moneda aprendida de correcciones previas del usuario
+          const learnedMon = this._learnedMonedaFuzzy(norm);
+          const moneda = learnedMon || t.moneda || 'UYU';
           return {
             ...t,
             descripcion,         // descripción limpia sin el N/M de cuota
+            moneda,
             _id: i,
             _esPago: esPago,
             _include: t.tarjeta_adicional !== true && t.descuento_de_adicional !== true && !esPago,
@@ -479,6 +499,7 @@ window.Mods.gastos = {
             _tipoGasto: ['casual','recurrente','tdc'].includes(t.tipo_gasto) ? t.tipo_gasto : 'casual',
             _normMerchant: norm,
             _overridden: learnedCat && learnedCat !== aiCat,
+            _monedaOverridden: !!learnedMon,   // si ya estaba aprendida, cuenta como override
             _manualCard: null,
           };
         });
@@ -874,6 +895,7 @@ window.Mods.gastos = {
       }
       if (e.target.classList.contains('g-mon-sel')) {
         t.moneda = e.target.value;
+        t._monedaOverridden = true;
       }
     };
 
@@ -1082,7 +1104,7 @@ window.Mods.gastos = {
     }
   },
 
-  // Guardar/actualizar mapeo merchant → categoría para futuras importaciones
+  // Guardar/actualizar mapeo merchant → categoría (y moneda si fue corregida) para futuras importaciones
   async _learnMerchants(transactions) {
     const updates = {};
     for (const t of transactions) {
@@ -1090,20 +1112,26 @@ window.Mods.gastos = {
       const norm = t._normMerchant || this._normMerchant(t.descripcion);
       if (!norm || norm.length < 3) continue;
       // Si hay conflicto entre filas, gana la última (la corrección más reciente)
-      updates[norm] = { ejemplo: t.descripcion, catId: t._catId };
+      updates[norm] = {
+        ejemplo: t.descripcion,
+        catId: t._catId,
+        moneda: t._monedaOverridden ? t.moneda : null,
+      };
     }
     const sb = getDB();
-    for (const [norm, { ejemplo, catId }] of Object.entries(updates)) {
+    for (const [norm, { ejemplo, catId, moneda }] of Object.entries(updates)) {
       const { data: existing } = await sb.from('merchant_categorias')
         .select('seen_count').eq('merchant_normalizado', norm).maybeSingle();
       const seen = (existing?.seen_count || 0) + 1;
-      await sb.from('merchant_categorias').upsert({
+      const upsertData = {
         merchant_normalizado: norm,
         categoria_id: catId,
         ejemplo_original: ejemplo,
         seen_count: seen,
         ultima_vez: new Date().toISOString(),
-      });
+      };
+      if (moneda) upsertData.moneda = moneda;
+      await sb.from('merchant_categorias').upsert(upsertData);
     }
   },
 

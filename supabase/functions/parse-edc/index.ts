@@ -123,19 +123,20 @@ Reconocé comercios uruguayos comunes y NO los dejes en "Otros" si son identific
 - Tecnología / electrónica: tiendas de electrónica, Apple Store, Mercado Libre tech → concepto tecnología
 Si el comercio es claramente reconocible, asigná su categoría; sólo usá "Otros" cuando realmente no se pueda identificar.
 
-## MONEDA (CRÍTICO — leé el SÍMBOLO del importe)
-La moneda se determina por el SÍMBOLO que acompaña al importe y por la columna donde está:
-- "$" (peso, SIN "US" ni "U" delante) → moneda: "UYU"  ← pesos uruguayos
-- "US$", "U$S" o "USD" → moneda: "USD"  ← dólares
-Disposición de columnas en estos EDC (ej. Santander): hay DOS columnas de importe.
-La columna de la IZQUIERDA es PESOS (UYU) y la de la DERECHA es DÓLARES (USD).
-Cada transacción tiene su importe en UNA sola columna; esa posición define la moneda.
-Reglas estrictas:
-1. "$" solo = pesos uruguayos ("UYU"). "$" NUNCA significa dólares en este documento.
-2. Marcá "USD" SOLO si ves el símbolo "US$"/"U$S"/"USD" o el importe está en la columna derecha.
-3. NUNCA infieras la moneda por el nombre del comercio ni porque "suene" internacional.
-4. La mayoría de los consumos locales (telepeaje, peajes, ANTEL, UTE, OSE, supermercados, ómnibus/STM) están en pesos → "UYU".
-5. Si no podés determinar el símbolo ni la columna con certeza, asumí "UYU" (la moneda local).
+## MONEDA (CRÍTICO — determiná la moneda por el símbolo que acompaña al importe)
+En Uruguay los EDC de Santander y otros bancos muestran los importes en DOS columnas:
+- Columna IZQUIERDA: importes en PESOS URUGUAYOS (UYU) — símbolo "$"
+- Columna DERECHA: importes en DÓLARES (USD) — símbolo "US$", "U$S", "USD" o "U$"
+
+REGLAS ABSOLUTAS para determinar la moneda:
+1. Si el importe aparece con el símbolo "$" SOLO (sin "US", "U$", ni "USD" antes) → moneda: "UYU"
+2. Si el importe aparece con "US$", "U$S", "U$", "USD", "US " antes del número → moneda: "USD"
+3. Si el importe aparece en la columna de la IZQUIERDA (sin símbolo de dólar) → moneda: "UYU"
+4. Si el importe aparece en la columna de la DERECHA (con símbolo de dólar o USD) → moneda: "USD"
+5. NUNCA infieras la moneda por el nombre del comercio ni porque "suene" internacional.
+6. Comercios LOCALES uruguayos (telepeaje, peajes, ANTEL, UTE, OSE, supermercados, farmacias, ómnibus/STM, taxis, combustible) son CASI SIEMPRE pesos (UYU).
+7. Si tenés duda, la moneda por DEFECTO es "UYU" — NO "USD".
+8. La MAYORÍA de las transacciones en un EDC uruguayo son en pesos. Si estás marcando más de la mitad como USD, probablemente estás equivocado.
 
 ## DATOS DEL DOCUMENTO
 También extraé del encabezado/pie del documento:
@@ -159,7 +160,7 @@ Devolvé ÚNICAMENTE JSON válido con esta estructura exacta, sin texto antes ni
         'content-type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'claude-haiku-4-5',
+        model: 'claude-sonnet-4-6',
         max_tokens: 16000,
         temperature: 0,
         messages: [{
