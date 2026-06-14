@@ -3812,10 +3812,11 @@ window.Mods.gastos = {
         if (totUSD >= 1)   parts.push(`USD ${fmt(totUSD, 0)}`);
         return {
           x: m.label, y: totalY,
-          text: parts.join(' / ') || '',
+          text: parts.join('<br>') || '',
           showarrow: false,
-          font: { size: 10, color: '#e5e7eb' },
-          xanchor: 'center', yanchor: 'bottom', yshift: 4,
+          font: { size: 9, color: '#e5e7eb' },
+          xanchor: 'center', yanchor: 'bottom', yshift: 6,
+          align: 'center',
         };
       });
 
@@ -3847,7 +3848,7 @@ window.Mods.gastos = {
         ...layoutBase,
         barmode: 'stack',
         dragmode: false,
-        margin: { t: 30, r: 10, b: 80, l: 70 },
+        margin: { t: 40, r: 10, b: 80, l: 70 },
         xaxis: { gridcolor: 'rgba(255,255,255,.05)', fixedrange: true },
         yaxis: { tickformat: ',d', gridcolor: 'rgba(255,255,255,.05)', zerolinecolor: 'rgba(255,255,255,.1)', fixedrange: true },
         legend: { orientation: 'h', y: -0.38, x: 0 },
