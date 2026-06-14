@@ -239,32 +239,34 @@ window.Mods.gastos = {
         color:${act ? '#fff' : 'var(--text-sec)'};transition:background .15s,color .15s`;
     };
     c.innerHTML = `
-      <h1>Gastos</h1>
-      <p class="page-subtitle">Control de egresos · importación automática de EDC</p>
-      <div class="g-tabs">
-        ${tabs.map(([t,l]) => `<button class="g-tab${this._tab===t?' active':''}" data-tab="${t}">${l}</button>`).join('')}
-      </div>
-      <select class="g-tab-select" id="g-tab-sel">
-        ${tabs.map(([t,l]) => `<option value="${t}"${this._tab===t?' selected':''}>${l}</option>`).join('')}
-      </select>
-      <div id="g-moneda-bar" style="display:${barTabs.has(this._tab)?'flex':'none'};
-        align-items:center;gap:10px;flex-wrap:wrap;padding:8px 12px;margin-bottom:.75rem;
-        background:var(--surface);border:1px solid var(--border);border-radius:8px">
-        <span style="font-size:.7rem;color:var(--text-sec);flex-shrink:0">Importes:</span>
-        <div style="display:flex;background:rgba(255,255,255,.06);border-radius:6px;padding:2px;gap:2px;flex-shrink:0">
-          ${['ORIGEN','UYU','USD'].map(m =>
-            `<button class="g-mon-btn" data-mode="${m}" style="${btnSt(m)}">${monLabels[m]}</button>`
-          ).join('')}
+      <div class="g-sticky-header">
+        <h1>Gastos</h1>
+        <p class="page-subtitle">Control de egresos · importación automática de EDC</p>
+        <div class="g-tabs">
+          ${tabs.map(([t,l]) => `<button class="g-tab${this._tab===t?' active':''}" data-tab="${t}">${l}</button>`).join('')}
         </div>
-        <div id="g-tc-wrap" style="display:${gm==='ORIGEN'?'none':'flex'};align-items:center;gap:6px">
-          <span style="font-size:.7rem;color:var(--text-sec)">Tipo de Cambio</span>
-          <input id="g-tc" type="number" min="1" step="0.1" value="${this._tc}" placeholder="43.5"
-            style="width:70px;font-size:.78rem;padding:4px 7px;border-radius:5px;
-              border:1px solid var(--border);background:var(--surface);color:var(--text);
-              font-family:'DM Mono',monospace">
+        <select class="g-tab-select" id="g-tab-sel">
+          ${tabs.map(([t,l]) => `<option value="${t}"${this._tab===t?' selected':''}>${l}</option>`).join('')}
+        </select>
+        <div id="g-moneda-bar" style="display:${barTabs.has(this._tab)?'flex':'none'};
+          align-items:center;gap:10px;flex-wrap:wrap;padding:8px 12px;margin-bottom:0;
+          background:var(--surface);border:1px solid var(--border);border-radius:8px">
+          <span style="font-size:.7rem;color:var(--text-sec);flex-shrink:0">Importes:</span>
+          <div style="display:flex;background:rgba(255,255,255,.06);border-radius:6px;padding:2px;gap:2px;flex-shrink:0">
+            ${['ORIGEN','UYU','USD'].map(m =>
+              `<button class="g-mon-btn" data-mode="${m}" style="${btnSt(m)}">${monLabels[m]}</button>`
+            ).join('')}
+          </div>
+          <div id="g-tc-wrap" style="display:${gm==='ORIGEN'?'none':'flex'};align-items:center;gap:6px">
+            <span style="font-size:.7rem;color:var(--text-sec)">Tipo de Cambio</span>
+            <input id="g-tc" type="number" min="1" step="0.1" value="${this._tc}" placeholder="43.5"
+              style="width:70px;font-size:.78rem;padding:4px 7px;border-radius:5px;
+                border:1px solid var(--border);background:var(--surface);color:var(--text);
+                font-family:'DM Mono',monospace">
+          </div>
         </div>
       </div>
-      <div id="g-content"></div>
+      <div id="g-content" style="padding-top:.75rem"></div>
       ${this._catDatalistHTML()}
     `;
     document.querySelectorAll('.g-tab').forEach(btn =>
@@ -1885,7 +1887,7 @@ window.Mods.gastos = {
         if (!item) return;
         const newTipo = e.target.value;
         if (newTipo === item.currentTipo) return;
-        const tipoLabel = newTipo === 'recurrente' ? '🔁 Recurrente' : '💳 Casual';
+        const tipoLabel = newTipo === 'recurrente' ? '🔁 Recurrente' : newTipo === 'tdc' ? '🏦 Cargo TDC' : '💳 Casual';
         if (!confirm(`¿Marcar ${item.count} gasto(s) de "${item.example}" como ${tipoLabel}?`)) {
           e.target.value = item.currentTipo;
           return;
@@ -1906,13 +1908,13 @@ window.Mods.gastos = {
       const norm = e.target.dataset.norm;
       const item = this._comerciosCache.find(i => i.norm === norm);
       if (!item) return;
-      const newCatId = this._catIdFromLabel(e.target.value);
+      const newCatId = e.target.value ? parseInt(e.target.value) : null;
       if (newCatId === item.currentCat) return;
       const catName = newCatId
         ? this._cats.find(c => c.id === newCatId)?.nombre || ''
         : 'Sin categoría';
       if (!confirm(`¿Re-categorizar ${item.count} gasto(s) de "${item.example}" como ${catName}?`)) {
-        e.target.value = this._catLabel(item.currentCat);
+        e.target.value = item.currentCat || '';
         return;
       }
       try {
@@ -1933,7 +1935,7 @@ window.Mods.gastos = {
         toast(`✅ ${item.count} gasto(s) actualizado(s)`);
       } catch(err) {
         toast('❌ ' + err.message, 'err');
-        e.target.value = this._catLabel(item.currentCat);
+        e.target.value = item.currentCat || '';
       }
     });
   },
@@ -2370,14 +2372,19 @@ window.Mods.gastos = {
         <td style="font-family:'DM Mono',monospace;white-space:nowrap">${ttlUYU}</td>
         <td style="font-family:'DM Mono',monospace;white-space:nowrap">${ttlUSD}</td>
         <td>
-          ${this._catComboHTML({ cls: 'c-cat-sel', extra: `data-norm="${it.norm}"`, value: it.currentCat, placeholder: '—', style: 'font-size:.74rem;padding:3px 6px;border-radius:4px;border:1px solid var(--border);background:var(--surface);color:var(--text);max-width:160px' })}
+          <select class="c-cat-sel" data-norm="${it.norm}"
+            style="font-size:.74rem;padding:3px 6px;border-radius:4px;border:1px solid var(--border);background:var(--surface);color:var(--text);max-width:160px">
+            <option value="">— Sin cat.</option>
+            ${this._cats.map(c => `<option value="${c.id}"${it.currentCat == c.id?' selected':''}>${c.icono} ${c.nombre}</option>`).join('')}
+          </select>
         </td>
         <td>
           <select class="c-tipo-sel" data-norm="${it.norm}"
             style="font-size:.74rem;padding:3px 6px;border-radius:4px;
               border:1px solid var(--border);background:var(--surface);color:var(--text)">
-            <option value="casual"${it.currentTipo!=='recurrente'?' selected':''}>💳 Casual</option>
+            <option value="casual"${it.currentTipo!=='recurrente'&&it.currentTipo!=='tdc'?' selected':''}>💳 Casual</option>
             <option value="recurrente"${it.currentTipo==='recurrente'?' selected':''}>🔁 Recurrente</option>
+            <option value="tdc"${it.currentTipo==='tdc'?' selected':''}>🏦 Cargo TDC</option>
           </select>
         </td>
       </tr>
@@ -3383,17 +3390,6 @@ window.Mods.gastos = {
     const totalSaveUYU  = allData.filter(r => isBenefit(r) && r.moneda !== 'USD').reduce((s,r) => s - parseFloat(r.monto), 0);
     const totalSaveUSD  = allData.filter(r => isBenefit(r) && r.moneda === 'USD').reduce((s,r) => s - parseFloat(r.monto), 0);
 
-    const topCatEntry = Object.entries(byCat).filter(([,v]) => v > 0).sort((a,b) => b[1]-a[1])[0];
-    const topCatName = topCatEntry
-      ? (topCatEntry[0] === 'sin' ? 'Sin categoría'
-         : (() => { const c = this._cats.find(c => c.id === +topCatEntry[0]); return c ? `${c.icono} ${c.nombre}` : 'Otros'; })())
-      : '—';
-
-    const topMonthEntry = months
-      .map(m => ({ label: m.label, total: toC(byMonth[m.ym].UYU, 'UYU') + toC(byMonth[m.ym].USD, 'USD') }))
-      .filter(m => m.total > 0)
-      .sort((a,b) => b.total - a.total)[0];
-
     // ── Beneficios / ahorro (montos en positivo) ──────────────────────────
     const byMonthSave = {};
     for (const m of months) byMonthSave[m.ym] = { UYU: 0, USD: 0 };
@@ -3406,12 +3402,6 @@ window.Mods.gastos = {
       const k = (r.comercio || '').trim() || 'Sin comercio';
       bySaveCom[k] = (bySaveCom[k] || 0) - toC(r.monto, r.moneda);
     }
-    const topComEntry = Object.entries(bySaveCom).filter(([,v]) => v > 0).sort((a,b) => b[1]-a[1])[0];
-    const topComName  = topComEntry ? topComEntry[0] : '—';
-    const topSaveMonthEntry = months
-      .map(m => ({ label: m.label, total: toC(byMonthSave[m.ym].UYU, 'UYU') + toC(byMonthSave[m.ym].USD, 'USD') }))
-      .filter(m => m.total > 0)
-      .sort((a,b) => b.total - a.total)[0];
 
     const hasBenef = totalSaved > 0 || totalSaveUYU > 0 || totalSaveUSD > 0;
     const isBenef  = this._resView === 'beneficios' && hasBenef;
@@ -3471,16 +3461,6 @@ window.Mods.gastos = {
               : fmtC(totalUSD)}
           </div>
           <div style="font-size:.65rem;color:var(--text-sec);margin-top:3px">${this._resDesde.slice(0,7)} → ${this._resHasta.slice(0,7)}</div>
-        </div>
-        <div class="form-card" style="padding:14px 16px;text-align:center">
-          <div style="font-size:.65rem;color:var(--text-sec);margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em">${isBenef ? 'Comercio top' : 'Rubro top'}</div>
-          <div style="font-size:.9rem;font-weight:600">${isBenef ? topComName : topCatName}</div>
-          <div style="font-family:'DM Mono',monospace;font-size:.8rem;color:${isBenef ? '#10b981' : 'var(--accent)'};margin-top:3px">${fmtC((isBenef ? topComEntry?.[1] : topCatEntry?.[1]) ?? 0)}</div>
-        </div>
-        <div class="form-card" style="padding:14px 16px;text-align:center">
-          <div style="font-size:.65rem;color:var(--text-sec);margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em">Mes top</div>
-          <div style="font-size:.9rem;font-weight:600;text-transform:capitalize">${(isBenef ? topSaveMonthEntry : topMonthEntry)?.label ?? '—'}</div>
-          <div style="font-family:'DM Mono',monospace;font-size:.8rem;color:${isBenef ? '#10b981' : 'var(--accent)'};margin-top:3px">${(isBenef ? topSaveMonthEntry : topMonthEntry) ? fmtC((isBenef ? topSaveMonthEntry : topMonthEntry).total) : '—'}</div>
         </div>
         ${hasBenef ? `
         <div id="r-card-benef" class="form-card" style="padding:14px 16px;text-align:center;cursor:pointer;border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.05);${isBenef ? 'box-shadow:0 0 0 2px #10b981' : ''}" title="Ver ahorro / beneficios">

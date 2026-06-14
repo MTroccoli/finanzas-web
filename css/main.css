@@ -761,6 +761,21 @@ tbody tr:hover td { background: rgba(46,127,217,.04); }
   background: rgba(46,127,217,.07);
 }
 
+/* ── Gastos sticky header ─────────────────────────────────────── */
+.g-sticky-header {
+  position: sticky;
+  top: var(--nav-h);
+  z-index: 100;
+  background: var(--bg);
+  margin: 0 -24px;
+  padding: 0 24px 8px;
+  border-bottom: 1px solid var(--border);
+}
+.g-sticky-header h1 { margin-bottom: 2px; }
+.g-sticky-header .page-subtitle { margin-bottom: 8px; }
+.g-sticky-header .g-tabs { margin-bottom: 8px; }
+.g-sticky-header .g-tab-select { margin-bottom: 8px; }
+
 /* ════════════════════════════════════════════════════════════════════════
    MOBILE ≤ 768px
 ════════════════════════════════════════════════════════════════════════ */
@@ -820,4 +835,11 @@ tbody tr:hover td { background: rgba(46,127,217,.04); }
   .g-filters > div { flex: 1 1 0; min-width: 0; }
   .g-filters select, .g-filters input { padding: 6px 5px; font-size: .72rem; }
   .g-fl-lbl { font-size: .58rem; }
+
+  .g-sticky-header {
+    top: 0;
+    margin: 0 -14px;
+    padding: 0 14px 8px;
+  }
+  .g-sticky-header .page-subtitle { margin-bottom: 6px; }
 }
