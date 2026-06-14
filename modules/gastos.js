@@ -36,6 +36,7 @@ window.Mods.gastos = {
   _adicOpenMonths: new Set(),                     // "titular|mes" abiertos en acordeón Adicional
   _bancotarjeta: '',      // Banco/tarjeta detectado por la IA en el EDC activo
   _resBanco:     '',      // Filtro por banco/tarjeta en Resumen
+  _resTipo:      '',      // Filtro por tipo de gasto en Resumen
   _adicTitular:  '',      // Nombre titular adicional asignado en la vista previa
   _adicMes:      null,    // Filtro mes en panel Adicional
   _adicTitularFiltro: '', // Filtro titular en panel Adicional
@@ -255,7 +256,7 @@ window.Mods.gastos = {
           ).join('')}
         </div>
         <div id="g-tc-wrap" style="display:${gm==='ORIGEN'?'none':'flex'};align-items:center;gap:6px">
-          <span style="font-size:.7rem;color:var(--text-sec)">T/C UYU/USD</span>
+          <span style="font-size:.7rem;color:var(--text-sec)">Tipo de Cambio</span>
           <input id="g-tc" type="number" min="1" step="0.1" value="${this._tc}" placeholder="43.5"
             style="width:70px;font-size:.78rem;padding:4px 7px;border-radius:5px;
               border:1px solid var(--border);background:var(--surface);color:var(--text);
@@ -1536,7 +1537,7 @@ window.Mods.gastos = {
           <div>
             <div style="font-size:.68rem;color:var(--text-sec);margin-bottom:2px">Tarjeta</div>
             <select id="h-banco" style="${selSt}">
-              <option value="">Todas las TDC</option>
+              <option value="">Todas</option>
               ${bancosHist.map(b => `<option value="${b}"${b===this._histBanco?' selected':''}>${b}</option>`).join('')}
             </select>
           </div>` : ''}
@@ -1554,49 +1555,6 @@ window.Mods.gastos = {
           ⚠ Ingresá el T/C en la barra de arriba para convertir importes.</div>` : ''}
       </div>
 
-
-      <!-- Recurrente vs Casual -->
-      ${(() => {
-        if (viewMode === 'ORIGEN') {
-          const recUYU = gastos.filter(g => g.tipo_gasto === 'recurrente' && g.moneda !== 'USD').reduce((s,g) => s + parseFloat(g.monto), 0);
-          const recUSD = gastos.filter(g => g.tipo_gasto === 'recurrente' && g.moneda === 'USD').reduce((s,g) => s + parseFloat(g.monto), 0);
-          const casUYU = gastos.filter(g => g.tipo_gasto !== 'recurrente' && g.moneda !== 'USD').reduce((s,g) => s + parseFloat(g.monto), 0);
-          const casUSD = gastos.filter(g => g.tipo_gasto !== 'recurrente' && g.moneda === 'USD').reduce((s,g) => s + parseFloat(g.monto), 0);
-          if (!recUYU && !recUSD && !casUYU && !casUSD) return '';
-          return `
-          <div class="form-card" style="padding:12px 16px;margin-bottom:.75rem">
-            <div style="display:flex;gap:16px;flex-wrap:wrap">
-              <div style="flex:1;min-width:120px">
-                <div style="font-size:.7rem;color:var(--text-sec);margin-bottom:2px">🔁 Recurrente</div>
-                <div style="font-family:'DM Mono',monospace;font-weight:600;font-size:.85rem">${fmtDual(recUYU, recUSD)}</div>
-              </div>
-              <div style="flex:1;min-width:120px">
-                <div style="font-size:.7rem;color:var(--text-sec);margin-bottom:2px">💳 Casual</div>
-                <div style="font-family:'DM Mono',monospace;font-weight:600;font-size:.85rem">${fmtDual(casUYU, casUSD)}</div>
-              </div>
-            </div>
-          </div>`;
-        }
-        const rec = gastos.filter(g => g.tipo_gasto === 'recurrente').reduce((s, g) => s + toVal(g.monto, g.moneda), 0);
-        const cas = gastos.filter(g => g.tipo_gasto !== 'recurrente').reduce((s, g) => s + toVal(g.monto, g.moneda), 0);
-        if (!rec && !cas) return '';
-        const pctRec = totalMes > 0 ? (rec / totalMes * 100) : 0;
-        return `
-        <div class="form-card" style="padding:12px 16px;margin-bottom:.75rem">
-          <div style="display:flex;gap:16px;flex-wrap:wrap">
-            <div style="flex:1;min-width:120px">
-              <div style="font-size:.7rem;color:var(--text-sec);margin-bottom:2px">🔁 Recurrente</div>
-              <div style="font-family:'DM Mono',monospace;font-weight:600">${fmtTotal(rec)}</div>
-              <div style="font-size:.7rem;color:var(--text-sec)">${pctRec.toFixed(0)}% del total</div>
-            </div>
-            <div style="flex:1;min-width:120px">
-              <div style="font-size:.7rem;color:var(--text-sec);margin-bottom:2px">💳 Casual</div>
-              <div style="font-family:'DM Mono',monospace;font-weight:600">${fmtTotal(cas)}</div>
-              <div style="font-size:.7rem;color:var(--text-sec)">${(100-pctRec).toFixed(0)}% del total</div>
-            </div>
-          </div>
-        </div>`;
-      })()}
 
       <!-- Tabla -->
       <div class="table-wrap">
@@ -3065,7 +3023,7 @@ window.Mods.gastos = {
           <div>
             <div style="font-size:.68rem;color:var(--text-sec);margin-bottom:2px">Tarjeta</div>
             <select id="c-banco-cuotas" style="${selSt}">
-              <option value="">Todas las TDC</option>
+              <option value="">Todas</option>
               ${bancosCuotas.map(b => `<option value="${b}"${b===this._cuotasBanco?' selected':''}>${b}</option>`).join('')}
             </select>
           </div>
@@ -3361,10 +3319,12 @@ window.Mods.gastos = {
 
     // Una sola query con todos los campos necesarios
     let q = getDB().from('gastos')
-      .select('fecha, monto, moneda, categoria_id, banco_tarjeta')
+      .select('fecha, monto, moneda, categoria_id, banco_tarjeta, tipo_gasto, cuota_actual')
       .gte('fecha', this._resDesde)
       .lte('fecha', this._resHasta);
     if (this._resCat) q = q.eq('categoria_id', +this._resCat);
+    if (this._resTipo === 'cuotas') q = q.not('cuota_actual', 'is', null);
+    else if (this._resTipo) q = q.eq('tipo_gasto', this._resTipo);
     const { data: allDataRaw = [] } = await q;
 
     // Lista única de bancos/tarjetas para el filtro
@@ -3453,14 +3413,24 @@ window.Mods.gastos = {
             </select>
           </div>
           <div>
+            <div style="font-size:.68rem;color:var(--text-sec);margin-bottom:2px">Tipo de gasto</div>
+            <select id="r-tipo" style="${selSt}">
+              <option value=""${!this._resTipo?' selected':''}>Todos</option>
+              <option value="casual"${this._resTipo==='casual'?' selected':''}>💳 Casual</option>
+              <option value="recurrente"${this._resTipo==='recurrente'?' selected':''}>🔁 Recurrente</option>
+              <option value="tdc"${this._resTipo==='tdc'?' selected':''}>🏦 Cargo TDC</option>
+              <option value="cuotas"${this._resTipo==='cuotas'?' selected':''}>📅 Solo cuotas</option>
+            </select>
+          </div>
+          <div>
             <div style="font-size:.68rem;color:var(--text-sec);margin-bottom:2px">Tarjeta</div>
             <select id="r-banco" style="${selSt};min-width:120px">
-              <option value="">Todas las TDC</option>
+              <option value="">Todas</option>
               ${bancos.map(b => `<option value="${b}"${b===this._resBanco?' selected':''}>${b}</option>`).join('')}
             </select>
           </div>
         </div>
-        ${!tc ? '<div style="margin-top:8px;font-size:.75rem;color:var(--red)">⚠ Ingresá el T/C en la barra de arriba para convertir los importes.</div>' : ''}
+        ${!tc ? '<div style="margin-top:8px;font-size:.75rem;color:var(--red)">⚠ Ingresá el Tipo de Cambio en la barra de arriba para convertir los importes.</div>' : ''}
       </div>
 
       <!-- Tarjetas resumen -->
@@ -3542,12 +3512,12 @@ window.Mods.gastos = {
       {
         x: xLabels, y: fromUyuY, type: 'bar', name: 'Gastos en UYU',
         marker: { color: '#3b82f6' }, customdata: origUyu,
-        hovertemplate: `<b>%{x}</b><br>$U %{customdata:,.0f}<extra>de pesos</extra>`,
+        hovertemplate: `<b>%{x}</b><br>$U %{customdata:,.0f}<extra></extra>`,
       },
       {
         x: xLabels, y: fromUsdY, type: 'bar', name: 'Gastos en USD',
         marker: { color: '#10b981' }, customdata: origUsd,
-        hovertemplate: `<b>%{x}</b><br>USD %{customdata:,.0f}<extra>de dólares</extra>`,
+        hovertemplate: `<b>%{x}</b><br>USD %{customdata:,.0f}<extra></extra>`,
       },
     ], {
       ...layoutBase,
@@ -3596,6 +3566,10 @@ window.Mods.gastos = {
     // Handlers
     document.getElementById('r-cat')?.addEventListener('change', e => {
       this._resCat = e.target.value || '';
+      this._drawResumen();
+    });
+    document.getElementById('r-tipo')?.addEventListener('change', e => {
+      this._resTipo = e.target.value;
       this._drawResumen();
     });
     document.getElementById('r-banco')?.addEventListener('change', e => {

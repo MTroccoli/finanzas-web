@@ -13,7 +13,7 @@
   --green:        #29D985;
   --red:          #FF5E5E;
   --gold:         #FFD166;
-  --topbar-h:     54px;
+  --topbar-h:     0px;
   --nav-h:        46px;
   --subnav-h:     44px;
   --mob-nav-h:    62px;
@@ -754,9 +754,6 @@ tbody tr:hover td { background: rgba(46,127,217,.04); }
    MOBILE ≤ 768px
 ════════════════════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
-  #topbar { height: 50px; padding: 0 14px; }
-  .logo { font-size: 19px; }
-
   #mainnav {
     top: auto;
     bottom: 0;
@@ -789,16 +786,16 @@ tbody tr:hover td { background: rgba(46,127,217,.04); }
   .nav-icon { font-size: 20px; }
 
   #subnav {
-    top: 50px;
+    top: 0;
     padding: 0 12px;
   }
 
   #content {
-    margin-top: calc(50px + var(--nav-h));
+    margin-top: var(--nav-h);
     padding: 16px 14px calc(var(--mob-nav-h) + 16px);
   }
   #content.with-subnav {
-    margin-top: calc(50px + var(--nav-h) + var(--subnav-h));
+    margin-top: calc(var(--nav-h) + var(--subnav-h));
   }
 
   .metrics-row { grid-template-columns: repeat(2, 1fr); }
