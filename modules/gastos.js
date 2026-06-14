@@ -3581,8 +3581,8 @@ window.Mods.gastos = {
       </div>
 
       <!-- Tarjetas resumen -->
-      ${totalUSD > 0 || totalSaved > 0 ? `
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:.75rem">
+        ${totalUSD > 0 || totalSaved > 0 ? `
         <div id="r-card-gastos" class="form-card" style="padding:14px 16px;text-align:center;cursor:pointer;${!isBenef ? 'box-shadow:0 0 0 2px var(--accent)' : ''}" title="Ver gastos">
           <div style="font-size:.65rem;color:var(--text-sec);margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em">Total gastado</div>
           <div style="font-family:'DM Mono',monospace;font-size:${this._gastoMoneda === 'ORIGEN' && totalGastUYU > 0 && totalGastUSD > 0 ? '.85rem' : '1.1rem'};font-weight:700;color:var(--accent);line-height:1.4">
@@ -3601,16 +3601,17 @@ window.Mods.gastos = {
               : fmtC(totalSaved)}
           </div>
           <div style="font-size:.65rem;color:var(--text-sec);margin-top:3px">${isBenef ? '👆 Viendo ahorro' : '🎁 Beneficio · 💎 Puntos BBVA'}</div>
-        </div>` : ''}
-        ${futureCuotasRaw.length > 0 ? `
+        </div>` : ''}` : ''}
         <div class="form-card" style="padding:14px 16px;text-align:center;border-color:rgba(255,209,102,.3);background:rgba(255,209,102,.04)">
           <div style="font-size:.65rem;color:var(--gold);margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em">📅 Cuotas próx. 2 meses</div>
           <div style="font-family:'DM Mono',monospace;font-size:${futureUYU > 0 && futureUSD > 0 ? '.85rem' : '1.1rem'};font-weight:700;color:var(--gold);line-height:1.4">
-            ${(() => { const p = []; if (futureUYU > 0) p.push(this._fmtMon(futureUYU,'UYU')); if (futureUSD > 0) p.push(this._fmtUSD(futureUSD)); return p.join('<br>') || '—'; })()}
+            ${futureCuotasRaw.length > 0
+              ? (() => { const p = []; if (futureUYU > 0) p.push(this._fmtMon(futureUYU,'UYU')); if (futureUSD > 0) p.push(this._fmtUSD(futureUSD)); return p.join('<br>') || '—'; })()
+              : '<span style="font-size:.8rem;color:var(--text-sec)">Sin cuotas pendientes</span>'}
           </div>
-          <div style="font-size:.65rem;color:var(--text-sec);margin-top:3px">${futureCuotasRaw.length} cuota(s) · ${todayStr.slice(0,7)} → ${twoMoLater.slice(0,7)}</div>
-        </div>` : ''}
-      </div>` : ''}
+          <div style="font-size:.65rem;color:var(--text-sec);margin-top:3px">${futureCuotasRaw.length > 0 ? `${futureCuotasRaw.length} cuota(s) · ` : ''}${todayStr.slice(0,7)} → ${twoMoLater.slice(0,7)}</div>
+        </div>
+      </div>
 
       <!-- Bar chart -->
       <div class="form-card" style="padding:14px 16px;margin-bottom:.75rem">
