@@ -1411,12 +1411,29 @@ window.Mods.gastos = {
     const toVal = (monto, mon) => {
       if (viewMode === 'USD') return this._toUSD(monto, mon, tc);
       if (viewMode === 'UYU') return mon === 'USD' ? parseFloat(monto) * (tc || 1) : parseFloat(monto);
-      return this._toUSD(monto, mon, tc); // ORIGEN: aproximado en USD para totales
+      return this._toUSD(monto, mon, tc);
+    };
+
+    // ORIGEN: track UYU and USD separately so we can display them natively
+    let totOrigUYU = 0, totOrigUSD = 0;
+    const bycatOrig = {};
+    for (const g of gastos) {
+      const k = g.categoria_id ?? 'sin';
+      const n = parseFloat(g.monto);
+      if (!bycatOrig[k]) bycatOrig[k] = { UYU: 0, USD: 0 };
+      if (g.moneda === 'USD') { bycatOrig[k].USD += n; totOrigUSD += n; }
+      else                    { bycatOrig[k].UYU += n; totOrigUYU += n; }
+    }
+    const fmtDual = (uyu, usd) => {
+      const p = [];
+      if (uyu > 0) p.push(this._fmtMon(uyu, 'UYU'));
+      if (usd > 0) p.push(this._fmtUSD(usd));
+      return p.length ? p.join(' · ') : '—';
     };
     const fmtTotal = n => {
       if (viewMode === 'USD') return this._fmtUSD(n);
       if (viewMode === 'UYU') return this._fmtMon(n, 'UYU');
-      return tc ? `≈ ${this._fmtUSD(n)}` : '—';
+      return fmtDual(totOrigUYU, totOrigUSD);
     };
 
     const totalMes = gastos.reduce((s, g) => s + toVal(g.monto, g.moneda), 0);
@@ -1481,37 +1498,79 @@ window.Mods.gastos = {
       </div>
 
       <!-- Resumen por categoría -->
-      ${Object.keys(bycat).length === 0 ? '' : `
+      ${Object.keys(bycatOrig).length === 0 ? '' : `
       <div class="form-card" style="padding:14px 16px;margin-bottom:.75rem">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:6px">
           <span style="font-weight:600;font-size:.9rem">Resumen del mes
             ${viewMode !== 'ORIGEN' && tc
               ? `<span style="font-size:.7rem;color:var(--accent);font-weight:400"> · ${viewMode === 'UYU' ? 'en UYU' : 'en USD'} (TC ${tc})</span>`
-              : viewMode === 'ORIGEN' && tc ? `<span style="font-size:.7rem;color:var(--text-sec);font-weight:400"> · ≈ USD</span>` : ''}
+              : ''}
           </span>
           <span style="font-family:'DM Mono',monospace;font-size:.85rem;color:var(--accent);font-weight:600">
-            Total: ${fmtTotal(totalMes)}
+            Total: ${viewMode === 'ORIGEN' ? fmtDual(totOrigUYU, totOrigUSD) : fmtTotal(totalMes)}
           </span>
         </div>
-        ${Object.entries(bycat).sort((a,b) => b[1]-a[1]).map(([id, tot]) => {
-          const pct = totalMes > 0 ? (tot/totalMes*100) : 0;
-          return `
-            <div style="margin-bottom:9px">
-              <div style="display:flex;justify-content:space-between;font-size:.78rem;margin-bottom:3px">
-                <span>${catBadge(id)}</span>
-                <span style="font-family:'DM Mono',monospace">
-                  ${fmtTotal(tot)} <span style="color:var(--text-sec)">(${pct.toFixed(0)}%)</span>
-                </span>
-              </div>
-              <div style="height:4px;background:var(--border);border-radius:2px">
-                <div style="height:4px;background:var(--accent);border-radius:2px;width:${pct.toFixed(1)}%"></div>
-              </div>
-            </div>`;
-        }).join('')}
+        ${(() => {
+          if (viewMode === 'ORIGEN') {
+            const approxTc = tc || 40;
+            const approxTotal = totOrigUYU + totOrigUSD * approxTc;
+            return Object.entries(bycatOrig)
+              .sort((a, b) => (b[1].UYU + b[1].USD * approxTc) - (a[1].UYU + a[1].USD * approxTc))
+              .map(([id, {UYU, USD}]) => {
+                const approxAmt = UYU + USD * approxTc;
+                const pct = approxTotal > 0 ? (approxAmt / approxTotal * 100) : 0;
+                return `
+                  <div style="margin-bottom:9px">
+                    <div style="display:flex;justify-content:space-between;font-size:.78rem;margin-bottom:3px;flex-wrap:wrap;gap:4px">
+                      <span>${catBadge(id)}</span>
+                      <span style="font-family:'DM Mono',monospace">${fmtDual(UYU, USD)}</span>
+                    </div>
+                    <div style="height:4px;background:var(--border);border-radius:2px">
+                      <div style="height:4px;background:var(--accent);border-radius:2px;width:${pct.toFixed(1)}%"></div>
+                    </div>
+                  </div>`;
+              }).join('');
+          }
+          return Object.entries(bycat).sort((a,b) => b[1]-a[1]).map(([id, tot]) => {
+            const pct = totalMes > 0 ? (tot/totalMes*100) : 0;
+            return `
+              <div style="margin-bottom:9px">
+                <div style="display:flex;justify-content:space-between;font-size:.78rem;margin-bottom:3px">
+                  <span>${catBadge(id)}</span>
+                  <span style="font-family:'DM Mono',monospace">
+                    ${fmtTotal(tot)} <span style="color:var(--text-sec)">(${pct.toFixed(0)}%)</span>
+                  </span>
+                </div>
+                <div style="height:4px;background:var(--border);border-radius:2px">
+                  <div style="height:4px;background:var(--accent);border-radius:2px;width:${pct.toFixed(1)}%"></div>
+                </div>
+              </div>`;
+          }).join('');
+        })()}
       </div>`}
 
       <!-- Recurrente vs Casual -->
       ${(() => {
+        if (viewMode === 'ORIGEN') {
+          const recUYU = gastos.filter(g => g.tipo_gasto === 'recurrente' && g.moneda !== 'USD').reduce((s,g) => s + parseFloat(g.monto), 0);
+          const recUSD = gastos.filter(g => g.tipo_gasto === 'recurrente' && g.moneda === 'USD').reduce((s,g) => s + parseFloat(g.monto), 0);
+          const casUYU = gastos.filter(g => g.tipo_gasto !== 'recurrente' && g.moneda !== 'USD').reduce((s,g) => s + parseFloat(g.monto), 0);
+          const casUSD = gastos.filter(g => g.tipo_gasto !== 'recurrente' && g.moneda === 'USD').reduce((s,g) => s + parseFloat(g.monto), 0);
+          if (!recUYU && !recUSD && !casUYU && !casUSD) return '';
+          return `
+          <div class="form-card" style="padding:12px 16px;margin-bottom:.75rem">
+            <div style="display:flex;gap:16px;flex-wrap:wrap">
+              <div style="flex:1;min-width:120px">
+                <div style="font-size:.7rem;color:var(--text-sec);margin-bottom:2px">🔁 Recurrente</div>
+                <div style="font-family:'DM Mono',monospace;font-weight:600;font-size:.85rem">${fmtDual(recUYU, recUSD)}</div>
+              </div>
+              <div style="flex:1;min-width:120px">
+                <div style="font-size:.7rem;color:var(--text-sec);margin-bottom:2px">💳 Casual</div>
+                <div style="font-family:'DM Mono',monospace;font-weight:600;font-size:.85rem">${fmtDual(casUYU, casUSD)}</div>
+              </div>
+            </div>
+          </div>`;
+        }
         const rec = gastos.filter(g => g.tipo_gasto === 'recurrente').reduce((s, g) => s + toVal(g.monto, g.moneda), 0);
         const cas = gastos.filter(g => g.tipo_gasto !== 'recurrente').reduce((s, g) => s + toVal(g.monto, g.moneda), 0);
         if (!rec && !cas) return '';
@@ -2869,41 +2928,63 @@ window.Mods.gastos = {
       proj.push({
         ym:    `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`,
         label: d.toLocaleDateString('es-UY', { month: 'short', year: '2-digit' }),
-        total: 0,
+        total: 0, UYU: 0, USD: 0,
       });
     }
 
+    let totalPendUYU = 0, totalPendUSD = 0;
     for (const g of activas) {
       const restantes = g.cuotas_totales - g.cuota_actual;
       const [yr, mo] = g.fecha.split('-').map(Number);
       const baseDate  = new Date(yr, mo - 1, 1);
-      const monto     = viewMode === 'USD'
+      const isUSD    = g.moneda === 'USD';
+      const montoNat = parseFloat(g.monto);
+      const monto    = viewMode === 'USD'
         ? this._toUSD(g.monto, g.moneda, tc)
         : viewMode === 'UYU'
-          ? (g.moneda === 'USD' ? parseFloat(g.monto) * (tc||1) : parseFloat(g.monto))
-          : this._toUSD(g.monto, g.moneda, tc); // ORIGEN: aprox USD para proyección
+          ? (isUSD ? montoNat * (tc||1) : montoNat)
+          : montoNat; // ORIGEN: moneda nativa
+      if (viewMode === 'ORIGEN') {
+        if (isUSD) totalPendUSD += montoNat * restantes;
+        else       totalPendUYU += montoNat * restantes;
+      }
       for (let k = 1; k <= restantes; k++) {
         const d  = new Date(baseDate.getFullYear(), baseDate.getMonth() + k, 1);
         const ym = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
         const slot = proj.find(p => p.ym === ym);
-        if (slot) slot.total += monto;
+        if (slot) {
+          if (viewMode === 'ORIGEN') {
+            if (isUSD) slot.USD += montoNat; else slot.UYU += montoNat;
+          } else {
+            slot.total += monto;
+          }
+        }
       }
     }
 
     // Total pendiente global
-    const totalPend = activas.reduce((s, g) => {
+    const totalPend = viewMode !== 'ORIGEN' ? activas.reduce((s, g) => {
       const m = viewMode === 'USD'
         ? this._toUSD(g.monto, g.moneda, tc)
         : viewMode === 'UYU'
           ? (g.moneda === 'USD' ? parseFloat(g.monto) * (tc||1) : parseFloat(g.monto))
-          : this._toUSD(g.monto, g.moneda, tc);
+          : 0;
       return s + m * (g.cuotas_totales - g.cuota_actual);
-    }, 0);
+    }, 0) : 0;
+    const fmtDualC = (uyu, usd) => {
+      const p = [];
+      if (uyu > 0) p.push(this._fmtMon(uyu, 'UYU'));
+      if (usd > 0) p.push(this._fmtUSD(usd));
+      return p.length ? p.join(' · ') : '—';
+    };
     const fmtTotalPend = viewMode === 'USD' ? this._fmtUSD(totalPend)
       : viewMode === 'UYU' ? this._fmtMon(totalPend, 'UYU')
-      : tc ? `≈ ${this._fmtUSD(totalPend)}` : '—';
+      : fmtDualC(totalPendUYU, totalPendUSD);
 
-    const maxProj = Math.max(1, ...proj.map(p => p.total));
+    const approxTcC = tc || 40;
+    const maxProj = Math.max(1, ...proj.map(p =>
+      viewMode === 'ORIGEN' ? p.UYU + p.USD * approxTcC : p.total
+    ));
     const selSt   = `font-size:.82rem;padding:5px 10px;border-radius:6px;border:1px solid var(--border);background:var(--surface);color:var(--text)`;
 
     gc.innerHTML = `
@@ -2954,14 +3035,15 @@ window.Mods.gastos = {
       <!-- Proyección por mes -->
       <div class="form-card" style="padding:14px 16px;margin-bottom:.75rem">
         <div style="font-weight:600;font-size:.9rem;margin-bottom:12px">Proyección próximos 12 meses</div>
-        ${proj.filter(p => p.total > 0).map(p => {
-          const pct = Math.max(2, (p.total / maxProj) * 100);
+        ${proj.filter(p => viewMode === 'ORIGEN' ? (p.UYU > 0 || p.USD > 0) : p.total > 0).map(p => {
+          const approxVal = viewMode === 'ORIGEN' ? p.UYU + p.USD * approxTcC : p.total;
+          const pct = Math.max(2, (approxVal / maxProj) * 100);
           const label = viewMode === 'USD' ? this._fmtUSD(p.total)
             : viewMode === 'UYU' ? this._fmtMon(p.total, 'UYU')
-            : tc ? this._fmtUSD(p.total) : '—';
+            : fmtDualC(p.UYU, p.USD);
           return `
             <div style="margin-bottom:8px">
-              <div style="display:flex;justify-content:space-between;font-size:.76rem;margin-bottom:3px">
+              <div style="display:flex;justify-content:space-between;font-size:.76rem;margin-bottom:3px;flex-wrap:wrap;gap:4px">
                 <span style="text-transform:capitalize">${p.label}</span>
                 <span style="font-family:'DM Mono',monospace">${label}</span>
               </div>
@@ -3302,6 +3384,11 @@ window.Mods.gastos = {
     // Tarjetas resumen (totalUSD = total en moneda de análisis)
     const totalUSD   = Object.values(byCat).reduce((s, v) => s + v, 0);
     const totalSaved = -Object.values(bySave).reduce((s, v) => s + v, 0); // negativo → positivo
+    // Totales nativos para modo ORIGEN (sin conversión)
+    const totalGastUYU  = allData.filter(r => !isBenefit(r) && r.moneda !== 'USD').reduce((s,r) => s + parseFloat(r.monto), 0);
+    const totalGastUSD  = allData.filter(r => !isBenefit(r) && r.moneda === 'USD').reduce((s,r) => s + parseFloat(r.monto), 0);
+    const totalSaveUYU  = allData.filter(r => isBenefit(r) && r.moneda !== 'USD').reduce((s,r) => s - parseFloat(r.monto), 0);
+    const totalSaveUSD  = allData.filter(r => isBenefit(r) && r.moneda === 'USD').reduce((s,r) => s - parseFloat(r.monto), 0);
 
     const topCatEntry = Object.entries(byCat).filter(([,v]) => v > 0).sort((a,b) => b[1]-a[1])[0];
     const topCatName = topCatEntry
@@ -3351,7 +3438,11 @@ window.Mods.gastos = {
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:.75rem">
         <div class="form-card" style="padding:14px 16px;text-align:center">
           <div style="font-size:.65rem;color:var(--text-sec);margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em">Total gastado</div>
-          <div style="font-family:'DM Mono',monospace;font-size:1.1rem;font-weight:700;color:var(--accent)">${fmtC(totalUSD)}</div>
+          <div style="font-family:'DM Mono',monospace;font-size:${this._gastoMoneda === 'ORIGEN' && totalGastUYU > 0 && totalGastUSD > 0 ? '.85rem' : '1.1rem'};font-weight:700;color:var(--accent);line-height:1.4">
+            ${this._gastoMoneda === 'ORIGEN'
+              ? (() => { const p = []; if (totalGastUYU > 0) p.push(this._fmtMon(totalGastUYU,'UYU')); if (totalGastUSD > 0) p.push(this._fmtUSD(totalGastUSD)); return p.join('<br>') || '—'; })()
+              : fmtC(totalUSD)}
+          </div>
           <div style="font-size:.65rem;color:var(--text-sec);margin-top:3px">${this._resDesde.slice(0,7)} → ${this._resHasta.slice(0,7)}</div>
         </div>
         <div class="form-card" style="padding:14px 16px;text-align:center">
@@ -3364,10 +3455,14 @@ window.Mods.gastos = {
           <div style="font-size:.9rem;font-weight:600;text-transform:capitalize">${topMonthEntry?.label ?? '—'}</div>
           <div style="font-family:'DM Mono',monospace;font-size:.8rem;color:var(--accent);margin-top:3px">${topMonthEntry ? fmtC(topMonthEntry.total) : '—'}</div>
         </div>
-        ${totalSaved > 0 ? `
+        ${(totalSaved > 0 || totalSaveUYU > 0 || totalSaveUSD > 0) ? `
         <div class="form-card" style="padding:14px 16px;text-align:center;border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.05)">
           <div style="font-size:.65rem;color:#10b981;margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em">Ahorro / beneficios</div>
-          <div style="font-family:'DM Mono',monospace;font-size:1.1rem;font-weight:700;color:#10b981">${fmtC(totalSaved)}</div>
+          <div style="font-family:'DM Mono',monospace;font-size:${this._gastoMoneda === 'ORIGEN' && totalSaveUYU > 0 && totalSaveUSD > 0 ? '.85rem' : '1.1rem'};font-weight:700;color:#10b981;line-height:1.4">
+            ${this._gastoMoneda === 'ORIGEN'
+              ? (() => { const p = []; if (totalSaveUYU > 0) p.push(this._fmtMon(totalSaveUYU,'UYU')); if (totalSaveUSD > 0) p.push(this._fmtUSD(totalSaveUSD)); return p.join('<br>') || '—'; })()
+              : fmtC(totalSaved)}
+          </div>
           <div style="font-size:.65rem;color:var(--text-sec);margin-top:3px">🎁 Beneficio · 💎 Puntos BBVA</div>
         </div>` : ''}
       </div>` : ''}
@@ -3385,8 +3480,12 @@ window.Mods.gastos = {
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:6px">
           <div style="font-weight:600;font-size:.9rem">Gastos por categoría · ${curLabel}</div>
           <div style="font-size:.78rem;color:var(--text-sec)">
-            Total gastos: <span style="color:var(--accent);font-family:'DM Mono',monospace;font-weight:600">${fmtC(totalUSD)}</span>
-            ${totalSaved > 0 ? ` · <span style="color:#10b981;font-family:'DM Mono',monospace">Ahorro: ${fmtC(totalSaved)}</span>` : ''}
+            Total gastos: <span style="color:var(--accent);font-family:'DM Mono',monospace;font-weight:600">
+              ${this._gastoMoneda === 'ORIGEN'
+                ? (() => { const p = []; if (totalGastUYU>0) p.push(this._fmtMon(totalGastUYU,'UYU')); if (totalGastUSD>0) p.push(this._fmtUSD(totalGastUSD)); return p.join(' · ') || '—'; })()
+                : fmtC(totalUSD)}
+            </span>
+            ${(totalSaved > 0 || totalSaveUYU > 0 || totalSaveUSD > 0) ? ` · <span style="color:#10b981;font-family:'DM Mono',monospace">Ahorro: ${this._gastoMoneda === 'ORIGEN' ? (() => { const p = []; if (totalSaveUYU>0) p.push(this._fmtMon(totalSaveUYU,'UYU')); if (totalSaveUSD>0) p.push(this._fmtUSD(totalSaveUSD)); return p.join(' · ') || '—'; })() : fmtC(totalSaved)}</span>` : ''}
           </div>
         </div>
         <div id="g-pie-chart" style="height:340px"></div>
