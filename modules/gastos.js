@@ -289,6 +289,35 @@ window.Mods.gastos = {
       this._saveTC(e.target.value.trim());
       this._drawTab();
     });
+    this._bindCatComboUX();
+  },
+
+  // Mejora la UX de los combos de categoría (input + datalist):
+  // al enfocar se limpia el texto para desplegar la lista completa; al salir
+  // se restaura la selección previa salvo que el usuario haya elegido/cambiado algo.
+  _bindCatComboUX() {
+    if (this._catComboBound) return;
+    this._catComboBound = true;
+    const isCombo = el => el && el.classList && el.classList.contains('cat-combo');
+    document.addEventListener('focusin', e => {
+      if (!isCombo(e.target)) return;
+      e.target.dataset.prev = e.target.value;
+      e.target._touched = false;
+      e.target.value = '';   // muestra todas las opciones del datalist
+    });
+    document.addEventListener('input', e => {
+      if (isCombo(e.target)) e.target._touched = true;
+    });
+    document.addEventListener('focusout', e => {
+      const el = e.target;
+      if (!isCombo(el)) return;
+      const val = el.value.trim();
+      // Restaurar selección anterior si: no tocó nada (solo clickeó), o tipeó
+      // algo que no resuelve a una categoría válida. Vacío deliberado = limpiar.
+      if ((!el._touched && !val) || (val && this._catIdFromLabel(val) == null)) {
+        el.value = el.dataset.prev || '';
+      }
+    });
   },
 
   _drawTab() {
@@ -2018,9 +2047,18 @@ window.Mods.gastos = {
     // Sugerir el ejemplo del grupo con más gastos
     const suggested = presetNombre
       || [...items].sort((a,b) => b.count - a.count)[0].example;
+    const exclSet     = new Set(excludedIds);
+    const allIds      = items.flatMap(i => i.ids).filter(id => !exclSet.has(id));
+    const totalGastos = allIds.length;
+    const exclCount   = excludedIds.length;
+    if (totalGastos < 1) { toast('No quedó ningún gasto marcado para unificar', 'warn'); return; }
     const entrada = prompt(
-      `Unificar ${items.length} comercio/s en un solo nombre:\n\n` +
-      items.map(i => `· ${i.example} (${i.count})`).join('\n') +
+      `Unificar ${totalGastos} gasto/s en un solo nombre` +
+      (exclCount ? ` (${exclCount} desmarcado/s quedan sin cambios)` : '') + `:\n\n` +
+      items.map(i => {
+        const incl = i.ids.filter(id => !exclSet.has(id)).length;
+        return `· ${i.example} (${incl}/${i.count})`;
+      }).join('\n') +
       `\n\nNombre final:`,
       suggested
     );
@@ -2029,9 +2067,6 @@ window.Mods.gastos = {
     if (!nuevo) return;
     const newNorm = this._normMerchant(nuevo);
 
-    const allIds   = items.flatMap(i => i.ids).filter(id => !excludedIds.includes(id));
-    const totalGastos = allIds.length;
-    if (totalGastos < 1) { toast('Todos los gastos están excluidos', 'warn'); return; }
     if (!confirm(`¿Renombrar ${totalGastos} gasto/s de ${items.length} comercio/s a "${nuevo}"?`)) return;
 
     try {
@@ -2113,20 +2148,17 @@ window.Mods.gastos = {
       return;
     }
     const q = (this._suggestSearch || '').toLowerCase().trim();
-    const visible = q
-      ? clusters.filter(c => c.items.some(i =>
-          i.example.toLowerCase().includes(q) || i.norm.includes(q)))
-      : clusters;
 
     panel.innerHTML = `
       <div class="form-card" style="padding:12px 16px;margin-bottom:.5rem;border:1px solid rgba(59,130,246,.3)">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
           <div style="font-size:.82rem;font-weight:600;flex:1">
-            🔍 ${clusters.length} grupo${clusters.length !== 1 ? 's' : ''} de posibles duplicados
-            ${q && visible.length !== clusters.length
-              ? `<span style="color:var(--text-sec);font-weight:400"> · ${visible.length} mostrado${visible.length !== 1 ? 's' : ''}</span>`
-              : ''}
+            🔍 <span id="c-suggest-count"></span>
           </div>
+        </div>
+        <div style="font-size:.7rem;color:var(--text-sec);margin-bottom:10px;line-height:1.4">
+          Marcá ✓ los gastos que querés <strong>incluir</strong> en la unificación.
+          Los desmarcados quedan con su nombre original.
         </div>
         <div style="margin-bottom:10px">
           <input id="c-suggest-search" type="search" placeholder="Buscar comercio..."
@@ -2134,20 +2166,47 @@ window.Mods.gastos = {
             style="width:100%;box-sizing:border-box;padding:6px 10px;border-radius:5px;
               border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:.78rem">
         </div>
-        <div id="c-suggest-list" style="display:flex;flex-direction:column;gap:6px">
-          ${visible.length
-            ? visible.map(c => this._renderClusterAccordion(c)).join('')
-            : `<div style="font-size:.78rem;color:var(--text-sec);padding:8px 0">Sin resultados para "${q}"</div>`
-          }
-        </div>
+        <div id="c-suggest-list" style="display:flex;flex-direction:column;gap:6px"></div>
       </div>`;
 
+    // El input mantiene el foco porque solo se re-renderiza la lista, no el panel.
     document.getElementById('c-suggest-search')?.addEventListener('input', e => {
       this._suggestSearch = e.target.value;
-      this._renderSuggestPanel();
+      this._renderSuggestList();
     });
 
-    panel.querySelectorAll('.c-group-rename').forEach(btn =>
+    this._renderSuggestList();
+  },
+
+  _renderSuggestList() {
+    const list = document.getElementById('c-suggest-list');
+    if (!list) return;
+    const clusters = this._buildSimilarClusters();
+    const q = (this._suggestSearch || '').toLowerCase().trim();
+    const visible = q
+      ? clusters.filter(c => c.items.some(i =>
+          i.example.toLowerCase().includes(q) || i.norm.includes(q)))
+      : clusters;
+
+    const countEl = document.getElementById('c-suggest-count');
+    if (countEl) {
+      countEl.textContent = `${clusters.length} grupo${clusters.length !== 1 ? 's' : ''} de posibles duplicados`
+        + (q && visible.length !== clusters.length
+            ? ` · ${visible.length} mostrado${visible.length !== 1 ? 's' : ''}` : '');
+    }
+
+    list.innerHTML = visible.length
+      ? visible.map(c => this._renderClusterAccordion(c)).join('')
+      : `<div style="font-size:.78rem;color:var(--text-sec);padding:8px 0">Sin resultados para "${q}"</div>`;
+
+    this._attachSuggestListHandlers(clusters);
+  },
+
+  _attachSuggestListHandlers(clusters) {
+    const list = document.getElementById('c-suggest-list');
+    if (!list) return;
+
+    list.querySelectorAll('.c-group-rename').forEach(btn =>
       btn.addEventListener('click', e => {
         e.stopPropagation();
         const key = btn.dataset.key;
@@ -2158,31 +2217,39 @@ window.Mods.gastos = {
         if (nuevo == null) return;
         const limpio = this._cleanComercio(nuevo.trim());
         if (limpio) this._suggestNames[key] = limpio;
-        this._renderSuggestPanel();
+        this._renderSuggestList();
       })
     );
 
-    panel.querySelectorAll('.c-cluster-hdr').forEach(hdr =>
+    list.querySelectorAll('.c-cluster-hdr').forEach(hdr =>
       hdr.addEventListener('click', e => {
         if (e.target.closest('.c-sugg-unify') || e.target.closest('.c-group-rename')) return;
         const key = hdr.dataset.key;
         if (this._suggestOpenKeys.has(key)) this._suggestOpenKeys.delete(key);
         else this._suggestOpenKeys.add(key);
-        this._renderSuggestPanel();
+        this._renderSuggestList();
       })
     );
 
-    panel.querySelectorAll('.c-gasto-chk').forEach(chk =>
+    list.querySelectorAll('.c-gasto-chk').forEach(chk =>
       chk.addEventListener('change', () => {
         const key = chk.dataset.key;
         const gid = +chk.dataset.gid;
         if (!this._suggestExcluded[key]) this._suggestExcluded[key] = new Set();
         if (chk.checked) this._suggestExcluded[key].delete(gid);
         else             this._suggestExcluded[key].add(gid);
+        // Actualizar contador "incl." del encabezado sin perder el scroll/foco
+        const c = clusters.find(cl => cl.key === key);
+        if (c) {
+          const excl = this._suggestExcluded[key];
+          const incl = c.items.flatMap(i => i.gastos).filter(g => !excl.has(g.id)).length;
+          const lbl  = list.querySelector(`.c-incl-count[data-key="${CSS.escape(key)}"]`);
+          if (lbl) lbl.textContent = `${incl}/${c.total} incl.`;
+        }
       })
     );
 
-    panel.querySelectorAll('.c-sugg-unify').forEach(btn =>
+    list.querySelectorAll('.c-sugg-unify').forEach(btn =>
       btn.addEventListener('click', () => {
         const key = btn.dataset.key;
         const c = clusters.find(cl => cl.key === key);
@@ -2243,7 +2310,7 @@ window.Mods.gastos = {
                 style="background:none;border:none;cursor:pointer;color:var(--text-sec);
                   font-size:.7rem;padding:0 2px;line-height:1">✏️</button>
               <span style="color:var(--text-sec);font-weight:400">
-                · ${c.items.length} variantes · ${includedCount}/${c.total} incl.
+                · ${c.items.length} variantes · <span class="c-incl-count" data-key="${c.key}">${includedCount}/${c.total} incl.</span>
               </span>
             </div>
             <div style="font-size:.68rem;color:var(--text-sec);margin-top:2px;
@@ -2717,14 +2784,34 @@ window.Mods.gastos = {
         : 'background:var(--surface);border:1px solid var(--border);color:var(--text-sec)';
       const titEsc = tit.replace(/"/g,'&quot;');
 
+      // Totales netos (gasto + descuento) por moneda para mostrar al lado del nombre
+      const headTotParts = [];
+      if (grandTotUYU > 0) {
+        headTotParts.push(
+          `<span style="font-family:'DM Mono',monospace">${this._fmtMon(grandTotUYU + grandDescUYU, 'UYU')}</span>`
+          + (grandDescUYU < 0 ? `<span style="color:#10b981;font-size:.68rem;margin-left:3px">(−${this._fmtMon(Math.abs(grandDescUYU),'UYU')} desc)</span>` : '')
+        );
+      }
+      if (grandTotUSD > 0) {
+        headTotParts.push(
+          `<span style="font-family:'DM Mono',monospace">${this._fmtMon(grandTotUSD + grandDescUSD, 'USD')}</span>`
+          + (grandDescUSD < 0 ? `<span style="color:#10b981;font-size:.68rem;margin-left:3px">(−${this._fmtMon(Math.abs(grandDescUSD),'USD')} desc)</span>` : '')
+        );
+      }
+
       return `
         <div class="form-card" style="padding:14px 16px;margin-bottom:.75rem">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
-            <div style="font-size:.95rem;font-weight:700;display:flex;align-items:center;gap:6px">
-              👤 ${tit}
-              <button class="adic-rename-btn" data-titular="${titEsc}" title="Renombrar titular"
-                style="background:none;border:none;cursor:pointer;color:var(--text-sec);
-                  font-size:.7rem;padding:2px 5px;border-radius:3px;vertical-align:middle">✏️</button>
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+              <div style="font-size:.95rem;font-weight:700;display:flex;align-items:center;gap:6px">
+                👤 ${tit}
+                <button class="adic-rename-btn" data-titular="${titEsc}" title="Renombrar titular"
+                  style="background:none;border:none;cursor:pointer;color:var(--text-sec);
+                    font-size:.7rem;padding:2px 5px;border-radius:3px;vertical-align:middle">✏️</button>
+              </div>
+              ${headTotParts.length
+                ? `<span style="font-size:.8rem;color:var(--accent);font-weight:600;display:flex;gap:10px;flex-wrap:wrap;align-items:center">${headTotParts.join('<span style="color:var(--text-sec)">·</span>')}</span>`
+                : ''}
             </div>
             <button class="adic-bulk-btn" data-titular="${titEsc}" data-val="${bulkVal}"
               style="font-size:.72rem;padding:4px 12px;border-radius:5px;cursor:pointer;${bulkBtnSt}">
