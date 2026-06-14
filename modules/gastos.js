@@ -9,14 +9,14 @@ window.Mods.gastos = {
   _splitCatNames: new Set(['Restaurantes', 'Viajes']),
   _histMes:      null,
   _histCat:      '',
-  _histMoneda:   'UYU',   // 'UYU' | 'USD' | 'TOTAL_USD'
+  _gastoMoneda:  'ORIGEN', // 'ORIGEN' | 'UYU' | 'USD' — modo global de vista de importes
   _histTipo:     '',
   _histSearch:   '',
   _histTitular:  '',      // Filtro por tarjetahabiente en Historial
   _histSort:     { col: 'fecha', dir: 'desc' },
   _reviewSort:   { col: 'fecha', dir: 'asc' },
   _histView:     'gastos',  // 'gastos' | 'comercios'
-  _cuotasMoneda: 'UYU',   // 'UYU' | 'USD' | 'TOTAL_USD'
+  _cuotasMoneda: 'UYU',   // legacy — no longer used; kept to avoid reference errors during transition
   _resDesde:     null,
   _resHasta:     null,
   _tc:           '',      // TC UYU/USD — persiste en configuracion
@@ -112,8 +112,7 @@ window.Mods.gastos = {
     this._cats = cats;
     this._learned = {};
     this._learnedMoneda = {};
-    this._histMoneda   = 'TOTAL_USD';
-    this._cuotasMoneda = 'TOTAL_USD';
+    this._gastoMoneda  = 'ORIGEN';
     for (const r of learnedRows) {
       this._learned[r.merchant_normalizado] = r.categoria_id;
       if (r.moneda) this._learnedMoneda[r.merchant_normalizado] = r.moneda;
@@ -167,36 +166,16 @@ window.Mods.gastos = {
     return tc > 0 ? parseFloat(n) / tc : parseFloat(n);
   },
 
-  // Muestra el monto según el modo de vista
+  // Muestra el monto según el modo de vista global
   _fmtView(n, mon, viewMode, tc) {
-    if (viewMode === 'TOTAL_USD') return this._fmtUSD(this._toUSD(n, mon, tc));
-    return this._fmtMon(n, mon);
+    if (viewMode === 'USD') return this._fmtUSD(this._toUSD(n, mon, tc));
+    if (viewMode === 'UYU') {
+      const v = mon === 'USD' ? parseFloat(n) * (tc || 1) : parseFloat(n);
+      return this._fmtMon(v, 'UYU');
+    }
+    return this._fmtMon(n, mon); // ORIGEN: moneda nativa del gasto
   },
 
-  // Render del selector de moneda + campo TC (compartido entre Historial y Cuotas)
-  _renderMonedaFilter(idPfx, current, tc) {
-    const sel = `font-size:.82rem;padding:5px 10px;border-radius:6px;
-      border:1px solid var(--border);background:var(--surface);color:var(--text)`;
-    const lbl = `font-size:.68rem;color:var(--text-sec);margin-bottom:2px`;
-    return `
-      <div>
-        <div style="${lbl}">Importes</div>
-        <select id="${idPfx}-moneda" style="${sel}">
-          <option value="UYU"${current==='UYU'?' selected':''}>UYU — Pesos</option>
-          <option value="USD"${current==='USD'?' selected':''}>USD — Dólares</option>
-          <option value="TOTAL_USD"${current==='TOTAL_USD'?' selected':''}>≈ Total en USD</option>
-        </select>
-      </div>
-      ${current === 'TOTAL_USD' ? `
-      <div>
-        <div style="${lbl}">T/C UYU/USD</div>
-        <input id="${idPfx}-tc" type="number" min="1" step="0.1" placeholder="43.5"
-          value="${tc}"
-          style="width:78px;font-size:.82rem;padding:5px 8px;border-radius:6px;
-            border:1px solid var(--border);background:var(--surface);color:var(--text);
-            font-family:'DM Mono',monospace">
-      </div>` : ''}`;
-  },
 
   // Guarda el TC en configuracion (fire-and-forget)
   _saveTC(val) {
@@ -215,11 +194,37 @@ window.Mods.gastos = {
       ['importar', '📤 Importar EDC'],
       ['manual',   '✚ Nuevo gasto'],
     ];
+    const barTabs  = new Set(['resumen','historial','cuotas']);
+    const gm       = this._gastoMoneda || 'ORIGEN';
+    const monLabels = { ORIGEN: 'Origen', UYU: 'Todo UYU', USD: 'Todo USD' };
+    const btnSt = (mode) => {
+      const act = gm === mode;
+      return `font-size:.74rem;padding:4px 12px;border-radius:4px;border:none;cursor:pointer;
+        background:${act ? 'var(--accent)' : 'transparent'};
+        color:${act ? '#fff' : 'var(--text-sec)'};transition:background .15s,color .15s`;
+    };
     c.innerHTML = `
       <h1>Gastos</h1>
       <p class="page-subtitle">Control de egresos · importación automática de EDC</p>
       <div class="g-tabs">
         ${tabs.map(([t,l]) => `<button class="g-tab${this._tab===t?' active':''}" data-tab="${t}">${l}</button>`).join('')}
+      </div>
+      <div id="g-moneda-bar" style="display:${barTabs.has(this._tab)?'flex':'none'};
+        align-items:center;gap:10px;flex-wrap:wrap;padding:8px 12px;margin-bottom:.75rem;
+        background:var(--surface);border:1px solid var(--border);border-radius:8px">
+        <span style="font-size:.7rem;color:var(--text-sec);flex-shrink:0">Importes:</span>
+        <div style="display:flex;background:rgba(255,255,255,.06);border-radius:6px;padding:2px;gap:2px;flex-shrink:0">
+          ${['ORIGEN','UYU','USD'].map(m =>
+            `<button class="g-mon-btn" data-mode="${m}" style="${btnSt(m)}">${monLabels[m]}</button>`
+          ).join('')}
+        </div>
+        <div id="g-tc-wrap" style="display:${gm==='ORIGEN'?'none':'flex'};align-items:center;gap:6px">
+          <span style="font-size:.7rem;color:var(--text-sec)">T/C UYU/USD</span>
+          <input id="g-tc" type="number" min="1" step="0.1" value="${this._tc}" placeholder="43.5"
+            style="width:70px;font-size:.78rem;padding:4px 7px;border-radius:5px;
+              border:1px solid var(--border);background:var(--surface);color:var(--text);
+              font-family:'DM Mono',monospace">
+        </div>
       </div>
       <div id="g-content"></div>
     `;
@@ -227,9 +232,28 @@ window.Mods.gastos = {
       btn.addEventListener('click', () => {
         this._tab = btn.dataset.tab;
         document.querySelectorAll('.g-tab').forEach(b => b.classList.toggle('active', b === btn));
+        const bar = document.getElementById('g-moneda-bar');
+        if (bar) bar.style.display = barTabs.has(this._tab) ? 'flex' : 'none';
         this._drawTab();
       })
     );
+    document.querySelectorAll('.g-mon-btn').forEach(btn =>
+      btn.addEventListener('click', () => {
+        this._gastoMoneda = btn.dataset.mode;
+        document.querySelectorAll('.g-mon-btn').forEach(b => {
+          const act = b.dataset.mode === this._gastoMoneda;
+          b.style.background = act ? 'var(--accent)' : 'transparent';
+          b.style.color      = act ? '#fff' : 'var(--text-sec)';
+        });
+        const wrap = document.getElementById('g-tc-wrap');
+        if (wrap) wrap.style.display = this._gastoMoneda === 'ORIGEN' ? 'none' : 'flex';
+        this._drawTab();
+      })
+    );
+    document.getElementById('g-tc')?.addEventListener('change', e => {
+      this._saveTC(e.target.value.trim());
+      this._drawTab();
+    });
   },
 
   _drawTab() {
@@ -1325,7 +1349,7 @@ window.Mods.gastos = {
     const mesAct    = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
     const mesFilter = this._histMes    || mesAct;
     const catFilter = this._histCat    || '';
-    const viewMode  = this._histMoneda || 'UYU';   // 'UYU' | 'USD' | 'TOTAL_USD'
+    const viewMode  = this._gastoMoneda || 'ORIGEN'; // 'ORIGEN' | 'UYU' | 'USD'
     const tipoFilter= this._histTipo   || '';
     const tc        = parseFloat(this._tc) || 0;
 
@@ -1346,7 +1370,6 @@ window.Mods.gastos = {
     if (catFilter)                   q = q.eq('categoria_id', +catFilter);
     if (tipoFilter === 'cuotas')     q = q.not('cuota_actual', 'is', null);
     else if (tipoFilter)             q = q.eq('tipo_gasto', tipoFilter);
-    if (viewMode !== 'TOTAL_USD')    q = q.eq('moneda', viewMode);
     const { data: gastosRaw, error } = await q.order('fecha', { ascending: false });
     if (error) throw error;
 
@@ -1357,13 +1380,18 @@ window.Mods.gastos = {
     if (this._histTitular === '__titular__')  gastos = gastos.filter(g => !g.titular_adicional);
     else if (this._histTitular)              gastos = gastos.filter(g => g.titular_adicional === this._histTitular);
 
-    const needsTC = viewMode === 'TOTAL_USD' && !tc;
+    const needsTC = viewMode !== 'ORIGEN' && !tc;
 
-    const toVal = (monto, mon) => viewMode === 'TOTAL_USD'
-      ? this._toUSD(monto, mon, tc)
-      : parseFloat(monto);
-
-    const fmtTotal = n => viewMode === 'TOTAL_USD' ? this._fmtUSD(n) : this._fmtMon(n, viewMode);
+    const toVal = (monto, mon) => {
+      if (viewMode === 'USD') return this._toUSD(monto, mon, tc);
+      if (viewMode === 'UYU') return mon === 'USD' ? parseFloat(monto) * (tc || 1) : parseFloat(monto);
+      return this._toUSD(monto, mon, tc); // ORIGEN: aproximado en USD para totales
+    };
+    const fmtTotal = n => {
+      if (viewMode === 'USD') return this._fmtUSD(n);
+      if (viewMode === 'UYU') return this._fmtMon(n, 'UYU');
+      return tc ? `≈ ${this._fmtUSD(n)}` : '—';
+    };
 
     const totalMes = gastos.reduce((s, g) => s + toVal(g.monto, g.moneda), 0);
     const bycat = {};
@@ -1426,10 +1454,9 @@ window.Mods.gastos = {
               ${titularesHist.map(t => `<option value="${t}"${t===this._histTitular?' selected':''}>👤 ${t}</option>`).join('')}
             </select>
           </div>` : ''}
-          ${this._renderMonedaFilter('h', viewMode, this._tc)}
         </div>
         ${needsTC ? `<div style="margin-top:8px;font-size:.75rem;color:var(--red)">
-          ⚠ Ingresá el TC UYU/USD para ver los totales convertidos.</div>` : ''}
+          ⚠ Ingresá el T/C en la barra de arriba para convertir importes.</div>` : ''}
       </div>
 
       <!-- Resumen por categoría -->
@@ -1437,9 +1464,9 @@ window.Mods.gastos = {
       <div class="form-card" style="padding:14px 16px;margin-bottom:.75rem">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
           <span style="font-weight:600;font-size:.9rem">Resumen del mes
-            ${viewMode==='TOTAL_USD' && tc
-              ? `<span style="font-size:.7rem;color:var(--accent);font-weight:400"> · en USD (TC ${tc})</span>`
-              : ''}
+            ${viewMode !== 'ORIGEN' && tc
+              ? `<span style="font-size:.7rem;color:var(--accent);font-weight:400"> · ${viewMode === 'UYU' ? 'en UYU' : 'en USD'} (TC ${tc})</span>`
+              : viewMode === 'ORIGEN' && tc ? `<span style="font-size:.7rem;color:var(--text-sec);font-weight:400"> · ≈ USD</span>` : ''}
           </span>
           <span style="font-family:'DM Mono',monospace;font-size:.85rem;color:var(--accent);font-weight:600">
             Total: ${fmtTotal(totalMes)}
@@ -1533,15 +1560,6 @@ window.Mods.gastos = {
         this._drawHistorialGastos();
       });
     });
-    document.getElementById('h-moneda')?.addEventListener('change', e => {
-      this._histMoneda = e.target.value;
-      this._drawHistorialGastos();
-    });
-    document.getElementById('h-tc')?.addEventListener('change', e => {
-      this._saveTC(e.target.value.trim());
-      this._drawHistorialGastos();
-    });
-
     // Búsqueda — re-renderiza tbody sin volver a la DB
     const search = document.getElementById('h-search');
     const clear  = document.getElementById('h-search-clear');
@@ -2048,9 +2066,16 @@ window.Mods.gastos = {
       this._renderSuggestPanel();
     });
 
+    panel.querySelectorAll('.c-var-rename').forEach(btn =>
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
+        this._renameComercio(btn.dataset.norm);
+      })
+    );
+
     panel.querySelectorAll('.c-cluster-hdr').forEach(hdr =>
       hdr.addEventListener('click', e => {
-        if (e.target.closest('.c-sugg-unify')) return;
+        if (e.target.closest('.c-sugg-unify') || e.target.closest('.c-var-rename')) return;
         const key = hdr.dataset.key;
         if (this._suggestOpenKeys.has(key)) this._suggestOpenKeys.delete(key);
         else this._suggestOpenKeys.add(key);
@@ -2127,9 +2152,15 @@ window.Mods.gastos = {
                 · ${includedCount}/${c.total} incl.
               </span>
             </div>
-            <div style="font-size:.68rem;color:var(--text-sec);margin-top:2px;
-              overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
-              ${c.items.map(i => `${i.example} (${i.count})`).join(' · ')}
+            <div style="font-size:.68rem;color:var(--text-sec);margin-top:2px;display:flex;flex-wrap:wrap;gap:3px 8px">
+              ${c.items.map(i => `
+                <span style="display:inline-flex;align-items:center;gap:3px">
+                  ${i.example} (${i.count})
+                  <button class="c-var-rename" data-norm="${i.norm.replace(/"/g,'&quot;')}"
+                    title="Renombrar variante"
+                    style="background:none;border:none;cursor:pointer;color:var(--text-sec);
+                      font-size:.65rem;padding:0 2px;line-height:1">✏️</button>
+                </span>`).join('')}
             </div>
           </div>
           <button class="c-sugg-unify" data-key="${c.key}"
@@ -2790,9 +2821,9 @@ window.Mods.gastos = {
       .order('fecha', { ascending: false });
     if (error) throw error;
 
-    const viewMode = this._cuotasMoneda || 'UYU';   // 'UYU' | 'USD' | 'TOTAL_USD'
+    const viewMode = this._gastoMoneda || 'ORIGEN'; // 'ORIGEN' | 'UYU' | 'USD'
     const tc       = parseFloat(this._tc) || 0;
-    const needsTC  = viewMode === 'TOTAL_USD' && !tc;
+    const needsTC  = viewMode !== 'ORIGEN' && !tc;
 
     // Deduplicar: por cada compra en cuotas quedarse solo con la cuota más reciente
     const purchaseKey = g => `${g.comercio}|${g.cuotas_totales}|${g.monto}|${g.moneda}`;
@@ -2807,9 +2838,7 @@ window.Mods.gastos = {
     const allActivas = this._cuotasBanco
       ? allActivasRaw.filter(g => g.banco_tarjeta === this._cuotasBanco)
       : allActivasRaw;
-    const activas = viewMode === 'TOTAL_USD'
-      ? allActivas
-      : allActivas.filter(g => g.moneda === viewMode);
+    const activas = allActivas; // todos los modos muestran todas las cuotas
 
     const catBadge = id => {
       const c = this._cats.find(c => c.id === id);
@@ -2833,9 +2862,11 @@ window.Mods.gastos = {
       const restantes = g.cuotas_totales - g.cuota_actual;
       const [yr, mo] = g.fecha.split('-').map(Number);
       const baseDate  = new Date(yr, mo - 1, 1);
-      const monto     = viewMode === 'TOTAL_USD'
+      const monto     = viewMode === 'USD'
         ? this._toUSD(g.monto, g.moneda, tc)
-        : parseFloat(g.monto);
+        : viewMode === 'UYU'
+          ? (g.moneda === 'USD' ? parseFloat(g.monto) * (tc||1) : parseFloat(g.monto))
+          : this._toUSD(g.monto, g.moneda, tc); // ORIGEN: aprox USD para proyección
       for (let k = 1; k <= restantes; k++) {
         const d  = new Date(baseDate.getFullYear(), baseDate.getMonth() + k, 1);
         const ym = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
@@ -2846,41 +2877,44 @@ window.Mods.gastos = {
 
     // Total pendiente global
     const totalPend = activas.reduce((s, g) => {
-      const m = viewMode === 'TOTAL_USD'
+      const m = viewMode === 'USD'
         ? this._toUSD(g.monto, g.moneda, tc)
-        : parseFloat(g.monto);
+        : viewMode === 'UYU'
+          ? (g.moneda === 'USD' ? parseFloat(g.monto) * (tc||1) : parseFloat(g.monto))
+          : this._toUSD(g.monto, g.moneda, tc);
       return s + m * (g.cuotas_totales - g.cuota_actual);
     }, 0);
-    const fmtTotalPend = viewMode === 'TOTAL_USD' ? this._fmtUSD(totalPend) : this._fmtMon(totalPend, viewMode);
+    const fmtTotalPend = viewMode === 'USD' ? this._fmtUSD(totalPend)
+      : viewMode === 'UYU' ? this._fmtMon(totalPend, 'UYU')
+      : tc ? `≈ ${this._fmtUSD(totalPend)}` : '—';
 
     const maxProj = Math.max(1, ...proj.map(p => p.total));
     const selSt   = `font-size:.82rem;padding:5px 10px;border-radius:6px;border:1px solid var(--border);background:var(--surface);color:var(--text)`;
 
     gc.innerHTML = `
-      <!-- Filtro moneda -->
-      <div class="form-card" style="padding:12px 16px;margin-bottom:.75rem">
+      ${bancosCuotas.length > 0 ? `
+      <div class="form-card" style="padding:10px 16px;margin-bottom:.75rem">
         <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end">
-          ${this._renderMonedaFilter('c', viewMode, this._tc)}
-          ${bancosCuotas.length > 0 ? `
           <div>
             <div style="font-size:.68rem;color:var(--text-sec);margin-bottom:2px">Tarjeta</div>
             <select id="c-banco-cuotas" style="${selSt}">
               <option value="">Todas las TDC</option>
               ${bancosCuotas.map(b => `<option value="${b}"${b===this._cuotasBanco?' selected':''}>${b}</option>`).join('')}
             </select>
-          </div>` : ''}
+          </div>
         </div>
         ${needsTC ? `<div style="margin-top:8px;font-size:.75rem;color:var(--red)">
-          ⚠ Ingresá el TC UYU/USD para convertir a dólares.</div>` : ''}
-      </div>
+          ⚠ Ingresá el T/C en la barra de arriba para convertir importes.</div>` : ''}
+      </div>` : needsTC ? `<div class="form-card" style="padding:10px 16px;margin-bottom:.75rem;font-size:.75rem;color:var(--red)">
+        ⚠ Ingresá el T/C en la barra de arriba para convertir importes.</div>` : ''}
 
       <!-- Totales -->
       <div class="form-card" style="padding:14px 16px;margin-bottom:.75rem">
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
           <div>
             <div style="font-weight:600;font-size:.9rem">Cuotas pendientes
-              ${viewMode==='TOTAL_USD' && tc
-                ? `<span style="font-size:.7rem;color:var(--accent);font-weight:400"> · en USD (TC ${tc})</span>`
+              ${viewMode !== 'ORIGEN' && tc
+                ? `<span style="font-size:.7rem;color:var(--accent);font-weight:400"> · ${viewMode === 'UYU' ? 'en UYU' : 'en USD'} (TC ${tc})</span>`
                 : ''}
             </div>
             <div style="font-size:.74rem;color:var(--text-sec);margin-top:2px">
@@ -2907,7 +2941,9 @@ window.Mods.gastos = {
         <div style="font-weight:600;font-size:.9rem;margin-bottom:12px">Proyección próximos 12 meses</div>
         ${proj.filter(p => p.total > 0).map(p => {
           const pct = Math.max(2, (p.total / maxProj) * 100);
-          const label = viewMode === 'TOTAL_USD' ? this._fmtUSD(p.total) : this._fmtMon(p.total, viewMode);
+          const label = viewMode === 'USD' ? this._fmtUSD(p.total)
+            : viewMode === 'UYU' ? this._fmtMon(p.total, 'UYU')
+            : tc ? this._fmtUSD(p.total) : '—';
           return `
             <div style="margin-bottom:8px">
               <div style="display:flex;justify-content:space-between;font-size:.76rem;margin-bottom:3px">
@@ -2962,14 +2998,6 @@ window.Mods.gastos = {
       </div>`}
     `;
 
-    document.getElementById('c-moneda')?.addEventListener('change', e => {
-      this._cuotasMoneda = e.target.value;
-      this._drawCuotas();
-    });
-    document.getElementById('c-tc')?.addEventListener('change', e => {
-      this._saveTC(e.target.value.trim());
-      this._drawCuotas();
-    });
     document.getElementById('c-banco-cuotas')?.addEventListener('change', e => {
       this._cuotasBanco = e.target.value;
       this._drawCuotas();
@@ -3079,13 +3107,6 @@ window.Mods.gastos = {
       <!-- Filtros -->
       <div class="form-card" style="padding:12px 16px;margin-bottom:.75rem">
         <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end">
-          <div>
-            <div style="font-size:.68rem;color:var(--text-sec);margin-bottom:2px">T/C UYU/USD</div>
-            <input id="r-tc" type="number" min="1" step="0.1" placeholder="43.5" value="${this._tc}"
-              style="width:82px;font-size:.78rem;padding:5px 8px;border-radius:6px;
-                border:1px solid var(--border);background:var(--surface);color:var(--text);
-                font-family:'DM Mono',monospace">
-          </div>
           <div>
             <div style="font-size:.68rem;color:var(--text-sec);margin-bottom:2px">Desde</div>
             <input id="r-desde" type="date" value="${this._resDesde}" style="${selSt}">
@@ -3221,10 +3242,6 @@ window.Mods.gastos = {
     }
 
     // Handlers
-    document.getElementById('r-tc')?.addEventListener('change', e => {
-      this._saveTC(e.target.value.trim());
-      this._drawResumen();
-    });
     document.getElementById('r-cat')?.addEventListener('change', e => {
       this._resCat = e.target.value;
       this._drawResumen();
