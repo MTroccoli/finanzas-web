@@ -40,6 +40,7 @@ window.Mods.gastos = {
   _resView:      'gastos',// Vista del Resumen: 'gastos' | 'beneficios' | 'cuotas'
   _cuotasProjWin: 3,     // Ventana en meses para tabla de cuotas en Resumen (3/6/12)
   _cuotasResSort: { col: 'total', dir: 'desc' }, // Sort de la tabla de cuotas en Resumen
+  _resFilterMonth: null,  // Mes seleccionado al clickear una barra del gráfico (YYYY-MM)
   _adicTitular:  '',      // Nombre titular adicional asignado en la vista previa
   _adicMes:      null,    // Filtro mes en panel Adicional
   _adicTitularFiltro: '', // Filtro titular en panel Adicional
@@ -3628,6 +3629,31 @@ window.Mods.gastos = {
     const isBenef   = this._resView === 'beneficios' && hasBenef;
     const isCuotas  = this._resView === 'cuotas';
 
+    // Panel de detalle filtrado por barra clickeada
+    const detailMonth = this._resFilterMonth || null;
+    let byCatDetail = byCat, bySaveComDetail = bySaveCom, bySaveComNativeDetail = bySaveComNative;
+    if (detailMonth) {
+      byCatDetail = {}; bySaveComDetail = {}; bySaveComNativeDetail = {};
+      for (const r of allData) {
+        if (r.fecha.slice(0,7) !== detailMonth) continue;
+        const k = r.categoria_id ?? 'sin';
+        const v = toC(r.monto, r.moneda);
+        if (isBenefit(r)) {
+          const kc = (r.comercio || '').trim() || 'Sin comercio';
+          bySaveComDetail[kc] = (bySaveComDetail[kc] || 0) - toC(r.monto, r.moneda);
+          if (!bySaveComNativeDetail[kc]) bySaveComNativeDetail[kc] = { UYU: 0, USD: 0 };
+          const m = -parseFloat(r.monto);
+          if (r.moneda === 'USD') bySaveComNativeDetail[kc].USD += m;
+          else bySaveComNativeDetail[kc].UYU += m;
+        } else {
+          byCatDetail[k] = (byCatDetail[k] || 0) + v;
+        }
+      }
+    }
+    const detailMonthLabel = detailMonth
+      ? (projMonths.find(m => m.ym === detailMonth) || months.find(m => m.ym === detailMonth))?.label
+      : null;
+
     const selSt  = `font-size:.82rem;padding:5px 8px;border-radius:6px;border:1px solid var(--border);background:var(--surface);color:var(--text)`;
 
     gc.innerHTML = `
@@ -3716,8 +3742,9 @@ window.Mods.gastos = {
       <!-- Detail panel (pie / table) -->
       <div class="form-card" style="padding:14px 16px;margin-bottom:.75rem">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:6px">
-          <div style="font-weight:600;font-size:.9rem">
+          <div style="font-weight:600;font-size:.9rem;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
             ${isCuotas ? 'Planes activos con cuotas pendientes' : isBenef ? 'Ahorro por comercio · ' + curLabel : 'Gastos por categoría · ' + curLabel}
+            ${detailMonthLabel ? `<button class="btn-clear-res-filter" style="font-size:.7rem;padding:2px 8px;border-radius:12px;border:1px solid var(--accent);background:rgba(46,127,217,.15);color:var(--accent);cursor:pointer">📅 ${detailMonthLabel} ✕</button>` : ''}
           </div>
           ${isCuotas ? '' : `<div style="font-size:.78rem;color:var(--text-sec)">
             Total gastos: <span style="color:var(--accent);font-family:'DM Mono',monospace;font-weight:600">
@@ -3746,6 +3773,10 @@ window.Mods.gastos = {
       // Convertir todo a UYU para escala común; usar tc si disponible, fallback 40
       const approxTc = tc || 40;
       const xProj = projMonths.map(m => m.label);
+
+      // Highlighting: atenuar barras no seleccionadas
+      const selIdx    = detailMonth ? projMonths.findIndex(m => m.ym === detailMonth) : -1;
+      const mkCol     = (full, dim) => projMonths.map((_, i) => selIdx < 0 || i === selIdx ? full : dim);
 
       // Recurrentes (violeta) — base de la barra
       const recurY    = projMonths.map(() => recurUYU + recurUSD * approxTc);
@@ -3801,14 +3832,14 @@ window.Mods.gastos = {
         {
           x: xProj, y: recurY, type: 'bar',
           name: `Recurrentes${recurNombre ? ' · ' + recurNombre + ' /mes' : ''}`,
-          marker: { color: '#a855f7' },
+          marker: { color: mkCol('#a855f7', 'rgba(168,85,247,0.25)') },
           customdata: recurHov,
           hovertemplate: '<b>%{x}</b><br>%{customdata}<extra></extra>',
         },
         {
           x: xProj, y: cuotasY, type: 'bar',
           name: `Cuotas${cuotNombre ? ' · ' + cuotNombre + ' tot.' : ''}`,
-          marker: { color: '#fbbf24' },
+          marker: { color: mkCol('#fbbf24', 'rgba(251,191,36,0.25)') },
           customdata: cuotasText,
           hovertemplate: '<b>%{x}</b><br>%{customdata}<extra></extra>',
         },
@@ -3832,16 +3863,20 @@ window.Mods.gastos = {
       const barNamePfx = isBenef ? 'Ahorro' : 'Gastos';
       const barColUyu  = isBenef ? '#10b981' : '#3b82f6';
       const barColUsd  = isBenef ? '#34d399' : '#10b981';
+      const barDimUyu  = isBenef ? 'rgba(16,185,129,0.25)' : 'rgba(59,130,246,0.25)';
+      const barDimUsd  = isBenef ? 'rgba(52,211,153,0.25)' : 'rgba(16,185,129,0.25)';
+      const selIdxB    = detailMonth ? months.findIndex(m => m.ym === detailMonth) : -1;
+      const mkColB     = (full, dim) => months.map((_, i) => selIdxB < 0 || i === selIdxB ? full : dim);
 
       Plotly.newPlot('g-bar-chart', [
         {
           x: xLabels, y: fromUyuY, type: 'bar', name: `${barNamePfx} en UYU`,
-          marker: { color: barColUyu }, customdata: origUyu,
+          marker: { color: mkColB(barColUyu, barDimUyu) }, customdata: origUyu,
           hovertemplate: `<b>%{x}</b><br>$U %{customdata:,.0f}<extra></extra>`,
         },
         {
           x: xLabels, y: fromUsdY, type: 'bar', name: `${barNamePfx} en USD`,
-          marker: { color: barColUsd }, customdata: origUsd,
+          marker: { color: mkColB(barColUsd, barDimUsd) }, customdata: origUsd,
           hovertemplate: `<b>%{x}</b><br>USD %{customdata:,.0f}<extra></extra>`,
         },
       ], {
@@ -3888,6 +3923,20 @@ window.Mods.gastos = {
         return sort.dir === 'desc' ? vb - va : va - vb;
       });
 
+      // Filtrar por mes clickeado si hay uno seleccionado
+      const displayRows = detailMonth
+        ? planRows.filter(p => {
+            const lastD = new Date(p.fecha + 'T00:00:00');
+            const rem   = (p.cuotas_totales||0) - (p.cuota_actual||0);
+            for (let i = 1; i <= rem; i++) {
+              const payD  = new Date(lastD.getFullYear(), lastD.getMonth() + i, 1);
+              const payYM = `${payD.getFullYear()}-${String(payD.getMonth()+1).padStart(2,'0')}`;
+              if (payYM === detailMonth) return true;
+            }
+            return false;
+          })
+        : planRows;
+
       const thSt  = 'padding:7px 6px;border-bottom:1px solid var(--border);font-size:.72rem;color:var(--text-sec);text-transform:uppercase;font-weight:500';
       const thSrt = (col, label) => {
         const active = sort.col === col;
@@ -3896,8 +3945,8 @@ window.Mods.gastos = {
       };
       const tdSt  = 'padding:7px 6px;border-bottom:1px solid rgba(255,255,255,.04);font-size:.8rem';
 
-      if (!planRows.length) {
-        pieEl.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-sec);font-size:.85rem">Sin planes de cuotas activos</div>';
+      if (!displayRows.length) {
+        pieEl.innerHTML = `<div style="padding:20px;text-align:center;color:var(--text-sec);font-size:.85rem">${detailMonth ? 'Sin cuotas en este mes' : 'Sin planes de cuotas activos'}</div>`;
       } else {
         pieEl.innerHTML = `<div class="table-scroll" style="overflow-x:auto">
           <table style="width:100%;border-collapse:collapse">
@@ -3909,7 +3958,7 @@ window.Mods.gastos = {
               ${thSrt('total', 'Total restante')}
             </tr></thead>
             <tbody>
-              ${planRows.map(p => {
+              ${displayRows.map(p => {
                 const monStr = p.moneda === 'USD' ? this._fmtUSD(p.montoN) : this._fmtMon(p.montoN, p.moneda);
                 const totStr = p.moneda === 'USD' ? this._fmtUSD(p.montoN * p.futInst) : this._fmtMon(p.montoN * p.futInst, p.moneda);
                 return `<tr>
@@ -3929,7 +3978,7 @@ window.Mods.gastos = {
       }
     } else if (isBenef) {
       // Tabla de ahorro por comercio
-      const saveEntries = Object.entries(bySaveCom).filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1]);
+      const saveEntries = Object.entries(bySaveComDetail).filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1]);
       const totalSaveAll = saveEntries.reduce((s, [, v]) => s + v, 0);
       const thSt = 'text-align:left;padding:7px 6px;border-bottom:1px solid var(--border);font-size:.72rem;color:var(--text-sec);text-transform:uppercase;font-weight:500';
       const tdSt = 'padding:7px 6px;border-bottom:1px solid rgba(255,255,255,.04);font-size:.8rem';
@@ -3946,7 +3995,7 @@ window.Mods.gastos = {
             <tbody>
               ${saveEntries.map(([name, val]) => {
                 const pct = totalSaveAll > 0 ? val / totalSaveAll * 100 : 0;
-                const nat = bySaveComNative[name] || { UYU: 0, USD: 0 };
+                const nat = bySaveComNativeDetail[name] || { UYU: 0, USD: 0 };
                 const natParts = [];
                 if (nat.UYU > 0) natParts.push(this._fmtMon(nat.UYU, 'UYU'));
                 if (nat.USD > 0) natParts.push(this._fmtUSD(nat.USD));
@@ -3962,7 +4011,7 @@ window.Mods.gastos = {
       }
     } else {
       const palette = ['#3b82f6','#10b981','#f59e0b','#ef4444','#a855f7','#06b6d4','#ec4899','#84cc16','#f97316','#6366f1','#14b8a6','#eab308'];
-      const entries = Object.entries(byCat).filter(([, v]) => v > 0).sort((a,b) => b[1] - a[1]);
+      const entries = Object.entries(byCatDetail).filter(([, v]) => v > 0).sort((a,b) => b[1] - a[1]);
       if (!entries.length) {
         pieEl.innerHTML =
           '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text-sec);font-size:.85rem">Sin datos en el rango seleccionado</div>';
@@ -3996,14 +4045,32 @@ window.Mods.gastos = {
 
     // Handlers
     document.getElementById('r-card-gastos')?.addEventListener('click', () => {
-      if (this._resView !== 'gastos') { this._resView = 'gastos'; this._drawResumen(); }
+      if (this._resView !== 'gastos') { this._resView = 'gastos'; this._resFilterMonth = null; this._drawResumen(); }
     });
     document.getElementById('r-card-benef')?.addEventListener('click', () => {
       this._resView = this._resView === 'beneficios' ? 'gastos' : 'beneficios';
+      this._resFilterMonth = null;
       this._drawResumen();
     });
     document.getElementById('r-card-cuotas')?.addEventListener('click', () => {
       this._resView = this._resView === 'cuotas' ? 'gastos' : 'cuotas';
+      this._resFilterMonth = null;
+      this._drawResumen();
+    });
+
+    // Click en barra del gráfico → filtrar tabla de detalle
+    document.getElementById('g-bar-chart')?.on('plotly_click', data => {
+      if (!data?.points?.length) return;
+      const lbl = data.points[0].x;
+      const src = isCuotas ? projMonths : months;
+      const m   = src.find(m => m.label === lbl);
+      if (!m) return;
+      this._resFilterMonth = this._resFilterMonth === m.ym ? null : m.ym;
+      this._drawResumen();
+    });
+    document.querySelector('.btn-clear-res-filter')?.addEventListener('click', e => {
+      e.stopPropagation();
+      this._resFilterMonth = null;
       this._drawResumen();
     });
     document.querySelectorAll('.th-sort-cuotas').forEach(th =>
