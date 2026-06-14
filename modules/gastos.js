@@ -39,6 +39,7 @@ window.Mods.gastos = {
   _resTipo:      '',      // Filtro por tipo de gasto en Resumen
   _resView:      'gastos',// Vista del Resumen: 'gastos' | 'beneficios' | 'cuotas'
   _cuotasProjWin: 3,     // Ventana en meses para tabla de cuotas en Resumen (3/6/12)
+  _cuotasResSort: { col: 'total', dir: 'desc' }, // Sort de la tabla de cuotas en Resumen
   _adicTitular:  '',      // Nombre titular adicional asignado en la vista previa
   _adicMes:      null,    // Filtro mes en panel Adicional
   _adicTitularFiltro: '', // Filtro titular en panel Adicional
@@ -3487,8 +3488,24 @@ window.Mods.gastos = {
       const key = `${(r.comercio || '').slice(0,30)}|${r.cuotas_totales}|${Math.round(parseFloat(r.monto)*100)}|${r.moneda}`;
       if (!planMap[key] || r.cuota_actual > planMap[key].cuota_actual) planMap[key] = r;
     }
-    // Proyectar próximos 3 meses
-    const projMonths = [0, 1, 2].map(i => {
+    // Proyectar hasta la última cuota (mínimo 3 meses visibles en el gráfico)
+    const nowYMProj = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+    let maxProjIdx = 2;
+    for (const plan of Object.values(planMap)) {
+      const remaining = (plan.cuotas_totales||0) - (plan.cuota_actual||0);
+      if (remaining <= 0) continue;
+      const lastD = new Date(plan.fecha + 'T00:00:00');
+      for (let i = remaining; i >= 1; i--) {
+        const payD  = new Date(lastD.getFullYear(), lastD.getMonth() + i, 1);
+        const payYM = `${payD.getFullYear()}-${String(payD.getMonth()+1).padStart(2,'0')}`;
+        if (payYM >= nowYMProj) {
+          const mfn = (payD.getFullYear() - now.getFullYear()) * 12 + (payD.getMonth() - now.getMonth());
+          if (mfn > maxProjIdx) maxProjIdx = mfn;
+          break;
+        }
+      }
+    }
+    const projMonths = Array.from({ length: maxProjIdx + 1 }, (_, i) => {
       const d = new Date(now.getFullYear(), now.getMonth() + i, 1);
       return { ym: `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`, label: d.toLocaleDateString('es-UY', { month: 'short', year: '2-digit' }) };
     });
@@ -3509,9 +3526,11 @@ window.Mods.gastos = {
       }
     }
 
-    const futureUYU   = projMonths.reduce((s, m) => s + cuotasByMonth[m.ym].UYU, 0);
-    const futureUSD   = projMonths.reduce((s, m) => s + cuotasByMonth[m.ym].USD, 0);
-    const futureCount = projMonths.reduce((s, m) => s + cuotasByMonth[m.ym].count, 0);
+    // Card totals: primeros 3 meses solamente (la tarjeta dice "Cuotas 3m")
+    const cardMonths  = projMonths.slice(0, 3);
+    const futureUYU   = cardMonths.reduce((s, m) => s + cuotasByMonth[m.ym].UYU, 0);
+    const futureUSD   = cardMonths.reduce((s, m) => s + cuotasByMonth[m.ym].USD, 0);
+    const futureCount = cardMonths.reduce((s, m) => s + cuotasByMonth[m.ym].count, 0);
 
     // Recurrentes: totales del último mes (proyectados flat)
     const recurUYU = (recurrentesLast).filter(r => r.moneda !== 'USD').reduce((s,r) => s + parseFloat(r.monto), 0);
@@ -3592,8 +3611,6 @@ window.Mods.gastos = {
     const isCuotas  = this._resView === 'cuotas';
 
     const selSt  = `font-size:.82rem;padding:5px 8px;border-radius:6px;border:1px solid var(--border);background:var(--surface);color:var(--text)`;
-    const projWin = this._cuotasProjWin || 3;
-    const winBtnSt = n => `font-size:.68rem;padding:2px 8px;border-radius:4px;border:1px solid var(--border);background:${projWin===n?'var(--accent)':'var(--surface)'};color:var(--text);cursor:pointer`;
 
     gc.innerHTML = `
       <!-- Filtros -->
@@ -3682,11 +3699,9 @@ window.Mods.gastos = {
       <div class="form-card" style="padding:14px 16px;margin-bottom:.75rem">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:6px">
           <div style="font-weight:600;font-size:.9rem">
-            ${isCuotas ? `Planes activos · próximos ${projWin}M` : isBenef ? 'Ahorro por comercio · ' + curLabel : 'Gastos por categoría · ' + curLabel}
+            ${isCuotas ? 'Planes activos con cuotas pendientes' : isBenef ? 'Ahorro por comercio · ' + curLabel : 'Gastos por categoría · ' + curLabel}
           </div>
-          ${isCuotas ? `<div style="display:flex;gap:5px">
-            ${[3,6,12].map(n => `<button class="btn-proj-win" data-win="${n}" style="${winBtnSt(n)}">${n}M</button>`).join('')}
-          </div>` : `<div style="font-size:.78rem;color:var(--text-sec)">
+          ${isCuotas ? '' : `<div style="font-size:.78rem;color:var(--text-sec)">
             Total gastos: <span style="color:var(--accent);font-family:'DM Mono',monospace;font-weight:600">
               ${this._gastoMoneda === 'ORIGEN'
                 ? (() => { const p = []; if (totalGastUYU>0) p.push(this._fmtMon(totalGastUYU,'UYU')); if (totalGastUSD>0) p.push(this._fmtUSD(totalGastUSD)); return p.join(' · ') || '—'; })()
@@ -3831,60 +3846,61 @@ window.Mods.gastos = {
     const pieEl = document.getElementById('g-pie-chart');
 
     if (isCuotas) {
-      // Tabla de planes activos filtrada por ventana (projWin meses)
-      const nowYM      = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
-      const winEndDate = new Date(now.getFullYear(), now.getMonth() + projWin, 28);
+      // Tabla de planes activos — todas las cuotas futuras, sin filtro de ventana
+      const nowYM  = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+      const sort   = this._cuotasResSort || { col: 'total', dir: 'desc' };
 
-      // Para cada plan: encontrar la primera cuota FUTURA (>= mes actual)
-      const plansInWindow = Object.values(planMap).filter(p => {
-        const rem  = (p.cuotas_totales||0) - (p.cuota_actual||0);
-        if (rem <= 0) return false;
+      // Precomputar futInst por plan y filtrar solo planes con cuotas futuras
+      const planRows = Object.values(planMap).map(p => {
+        const rem   = (p.cuotas_totales||0) - (p.cuota_actual||0);
         const lastD = new Date(p.fecha + 'T00:00:00');
+        let futInst = 0;
         for (let i = 1; i <= rem; i++) {
           const payD  = new Date(lastD.getFullYear(), lastD.getMonth() + i, 1);
           const payYM = `${payD.getFullYear()}-${String(payD.getMonth()+1).padStart(2,'0')}`;
-          if (payYM >= nowYM) return payD <= winEndDate; // primera cuota futura ¿entra en ventana?
+          if (payYM >= nowYM) futInst++;
         }
-        return false; // todas las cuotas ya pasaron
-      }).sort((a, b) => parseFloat(b.monto) - parseFloat(a.monto));
+        return { ...p, futInst, montoN: parseFloat(p.monto) };
+      }).filter(p => p.futInst > 0);
 
-      const thSt = 'text-align:left;padding:7px 6px;border-bottom:1px solid var(--border);font-size:.72rem;color:var(--text-sec);text-transform:uppercase;font-weight:500';
-      const tdSt = 'padding:7px 6px;border-bottom:1px solid rgba(255,255,255,.04);font-size:.8rem';
+      planRows.sort((a, b) => {
+        const va = sort.col === 'total' ? a.montoN * a.futInst : a.montoN;
+        const vb = sort.col === 'total' ? b.montoN * b.futInst : b.montoN;
+        return sort.dir === 'desc' ? vb - va : va - vb;
+      });
 
-      if (!plansInWindow.length) {
-        pieEl.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-sec);font-size:.85rem">Sin planes activos en los próximos ' + projWin + ' meses</div>';
+      const thSt  = 'padding:7px 6px;border-bottom:1px solid var(--border);font-size:.72rem;color:var(--text-sec);text-transform:uppercase;font-weight:500';
+      const thSrt = (col, label) => {
+        const active = sort.col === col;
+        const arrow  = active ? (sort.dir === 'desc' ? ' ↓' : ' ↑') : '';
+        return `<th class="th-sort-cuotas" data-col="${col}" style="${thSt};text-align:right;cursor:pointer;${active?'color:var(--text)':''}">${label}${arrow}</th>`;
+      };
+      const tdSt  = 'padding:7px 6px;border-bottom:1px solid rgba(255,255,255,.04);font-size:.8rem';
+
+      if (!planRows.length) {
+        pieEl.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-sec);font-size:.85rem">Sin planes de cuotas activos</div>';
       } else {
         pieEl.innerHTML = `<div class="table-scroll" style="overflow-x:auto">
           <table style="width:100%;border-collapse:collapse">
             <thead><tr>
-              <th style="${thSt}">Compra</th>
+              <th style="${thSt};text-align:left">Compra</th>
+              <th style="${thSt};text-align:left">Tarjeta</th>
               <th style="${thSt};text-align:center">Cuota</th>
-              <th style="${thSt};text-align:right">Por mes</th>
-              <th style="${thSt};text-align:right">Total restante</th>
-              <th style="${thSt}">Tarjeta</th>
+              ${thSrt('mes', 'Por mes')}
+              ${thSrt('total', 'Total restante')}
             </tr></thead>
             <tbody>
-              ${plansInWindow.map(p => {
-                const lastD = new Date(p.fecha + 'T00:00:00');
-                const rem   = (p.cuotas_totales||0) - (p.cuota_actual||0);
-                // Contar solo las cuotas futuras (>= mes actual)
-                let futInst = 0;
-                for (let i = 1; i <= rem; i++) {
-                  const payD  = new Date(lastD.getFullYear(), lastD.getMonth() + i, 1);
-                  const payYM = `${payD.getFullYear()}-${String(payD.getMonth()+1).padStart(2,'0')}`;
-                  if (payYM >= nowYM) futInst++;
-                }
-                const monto  = parseFloat(p.monto);
-                const monStr = p.moneda === 'USD' ? this._fmtUSD(monto) : this._fmtMon(monto, p.moneda);
-                const totStr = p.moneda === 'USD' ? this._fmtUSD(monto * futInst) : this._fmtMon(monto * futInst, p.moneda);
+              ${planRows.map(p => {
+                const monStr = p.moneda === 'USD' ? this._fmtUSD(p.montoN) : this._fmtMon(p.montoN, p.moneda);
+                const totStr = p.moneda === 'USD' ? this._fmtUSD(p.montoN * p.futInst) : this._fmtMon(p.montoN * p.futInst, p.moneda);
                 return `<tr>
                   <td style="${tdSt}">${p.comercio || '—'}
                     <div style="font-size:.68rem;color:var(--text-sec)">${fmtDate(p.fecha)} · ${p.moneda}</div>
                   </td>
+                  <td style="${tdSt};color:var(--text-sec);font-size:.74rem">${p.banco_tarjeta || '—'}</td>
                   <td style="${tdSt};text-align:center;font-family:'DM Mono',monospace;color:var(--text-sec)">${p.cuota_actual}/${p.cuotas_totales}</td>
                   <td style="${tdSt};text-align:right;font-family:'DM Mono',monospace;font-weight:600;color:var(--gold)">${monStr}</td>
                   <td style="${tdSt};text-align:right;font-family:'DM Mono',monospace;color:var(--text-sec)">${totStr}</td>
-                  <td style="${tdSt};color:var(--text-sec);font-size:.74rem">${p.banco_tarjeta || '—'}</td>
                 </tr>`;
               }).join('')}
             </tbody>
@@ -3969,10 +3985,14 @@ window.Mods.gastos = {
       this._resView = this._resView === 'cuotas' ? 'gastos' : 'cuotas';
       this._drawResumen();
     });
-    document.querySelectorAll('.btn-proj-win').forEach(btn =>
-      btn.addEventListener('click', e => {
-        e.stopPropagation();
-        this._cuotasProjWin = parseInt(btn.dataset.win);
+    document.querySelectorAll('.th-sort-cuotas').forEach(th =>
+      th.addEventListener('click', () => {
+        const col = th.dataset.col;
+        if (this._cuotasResSort?.col === col) {
+          this._cuotasResSort.dir = this._cuotasResSort.dir === 'desc' ? 'asc' : 'desc';
+        } else {
+          this._cuotasResSort = { col, dir: 'desc' };
+        }
         this._drawResumen();
       })
     );
