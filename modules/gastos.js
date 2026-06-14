@@ -43,6 +43,8 @@ window.Mods.gastos = {
   _adicTitularFiltro: '', // Filtro titular en panel Adicional
   _adicCards:    [],      // [{ digits, name, editedName }] — tarjetas adicionales detectadas en el EDC
   _tarjOpen:     new Set(),// tarjetas abiertas en acordeón del tab Tarjetas
+  _lastTdcTab:   'historial', // último sub-tab de TDC visitado
+  _manualSaved:  [],      // gastos guardados en esta sesión desde el panel Nuevo gasto
 
   // Normalizar comercio para matching: lowercase, sin tildes, sin códigos de comercio
   _normMerchant(s) {
@@ -220,15 +222,15 @@ window.Mods.gastos = {
 
   _drawShell() {
     const c = document.getElementById('content');
-    const tabs = [
-      ['resumen',  '📊 Resumen'],
+    const tdcTabDefs = [
       ['historial','📋 Historial'],
       ['cuotas',   '📅 Cuotas'],
       ['comercios','🏷️ Comercios'],
       ['adicional','👤 Adicional'],
       ['importar', '📤 Importar EDC'],
-      ['manual',   '✚ Nuevo gasto'],
     ];
+    const tdcSet   = new Set(tdcTabDefs.map(([t]) => t));
+    const isTdc    = tdcSet.has(this._tab);
     const barTabs  = new Set(['resumen','historial','cuotas']);
     const gm       = this._gastoMoneda || 'ORIGEN';
     const monLabels = { ORIGEN: 'Origen', UYU: 'Todo UYU', USD: 'Todo USD' };
@@ -243,10 +245,21 @@ window.Mods.gastos = {
         <h1>Gastos</h1>
         <p class="page-subtitle">Control de egresos · importación automática de EDC</p>
         <div class="g-tabs">
-          ${tabs.map(([t,l]) => `<button class="g-tab${this._tab===t?' active':''}" data-tab="${t}">${l}</button>`).join('')}
+          <button class="g-tab${this._tab==='resumen'?' active':''}" data-tab="resumen">📊 Resumen</button>
+          <button class="g-tab${isTdc?' active':''}" data-tab="_tdc">💳 Tarjetas de Crédito</button>
+          <button class="g-tab${this._tab==='manual'?' active':''}" data-tab="manual">✚ Nuevo gasto</button>
+        </div>
+        <div id="g-subtab-row" class="g-tabs"
+          style="margin-top:-2px;margin-bottom:6px;display:${isTdc?'flex':'none'};flex-wrap:wrap">
+          ${tdcTabDefs.map(([t,l]) => `<button class="g-tab g-subtab${this._tab===t?' active':''}"
+            style="font-size:.75rem;padding:4px 12px" data-tab="${t}">${l}</button>`).join('')}
         </div>
         <select class="g-tab-select" id="g-tab-sel">
-          ${tabs.map(([t,l]) => `<option value="${t}"${this._tab===t?' selected':''}>${l}</option>`).join('')}
+          <option value="resumen"${this._tab==='resumen'?' selected':''}>📊 Resumen</option>
+          <optgroup label="💳 Tarjetas de Crédito">
+            ${tdcTabDefs.map(([t,l]) => `<option value="${t}"${this._tab===t?' selected':''}>${l}</option>`).join('')}
+          </optgroup>
+          <option value="manual"${this._tab==='manual'?' selected':''}>✚ Nuevo gasto</option>
         </select>
         <div id="g-moneda-bar" style="display:${barTabs.has(this._tab)?'flex':'none'};
           align-items:center;gap:10px;flex-wrap:wrap;padding:8px 12px;margin-bottom:0;
@@ -269,20 +282,39 @@ window.Mods.gastos = {
       <div id="g-content" style="padding-top:.75rem"></div>
       ${this._catDatalistHTML()}
     `;
+
+    const _refreshNav = () => {
+      const isTdcNow = tdcSet.has(this._tab);
+      document.querySelectorAll('.g-tab:not(.g-subtab)').forEach(b => {
+        const active = isTdcNow ? b.dataset.tab === '_tdc' : b.dataset.tab === this._tab;
+        b.classList.toggle('active', active);
+      });
+      document.querySelectorAll('.g-subtab').forEach(b =>
+        b.classList.toggle('active', b.dataset.tab === this._tab)
+      );
+      const subRow = document.getElementById('g-subtab-row');
+      if (subRow) subRow.style.display = isTdcNow ? 'flex' : 'none';
+      const bar = document.getElementById('g-moneda-bar');
+      if (bar) bar.style.display = barTabs.has(this._tab) ? 'flex' : 'none';
+    };
+
     document.querySelectorAll('.g-tab').forEach(btn =>
       btn.addEventListener('click', () => {
-        this._tab = btn.dataset.tab;
-        document.querySelectorAll('.g-tab').forEach(b => b.classList.toggle('active', b === btn));
-        const bar = document.getElementById('g-moneda-bar');
-        if (bar) bar.style.display = barTabs.has(this._tab) ? 'flex' : 'none';
+        const tgt = btn.dataset.tab;
+        if (tgt === '_tdc') {
+          this._tab = this._lastTdcTab || 'historial';
+        } else {
+          this._tab = tgt;
+          if (tdcSet.has(tgt)) this._lastTdcTab = tgt;
+        }
+        _refreshNav();
         this._drawTab();
       })
     );
     document.getElementById('g-tab-sel')?.addEventListener('change', e => {
       this._tab = e.target.value;
-      document.querySelectorAll('.g-tab').forEach(b => b.classList.toggle('active', b.dataset.tab === this._tab));
-      const bar = document.getElementById('g-moneda-bar');
-      if (bar) bar.style.display = barTabs.has(this._tab) ? 'flex' : 'none';
+      if (tdcSet.has(this._tab)) this._lastTdcTab = this._tab;
+      _refreshNav();
       this._drawTab();
     });
     document.querySelectorAll('.g-mon-btn').forEach(btn =>
@@ -1324,10 +1356,24 @@ window.Mods.gastos = {
 
   // ── Manual ──────────────────────────────────────────────────────────────
   _drawManual() {
-    const catOpts = this._cats.map(c =>
-      `<option value="${c.id}">${c.icono} ${c.nombre}</option>`).join('');
+    const savedSt = `font-size:.72rem;padding:2px 8px;border-radius:4px;border:1px solid var(--border);background:var(--surface);color:var(--text-sec);cursor:pointer`;
+
+    const savedHTML = this._manualSaved.length ? `
+      <div class="form-card" style="margin-bottom:.75rem;padding:14px 16px">
+        <h3 style="margin-bottom:10px">Guardados en esta sesión (${this._manualSaved.length})</h3>
+        ${this._manualSaved.map((g, i) => `
+          <div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border);font-size:.82rem">
+            <span style="color:var(--text-sec);font-family:'DM Mono',monospace;white-space:nowrap">${fmtDate(g.fecha)}</span>
+            <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${g.comercio || '—'}</span>
+            <span style="font-family:'DM Mono',monospace;color:var(--accent);white-space:nowrap">${fmt(g.monto_orig ?? g.monto, 2)} ${g.moneda}</span>
+            <span style="font-size:.68rem;color:var(--text-sec);white-space:nowrap">${g._catLabel || ''}</span>
+            <button class="g-ms-load" data-idx="${i}" style="${savedSt}">📝 Cargar</button>
+            <button class="g-ms-del" data-idx="${i}" style="${savedSt};color:var(--red);border-color:transparent">✕</button>
+          </div>`).join('')}
+      </div>` : '';
 
     document.getElementById('g-content').innerHTML = `
+      ${savedHTML}
       <div class="form-card">
         <h3>Nuevo gasto</h3>
         <form id="form-gasto">
@@ -1360,6 +1406,7 @@ window.Mods.gastos = {
               <select id="g-tipo-gasto">
                 <option value="casual">💳 Casual</option>
                 <option value="recurrente">🔁 Recurrente</option>
+                <option value="tdc">🏦 Cargo TDC</option>
               </select>
             </div>
             <div class="form-group">
@@ -1393,45 +1440,114 @@ window.Mods.gastos = {
             <label>Notas (opcional)</label>
             <input id="g-notas" type="text" placeholder="Detalle adicional…">
           </div>
-          <button type="submit" class="btn btn-primary">✚ Registrar gasto</button>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <button type="submit" class="btn btn-primary">✚ Registrar gasto</button>
+            <button type="button" id="g-guardar-btn" class="btn"
+              style="background:var(--surface-alt);border:1px solid var(--border);color:var(--text)">💾 Guardar</button>
+          </div>
         </form>
       </div>
     `;
 
-    document.getElementById('form-gasto').addEventListener('submit', async e => {
-      e.preventDefault();
+    const _readForm = () => {
       const rawMonto = parseFloat(document.getElementById('g-monto').value);
       const N        = parseInt(document.getElementById('g-dividir-entre').value) || 1;
-      const monto    = rawMonto / N;
       const catId    = this._catIdFromLabel(document.getElementById('g-categoria').value);
       const cuotaA   = parseInt(document.getElementById('g-cuota-actual').value)   || null;
       const cuotaT   = parseInt(document.getElementById('g-cuotas-totales').value) || null;
       const notas    = document.getElementById('g-notas').value.trim();
+      return { rawMonto, N, catId, cuotaA, cuotaT, notas,
+        monto: rawMonto / N,
+        fecha: document.getElementById('g-fecha').value,
+        moneda: document.getElementById('g-moneda').value,
+        comercio: document.getElementById('g-comercio').value.trim() || null,
+        tipo_gasto: document.getElementById('g-tipo-gasto').value,
+        usuario: document.getElementById('g-usuario').value,
+      };
+    };
 
-      if ((cuotaA && !cuotaT) || (cuotaT && !cuotaA)) {
-        return toast('Completá las dos cuotas o dejalas vacías', 'err');
-      }
-      if (cuotaA && cuotaT && cuotaA > cuotaT) {
-        return toast('La cuota actual no puede ser mayor al total', 'err');
-      }
+    const _validate = ({ rawMonto, cuotaA, cuotaT }) => {
+      if (!rawMonto) { toast('Ingresá el monto', 'err'); return false; }
+      if ((cuotaA && !cuotaT) || (cuotaT && !cuotaA)) { toast('Completá las dos cuotas o dejalas vacías', 'err'); return false; }
+      if (cuotaA && cuotaT && cuotaA > cuotaT) { toast('La cuota actual no puede ser mayor al total', 'err'); return false; }
+      return true;
+    };
 
+    const _buildRecord = ({ fecha, monto, rawMonto, N, moneda, comercio, catId, tipo_gasto, usuario, cuotaA, cuotaT, notas }) => ({
+      fecha, monto, moneda, tipo_gasto, usuario,
+      comercio: comercio || null,
+      categoria_id: catId ? +catId : null,
+      dividido_entre: N, fuente: 'manual',
+      cuota_actual: cuotaA, cuotas_totales: cuotaT,
+      notas: N > 1 ? `Total original: ${rawMonto} · dividido entre ${N}` : (notas || null),
+    });
+
+    document.getElementById('form-gasto').addEventListener('submit', async e => {
+      e.preventDefault();
+      const data = _readForm();
+      if (!_validate(data)) return;
       try {
-        await dbInsert('gastos', {
-          fecha:        document.getElementById('g-fecha').value,
-          monto, moneda: document.getElementById('g-moneda').value,
-          comercio:     document.getElementById('g-comercio').value.trim() || null,
-          categoria_id: catId ? +catId : null,
-          tipo_gasto:   document.getElementById('g-tipo-gasto').value,
-          usuario:      document.getElementById('g-usuario').value,
-          dividido_entre: N, fuente: 'manual',
-          cuota_actual:   cuotaA,
-          cuotas_totales: cuotaT,
-          notas: N > 1 ? `Total original: ${rawMonto} · dividido entre ${N}` : (notas || null),
-        });
+        await dbInsert('gastos', _buildRecord(data));
         toast('✅ Gasto registrado');
         e.target.reset();
         document.getElementById('g-fecha').value = new Date().toISOString().slice(0,10);
       } catch(err) { toast('❌ ' + err.message, 'err'); }
+    });
+
+    document.getElementById('g-guardar-btn')?.addEventListener('click', async () => {
+      const data = _readForm();
+      if (!_validate(data)) return;
+      const record = _buildRecord(data);
+      try {
+        await dbInsert('gastos', record);
+        const catId = data.catId;
+        this._manualSaved.unshift({
+          ...record,
+          monto_orig: data.rawMonto,
+          _catLabel: catId ? (this._catLabel(+catId) || '') : '',
+        });
+        toast('✅ Guardado');
+        // Partial reset: keep fecha, moneda, tipo, usuario
+        document.getElementById('g-monto').value = '';
+        document.getElementById('g-comercio').value = '';
+        document.getElementById('g-cuota-actual').value = '';
+        document.getElementById('g-cuotas-totales').value = '';
+        document.getElementById('g-notas').value = '';
+        document.getElementById('g-dividir-entre').value = '1';
+        const catEl = document.getElementById('g-categoria');
+        if (catEl) { catEl.value = ''; catEl.dataset.catid = ''; }
+        this._drawManual();
+      } catch(err) { toast('❌ ' + err.message, 'err'); }
+    });
+
+    document.querySelectorAll('.g-ms-load').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const g = this._manualSaved[+btn.dataset.idx];
+        if (!g) return;
+        document.getElementById('g-fecha').value = g.fecha || '';
+        document.getElementById('g-monto').value = g.monto_orig ?? g.monto;
+        document.getElementById('g-moneda').value = g.moneda || 'UYU';
+        document.getElementById('g-comercio').value = g.comercio || '';
+        document.getElementById('g-tipo-gasto').value = g.tipo_gasto || 'casual';
+        document.getElementById('g-usuario').value = g.usuario || 'compartido';
+        document.getElementById('g-dividir-entre').value = g.dividido_entre || 1;
+        document.getElementById('g-cuota-actual').value = g.cuota_actual || '';
+        document.getElementById('g-cuotas-totales').value = g.cuotas_totales || '';
+        document.getElementById('g-notas').value = g.notas || '';
+        const catEl = document.getElementById('g-categoria');
+        if (catEl && g.categoria_id) {
+          catEl.dataset.catid = g.categoria_id;
+          catEl.value = this._catLabel(g.categoria_id) || '';
+        } else if (catEl) { catEl.value = ''; catEl.dataset.catid = ''; }
+        document.getElementById('g-monto')?.focus();
+      });
+    });
+
+    document.querySelectorAll('.g-ms-del').forEach(btn => {
+      btn.addEventListener('click', () => {
+        this._manualSaved.splice(+btn.dataset.idx, 1);
+        this._drawManual();
+      });
     });
   },
 
@@ -3327,7 +3443,7 @@ window.Mods.gastos = {
       cur = new Date(cur.getFullYear(), cur.getMonth() + 1, 1);
     }
 
-    // Una sola query con todos los campos necesarios
+    // Query principal + cuotas próximas en paralelo
     let q = getDB().from('gastos')
       .select('fecha, monto, moneda, categoria_id, banco_tarjeta, tipo_gasto, cuota_actual, comercio')
       .gte('fecha', this._resDesde)
@@ -3335,7 +3451,18 @@ window.Mods.gastos = {
     if (this._resCat) q = q.eq('categoria_id', +this._resCat);
     if (this._resTipo === 'cuotas') q = q.not('cuota_actual', 'is', null);
     else if (this._resTipo) q = q.eq('tipo_gasto', this._resTipo);
-    const { data: allDataRaw = [] } = await q;
+
+    const todayStr     = now.toISOString().slice(0, 10);
+    const twoMoLater   = new Date(now.getFullYear(), now.getMonth() + 3, 0).toISOString().slice(0, 10);
+    let qFutureCuotas  = getDB().from('gastos')
+      .select('fecha, monto, moneda, cuota_actual, cuotas_totales')
+      .not('cuota_actual', 'is', null)
+      .gte('fecha', todayStr)
+      .lte('fecha', twoMoLater)
+      .or('titular_adicional.is.null,incluido_en_gastos.eq.true');
+    if (this._resBanco) qFutureCuotas = qFutureCuotas.eq('banco_tarjeta', this._resBanco);
+
+    const [{ data: allDataRaw = [] }, { data: futureCuotasRaw = [] }] = await Promise.all([q, qFutureCuotas]);
 
     // Lista única de bancos/tarjetas para el filtro
     const bancos = [...new Set(allDataRaw.map(r => r.banco_tarjeta).filter(Boolean))].sort();
@@ -3406,6 +3533,9 @@ window.Mods.gastos = {
     const hasBenef = totalSaved > 0 || totalSaveUYU > 0 || totalSaveUSD > 0;
     const isBenef  = this._resView === 'beneficios' && hasBenef;
 
+    const futureUYU = futureCuotasRaw.filter(r => r.moneda !== 'USD').reduce((s,r) => s + parseFloat(r.monto), 0);
+    const futureUSD = futureCuotasRaw.filter(r => r.moneda === 'USD').reduce((s,r) => s + parseFloat(r.monto), 0);
+
     const selSt  = `font-size:.82rem;padding:5px 8px;border-radius:6px;border:1px solid var(--border);background:var(--surface);color:var(--text)`;
 
     gc.innerHTML = `
@@ -3471,6 +3601,14 @@ window.Mods.gastos = {
               : fmtC(totalSaved)}
           </div>
           <div style="font-size:.65rem;color:var(--text-sec);margin-top:3px">${isBenef ? '👆 Viendo ahorro' : '🎁 Beneficio · 💎 Puntos BBVA'}</div>
+        </div>` : ''}
+        ${futureCuotasRaw.length > 0 ? `
+        <div class="form-card" style="padding:14px 16px;text-align:center;border-color:rgba(255,209,102,.3);background:rgba(255,209,102,.04)">
+          <div style="font-size:.65rem;color:var(--gold);margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em">📅 Cuotas próx. 2 meses</div>
+          <div style="font-family:'DM Mono',monospace;font-size:${futureUYU > 0 && futureUSD > 0 ? '.85rem' : '1.1rem'};font-weight:700;color:var(--gold);line-height:1.4">
+            ${(() => { const p = []; if (futureUYU > 0) p.push(this._fmtMon(futureUYU,'UYU')); if (futureUSD > 0) p.push(this._fmtUSD(futureUSD)); return p.join('<br>') || '—'; })()}
+          </div>
+          <div style="font-size:.65rem;color:var(--text-sec);margin-top:3px">${futureCuotasRaw.length} cuota(s) · ${todayStr.slice(0,7)} → ${twoMoLater.slice(0,7)}</div>
         </div>` : ''}
       </div>` : ''}
 
