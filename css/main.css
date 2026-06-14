@@ -507,6 +507,10 @@ hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
   overflow: hidden;
   margin-bottom: 24px;
 }
+.table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
 .table-header {
   display: flex;
   align-items: center;
@@ -802,5 +806,4 @@ tbody tr:hover td { background: rgba(46,127,217,.04); }
   thead th, tbody td { padding: 9px 10px; font-size: 12px; }
   .g-tabs { display: none; }
   .g-tab-select { display: block; }
-  .js-plotly-plot { pointer-events: none; }
 }

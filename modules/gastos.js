@@ -224,7 +224,6 @@ window.Mods.gastos = {
       ['cuotas',   '📅 Cuotas'],
       ['comercios','🏷️ Comercios'],
       ['adicional','👤 Adicional'],
-      ['tarjetas', '🏦 Tarjetas'],
       ['importar', '📤 Importar EDC'],
       ['manual',   '✚ Nuevo gasto'],
     ];
@@ -337,7 +336,6 @@ window.Mods.gastos = {
       case 'cuotas':    return this._drawCuotas();
       case 'comercios': return this._drawHistorialComercios();
       case 'adicional': return this._drawHistorialAdicional();
-      case 'tarjetas':  return this._drawTarjetas();
       case 'importar':  return this._drawImportar();
       case 'manual':    return this._drawManual();
     }
@@ -401,13 +399,26 @@ window.Mods.gastos = {
 
     // Cargar importaciones anteriores para el panel de gestión
     const sb = getDB();
-    const [impsRes, gastosRes, stoRes] = await Promise.all([
+    const [impsRes, gastosRes, stoRes, cardCountRes, periodosRes] = await Promise.all([
       sb.from('importaciones').select('id, registros_importados, archivo_path, banco_tarjeta').order('id', { ascending: false }),
       sb.from('gastos').select('importacion_id, fecha').not('importacion_id', 'is', null),
       sb.storage.from('edcs').list('', { limit: 1000, sortBy: { column: 'name', order: 'asc' } }).catch(() => ({ data: [] })),
+      sb.from('gastos').select('banco_tarjeta').not('banco_tarjeta', 'is', null),
+      sb.from('tarjeta_periodos').select('*').order('periodo', { ascending: false }),
     ]);
     const impsRaw = impsRes.data || [];
     const gastosAll = gastosRes.data || [];
+
+    // Tarjetas detectadas: conteo de gastos por tarjeta + períodos de cierre/vencimiento
+    const cardCounts = {};
+    for (const r of (cardCountRes.data || [])) cardCounts[r.banco_tarjeta] = (cardCounts[r.banco_tarjeta] || 0) + 1;
+    const periodosByCard = {};
+    for (const p of (periodosRes.data || [])) (periodosByCard[p.banco_tarjeta] = periodosByCard[p.banco_tarjeta] || []).push(p);
+    const cardNames = [...new Set([
+      ...Object.keys(cardCounts),
+      ...impsRaw.map(i => i.banco_tarjeta),
+      ...(periodosRes.data || []).map(p => p.banco_tarjeta),
+    ].filter(Boolean))].sort((a, b) => (cardCounts[b] || 0) - (cardCounts[a] || 0) || a.localeCompare(b));
     // PDFs en storage que no están enlazados a ninguna importación (huérfanos →
     // recuperables tras un borrado accidental de la tabla gastos/importaciones).
     const stoFiles = (stoRes?.data || []).filter(f => f?.name && /\.(pdf|png|jpe?g|webp|gif)$/i.test(f.name));
@@ -449,6 +460,7 @@ window.Mods.gastos = {
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
           <h3 style="margin:0;font-size:.9rem">Importaciones anteriores</h3>
         </div>
+        <div class="table-scroll">
         <table style="font-size:.8rem">
           <thead><tr>
             <th style="width:40px">
@@ -479,12 +491,25 @@ window.Mods.gastos = {
               </tr>`).join('')}
           </tbody>
         </table>
+        </div>
         <div id="g-imp-sel-bar" style="display:none;margin-top:10px;display:flex;gap:8px;align-items:center">
           <span id="g-imp-sel-count" style="font-size:.78rem;color:var(--text-sec)"></span>
           <button id="g-btn-del-sel" class="btn btn-ghost"
             style="font-size:.75rem;padding:4px 10px;color:var(--red);border-color:rgba(239,68,68,.3)">
             🗑 Eliminar seleccionados
           </button>
+        </div>
+      </div>`}
+
+      ${cardNames.length === 0 ? '' : `
+      <div class="form-card" style="padding:14px 16px;margin-top:.75rem">
+        <h3 style="margin:0 0 4px;font-size:.9rem">🏦 Tarjetas</h3>
+        <p style="font-size:.78rem;color:var(--text-sec);margin:0 0 12px">
+          Renombrá tarjetas que la IA haya leído distinto (se unifican todos sus gastos) y registrá
+          las fechas de cierre y vencimiento de cada estado de cuenta.
+        </p>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          ${cardNames.map(name => this._tarjetaCard(name, cardCounts[name] || 0, periodosByCard[name] || [])).join('')}
         </div>
       </div>`}
 
@@ -776,6 +801,8 @@ window.Mods.gastos = {
       );
       if (ok) deleteImport(ids, `los ${total} gastos importados`);
     });
+
+    this._attachTarjetasHandlers();
   },
 
   _drawReview() {
@@ -1590,7 +1617,7 @@ window.Mods.gastos = {
           <div class="empty"><div class="empty-icon">💸</div>
           <div class="empty-text">Sin gastos para este período</div></div>
         ` : `
-          <div style="overflow-x:auto">
+          <div class="table-scroll">
           <table>
             <thead id="g-hist-thead"><tr>
               ${this._thSort('fecha',    'Fecha',    this._histSort)}
@@ -1783,6 +1810,7 @@ window.Mods.gastos = {
           <div class="empty"><div class="empty-icon">🏷️</div>
           <div class="empty-text">Sin comercios registrados</div></div>
         ` : `
+          <div class="table-scroll">
           <table>
             <thead id="g-com-thead"><tr>
               <th style="width:30px"><input type="checkbox" id="c-chk-all" title="Seleccionar todos los visibles"></th>
@@ -1796,6 +1824,7 @@ window.Mods.gastos = {
             </tr></thead>
             <tbody id="g-com-tbody"></tbody>
           </table>
+          </div>
         `}
       </div>
     `;
@@ -2714,12 +2743,14 @@ window.Mods.gastos = {
               </div>
               <div class="adic-month-detail" data-key="${openKey.replace(/"/g,'&quot;')}"
                 style="display:${isOpen?'block':'none'};padding:8px 4px 0">
+                <div class="table-scroll">
                 <table style="font-size:.8rem;margin-bottom:4px">
                   <thead><tr>
                     <th>Fecha</th><th>Comercio</th><th>Monto</th><th>Descuento</th><th>Total</th><th></th>
                   </tr></thead>
                   <tbody>${tableRows}</tbody>
                 </table>
+                </div>
               </div>
             </div>`;
         }).join('');
@@ -3097,6 +3128,7 @@ window.Mods.gastos = {
       <!-- Lista -->
       <div class="table-wrap">
         <div class="table-header"><span class="table-title">Compras en cuotas</span></div>
+        <div class="table-scroll">
         <table>
           <thead><tr>
             <th>Compra</th><th>Categoría</th><th>Cuota</th><th>Por mes</th><th>Restante</th><th></th>
@@ -3132,6 +3164,7 @@ window.Mods.gastos = {
             }).join('')}
           </tbody>
         </table>
+        </div>
       </div>`}
     `;
 
@@ -3151,50 +3184,7 @@ window.Mods.gastos = {
   },
 
   // ── Tarjetas (renombrar + cierre/vencimiento por mes) ───────────────────
-  async _drawTarjetas() {
-    const gc = document.getElementById('g-content');
-    gc.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
-
-    const sb = getDB();
-    const [gRes, iRes, pRes] = await Promise.all([
-      sb.from('gastos').select('banco_tarjeta').not('banco_tarjeta', 'is', null),
-      sb.from('importaciones').select('banco_tarjeta').not('banco_tarjeta', 'is', null),
-      sb.from('tarjeta_periodos').select('*').order('periodo', { ascending: false }),
-    ]);
-
-    const counts = {};
-    for (const r of (gRes.data || [])) counts[r.banco_tarjeta] = (counts[r.banco_tarjeta] || 0) + 1;
-    const names = new Set([
-      ...Object.keys(counts),
-      ...(iRes.data || []).map(r => r.banco_tarjeta),
-      ...(pRes.data || []).map(r => r.banco_tarjeta),
-    ].filter(Boolean));
-
-    const periodosByCard = {};
-    for (const p of (pRes.data || [])) (periodosByCard[p.banco_tarjeta] = periodosByCard[p.banco_tarjeta] || []).push(p);
-
-    const cards = [...names].sort((a, b) => (counts[b] || 0) - (counts[a] || 0) || a.localeCompare(b));
-
-    if (!cards.length) {
-      gc.innerHTML = `<div class="table-wrap"><div class="empty"><div class="empty-icon">🏦</div>
-        <div class="empty-text">No hay tarjetas detectadas todavía</div>
-        <div style="font-size:.75rem;color:var(--text-sec);margin-top:4px">
-          Las tarjetas aparecen al importar un EDC.</div></div></div>`;
-      return;
-    }
-
-    gc.innerHTML = `
-      <div class="form-card" style="padding:12px 16px;margin-bottom:.75rem;font-size:.78rem;color:var(--text-sec)">
-        Renombrá tarjetas que la IA haya leído distinto (se unifican todos sus gastos) y registrá
-        las fechas de cierre y vencimiento de cada estado de cuenta.
-      </div>
-      <div style="display:flex;flex-direction:column;gap:8px">
-        ${cards.map(name => this._tarjetaCard(name, counts[name] || 0, periodosByCard[name] || [])).join('')}
-      </div>`;
-
-    this._attachTarjetasHandlers();
-  },
-
+  // El editor de tarjetas vive dentro de la pestaña "Importar EDC".
   _tarjetaCard(name, count, periodos) {
     const isOpen = this._tarjOpen.has(name);
     const nameEsc = name.replace(/"/g, '&quot;');
@@ -3267,7 +3257,7 @@ window.Mods.gastos = {
         const card = hdr.dataset.card;
         if (this._tarjOpen.has(card)) this._tarjOpen.delete(card);
         else this._tarjOpen.add(card);
-        this._drawTarjetas();
+        this._drawTab();
       })
     );
 
@@ -3297,7 +3287,7 @@ window.Mods.gastos = {
         if (!confirm(`¿Eliminar el período ${btn.dataset.periodo}?`)) return;
         try {
           await dbDelete('tarjeta_periodos', { banco_tarjeta: btn.dataset.card, periodo: btn.dataset.periodo });
-          this._drawTarjetas();
+          this._drawTab();
         } catch(err) { toast('❌ ' + err.message, 'err'); }
       })
     );
@@ -3312,7 +3302,7 @@ window.Mods.gastos = {
         try {
           await dbUpsert('tarjeta_periodos', { banco_tarjeta: btn.dataset.card, periodo: mes, cierre, vencimiento: venc });
           toast('✅ Mes agregado');
-          this._drawTarjetas();
+          this._drawTab();
         } catch(err) { toast('❌ ' + err.message, 'err'); }
       })
     );
@@ -3336,7 +3326,7 @@ window.Mods.gastos = {
       }
       if (this._tarjOpen.has(oldName)) { this._tarjOpen.delete(oldName); this._tarjOpen.add(nombre); }
       toast(`✅ Tarjeta renombrada a "${nombre}"`);
-      this._drawTarjetas();
+      this._drawTab();
     } catch(err) { toast('❌ ' + err.message, 'err'); }
   },
 
@@ -3442,9 +3432,6 @@ window.Mods.gastos = {
       .sort((a,b) => b.total - a.total)[0];
 
     const selSt  = `font-size:.82rem;padding:5px 8px;border-radius:6px;border:1px solid var(--border);background:var(--surface);color:var(--text)`;
-    const catOpts = this._cats.map(c =>
-      `<option value="${c.id}"${String(c.id)===String(this._resCat)?' selected':''}>${c.icono} ${c.nombre}</option>`
-    ).join('');
 
     gc.innerHTML = `
       <!-- Filtros -->
@@ -3460,7 +3447,10 @@ window.Mods.gastos = {
           </div>
           <div>
             <div style="font-size:.68rem;color:var(--text-sec);margin-bottom:2px">Categoría</div>
-            ${this._catComboHTML({ id: 'r-cat', value: this._resCat || null, placeholder: 'Todos los rubros', style: selSt + ';min-width:150px' })}
+            <select id="r-cat" style="${selSt};min-width:150px">
+              <option value="">Todos los rubros</option>
+              ${this._cats.map(c => `<option value="${c.id}"${String(c.id)===String(this._resCat)?' selected':''}>${c.icono} ${c.nombre}</option>`).join('')}
+            </select>
           </div>
           <div>
             <div style="font-size:.68rem;color:var(--text-sec);margin-bottom:2px">Tarjeta</div>
@@ -3537,6 +3527,9 @@ window.Mods.gastos = {
     // Gastos originalmente en pesos y en dólares, ambos convertidos a la moneda de análisis
     const fromUyuY = months.map(m => toC(byMonth[m.ym].UYU, 'UYU'));
     const fromUsdY = months.map(m => toC(byMonth[m.ym].USD, 'USD'));
+    // Montos en moneda origen para el tooltip (sin conversión)
+    const origUyu  = months.map(m => byMonth[m.ym].UYU);
+    const origUsd  = months.map(m => byMonth[m.ym].USD);
     const xLabels  = months.map(m => m.label);
 
     const layoutBase = {
@@ -3548,22 +3541,23 @@ window.Mods.gastos = {
     Plotly.newPlot('g-bar-chart', [
       {
         x: xLabels, y: fromUyuY, type: 'bar', name: 'Gastos en UYU',
-        marker: { color: '#3b82f6' },
-        hovertemplate: `<b>%{x}</b><br>${tickPfx}%{y:,.0f}<extra>de pesos</extra>`,
+        marker: { color: '#3b82f6' }, customdata: origUyu,
+        hovertemplate: `<b>%{x}</b><br>$U %{customdata:,.0f}<extra>de pesos</extra>`,
       },
       {
         x: xLabels, y: fromUsdY, type: 'bar', name: 'Gastos en USD',
-        marker: { color: '#10b981' },
-        hovertemplate: `<b>%{x}</b><br>${tickPfx}%{y:,.0f}<extra>de dólares</extra>`,
+        marker: { color: '#10b981' }, customdata: origUsd,
+        hovertemplate: `<b>%{x}</b><br>USD %{customdata:,.0f}<extra>de dólares</extra>`,
       },
     ], {
       ...layoutBase,
       barmode: 'stack',
+      dragmode: false,
       margin: { t: 10, r: 10, b: 70, l: 70 },
-      xaxis: { tickangle: -30, gridcolor: 'rgba(255,255,255,.05)' },
-      yaxis: { tickprefix: tickPfx, tickformat: ',d', gridcolor: 'rgba(255,255,255,.05)', zerolinecolor: 'rgba(255,255,255,.1)' },
+      xaxis: { tickangle: -30, gridcolor: 'rgba(255,255,255,.05)', fixedrange: true },
+      yaxis: { tickprefix: tickPfx, tickformat: ',d', gridcolor: 'rgba(255,255,255,.05)', zerolinecolor: 'rgba(255,255,255,.1)', fixedrange: true },
       legend: { orientation: 'h', y: -0.25, x: 0 },
-    }, { displayModeBar: false, responsive: true });
+    }, { displayModeBar: false, responsive: true, scrollZoom: false });
 
     // ── Pie chart ─────────────────────────────────────────────────────────
     const palette = ['#3b82f6','#10b981','#f59e0b','#ef4444','#a855f7','#06b6d4','#ec4899','#84cc16','#f97316','#6366f1','#14b8a6','#eab308'];
@@ -3578,27 +3572,30 @@ window.Mods.gastos = {
         return c ? `${c.icono} ${c.nombre}` : 'Otros';
       });
       const pieValues = entries.map(([, v]) => v);
+      // Solo etiquetar las 5 categorías mayores; el resto sin texto (se ve en hover)
+      const pieText = pieLabels.map((lbl, i) => i < 5 ? lbl : '');
       Plotly.newPlot('g-pie-chart', [{
         values: pieValues,
         labels: pieLabels,
+        text: pieText,
         type: 'pie',
         hole: 0.45,
-        textinfo: 'label+percent',
-        textposition: 'outside',
-        textfont: { size: 11, color: '#cfcfcf' },
+        textinfo: 'text',
+        textposition: 'inside',
+        insidetextorientation: 'horizontal',
+        textfont: { size: 11, color: '#fff' },
         marker: { colors: palette.slice(0, pieValues.length), line: { color: 'rgba(0,0,0,.2)', width: 1 } },
         hovertemplate: `<b>%{label}</b><br>${tickPfx}%{value:,.0f}<br>%{percent}<extra></extra>`,
       }], {
         ...layoutBase,
         showlegend: false,
         margin: { t: 20, r: 20, b: 20, l: 20 },
-      }, { displayModeBar: false, responsive: true });
+      }, { displayModeBar: false, responsive: true, scrollZoom: false });
     }
 
     // Handlers
     document.getElementById('r-cat')?.addEventListener('change', e => {
-      const catId = this._catIdFromLabel(e.target.value);
-      this._resCat = catId != null ? String(catId) : '';
+      this._resCat = e.target.value || '';
       this._drawResumen();
     });
     document.getElementById('r-banco')?.addEventListener('change', e => {
