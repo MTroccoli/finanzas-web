@@ -3574,6 +3574,7 @@ window.Mods.gastos = {
     const byMonthSave = {};
     for (const m of months) byMonthSave[m.ym] = { UYU: 0, USD: 0 };
     const bySaveCom = {};
+    const bySaveComNative = {}; // { comercio: { UYU, USD } } — montos en moneda origen
     for (const r of allData) {
       if (!isBenefit(r)) continue;
       const ym = r.fecha.slice(0, 7);
@@ -3581,6 +3582,9 @@ window.Mods.gastos = {
       if (byMonthSave[ym]) byMonthSave[ym][r.moneda === 'USD' ? 'USD' : 'UYU'] += monto;
       const k = (r.comercio || '').trim() || 'Sin comercio';
       bySaveCom[k] = (bySaveCom[k] || 0) - toC(r.monto, r.moneda);
+      if (!bySaveComNative[k]) bySaveComNative[k] = { UYU: 0, USD: 0 };
+      if (r.moneda === 'USD') bySaveComNative[k].USD += monto;
+      else bySaveComNative[k].UYU += monto;
     }
 
     const hasBenef  = totalSaved > 0 || totalSaveUYU > 0 || totalSaveUSD > 0;
@@ -3705,57 +3709,90 @@ window.Mods.gastos = {
     };
 
     if (isCuotas) {
-      // Proyección: cuotas UYU/USD + recurrentes UYU/USD apilados por mes
+      // 2 colores: violeta (recurrentes, abajo) + dorado (cuotas, arriba)
+      // Convertir todo a UYU para escala común; usar tc si disponible, fallback 40
+      const approxTc = tc || 40;
       const xProj = projMonths.map(m => m.label);
-      const cuotaUYUvals = projMonths.map(m => cuotasByMonth[m.ym].UYU);
-      const cuotaUSDvals = projMonths.map(m => cuotasByMonth[m.ym].USD);
-      const recurUYUvals = projMonths.map(() => recurUYU);
-      const recurUSDvals = projMonths.map(() => recurUSD);
+
+      // Recurrentes (violeta) — base de la barra
+      const recurY    = projMonths.map(() => recurUYU + recurUSD * approxTc);
+      const recurText = projMonths.map(() => {
+        const parts = [];
+        if (recurUYU >= 100) parts.push(`$U ${fmt(recurUYU, 0)}`);
+        if (recurUSD >= 1)   parts.push(`USD ${fmt(recurUSD, 0)}`);
+        return parts.join(' / ');
+      });
+      const recurHov = projMonths.map(() => {
+        const parts = [];
+        if (recurUYU >= 100) parts.push(`$U ${fmt(recurUYU, 0)}`);
+        if (recurUSD >= 1)   parts.push(`USD ${fmt(recurUSD, 0)}`);
+        return parts.join(' + ') || '—';
+      });
+
+      // Cuotas (dorado) — encima
+      const cuotasY    = projMonths.map(m => cuotasByMonth[m.ym].UYU + cuotasByMonth[m.ym].USD * approxTc);
+      const cuotasText = projMonths.map(m => {
+        const parts = [];
+        if (cuotasByMonth[m.ym].UYU >= 100) parts.push(`$U ${fmt(cuotasByMonth[m.ym].UYU, 0)}`);
+        if (cuotasByMonth[m.ym].USD >= 1)   parts.push(`USD ${fmt(cuotasByMonth[m.ym].USD, 0)}`);
+        return parts.join(' / ');
+      });
+
+      // Anotaciones totales encima de cada barra
+      const annotations = projMonths.map((m, i) => {
+        const totalY = recurY[i] + cuotasY[i];
+        const parts = [];
+        const totUYU = cuotasByMonth[m.ym].UYU + recurUYU;
+        const totUSD = cuotasByMonth[m.ym].USD + recurUSD;
+        if (totUYU >= 100) parts.push(`$U ${fmt(totUYU, 0)}`);
+        if (totUSD >= 1)   parts.push(`USD ${fmt(totUSD, 0)}`);
+        return {
+          x: m.label, y: totalY,
+          text: parts.join(' / ') || '',
+          showarrow: false,
+          font: { size: 10, color: '#e5e7eb' },
+          xanchor: 'center', yanchor: 'bottom', yshift: 4,
+        };
+      });
+
+      const recurNombre = [
+        recurUYU >= 100 ? `$U ${fmt(recurUYU, 0)}` : '',
+        recurUSD >= 1   ? `USD ${fmt(recurUSD, 0)}` : '',
+      ].filter(Boolean).join(' + ');
+      const cuotNombre = [
+        futureUYU >= 100 ? `$U ${fmt(futureUYU, 0)}` : '',
+        futureUSD >= 1   ? `USD ${fmt(futureUSD, 0)}` : '',
+      ].filter(Boolean).join(' + ');
+
       Plotly.newPlot('g-bar-chart', [
         {
-          x: xProj, y: cuotaUYUvals, type: 'bar',
-          name: `Cuotas $U · ${this._fmtMon(futureUYU, 'UYU')} tot.`,
-          marker: { color: '#fbbf24' },
-          text: cuotaUYUvals.map(v => v >= 200 ? `$U ${fmt(v, 0)}` : ''),
-          textposition: 'inside', insidetextanchor: 'middle',
-          textfont: { size: 10, color: 'rgba(0,0,0,.8)' },
-          hovertemplate: '<b>%{x}</b><br>$U %{y:,.0f}<extra></extra>',
-        },
-        {
-          x: xProj, y: cuotaUSDvals, type: 'bar',
-          name: `Cuotas USD · ${this._fmtUSD(futureUSD)} tot.`,
-          marker: { color: '#f59e0b' },
-          text: cuotaUSDvals.map(v => v >= 1 ? `USD ${fmt(v, 0)}` : ''),
-          textposition: 'inside', insidetextanchor: 'middle',
-          textfont: { size: 10, color: 'rgba(0,0,0,.8)' },
-          hovertemplate: '<b>%{x}</b><br>USD %{y:,.2f}<extra></extra>',
-        },
-        {
-          x: xProj, y: recurUYUvals, type: 'bar',
-          name: `Recurrentes $U · ${this._fmtMon(recurUYU, 'UYU')} /mes`,
+          x: xProj, y: recurY, type: 'bar',
+          name: `Recurrentes${recurNombre ? ' · ' + recurNombre + ' /mes' : ''}`,
           marker: { color: '#a855f7' },
-          text: recurUYUvals.map(v => v >= 200 ? `$U ${fmt(v, 0)}` : ''),
+          text: recurText,
           textposition: 'inside', insidetextanchor: 'middle',
           textfont: { size: 10, color: '#fff' },
-          hovertemplate: '<b>%{x}</b><br>$U %{y:,.0f}<extra></extra>',
+          customdata: recurHov,
+          hovertemplate: '<b>%{x}</b><br>%{customdata}<extra></extra>',
         },
         {
-          x: xProj, y: recurUSDvals, type: 'bar',
-          name: `Recurrentes USD · ${this._fmtUSD(recurUSD)} /mes`,
-          marker: { color: '#d8b4fe' },
-          text: recurUSDvals.map(v => v >= 1 ? `USD ${fmt(v, 0)}` : ''),
+          x: xProj, y: cuotasY, type: 'bar',
+          name: `Cuotas${cuotNombre ? ' · ' + cuotNombre + ' tot.' : ''}`,
+          marker: { color: '#fbbf24' },
+          text: cuotasText,
           textposition: 'inside', insidetextanchor: 'middle',
           textfont: { size: 10, color: 'rgba(0,0,0,.8)' },
-          hovertemplate: '<b>%{x}</b><br>USD %{y:,.2f}<extra></extra>',
+          hovertemplate: '<b>%{x}</b><br>%{text}<extra></extra>',
         },
       ], {
         ...layoutBase,
         barmode: 'stack',
         dragmode: false,
-        margin: { t: 10, r: 10, b: 90, l: 70 },
+        margin: { t: 30, r: 10, b: 80, l: 70 },
         xaxis: { gridcolor: 'rgba(255,255,255,.05)', fixedrange: true },
         yaxis: { tickformat: ',d', gridcolor: 'rgba(255,255,255,.05)', zerolinecolor: 'rgba(255,255,255,.1)', fixedrange: true },
-        legend: { orientation: 'h', y: -0.42, x: 0 },
+        legend: { orientation: 'h', y: -0.38, x: 0 },
+        annotations,
       }, { displayModeBar: false, responsive: true, scrollZoom: false });
     } else {
       const barSrc  = isBenef ? byMonthSave : byMonth;
@@ -3795,13 +3832,20 @@ window.Mods.gastos = {
 
     if (isCuotas) {
       // Tabla de planes activos filtrada por ventana (projWin meses)
+      const nowYM      = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
       const winEndDate = new Date(now.getFullYear(), now.getMonth() + projWin, 28);
+
+      // Para cada plan: encontrar la primera cuota FUTURA (>= mes actual)
       const plansInWindow = Object.values(planMap).filter(p => {
-        const rem = (p.cuotas_totales||0) - (p.cuota_actual||0);
+        const rem  = (p.cuotas_totales||0) - (p.cuota_actual||0);
         if (rem <= 0) return false;
         const lastD = new Date(p.fecha + 'T00:00:00');
-        const nextD = new Date(lastD.getFullYear(), lastD.getMonth() + 1, 15);
-        return nextD <= winEndDate;
+        for (let i = 1; i <= rem; i++) {
+          const payD  = new Date(lastD.getFullYear(), lastD.getMonth() + i, 1);
+          const payYM = `${payD.getFullYear()}-${String(payD.getMonth()+1).padStart(2,'0')}`;
+          if (payYM >= nowYM) return payD <= winEndDate; // primera cuota futura ¿entra en ventana?
+        }
+        return false; // todas las cuotas ya pasaron
       }).sort((a, b) => parseFloat(b.monto) - parseFloat(a.monto));
 
       const thSt = 'text-align:left;padding:7px 6px;border-bottom:1px solid var(--border);font-size:.72rem;color:var(--text-sec);text-transform:uppercase;font-weight:500';
@@ -3821,10 +3865,18 @@ window.Mods.gastos = {
             </tr></thead>
             <tbody>
               ${plansInWindow.map(p => {
-                const rem = (p.cuotas_totales||0) - (p.cuota_actual||0);
-                const monto = parseFloat(p.monto);
+                const lastD = new Date(p.fecha + 'T00:00:00');
+                const rem   = (p.cuotas_totales||0) - (p.cuota_actual||0);
+                // Contar solo las cuotas futuras (>= mes actual)
+                let futInst = 0;
+                for (let i = 1; i <= rem; i++) {
+                  const payD  = new Date(lastD.getFullYear(), lastD.getMonth() + i, 1);
+                  const payYM = `${payD.getFullYear()}-${String(payD.getMonth()+1).padStart(2,'0')}`;
+                  if (payYM >= nowYM) futInst++;
+                }
+                const monto  = parseFloat(p.monto);
                 const monStr = p.moneda === 'USD' ? this._fmtUSD(monto) : this._fmtMon(monto, p.moneda);
-                const totStr = p.moneda === 'USD' ? this._fmtUSD(monto * rem) : this._fmtMon(monto * rem, p.moneda);
+                const totStr = p.moneda === 'USD' ? this._fmtUSD(monto * futInst) : this._fmtMon(monto * futInst, p.moneda);
                 return `<tr>
                   <td style="${tdSt}">${p.comercio || '—'}
                     <div style="font-size:.68rem;color:var(--text-sec)">${fmtDate(p.fecha)} · ${p.moneda}</div>
@@ -3857,9 +3909,14 @@ window.Mods.gastos = {
             <tbody>
               ${saveEntries.map(([name, val]) => {
                 const pct = totalSaveAll > 0 ? val / totalSaveAll * 100 : 0;
+                const nat = bySaveComNative[name] || { UYU: 0, USD: 0 };
+                const natParts = [];
+                if (nat.UYU > 0) natParts.push(this._fmtMon(nat.UYU, 'UYU'));
+                if (nat.USD > 0) natParts.push(this._fmtUSD(nat.USD));
+                const monStr = natParts.join(' · ') || fmtC(val);
                 return `<tr>
                   <td style="${tdSt}">${name}</td>
-                  <td style="${tdSt};text-align:right;font-family:'DM Mono',monospace;font-weight:600;color:#10b981">${fmtC(val)}</td>
+                  <td style="${tdSt};text-align:right;font-family:'DM Mono',monospace;font-weight:600;color:#10b981">${monStr}</td>
                   <td style="${tdSt};text-align:right;color:var(--text-sec)">${fmt(pct, 1)}%</td>
                 </tr>`;
               }).join('')}
