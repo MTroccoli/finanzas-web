@@ -3079,6 +3079,7 @@ window.Mods.gastos = {
 
     // Proyección próximos 12 meses
     const now = new Date();
+    const nowYMC = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
     const proj = [];
     for (let i = 1; i <= 12; i++) {
       const d = new Date(now.getFullYear(), now.getMonth() + i, 1);
@@ -3223,11 +3224,26 @@ window.Mods.gastos = {
             ${activas.map(g => {
               const restantes = g.cuotas_totales - g.cuota_actual;
               const monto     = parseFloat(g.monto);
+              // Próxima cuota futura (>= mes actual)
+              const [yr, mo] = g.fecha.split('-').map(Number);
+              const baseD = new Date(yr, mo - 1, 1);
+              let futC = 0, nextN = null, nextLbl = null;
+              for (let k = 1; k <= restantes; k++) {
+                const pd  = new Date(baseD.getFullYear(), baseD.getMonth() + k, 1);
+                const pym = `${pd.getFullYear()}-${String(pd.getMonth()+1).padStart(2,'0')}`;
+                if (pym >= nowYMC) {
+                  futC++;
+                  if (nextN === null) {
+                    nextN   = g.cuota_actual + k;
+                    nextLbl = pd.toLocaleDateString('es-UY', { month: 'short', year: '2-digit' });
+                  }
+                }
+              }
               return `
                 <tr>
                   <td>${g.comercio ?? '—'}
                     <div style="font-size:.68rem;color:var(--text-sec);font-family:'DM Mono',monospace">
-                      ${fmtDate(g.fecha)} · ${g.moneda}
+                      ${nextLbl ? 'Próx: ' + nextLbl : fmtDate(g.fecha)} · ${g.moneda}
                     </div>
                     <div style="margin-top:2px">
                       ${g.titular_adicional
@@ -3236,13 +3252,15 @@ window.Mods.gastos = {
                     </div>
                   </td>
                   <td>${catBadge(g.categoria_id)}</td>
-                  <td style="font-family:'DM Mono',monospace;font-size:.78rem">${g.cuota_actual}/${g.cuotas_totales}</td>
+                  <td style="font-family:'DM Mono',monospace;font-size:.78rem">
+                    ${nextN ?? g.cuota_actual + 1}/${g.cuotas_totales}
+                  </td>
                   <td style="font-family:'DM Mono',monospace;font-weight:600;white-space:nowrap">
                     ${fmtV(monto, g.moneda)}
                   </td>
                   <td style="font-family:'DM Mono',monospace;color:var(--text-sec);white-space:nowrap">
-                    ${fmtV(monto * restantes, g.moneda)}
-                    <div style="font-size:.65rem">${restantes} cuotas</div>
+                    ${fmtV(monto * futC, g.moneda)}
+                    <div style="font-size:.65rem">${futC} cuotas</div>
                   </td>
                   <td><button class="btn btn-ghost btn-del-c" data-id="${g.id}"
                     style="font-size:.7rem;padding:2px 7px;color:var(--red)">✕</button></td>
@@ -3784,9 +3802,6 @@ window.Mods.gastos = {
           x: xProj, y: recurY, type: 'bar',
           name: `Recurrentes${recurNombre ? ' · ' + recurNombre + ' /mes' : ''}`,
           marker: { color: '#a855f7' },
-          text: recurText,
-          textposition: 'inside', insidetextanchor: 'middle',
-          textfont: { size: 10, color: '#fff' },
           customdata: recurHov,
           hovertemplate: '<b>%{x}</b><br>%{customdata}<extra></extra>',
         },
@@ -3794,10 +3809,8 @@ window.Mods.gastos = {
           x: xProj, y: cuotasY, type: 'bar',
           name: `Cuotas${cuotNombre ? ' · ' + cuotNombre + ' tot.' : ''}`,
           marker: { color: '#fbbf24' },
-          text: cuotasText,
-          textposition: 'inside', insidetextanchor: 'middle',
-          textfont: { size: 10, color: 'rgba(0,0,0,.8)' },
           hovertemplate: '<b>%{x}</b><br>%{text}<extra></extra>',
+          text: cuotasText,
         },
       ], {
         ...layoutBase,
@@ -3850,17 +3863,23 @@ window.Mods.gastos = {
       const nowYM  = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
       const sort   = this._cuotasResSort || { col: 'total', dir: 'desc' };
 
-      // Precomputar futInst por plan y filtrar solo planes con cuotas futuras
+      // Precomputar próxima cuota futura por plan y filtrar planes sin cuotas futuras
       const planRows = Object.values(planMap).map(p => {
         const rem   = (p.cuotas_totales||0) - (p.cuota_actual||0);
         const lastD = new Date(p.fecha + 'T00:00:00');
-        let futInst = 0;
+        let futInst = 0, nextInstNum = null, nextInstDate = null;
         for (let i = 1; i <= rem; i++) {
           const payD  = new Date(lastD.getFullYear(), lastD.getMonth() + i, 1);
           const payYM = `${payD.getFullYear()}-${String(payD.getMonth()+1).padStart(2,'0')}`;
-          if (payYM >= nowYM) futInst++;
+          if (payYM >= nowYM) {
+            futInst++;
+            if (nextInstNum === null) { nextInstNum = p.cuota_actual + i; nextInstDate = payD; }
+          }
         }
-        return { ...p, futInst, montoN: parseFloat(p.monto) };
+        const nextLabel = nextInstDate
+          ? nextInstDate.toLocaleDateString('es-UY', { month: 'short', year: '2-digit' })
+          : null;
+        return { ...p, futInst, montoN: parseFloat(p.monto), nextInstNum, nextLabel };
       }).filter(p => p.futInst > 0);
 
       planRows.sort((a, b) => {
@@ -3895,10 +3914,12 @@ window.Mods.gastos = {
                 const totStr = p.moneda === 'USD' ? this._fmtUSD(p.montoN * p.futInst) : this._fmtMon(p.montoN * p.futInst, p.moneda);
                 return `<tr>
                   <td style="${tdSt}">${p.comercio || '—'}
-                    <div style="font-size:.68rem;color:var(--text-sec)">${fmtDate(p.fecha)} · ${p.moneda}</div>
+                    <div style="font-size:.68rem;color:var(--text-sec)">${p.nextLabel ? 'Próx: ' + p.nextLabel : '—'} · ${p.moneda}</div>
                   </td>
                   <td style="${tdSt};color:var(--text-sec);font-size:.74rem">${p.banco_tarjeta || '—'}</td>
-                  <td style="${tdSt};text-align:center;font-family:'DM Mono',monospace;color:var(--text-sec)">${p.cuota_actual}/${p.cuotas_totales}</td>
+                  <td style="${tdSt};text-align:center;font-family:'DM Mono',monospace;font-size:.78rem">
+                    ${p.nextInstNum ?? p.cuota_actual + 1}/${p.cuotas_totales}
+                  </td>
                   <td style="${tdSt};text-align:right;font-family:'DM Mono',monospace;font-weight:600;color:var(--gold)">${monStr}</td>
                   <td style="${tdSt};text-align:right;font-family:'DM Mono',monospace;color:var(--text-sec)">${totStr}</td>
                 </tr>`;
