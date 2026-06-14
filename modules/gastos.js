@@ -37,6 +37,7 @@ window.Mods.gastos = {
   _bancotarjeta: '',      // Banco/tarjeta detectado por la IA en el EDC activo
   _resBanco:     '',      // Filtro por banco/tarjeta en Resumen
   _resTipo:      '',      // Filtro por tipo de gasto en Resumen
+  _resView:      'gastos',// Vista del Resumen: 'gastos' | 'beneficios'
   _adicTitular:  '',      // Nombre titular adicional asignado en la vista previa
   _adicMes:      null,    // Filtro mes en panel Adicional
   _adicTitularFiltro: '', // Filtro titular en panel Adicional
@@ -1509,22 +1510,24 @@ window.Mods.gastos = {
     gc.innerHTML = `
       <!-- Filtros -->
       <div class="form-card" style="padding:12px 16px;margin-bottom:.75rem">
-        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end">
+        <div class="g-filters">
           <div>
-            <div style="font-size:.68rem;color:var(--text-sec);margin-bottom:2px">Mes</div>
+            <div class="g-fl-lbl">Mes</div>
             <select id="h-mes" style="${selSt}">
               ${meses.map(m => `<option value="${m.val}"${m.val===mesFilter?' selected':''}>${m.lbl}</option>`).join('')}
             </select>
           </div>
           <div>
-            <div style="font-size:.68rem;color:var(--text-sec);margin-bottom:2px">Categoría</div>
-            <select id="h-cat" style="${selSt};min-width:150px">
-              <option value="">Todas las categorías</option>
+            <div class="g-fl-lbl">Categoría</div>
+            <select id="h-cat" style="${selSt}">
+              <option value="">Todas</option>
               ${this._cats.map(c => `<option value="${c.id}"${String(c.id)===catFilter?' selected':''}>${c.icono} ${c.nombre}</option>`).join('')}
             </select>
           </div>
+        </div>
+        <div class="g-filters">
           <div>
-            <div style="font-size:.68rem;color:var(--text-sec);margin-bottom:2px">Tipo de gasto</div>
+            <div class="g-fl-lbl">Tipo de gasto</div>
             <select id="h-tipo" style="${selSt}">
               <option value=""${!tipoFilter?' selected':''}>Todos</option>
               <option value="casual"${tipoFilter==='casual'?' selected':''}>💳 Casual</option>
@@ -1535,7 +1538,7 @@ window.Mods.gastos = {
           </div>
           ${bancosHist.length > 0 ? `
           <div>
-            <div style="font-size:.68rem;color:var(--text-sec);margin-bottom:2px">Tarjeta</div>
+            <div class="g-fl-lbl">Tarjeta</div>
             <select id="h-banco" style="${selSt}">
               <option value="">Todas</option>
               ${bancosHist.map(b => `<option value="${b}"${b===this._histBanco?' selected':''}>${b}</option>`).join('')}
@@ -1543,7 +1546,7 @@ window.Mods.gastos = {
           </div>` : ''}
           ${titularesHist.length > 0 ? `
           <div>
-            <div style="font-size:.68rem;color:var(--text-sec);margin-bottom:2px">Tarjetahabiente</div>
+            <div class="g-fl-lbl">Tarjetahabiente</div>
             <select id="h-titular" style="${selSt}">
               <option value="">Todos</option>
               <option value="__titular__"${this._histTitular==='__titular__'?' selected':''}>💳 Titular</option>
@@ -3319,7 +3322,7 @@ window.Mods.gastos = {
 
     // Una sola query con todos los campos necesarios
     let q = getDB().from('gastos')
-      .select('fecha, monto, moneda, categoria_id, banco_tarjeta, tipo_gasto, cuota_actual')
+      .select('fecha, monto, moneda, categoria_id, banco_tarjeta, tipo_gasto, cuota_actual, comercio')
       .gte('fecha', this._resDesde)
       .lte('fecha', this._resHasta);
     if (this._resCat) q = q.eq('categoria_id', +this._resCat);
@@ -3391,29 +3394,53 @@ window.Mods.gastos = {
       .filter(m => m.total > 0)
       .sort((a,b) => b.total - a.total)[0];
 
+    // ── Beneficios / ahorro (montos en positivo) ──────────────────────────
+    const byMonthSave = {};
+    for (const m of months) byMonthSave[m.ym] = { UYU: 0, USD: 0 };
+    const bySaveCom = {};
+    for (const r of allData) {
+      if (!isBenefit(r)) continue;
+      const ym = r.fecha.slice(0, 7);
+      const monto = -parseFloat(r.monto); // beneficios se guardan negativos
+      if (byMonthSave[ym]) byMonthSave[ym][r.moneda === 'USD' ? 'USD' : 'UYU'] += monto;
+      const k = (r.comercio || '').trim() || 'Sin comercio';
+      bySaveCom[k] = (bySaveCom[k] || 0) - toC(r.monto, r.moneda);
+    }
+    const topComEntry = Object.entries(bySaveCom).filter(([,v]) => v > 0).sort((a,b) => b[1]-a[1])[0];
+    const topComName  = topComEntry ? topComEntry[0] : '—';
+    const topSaveMonthEntry = months
+      .map(m => ({ label: m.label, total: toC(byMonthSave[m.ym].UYU, 'UYU') + toC(byMonthSave[m.ym].USD, 'USD') }))
+      .filter(m => m.total > 0)
+      .sort((a,b) => b.total - a.total)[0];
+
+    const hasBenef = totalSaved > 0 || totalSaveUYU > 0 || totalSaveUSD > 0;
+    const isBenef  = this._resView === 'beneficios' && hasBenef;
+
     const selSt  = `font-size:.82rem;padding:5px 8px;border-radius:6px;border:1px solid var(--border);background:var(--surface);color:var(--text)`;
 
     gc.innerHTML = `
       <!-- Filtros -->
       <div class="form-card" style="padding:12px 16px;margin-bottom:.75rem">
-        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end">
+        <div class="g-filters">
           <div>
-            <div style="font-size:.68rem;color:var(--text-sec);margin-bottom:2px">Desde</div>
+            <div class="g-fl-lbl">Desde</div>
             <input id="r-desde" type="date" value="${this._resDesde}" style="${selSt}">
           </div>
           <div>
-            <div style="font-size:.68rem;color:var(--text-sec);margin-bottom:2px">Hasta</div>
+            <div class="g-fl-lbl">Hasta</div>
             <input id="r-hasta" type="date" value="${this._resHasta}" style="${selSt}">
           </div>
+        </div>
+        <div class="g-filters">
           <div>
-            <div style="font-size:.68rem;color:var(--text-sec);margin-bottom:2px">Categoría</div>
-            <select id="r-cat" style="${selSt};min-width:150px">
-              <option value="">Todos los rubros</option>
+            <div class="g-fl-lbl">Categoría</div>
+            <select id="r-cat" style="${selSt}">
+              <option value="">Todos</option>
               ${this._cats.map(c => `<option value="${c.id}"${String(c.id)===String(this._resCat)?' selected':''}>${c.icono} ${c.nombre}</option>`).join('')}
             </select>
           </div>
           <div>
-            <div style="font-size:.68rem;color:var(--text-sec);margin-bottom:2px">Tipo de gasto</div>
+            <div class="g-fl-lbl">Tipo de gasto</div>
             <select id="r-tipo" style="${selSt}">
               <option value=""${!this._resTipo?' selected':''}>Todos</option>
               <option value="casual"${this._resTipo==='casual'?' selected':''}>💳 Casual</option>
@@ -3423,8 +3450,8 @@ window.Mods.gastos = {
             </select>
           </div>
           <div>
-            <div style="font-size:.68rem;color:var(--text-sec);margin-bottom:2px">Tarjeta</div>
-            <select id="r-banco" style="${selSt};min-width:120px">
+            <div class="g-fl-lbl">Tarjeta</div>
+            <select id="r-banco" style="${selSt}">
               <option value="">Todas</option>
               ${bancos.map(b => `<option value="${b}"${b===this._resBanco?' selected':''}>${b}</option>`).join('')}
             </select>
@@ -3436,7 +3463,7 @@ window.Mods.gastos = {
       <!-- Tarjetas resumen -->
       ${totalUSD > 0 || totalSaved > 0 ? `
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:.75rem">
-        <div class="form-card" style="padding:14px 16px;text-align:center">
+        <div id="r-card-gastos" class="form-card" style="padding:14px 16px;text-align:center;cursor:pointer;${!isBenef ? 'box-shadow:0 0 0 2px var(--accent)' : ''}" title="Ver gastos">
           <div style="font-size:.65rem;color:var(--text-sec);margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em">Total gastado</div>
           <div style="font-family:'DM Mono',monospace;font-size:${this._gastoMoneda === 'ORIGEN' && totalGastUYU > 0 && totalGastUSD > 0 ? '.85rem' : '1.1rem'};font-weight:700;color:var(--accent);line-height:1.4">
             ${this._gastoMoneda === 'ORIGEN'
@@ -3446,31 +3473,31 @@ window.Mods.gastos = {
           <div style="font-size:.65rem;color:var(--text-sec);margin-top:3px">${this._resDesde.slice(0,7)} → ${this._resHasta.slice(0,7)}</div>
         </div>
         <div class="form-card" style="padding:14px 16px;text-align:center">
-          <div style="font-size:.65rem;color:var(--text-sec);margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em">Rubro top</div>
-          <div style="font-size:.9rem;font-weight:600">${topCatName}</div>
-          <div style="font-family:'DM Mono',monospace;font-size:.8rem;color:var(--accent);margin-top:3px">${fmtC(topCatEntry?.[1] ?? 0)}</div>
+          <div style="font-size:.65rem;color:var(--text-sec);margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em">${isBenef ? 'Comercio top' : 'Rubro top'}</div>
+          <div style="font-size:.9rem;font-weight:600">${isBenef ? topComName : topCatName}</div>
+          <div style="font-family:'DM Mono',monospace;font-size:.8rem;color:${isBenef ? '#10b981' : 'var(--accent)'};margin-top:3px">${fmtC((isBenef ? topComEntry?.[1] : topCatEntry?.[1]) ?? 0)}</div>
         </div>
         <div class="form-card" style="padding:14px 16px;text-align:center">
           <div style="font-size:.65rem;color:var(--text-sec);margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em">Mes top</div>
-          <div style="font-size:.9rem;font-weight:600;text-transform:capitalize">${topMonthEntry?.label ?? '—'}</div>
-          <div style="font-family:'DM Mono',monospace;font-size:.8rem;color:var(--accent);margin-top:3px">${topMonthEntry ? fmtC(topMonthEntry.total) : '—'}</div>
+          <div style="font-size:.9rem;font-weight:600;text-transform:capitalize">${(isBenef ? topSaveMonthEntry : topMonthEntry)?.label ?? '—'}</div>
+          <div style="font-family:'DM Mono',monospace;font-size:.8rem;color:${isBenef ? '#10b981' : 'var(--accent)'};margin-top:3px">${(isBenef ? topSaveMonthEntry : topMonthEntry) ? fmtC((isBenef ? topSaveMonthEntry : topMonthEntry).total) : '—'}</div>
         </div>
-        ${(totalSaved > 0 || totalSaveUYU > 0 || totalSaveUSD > 0) ? `
-        <div class="form-card" style="padding:14px 16px;text-align:center;border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.05)">
+        ${hasBenef ? `
+        <div id="r-card-benef" class="form-card" style="padding:14px 16px;text-align:center;cursor:pointer;border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.05);${isBenef ? 'box-shadow:0 0 0 2px #10b981' : ''}" title="Ver ahorro / beneficios">
           <div style="font-size:.65rem;color:#10b981;margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em">Ahorro / beneficios</div>
           <div style="font-family:'DM Mono',monospace;font-size:${this._gastoMoneda === 'ORIGEN' && totalSaveUYU > 0 && totalSaveUSD > 0 ? '.85rem' : '1.1rem'};font-weight:700;color:#10b981;line-height:1.4">
             ${this._gastoMoneda === 'ORIGEN'
               ? (() => { const p = []; if (totalSaveUYU > 0) p.push(this._fmtMon(totalSaveUYU,'UYU')); if (totalSaveUSD > 0) p.push(this._fmtUSD(totalSaveUSD)); return p.join('<br>') || '—'; })()
               : fmtC(totalSaved)}
           </div>
-          <div style="font-size:.65rem;color:var(--text-sec);margin-top:3px">🎁 Beneficio · 💎 Puntos BBVA</div>
+          <div style="font-size:.65rem;color:var(--text-sec);margin-top:3px">${isBenef ? '👆 Viendo ahorro' : '🎁 Beneficio · 💎 Puntos BBVA'}</div>
         </div>` : ''}
       </div>` : ''}
 
       <!-- Bar chart -->
       <div class="form-card" style="padding:14px 16px;margin-bottom:.75rem">
         <div style="font-weight:600;font-size:.9rem;margin-bottom:8px">
-          Evolución mensual · ${curLabel}${this._resCat ? ` · ${this._cats.find(c=>c.id===+this._resCat)?.nombre||''}` : ''}
+          ${isBenef ? 'Evolución de ahorro' : 'Evolución mensual'} · ${curLabel}${!isBenef && this._resCat ? ` · ${this._cats.find(c=>c.id===+this._resCat)?.nombre||''}` : ''}
         </div>
         <div id="g-bar-chart" style="height:300px"></div>
       </div>
@@ -3478,7 +3505,7 @@ window.Mods.gastos = {
       <!-- Pie chart -->
       <div class="form-card" style="padding:14px 16px;margin-bottom:.75rem">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:6px">
-          <div style="font-weight:600;font-size:.9rem">Gastos por categoría · ${curLabel}</div>
+          <div style="font-weight:600;font-size:.9rem">${isBenef ? 'Ahorro por comercio' : 'Gastos por categoría'} · ${curLabel}</div>
           <div style="font-size:.78rem;color:var(--text-sec)">
             Total gastos: <span style="color:var(--accent);font-family:'DM Mono',monospace;font-weight:600">
               ${this._gastoMoneda === 'ORIGEN'
@@ -3494,13 +3521,17 @@ window.Mods.gastos = {
 
     // ── Bar chart ─────────────────────────────────────────────────────────
     const tickPfx = convCur === 'UYU' ? '$U ' : 'USD ';
-    // Gastos originalmente en pesos y en dólares, ambos convertidos a la moneda de análisis
-    const fromUyuY = months.map(m => toC(byMonth[m.ym].UYU, 'UYU'));
-    const fromUsdY = months.map(m => toC(byMonth[m.ym].USD, 'USD'));
+    const barSrc  = isBenef ? byMonthSave : byMonth;
+    // Importes (gastos o ahorro) convertidos a la moneda de análisis
+    const fromUyuY = months.map(m => toC(barSrc[m.ym].UYU, 'UYU'));
+    const fromUsdY = months.map(m => toC(barSrc[m.ym].USD, 'USD'));
     // Montos en moneda origen para el tooltip (sin conversión)
-    const origUyu  = months.map(m => byMonth[m.ym].UYU);
-    const origUsd  = months.map(m => byMonth[m.ym].USD);
+    const origUyu  = months.map(m => barSrc[m.ym].UYU);
+    const origUsd  = months.map(m => barSrc[m.ym].USD);
     const xLabels  = months.map(m => m.label);
+    const barNamePfx = isBenef ? 'Ahorro' : 'Gastos';
+    const barColUyu  = isBenef ? '#10b981' : '#3b82f6';
+    const barColUsd  = isBenef ? '#34d399' : '#10b981';
 
     const layoutBase = {
       paper_bgcolor: 'rgba(0,0,0,0)',
@@ -3510,13 +3541,13 @@ window.Mods.gastos = {
 
     Plotly.newPlot('g-bar-chart', [
       {
-        x: xLabels, y: fromUyuY, type: 'bar', name: 'Gastos en UYU',
-        marker: { color: '#3b82f6' }, customdata: origUyu,
+        x: xLabels, y: fromUyuY, type: 'bar', name: `${barNamePfx} en UYU`,
+        marker: { color: barColUyu }, customdata: origUyu,
         hovertemplate: `<b>%{x}</b><br>$U %{customdata:,.0f}<extra></extra>`,
       },
       {
-        x: xLabels, y: fromUsdY, type: 'bar', name: 'Gastos en USD',
-        marker: { color: '#10b981' }, customdata: origUsd,
+        x: xLabels, y: fromUsdY, type: 'bar', name: `${barNamePfx} en USD`,
+        marker: { color: barColUsd }, customdata: origUsd,
         hovertemplate: `<b>%{x}</b><br>USD %{customdata:,.0f}<extra></extra>`,
       },
     ], {
@@ -3531,12 +3562,13 @@ window.Mods.gastos = {
 
     // ── Pie chart ─────────────────────────────────────────────────────────
     const palette = ['#3b82f6','#10b981','#f59e0b','#ef4444','#a855f7','#06b6d4','#ec4899','#84cc16','#f97316','#6366f1','#14b8a6','#eab308'];
-    const entries = Object.entries(byCat).filter(([, v]) => v > 0).sort((a,b) => b[1] - a[1]);
+    const entries = Object.entries(isBenef ? bySaveCom : byCat).filter(([, v]) => v > 0).sort((a,b) => b[1] - a[1]);
     if (!entries.length) {
       document.getElementById('g-pie-chart').innerHTML =
         '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text-sec);font-size:.85rem">Sin datos en el rango seleccionado</div>';
     } else {
       const pieLabels = entries.map(([id]) => {
+        if (isBenef) return id; // nombre de comercio
         if (id === 'sin') return 'Sin categoría';
         const c = this._cats.find(c => c.id === +id);
         return c ? `${c.icono} ${c.nombre}` : 'Otros';
@@ -3564,6 +3596,13 @@ window.Mods.gastos = {
     }
 
     // Handlers
+    document.getElementById('r-card-gastos')?.addEventListener('click', () => {
+      if (this._resView !== 'gastos') { this._resView = 'gastos'; this._drawResumen(); }
+    });
+    document.getElementById('r-card-benef')?.addEventListener('click', () => {
+      this._resView = this._resView === 'beneficios' ? 'gastos' : 'beneficios';
+      this._drawResumen();
+    });
     document.getElementById('r-cat')?.addEventListener('change', e => {
       this._resCat = e.target.value || '';
       this._drawResumen();

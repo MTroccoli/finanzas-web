@@ -511,6 +511,17 @@ hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
+/* Filtros compactos (Gastos) */
+.g-filters {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+.g-filters + .g-filters { margin-top: 8px; }
+.g-filters > div { flex: 1 1 auto; min-width: 120px; }
+.g-filters select, .g-filters input { width: 100%; }
+.g-fl-lbl { font-size: .68rem; color: var(--text-sec); margin-bottom: 2px; }
 .table-header {
   display: flex;
   align-items: center;
@@ -803,4 +814,10 @@ tbody tr:hover td { background: rgba(46,127,217,.04); }
   thead th, tbody td { padding: 9px 10px; font-size: 12px; }
   .g-tabs { display: none; }
   .g-tab-select { display: block; }
+
+  /* Filtros: que entren varios en la misma línea sin ocupar tanto alto */
+  .g-filters { gap: 6px; }
+  .g-filters > div { flex: 1 1 0; min-width: 0; }
+  .g-filters select, .g-filters input { padding: 6px 5px; font-size: .72rem; }
+  .g-fl-lbl { font-size: .58rem; }
 }
