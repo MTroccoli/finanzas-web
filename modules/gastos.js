@@ -16,7 +16,6 @@ window.Mods.gastos = {
   _histSort:     { col: 'fecha', dir: 'desc' },
   _reviewSort:   { col: 'fecha', dir: 'asc' },
   _histView:     'gastos',  // 'gastos' | 'comercios'
-  _cuotasMoneda: 'UYU',   // legacy — no longer used; kept to avoid reference errors during transition
   _resDesde:     null,
   _resHasta:     null,
   _tc:           '',      // TC UYU/USD — persiste en configuracion
@@ -33,6 +32,7 @@ window.Mods.gastos = {
   _suggestOpenKeys: new Set(),               // cluster keys con acordeón abierto
   _suggestExcluded: {},                      // { clusterKey: Set<gastoId> } excluidos de unify
   _suggestSearch:   '',                      // búsqueda activa en suggest panel
+  _suggestNames:    {},                      // { clusterKey: nombre final editado por el usuario }
   _adicOpenMonths: new Set(),                     // "titular|mes" abiertos en acordeón Adicional
   _bancotarjeta: '',      // Banco/tarjeta detectado por la IA en el EDC activo
   _resBanco:     '',      // Filtro por banco/tarjeta en Resumen
@@ -40,6 +40,7 @@ window.Mods.gastos = {
   _adicMes:      null,    // Filtro mes en panel Adicional
   _adicTitularFiltro: '', // Filtro titular en panel Adicional
   _adicCards:    [],      // [{ digits, name, editedName }] — tarjetas adicionales detectadas en el EDC
+  _tarjOpen:     new Set(),// tarjetas abiertas en acordeón del tab Tarjetas
 
   // Normalizar comercio para matching: lowercase, sin tildes, sin códigos de comercio
   _normMerchant(s) {
@@ -183,6 +184,38 @@ window.Mods.gastos = {
     setConfig('gastos_tc', val).catch(() => {});
   },
 
+  // ── Combobox de categoría con búsqueda (input + datalist compartido) ─────
+
+  _catLabel(id) {
+    const c = this._cats.find(c => c.id === +id);
+    return c ? `${c.icono} ${c.nombre}` : '';
+  },
+
+  // Resuelve el id de categoría a partir de lo tipeado (label exacto o nombre).
+  _catIdFromLabel(val) {
+    const v = (val || '').trim();
+    if (!v) return null;
+    const c = this._cats.find(c =>
+      `${c.icono} ${c.nombre}` === v || c.nombre.toLowerCase() === v.toLowerCase());
+    return c ? c.id : null;
+  },
+
+  // <datalist> único que comparten todos los combos de categoría.
+  _catDatalistHTML() {
+    return `<datalist id="cat-datalist">${
+      this._cats.map(c => `<option value="${c.icono} ${c.nombre}"></option>`).join('')
+    }</datalist>`;
+  },
+
+  // Input de categoría con autocompletado. `value` = id actual (o null).
+  _catComboHTML({ id = '', cls = '', extra = '', value = null, placeholder = 'Buscar…', style = '' } = {}) {
+    const v = value != null && value !== '' ? this._catLabel(value) : '';
+    return `<input type="text" ${id ? `id="${id}"` : ''} class="cat-combo ${cls}"
+      list="cat-datalist" autocomplete="off" ${extra}
+      value="${v.replace(/"/g, '&quot;')}" placeholder="${placeholder}"
+      data-catid="${value != null ? value : ''}" style="${style}">`;
+  },
+
   _drawShell() {
     const c = document.getElementById('content');
     const tabs = [
@@ -191,6 +224,7 @@ window.Mods.gastos = {
       ['cuotas',   '📅 Cuotas'],
       ['comercios','🏷️ Comercios'],
       ['adicional','👤 Adicional'],
+      ['tarjetas', '🏦 Tarjetas'],
       ['importar', '📤 Importar EDC'],
       ['manual',   '✚ Nuevo gasto'],
     ];
@@ -227,6 +261,7 @@ window.Mods.gastos = {
         </div>
       </div>
       <div id="g-content"></div>
+      ${this._catDatalistHTML()}
     `;
     document.querySelectorAll('.g-tab').forEach(btn =>
       btn.addEventListener('click', () => {
@@ -263,6 +298,7 @@ window.Mods.gastos = {
       case 'cuotas':    return this._drawCuotas();
       case 'comercios': return this._drawHistorialComercios();
       case 'adicional': return this._drawHistorialAdicional();
+      case 'tarjetas':  return this._drawTarjetas();
       case 'importar':  return this._drawImportar();
       case 'manual':    return this._drawManual();
     }
@@ -963,7 +999,7 @@ window.Mods.gastos = {
         refreshCounts();
       }
       if (e.target.classList.contains('g-cat-sel')) {
-        t._catId = e.target.value ? +e.target.value : null;
+        t._catId = this._catIdFromLabel(e.target.value);
         t.categoria = this._cats.find(c => c.id === t._catId)?.nombre ?? 'Otros';
         const divCell = document.querySelector(`.g-div-cell[data-id="${id}"]`);
         if (divCell) divCell.innerHTML = this._divCellHTML(t);
@@ -1061,14 +1097,7 @@ window.Mods.gastos = {
           </select>
         </td>
         <td>
-          <select class="g-cat-sel" data-id="${t._id}"
-            style="font-size:.72rem;padding:3px 6px;border-radius:4px;
-              border:1px solid var(--border);background:var(--surface);color:var(--text);max-width:140px">
-            <option value="">—</option>
-            ${this._cats.map(c =>
-              `<option value="${c.id}"${c.id===t._catId?' selected':''}>${c.icono} ${c.nombre}</option>`
-            ).join('')}
-          </select>
+          ${this._catComboHTML({ cls: 'g-cat-sel', extra: `data-id="${t._id}"`, value: t._catId, placeholder: '—', style: 'font-size:.72rem;padding:3px 6px;border-radius:4px;border:1px solid var(--border);background:var(--surface);color:var(--text);max-width:140px' })}
         </td>
         <td>
           <select class="g-tipo-sel" data-id="${t._id}"
@@ -1254,10 +1283,7 @@ window.Mods.gastos = {
             </div>
             <div class="form-group">
               <label>Categoría</label>
-              <select id="g-categoria">
-                <option value="">Sin categoría</option>
-                ${catOpts}
-              </select>
+              ${this._catComboHTML({ id: 'g-categoria', placeholder: 'Sin categoría', style: 'width:100%' })}
             </div>
             <div class="form-group">
               <label>Tipo de gasto</label>
@@ -1307,7 +1333,7 @@ window.Mods.gastos = {
       const rawMonto = parseFloat(document.getElementById('g-monto').value);
       const N        = parseInt(document.getElementById('g-dividir-entre').value) || 1;
       const monto    = rawMonto / N;
-      const catId    = document.getElementById('g-categoria').value;
+      const catId    = this._catIdFromLabel(document.getElementById('g-categoria').value);
       const cuotaA   = parseInt(document.getElementById('g-cuota-actual').value)   || null;
       const cuotaT   = parseInt(document.getElementById('g-cuotas-totales').value) || null;
       const notas    = document.getElementById('g-notas').value.trim();
@@ -1420,12 +1446,7 @@ window.Mods.gastos = {
           </div>
           <div>
             <div style="font-size:.68rem;color:var(--text-sec);margin-bottom:2px">Categoría</div>
-            <select id="h-cat" style="${selSt}">
-              <option value="">Todas</option>
-              ${this._cats.map(c =>
-                `<option value="${c.id}"${String(c.id)===catFilter?' selected':''}>${c.icono} ${c.nombre}</option>`
-              ).join('')}
-            </select>
+            ${this._catComboHTML({ id: 'h-cat', value: catFilter || null, placeholder: 'Todas', style: selSt + ';min-width:150px' })}
           </div>
           <div>
             <div style="font-size:.68rem;color:var(--text-sec);margin-bottom:2px">Tipo de gasto</div>
@@ -1552,8 +1573,9 @@ window.Mods.gastos = {
 
     ['h-mes','h-cat','h-tipo','h-banco','h-titular'].forEach(id => {
       document.getElementById(id)?.addEventListener('change', () => {
+        const catId        = this._catIdFromLabel(document.getElementById('h-cat').value);
         this._histMes      = document.getElementById('h-mes').value;
-        this._histCat      = document.getElementById('h-cat').value;
+        this._histCat      = catId != null ? String(catId) : '';
         this._histTipo     = document.getElementById('h-tipo').value;
         this._histBanco    = document.getElementById('h-banco')?.value    || '';
         this._histTitular  = document.getElementById('h-titular')?.value  || '';
@@ -1854,13 +1876,13 @@ window.Mods.gastos = {
       const norm = e.target.dataset.norm;
       const item = this._comerciosCache.find(i => i.norm === norm);
       if (!item) return;
-      const newCatId = e.target.value ? +e.target.value : null;
+      const newCatId = this._catIdFromLabel(e.target.value);
       if (newCatId === item.currentCat) return;
       const catName = newCatId
         ? this._cats.find(c => c.id === newCatId)?.nombre || ''
         : 'Sin categoría';
       if (!confirm(`¿Re-categorizar ${item.count} gasto(s) de "${item.example}" como ${catName}?`)) {
-        e.target.value = item.currentCat ?? '';
+        e.target.value = this._catLabel(item.currentCat);
         return;
       }
       try {
@@ -1881,7 +1903,7 @@ window.Mods.gastos = {
         toast(`✅ ${item.count} gasto(s) actualizado(s)`);
       } catch(err) {
         toast('❌ ' + err.message, 'err');
-        e.target.value = item.currentCat ?? '';
+        e.target.value = this._catLabel(item.currentCat);
       }
     });
   },
@@ -2066,16 +2088,24 @@ window.Mods.gastos = {
       this._renderSuggestPanel();
     });
 
-    panel.querySelectorAll('.c-var-rename').forEach(btn =>
+    panel.querySelectorAll('.c-group-rename').forEach(btn =>
       btn.addEventListener('click', e => {
         e.stopPropagation();
-        this._renameComercio(btn.dataset.norm);
+        const key = btn.dataset.key;
+        const c   = clusters.find(cl => cl.key === key);
+        if (!c) return;
+        const actual = this._suggestNames[key] || c.items[0].example;
+        const nuevo  = prompt('Nombre final del grupo:', actual);
+        if (nuevo == null) return;
+        const limpio = this._cleanComercio(nuevo.trim());
+        if (limpio) this._suggestNames[key] = limpio;
+        this._renderSuggestPanel();
       })
     );
 
     panel.querySelectorAll('.c-cluster-hdr').forEach(hdr =>
       hdr.addEventListener('click', e => {
-        if (e.target.closest('.c-sugg-unify') || e.target.closest('.c-var-rename')) return;
+        if (e.target.closest('.c-sugg-unify') || e.target.closest('.c-group-rename')) return;
         const key = hdr.dataset.key;
         if (this._suggestOpenKeys.has(key)) this._suggestOpenKeys.delete(key);
         else this._suggestOpenKeys.add(key);
@@ -2099,7 +2129,8 @@ window.Mods.gastos = {
         const c = clusters.find(cl => cl.key === key);
         if (!c) return;
         const excluded = [...(this._suggestExcluded[key] || new Set())];
-        this._bulkUnifyComercios(c.items.map(i => i.norm), c.items[0].example, excluded);
+        const preset   = this._suggestNames[key] || c.items[0].example;
+        this._bulkUnifyComercios(c.items.map(i => i.norm), preset, excluded);
       })
     );
   },
@@ -2107,6 +2138,7 @@ window.Mods.gastos = {
   _renderClusterAccordion(c) {
     const isOpen  = this._suggestOpenKeys.has(c.key);
     const excl    = this._suggestExcluded[c.key] || new Set();
+    const groupName = this._suggestNames[c.key] || c.items[0].example;
     const allGastos = c.items.flatMap(i => i.gastos)
       .sort((a, b) => a.fecha < b.fecha ? 1 : -1);
     const includedCount = allGastos.filter(g => !excl.has(g.id)).length;
@@ -2146,21 +2178,18 @@ window.Mods.gastos = {
             background:rgba(255,255,255,.03);cursor:pointer;user-select:none">
           <span style="color:var(--text-sec);font-size:.75rem;flex-shrink:0">${isOpen ? '▾' : '▸'}</span>
           <div style="flex:1;min-width:0">
-            <div style="font-size:.79rem;font-weight:600">${c.items[0].example}
+            <div style="font-size:.79rem;font-weight:600;display:flex;align-items:center;gap:5px;flex-wrap:wrap">
+              <span>${groupName}</span>
+              <button class="c-group-rename" data-key="${c.key}" title="Editar nombre del grupo"
+                style="background:none;border:none;cursor:pointer;color:var(--text-sec);
+                  font-size:.7rem;padding:0 2px;line-height:1">✏️</button>
               <span style="color:var(--text-sec);font-weight:400">
-                · ${c.items.length} variantes
-                · ${includedCount}/${c.total} incl.
+                · ${c.items.length} variantes · ${includedCount}/${c.total} incl.
               </span>
             </div>
-            <div style="font-size:.68rem;color:var(--text-sec);margin-top:2px;display:flex;flex-wrap:wrap;gap:3px 8px">
-              ${c.items.map(i => `
-                <span style="display:inline-flex;align-items:center;gap:3px">
-                  ${i.example} (${i.count})
-                  <button class="c-var-rename" data-norm="${i.norm.replace(/"/g,'&quot;')}"
-                    title="Renombrar variante"
-                    style="background:none;border:none;cursor:pointer;color:var(--text-sec);
-                      font-size:.65rem;padding:0 2px;line-height:1">✏️</button>
-                </span>`).join('')}
+            <div style="font-size:.68rem;color:var(--text-sec);margin-top:2px;
+              overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
+              ${c.items.map(i => `${i.example} (${i.count})`).join(' · ')}
             </div>
           </div>
           <button class="c-sugg-unify" data-key="${c.key}"
@@ -2225,9 +2254,6 @@ window.Mods.gastos = {
   },
 
   _comercioRow(it) {
-    const catOpts = this._cats.map(c =>
-      `<option value="${c.id}"${c.id===it.currentCat?' selected':''}>${c.icono} ${c.nombre}</option>`
-    ).join('');
     const ttlUYU = it.totals.UYU > 0
       ? this._fmtMon(it.totals.UYU, 'UYU')
         + (it.negs.UYU < 0 ? `<span style="color:#10b981;font-size:.7rem;display:block">${this._fmtMon(it.negs.UYU, 'UYU')}</span>` : '')
@@ -2276,12 +2302,7 @@ window.Mods.gastos = {
         <td style="font-family:'DM Mono',monospace;white-space:nowrap">${ttlUYU}</td>
         <td style="font-family:'DM Mono',monospace;white-space:nowrap">${ttlUSD}</td>
         <td>
-          <select class="c-cat-sel" data-norm="${it.norm}"
-            style="font-size:.74rem;padding:3px 6px;border-radius:4px;
-              border:1px solid var(--border);background:var(--surface);color:var(--text);max-width:160px">
-            <option value=""${it.currentCat==null?' selected':''}>—</option>
-            ${catOpts}
-          </select>
+          ${this._catComboHTML({ cls: 'c-cat-sel', extra: `data-norm="${it.norm}"`, value: it.currentCat, placeholder: '—', style: 'font-size:.74rem;padding:3px 6px;border-radius:4px;border:1px solid var(--border);background:var(--surface);color:var(--text);max-width:160px' })}
         </td>
         <td>
           <select class="c-tipo-sel" data-norm="${it.norm}"
@@ -2368,13 +2389,7 @@ window.Mods.gastos = {
             </div>
             <div>
               <div style="font-size:.68rem;color:var(--text-sec);margin-bottom:2px">Categoría</div>
-              <select class="ge-cat" style="font-size:.78rem;padding:4px 7px;border-radius:5px;
-                border:1px solid var(--border);background:var(--surface);color:var(--text)">
-                <option value="">—</option>
-                ${this._cats.map(c =>
-                  `<option value="${c.id}"${c.id===g.categoria_id?' selected':''}>${c.icono} ${c.nombre}</option>`
-                ).join('')}
-              </select>
+              ${this._catComboHTML({ cls: 'ge-cat', value: g.categoria_id || null, placeholder: '—', style: 'font-size:.78rem;padding:4px 7px;border-radius:5px;border:1px solid var(--border);background:var(--surface);color:var(--text);min-width:140px' })}
             </div>
             <div>
               <div style="font-size:.68rem;color:var(--text-sec);margin-bottom:2px">Tipo</div>
@@ -2450,7 +2465,7 @@ window.Mods.gastos = {
             comercio:    editRow.querySelector('.ge-comercio').value.trim() || null,
             monto,
             moneda:        editRow.querySelector('.ge-moneda').value,
-            categoria_id:  editRow.querySelector('.ge-cat').value ? +editRow.querySelector('.ge-cat').value : null,
+            categoria_id:  this._catIdFromLabel(editRow.querySelector('.ge-cat').value),
             tipo_gasto:    editRow.querySelector('.ge-tipo').value,
             dividido_entre: +editRow.querySelector('.ge-div').value || 1,
           }, { id });
@@ -3013,6 +3028,196 @@ window.Mods.gastos = {
     );
   },
 
+  // ── Tarjetas (renombrar + cierre/vencimiento por mes) ───────────────────
+  async _drawTarjetas() {
+    const gc = document.getElementById('g-content');
+    gc.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+
+    const sb = getDB();
+    const [gRes, iRes, pRes] = await Promise.all([
+      sb.from('gastos').select('banco_tarjeta').not('banco_tarjeta', 'is', null),
+      sb.from('importaciones').select('banco_tarjeta').not('banco_tarjeta', 'is', null),
+      sb.from('tarjeta_periodos').select('*').order('periodo', { ascending: false }),
+    ]);
+
+    const counts = {};
+    for (const r of (gRes.data || [])) counts[r.banco_tarjeta] = (counts[r.banco_tarjeta] || 0) + 1;
+    const names = new Set([
+      ...Object.keys(counts),
+      ...(iRes.data || []).map(r => r.banco_tarjeta),
+      ...(pRes.data || []).map(r => r.banco_tarjeta),
+    ].filter(Boolean));
+
+    const periodosByCard = {};
+    for (const p of (pRes.data || [])) (periodosByCard[p.banco_tarjeta] = periodosByCard[p.banco_tarjeta] || []).push(p);
+
+    const cards = [...names].sort((a, b) => (counts[b] || 0) - (counts[a] || 0) || a.localeCompare(b));
+
+    if (!cards.length) {
+      gc.innerHTML = `<div class="table-wrap"><div class="empty"><div class="empty-icon">🏦</div>
+        <div class="empty-text">No hay tarjetas detectadas todavía</div>
+        <div style="font-size:.75rem;color:var(--text-sec);margin-top:4px">
+          Las tarjetas aparecen al importar un EDC.</div></div></div>`;
+      return;
+    }
+
+    gc.innerHTML = `
+      <div class="form-card" style="padding:12px 16px;margin-bottom:.75rem;font-size:.78rem;color:var(--text-sec)">
+        Renombrá tarjetas que la IA haya leído distinto (se unifican todos sus gastos) y registrá
+        las fechas de cierre y vencimiento de cada estado de cuenta.
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        ${cards.map(name => this._tarjetaCard(name, counts[name] || 0, periodosByCard[name] || [])).join('')}
+      </div>`;
+
+    this._attachTarjetasHandlers();
+  },
+
+  _tarjetaCard(name, count, periodos) {
+    const isOpen = this._tarjOpen.has(name);
+    const nameEsc = name.replace(/"/g, '&quot;');
+    const inpSt = `font-size:.74rem;padding:3px 6px;border-radius:4px;border:1px solid var(--border);background:var(--surface);color:var(--text)`;
+    const body = isOpen ? `
+      <div style="padding:8px 12px 12px;border-top:1px solid var(--border)">
+        <table style="width:100%;border-collapse:collapse;font-size:.74rem">
+          <thead><tr style="color:var(--text-sec);text-align:left">
+            <th style="padding:3px 5px;font-weight:500">Mes</th>
+            <th style="padding:3px 5px;font-weight:500">Cierre</th>
+            <th style="padding:3px 5px;font-weight:500">Vencimiento</th>
+            <th style="padding:3px 5px;width:30px"></th>
+          </tr></thead>
+          <tbody>
+            ${[...periodos].sort((a,b) => a.periodo < b.periodo ? 1 : -1).map(p => `
+              <tr style="border-top:1px solid rgba(255,255,255,.04)">
+                <td style="padding:3px 5px;font-family:'DM Mono',monospace">${p.periodo}</td>
+                <td style="padding:3px 5px">
+                  <input type="date" class="tj-cierre" data-card="${nameEsc}" data-periodo="${p.periodo}"
+                    value="${p.cierre || ''}" style="${inpSt}"></td>
+                <td style="padding:3px 5px">
+                  <input type="date" class="tj-venc" data-card="${nameEsc}" data-periodo="${p.periodo}"
+                    value="${p.vencimiento || ''}" style="${inpSt}"></td>
+                <td style="padding:3px 5px;text-align:center">
+                  <button class="tj-del" data-card="${nameEsc}" data-periodo="${p.periodo}"
+                    title="Eliminar período" style="background:none;border:none;cursor:pointer;color:var(--red);font-size:.8rem">✕</button>
+                </td>
+              </tr>`).join('') || `<tr><td colspan="4" style="padding:6px 5px;color:var(--text-sec)">Sin períodos cargados</td></tr>`}
+          </tbody>
+        </table>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:flex-end;margin-top:10px;
+          padding-top:10px;border-top:1px dashed var(--border)">
+          <div><div style="font-size:.66rem;color:var(--text-sec);margin-bottom:2px">Mes</div>
+            <input type="month" class="tj-new-mes" data-card="${nameEsc}" style="${inpSt}"></div>
+          <div><div style="font-size:.66rem;color:var(--text-sec);margin-bottom:2px">Cierre</div>
+            <input type="date" class="tj-new-cierre" data-card="${nameEsc}" style="${inpSt}"></div>
+          <div><div style="font-size:.66rem;color:var(--text-sec);margin-bottom:2px">Vencimiento</div>
+            <input type="date" class="tj-new-venc" data-card="${nameEsc}" style="${inpSt}"></div>
+          <button class="tj-add" data-card="${nameEsc}"
+            style="font-size:.74rem;padding:5px 12px;border-radius:5px;cursor:pointer;
+              background:var(--accent);border:1px solid var(--accent);color:#fff">+ Agregar mes</button>
+        </div>
+      </div>` : '';
+    return `
+      <div style="border:1px solid var(--border);border-radius:8px;overflow:hidden">
+        <div class="tj-hdr" data-card="${nameEsc}"
+          style="display:flex;align-items:center;gap:8px;padding:10px 12px;
+            background:rgba(255,255,255,.03);cursor:pointer;user-select:none">
+          <span style="color:var(--text-sec);font-size:.75rem;flex-shrink:0">${isOpen ? '▾' : '▸'}</span>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:.85rem;font-weight:600">${name}</div>
+            <div style="font-size:.7rem;color:var(--text-sec);margin-top:1px">
+              ${count} gasto${count !== 1 ? 's' : ''} · ${periodos.length} período${periodos.length !== 1 ? 's' : ''}
+            </div>
+          </div>
+          <button class="tj-rename" data-card="${nameEsc}" title="Renombrar tarjeta"
+            style="background:none;border:1px solid var(--border);border-radius:5px;cursor:pointer;
+              color:var(--text-sec);font-size:.72rem;padding:4px 9px;flex-shrink:0">✏️ Renombrar</button>
+        </div>
+        ${body}
+      </div>`;
+  },
+
+  _attachTarjetasHandlers() {
+    const gc = document.getElementById('g-content');
+
+    gc.querySelectorAll('.tj-hdr').forEach(hdr =>
+      hdr.addEventListener('click', e => {
+        if (e.target.closest('.tj-rename')) return;
+        const card = hdr.dataset.card;
+        if (this._tarjOpen.has(card)) this._tarjOpen.delete(card);
+        else this._tarjOpen.add(card);
+        this._drawTarjetas();
+      })
+    );
+
+    gc.querySelectorAll('.tj-rename').forEach(btn =>
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
+        this._renameTarjeta(btn.dataset.card);
+      })
+    );
+
+    const savePeriodo = async (inp) => {
+      const row  = inp.closest('tr');
+      const cierre = row.querySelector('.tj-cierre')?.value || null;
+      const venc   = row.querySelector('.tj-venc')?.value   || null;
+      try {
+        await dbUpsert('tarjeta_periodos', {
+          banco_tarjeta: inp.dataset.card, periodo: inp.dataset.periodo, cierre, vencimiento: venc,
+        });
+        toast('✅ Guardado');
+      } catch(err) { toast('❌ ' + err.message, 'err'); }
+    };
+    gc.querySelectorAll('.tj-cierre, .tj-venc').forEach(inp =>
+      inp.addEventListener('change', () => savePeriodo(inp)));
+
+    gc.querySelectorAll('.tj-del').forEach(btn =>
+      btn.addEventListener('click', async () => {
+        if (!confirm(`¿Eliminar el período ${btn.dataset.periodo}?`)) return;
+        try {
+          await dbDelete('tarjeta_periodos', { banco_tarjeta: btn.dataset.card, periodo: btn.dataset.periodo });
+          this._drawTarjetas();
+        } catch(err) { toast('❌ ' + err.message, 'err'); }
+      })
+    );
+
+    gc.querySelectorAll('.tj-add').forEach(btn =>
+      btn.addEventListener('click', async () => {
+        const wrap = btn.parentElement;
+        const mes  = wrap.querySelector('.tj-new-mes')?.value;
+        if (!mes) { toast('Elegí el mes', 'warn'); return; }
+        const cierre = wrap.querySelector('.tj-new-cierre')?.value || null;
+        const venc   = wrap.querySelector('.tj-new-venc')?.value   || null;
+        try {
+          await dbUpsert('tarjeta_periodos', { banco_tarjeta: btn.dataset.card, periodo: mes, cierre, vencimiento: venc });
+          toast('✅ Mes agregado');
+          this._drawTarjetas();
+        } catch(err) { toast('❌ ' + err.message, 'err'); }
+      })
+    );
+  },
+
+  async _renameTarjeta(oldName) {
+    const nuevo = prompt(`Nuevo nombre para la tarjeta "${oldName}".\nSe renombrarán todos sus gastos.`, oldName);
+    if (nuevo == null) return;
+    const nombre = nuevo.trim();
+    if (!nombre || nombre === oldName) return;
+    try {
+      await dbUpdate('gastos',        { banco_tarjeta: nombre }, { banco_tarjeta: oldName });
+      await dbUpdate('importaciones', { banco_tarjeta: nombre }, { banco_tarjeta: oldName });
+      // Mover períodos: re-insertar bajo el nuevo nombre y borrar los viejos
+      const { data: viejos = [] } = await getDB().from('tarjeta_periodos').select('*').eq('banco_tarjeta', oldName);
+      if (viejos.length) {
+        await dbUpsert('tarjeta_periodos', viejos.map(p => ({
+          banco_tarjeta: nombre, periodo: p.periodo, cierre: p.cierre, vencimiento: p.vencimiento,
+        })));
+        await dbDelete('tarjeta_periodos', { banco_tarjeta: oldName });
+      }
+      if (this._tarjOpen.has(oldName)) { this._tarjOpen.delete(oldName); this._tarjOpen.add(nombre); }
+      toast(`✅ Tarjeta renombrada a "${nombre}"`);
+      this._drawTarjetas();
+    } catch(err) { toast('❌ ' + err.message, 'err'); }
+  },
+
   // ── Resumen (gráficos) ──────────────────────────────────────────────────
   async _drawResumen() {
     const gc = document.getElementById('g-content');
@@ -3064,6 +3269,17 @@ window.Mods.gastos = {
     );
     const isBenefit = r => r.categoria_id != null && benefitCatIds.has(r.categoria_id);
 
+    // Moneda de análisis: el resumen agrega, así que necesita una unidad común.
+    // UYU → todo en pesos · USD/Origen → todo en dólares (Origen no puede sumar mixto).
+    const convCur = this._gastoMoneda === 'UYU' ? 'UYU' : 'USD';
+    const toC = (monto, mon) => {
+      const n = parseFloat(monto);
+      if (convCur === 'UYU') return mon === 'USD' ? (tc ? n * tc : 0) : n;
+      return mon === 'USD' ? n : (tc ? n / tc : 0);
+    };
+    const fmtC = n => convCur === 'UYU' ? this._fmtMon(n, 'UYU') : this._fmtUSD(n);
+    const curLabel = convCur === 'UYU' ? 'en UYU' : 'en USD';
+
     // Buckets por mes (solo gastos, sin beneficios)
     const byMonth = {};
     for (const m of months) byMonth[m.ym] = { UYU: 0, USD: 0 };
@@ -3073,17 +3289,17 @@ window.Mods.gastos = {
       if (byMonth[ym]) byMonth[ym][r.moneda === 'USD' ? 'USD' : 'UYU'] += parseFloat(r.monto);
     }
 
-    // Buckets por categoría en USD — separados en gastos y beneficios
+    // Buckets por categoría en la moneda de análisis — gastos y beneficios
     const byCat  = {};
     const bySave = {};
     for (const r of allData) {
       const k = r.categoria_id ?? 'sin';
-      const v = r.moneda === 'USD' ? parseFloat(r.monto) : (tc ? parseFloat(r.monto) / tc : 0);
+      const v = toC(r.monto, r.moneda);
       if (isBenefit(r)) bySave[k] = (bySave[k] || 0) + v;
       else              byCat[k]  = (byCat[k]  || 0) + v;
     }
 
-    // Tarjetas resumen
+    // Tarjetas resumen (totalUSD = total en moneda de análisis)
     const totalUSD   = Object.values(byCat).reduce((s, v) => s + v, 0);
     const totalSaved = -Object.values(bySave).reduce((s, v) => s + v, 0); // negativo → positivo
 
@@ -3094,7 +3310,7 @@ window.Mods.gastos = {
       : '—';
 
     const topMonthEntry = months
-      .map(m => ({ label: m.label, total: (tc ? byMonth[m.ym].UYU / tc : 0) + byMonth[m.ym].USD }))
+      .map(m => ({ label: m.label, total: toC(byMonth[m.ym].UYU, 'UYU') + toC(byMonth[m.ym].USD, 'USD') }))
       .filter(m => m.total > 0)
       .sort((a,b) => b.total - a.total)[0];
 
@@ -3117,10 +3333,7 @@ window.Mods.gastos = {
           </div>
           <div>
             <div style="font-size:.68rem;color:var(--text-sec);margin-bottom:2px">Categoría</div>
-            <select id="r-cat" style="${selSt}">
-              <option value="">Todos los rubros</option>
-              ${catOpts}
-            </select>
+            ${this._catComboHTML({ id: 'r-cat', value: this._resCat || null, placeholder: 'Todos los rubros', style: selSt + ';min-width:150px' })}
           </div>
           <div>
             <div style="font-size:.68rem;color:var(--text-sec);margin-bottom:2px">Tarjeta</div>
@@ -3130,7 +3343,7 @@ window.Mods.gastos = {
             </select>
           </div>
         </div>
-        ${!tc ? '<div style="margin-top:8px;font-size:.75rem;color:var(--red)">⚠ Ingresá el TC UYU/USD para ver los totales convertidos a USD.</div>' : ''}
+        ${!tc ? '<div style="margin-top:8px;font-size:.75rem;color:var(--red)">⚠ Ingresá el T/C en la barra de arriba para convertir los importes.</div>' : ''}
       </div>
 
       <!-- Tarjetas resumen -->
@@ -3138,23 +3351,23 @@ window.Mods.gastos = {
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:.75rem">
         <div class="form-card" style="padding:14px 16px;text-align:center">
           <div style="font-size:.65rem;color:var(--text-sec);margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em">Total gastado</div>
-          <div style="font-family:'DM Mono',monospace;font-size:1.1rem;font-weight:700;color:var(--accent)">${this._fmtUSD(totalUSD)}</div>
+          <div style="font-family:'DM Mono',monospace;font-size:1.1rem;font-weight:700;color:var(--accent)">${fmtC(totalUSD)}</div>
           <div style="font-size:.65rem;color:var(--text-sec);margin-top:3px">${this._resDesde.slice(0,7)} → ${this._resHasta.slice(0,7)}</div>
         </div>
         <div class="form-card" style="padding:14px 16px;text-align:center">
           <div style="font-size:.65rem;color:var(--text-sec);margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em">Rubro top</div>
           <div style="font-size:.9rem;font-weight:600">${topCatName}</div>
-          <div style="font-family:'DM Mono',monospace;font-size:.8rem;color:var(--accent);margin-top:3px">${this._fmtUSD(topCatEntry?.[1] ?? 0)}</div>
+          <div style="font-family:'DM Mono',monospace;font-size:.8rem;color:var(--accent);margin-top:3px">${fmtC(topCatEntry?.[1] ?? 0)}</div>
         </div>
         <div class="form-card" style="padding:14px 16px;text-align:center">
           <div style="font-size:.65rem;color:var(--text-sec);margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em">Mes top</div>
           <div style="font-size:.9rem;font-weight:600;text-transform:capitalize">${topMonthEntry?.label ?? '—'}</div>
-          <div style="font-family:'DM Mono',monospace;font-size:.8rem;color:var(--accent);margin-top:3px">${topMonthEntry ? this._fmtUSD(topMonthEntry.total) : '—'}</div>
+          <div style="font-family:'DM Mono',monospace;font-size:.8rem;color:var(--accent);margin-top:3px">${topMonthEntry ? fmtC(topMonthEntry.total) : '—'}</div>
         </div>
         ${totalSaved > 0 ? `
         <div class="form-card" style="padding:14px 16px;text-align:center;border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.05)">
           <div style="font-size:.65rem;color:#10b981;margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em">Ahorro / beneficios</div>
-          <div style="font-family:'DM Mono',monospace;font-size:1.1rem;font-weight:700;color:#10b981">${this._fmtUSD(totalSaved)}</div>
+          <div style="font-family:'DM Mono',monospace;font-size:1.1rem;font-weight:700;color:#10b981">${fmtC(totalSaved)}</div>
           <div style="font-size:.65rem;color:var(--text-sec);margin-top:3px">🎁 Beneficio · 💎 Puntos BBVA</div>
         </div>` : ''}
       </div>` : ''}
@@ -3162,7 +3375,7 @@ window.Mods.gastos = {
       <!-- Bar chart -->
       <div class="form-card" style="padding:14px 16px;margin-bottom:.75rem">
         <div style="font-weight:600;font-size:.9rem;margin-bottom:8px">
-          Evolución mensual · en USD${this._resCat ? ` · ${this._cats.find(c=>c.id===+this._resCat)?.nombre||''}` : ''}
+          Evolución mensual · ${curLabel}${this._resCat ? ` · ${this._cats.find(c=>c.id===+this._resCat)?.nombre||''}` : ''}
         </div>
         <div id="g-bar-chart" style="height:300px"></div>
       </div>
@@ -3170,10 +3383,10 @@ window.Mods.gastos = {
       <!-- Pie chart -->
       <div class="form-card" style="padding:14px 16px;margin-bottom:.75rem">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:6px">
-          <div style="font-weight:600;font-size:.9rem">Gastos por categoría · en USD</div>
+          <div style="font-weight:600;font-size:.9rem">Gastos por categoría · ${curLabel}</div>
           <div style="font-size:.78rem;color:var(--text-sec)">
-            Total gastos: <span style="color:var(--accent);font-family:'DM Mono',monospace;font-weight:600">${this._fmtUSD(totalUSD)}</span>
-            ${totalSaved > 0 ? ` · <span style="color:#10b981;font-family:'DM Mono',monospace">Ahorro: ${this._fmtUSD(totalSaved)}</span>` : ''}
+            Total gastos: <span style="color:var(--accent);font-family:'DM Mono',monospace;font-weight:600">${fmtC(totalUSD)}</span>
+            ${totalSaved > 0 ? ` · <span style="color:#10b981;font-family:'DM Mono',monospace">Ahorro: ${fmtC(totalSaved)}</span>` : ''}
           </div>
         </div>
         <div id="g-pie-chart" style="height:340px"></div>
@@ -3181,9 +3394,11 @@ window.Mods.gastos = {
     `;
 
     // ── Bar chart ─────────────────────────────────────────────────────────
-    const uyuY    = months.map(m => tc ? byMonth[m.ym].UYU / tc : 0);
-    const usdY    = months.map(m => byMonth[m.ym].USD);
-    const xLabels = months.map(m => m.label);
+    const tickPfx = convCur === 'UYU' ? '$U ' : 'USD ';
+    // Gastos originalmente en pesos y en dólares, ambos convertidos a la moneda de análisis
+    const fromUyuY = months.map(m => toC(byMonth[m.ym].UYU, 'UYU'));
+    const fromUsdY = months.map(m => toC(byMonth[m.ym].USD, 'USD'));
+    const xLabels  = months.map(m => m.label);
 
     const layoutBase = {
       paper_bgcolor: 'rgba(0,0,0,0)',
@@ -3193,21 +3408,21 @@ window.Mods.gastos = {
 
     Plotly.newPlot('g-bar-chart', [
       {
-        x: xLabels, y: uyuY, type: 'bar', name: 'UYU (convertido)',
+        x: xLabels, y: fromUyuY, type: 'bar', name: 'Gastos en UYU',
         marker: { color: '#3b82f6' },
-        hovertemplate: '<b>%{x}</b><br>UYU → USD %{y:,.0f}<extra></extra>',
+        hovertemplate: `<b>%{x}</b><br>${tickPfx}%{y:,.0f}<extra>de pesos</extra>`,
       },
       {
-        x: xLabels, y: usdY, type: 'bar', name: 'USD',
+        x: xLabels, y: fromUsdY, type: 'bar', name: 'Gastos en USD',
         marker: { color: '#10b981' },
-        hovertemplate: '<b>%{x}</b><br>USD %{y:,.0f}<extra></extra>',
+        hovertemplate: `<b>%{x}</b><br>${tickPfx}%{y:,.0f}<extra>de dólares</extra>`,
       },
     ], {
       ...layoutBase,
       barmode: 'stack',
       margin: { t: 10, r: 10, b: 70, l: 70 },
       xaxis: { tickangle: -30, gridcolor: 'rgba(255,255,255,.05)' },
-      yaxis: { tickprefix: 'USD ', tickformat: ',d', gridcolor: 'rgba(255,255,255,.05)', zerolinecolor: 'rgba(255,255,255,.1)' },
+      yaxis: { tickprefix: tickPfx, tickformat: ',d', gridcolor: 'rgba(255,255,255,.05)', zerolinecolor: 'rgba(255,255,255,.1)' },
       legend: { orientation: 'h', y: -0.25, x: 0 },
     }, { displayModeBar: false, responsive: true });
 
@@ -3233,7 +3448,7 @@ window.Mods.gastos = {
         textposition: 'outside',
         textfont: { size: 11, color: '#cfcfcf' },
         marker: { colors: palette.slice(0, pieValues.length), line: { color: 'rgba(0,0,0,.2)', width: 1 } },
-        hovertemplate: '<b>%{label}</b><br>USD %{value:,.0f}<br>%{percent}<extra></extra>',
+        hovertemplate: `<b>%{label}</b><br>${tickPfx}%{value:,.0f}<br>%{percent}<extra></extra>`,
       }], {
         ...layoutBase,
         showlegend: false,
@@ -3243,7 +3458,8 @@ window.Mods.gastos = {
 
     // Handlers
     document.getElementById('r-cat')?.addEventListener('change', e => {
-      this._resCat = e.target.value;
+      const catId = this._catIdFromLabel(e.target.value);
+      this._resCat = catId != null ? String(catId) : '';
       this._drawResumen();
     });
     document.getElementById('r-banco')?.addEventListener('change', e => {
