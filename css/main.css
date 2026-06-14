@@ -776,6 +776,18 @@ tbody tr:hover td { background: rgba(46,127,217,.04); }
 .g-sticky-header .g-tabs { margin-bottom: 8px; }
 .g-sticky-header .g-tab-select { margin-bottom: 8px; }
 
+/* ── Resumen cards grid ───────────────────────────────────────── */
+.r-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+  margin-bottom: .75rem;
+}
+.r-card {
+  padding: 12px 14px;
+  text-align: center;
+}
+
 /* ════════════════════════════════════════════════════════════════════════
    MOBILE ≤ 768px
 ════════════════════════════════════════════════════════════════════════ */
@@ -842,4 +854,7 @@ tbody tr:hover td { background: rgba(46,127,217,.04); }
     padding: 0 14px 8px;
   }
   .g-sticky-header .page-subtitle { margin-bottom: 6px; }
+
+  .r-cards-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .r-card { padding: 10px 6px; }
 }

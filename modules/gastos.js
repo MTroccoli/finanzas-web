@@ -3452,17 +3452,69 @@ window.Mods.gastos = {
     if (this._resTipo === 'cuotas') q = q.not('cuota_actual', 'is', null);
     else if (this._resTipo) q = q.eq('tipo_gasto', this._resTipo);
 
-    const todayStr     = now.toISOString().slice(0, 10);
-    const twoMoLater   = new Date(now.getFullYear(), now.getMonth() + 3, 0).toISOString().slice(0, 10);
-    let qFutureCuotas  = getDB().from('gastos')
-      .select('fecha, monto, moneda, cuota_actual, cuotas_totales')
-      .not('cuota_actual', 'is', null)
-      .gte('fecha', todayStr)
-      .lte('fecha', twoMoLater)
-      .or('titular_adicional.is.null,incluido_en_gastos.eq.true');
-    if (this._resBanco) qFutureCuotas = qFutureCuotas.eq('banco_tarjeta', this._resBanco);
+    const todayStr = now.toISOString().slice(0, 10);
 
-    const [{ data: allDataRaw = [] }, { data: futureCuotasRaw = [] }] = await Promise.all([q, qFutureCuotas]);
+    // Query 2: cuotas activas — busca el último pago conocido de cada plan
+    const oneYrAgo = new Date(now.getFullYear() - 1, now.getMonth(), 1).toISOString().slice(0, 10);
+    let qActiveCuotas = getDB().from('gastos')
+      .select('fecha, monto, moneda, cuota_actual, cuotas_totales, comercio, banco_tarjeta')
+      .not('cuota_actual', 'is', null)
+      .not('cuotas_totales', 'is', null)
+      .gte('fecha', oneYrAgo)
+      .or('titular_adicional.is.null,incluido_en_gastos.eq.true')
+      .order('fecha', { ascending: false });
+    if (this._resBanco) qActiveCuotas = qActiveCuotas.eq('banco_tarjeta', this._resBanco);
+
+    // Query 3: recurrentes del último mes completo (base para proyectar)
+    const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1).toISOString().slice(0,10);
+    const lastMonthEnd   = new Date(now.getFullYear(), now.getMonth(), 0).toISOString().slice(0,10);
+    let qRecurrentes = getDB().from('gastos')
+      .select('monto, moneda')
+      .eq('tipo_gasto', 'recurrente')
+      .gte('fecha', lastMonthStart)
+      .lte('fecha', lastMonthEnd)
+      .or('titular_adicional.is.null,incluido_en_gastos.eq.true');
+    if (this._resBanco) qRecurrentes = qRecurrentes.eq('banco_tarjeta', this._resBanco);
+
+    const [{ data: allDataRaw = [] }, { data: activeCuotasAll = [] }, { data: recurrentesLast = [] }] =
+      await Promise.all([q, qActiveCuotas, qRecurrentes]);
+
+    // ── Proyección de cuotas activas ────────────────────────────────────────
+    // Encontrar el pago más reciente de cada plan (comercio + cuotas_totales + monto + moneda)
+    const planMap = {};
+    for (const r of activeCuotasAll) {
+      const key = `${(r.comercio || '').slice(0,30)}|${r.cuotas_totales}|${Math.round(parseFloat(r.monto)*100)}|${r.moneda}`;
+      if (!planMap[key] || r.cuota_actual > planMap[key].cuota_actual) planMap[key] = r;
+    }
+    // Proyectar próximos 3 meses
+    const projMonths = [0, 1, 2].map(i => {
+      const d = new Date(now.getFullYear(), now.getMonth() + i, 1);
+      return { ym: `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`, label: d.toLocaleDateString('es-UY', { month: 'short', year: '2-digit' }) };
+    });
+    const cuotasByMonth = {};
+    for (const m of projMonths) cuotasByMonth[m.ym] = { UYU: 0, USD: 0, count: 0 };
+
+    for (const plan of Object.values(planMap)) {
+      const remaining = (plan.cuotas_totales || 0) - (plan.cuota_actual || 0);
+      if (remaining <= 0) continue;
+      const lastD = new Date(plan.fecha + 'T00:00:00');
+      for (let i = 1; i <= remaining; i++) {
+        const payD = new Date(lastD.getFullYear(), lastD.getMonth() + i, 15);
+        const ym   = `${payD.getFullYear()}-${String(payD.getMonth()+1).padStart(2,'0')}`;
+        if (cuotasByMonth[ym]) {
+          cuotasByMonth[ym][plan.moneda === 'USD' ? 'USD' : 'UYU'] += parseFloat(plan.monto);
+          cuotasByMonth[ym].count++;
+        }
+      }
+    }
+
+    const futureUYU   = projMonths.reduce((s, m) => s + cuotasByMonth[m.ym].UYU, 0);
+    const futureUSD   = projMonths.reduce((s, m) => s + cuotasByMonth[m.ym].USD, 0);
+    const futureCount = projMonths.reduce((s, m) => s + cuotasByMonth[m.ym].count, 0);
+
+    // Recurrentes: totales del último mes (proyectados flat)
+    const recurUYU = (recurrentesLast).filter(r => r.moneda !== 'USD').reduce((s,r) => s + parseFloat(r.monto), 0);
+    const recurUSD = (recurrentesLast).filter(r => r.moneda === 'USD').reduce((s,r) => s + parseFloat(r.monto), 0);
 
     // Lista única de bancos/tarjetas para el filtro
     const bancos = [...new Set(allDataRaw.map(r => r.banco_tarjeta).filter(Boolean))].sort();
@@ -3530,11 +3582,9 @@ window.Mods.gastos = {
       bySaveCom[k] = (bySaveCom[k] || 0) - toC(r.monto, r.moneda);
     }
 
-    const hasBenef = totalSaved > 0 || totalSaveUYU > 0 || totalSaveUSD > 0;
-    const isBenef  = this._resView === 'beneficios' && hasBenef;
-
-    const futureUYU = futureCuotasRaw.filter(r => r.moneda !== 'USD').reduce((s,r) => s + parseFloat(r.monto), 0);
-    const futureUSD = futureCuotasRaw.filter(r => r.moneda === 'USD').reduce((s,r) => s + parseFloat(r.monto), 0);
+    const hasBenef  = totalSaved > 0 || totalSaveUYU > 0 || totalSaveUSD > 0;
+    const isBenef   = this._resView === 'beneficios' && hasBenef;
+    const isCuotas  = this._resView === 'cuotas';
 
     const selSt  = `font-size:.82rem;padding:5px 8px;border-radius:6px;border:1px solid var(--border);background:var(--surface);color:var(--text)`;
 
@@ -3581,42 +3631,42 @@ window.Mods.gastos = {
       </div>
 
       <!-- Tarjetas resumen -->
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:.75rem">
+      <div class="r-cards-grid">
         ${totalUSD > 0 || totalSaved > 0 ? `
-        <div id="r-card-gastos" class="form-card" style="padding:14px 16px;text-align:center;cursor:pointer;${!isBenef ? 'box-shadow:0 0 0 2px var(--accent)' : ''}" title="Ver gastos">
-          <div style="font-size:.65rem;color:var(--text-sec);margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em">Total gastado</div>
-          <div style="font-family:'DM Mono',monospace;font-size:${this._gastoMoneda === 'ORIGEN' && totalGastUYU > 0 && totalGastUSD > 0 ? '.85rem' : '1.1rem'};font-weight:700;color:var(--accent);line-height:1.4">
+        <div id="r-card-gastos" class="form-card r-card" style="cursor:pointer;${!isBenef && !isCuotas ? 'box-shadow:0 0 0 2px var(--accent)' : ''}" title="Ver gastos">
+          <div style="font-size:.6rem;color:var(--text-sec);margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em">Total gastado</div>
+          <div style="font-family:'DM Mono',monospace;font-size:${this._gastoMoneda === 'ORIGEN' && totalGastUYU > 0 && totalGastUSD > 0 ? '.82rem' : '1rem'};font-weight:700;color:var(--accent);line-height:1.4">
             ${this._gastoMoneda === 'ORIGEN'
               ? (() => { const p = []; if (totalGastUYU > 0) p.push(this._fmtMon(totalGastUYU,'UYU')); if (totalGastUSD > 0) p.push(this._fmtUSD(totalGastUSD)); return p.join('<br>') || '—'; })()
               : fmtC(totalUSD)}
           </div>
-          <div style="font-size:.65rem;color:var(--text-sec);margin-top:3px">${this._resDesde.slice(0,7)} → ${this._resHasta.slice(0,7)}</div>
+          <div style="font-size:.6rem;color:var(--text-sec);margin-top:3px">${this._resDesde.slice(0,7)} → ${this._resHasta.slice(0,7)}</div>
         </div>
         ${hasBenef ? `
-        <div id="r-card-benef" class="form-card" style="padding:14px 16px;text-align:center;cursor:pointer;border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.05);${isBenef ? 'box-shadow:0 0 0 2px #10b981' : ''}" title="Ver ahorro / beneficios">
-          <div style="font-size:.65rem;color:#10b981;margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em">Ahorro / beneficios</div>
-          <div style="font-family:'DM Mono',monospace;font-size:${this._gastoMoneda === 'ORIGEN' && totalSaveUYU > 0 && totalSaveUSD > 0 ? '.85rem' : '1.1rem'};font-weight:700;color:#10b981;line-height:1.4">
+        <div id="r-card-benef" class="form-card r-card" style="cursor:pointer;border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.05);${isBenef ? 'box-shadow:0 0 0 2px #10b981' : ''}" title="Ver ahorro / beneficios">
+          <div style="font-size:.6rem;color:#10b981;margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em">Ahorro</div>
+          <div style="font-family:'DM Mono',monospace;font-size:${this._gastoMoneda === 'ORIGEN' && totalSaveUYU > 0 && totalSaveUSD > 0 ? '.82rem' : '1rem'};font-weight:700;color:#10b981;line-height:1.4">
             ${this._gastoMoneda === 'ORIGEN'
               ? (() => { const p = []; if (totalSaveUYU > 0) p.push(this._fmtMon(totalSaveUYU,'UYU')); if (totalSaveUSD > 0) p.push(this._fmtUSD(totalSaveUSD)); return p.join('<br>') || '—'; })()
               : fmtC(totalSaved)}
           </div>
-          <div style="font-size:.65rem;color:var(--text-sec);margin-top:3px">${isBenef ? '👆 Viendo ahorro' : '🎁 Beneficio · 💎 Puntos BBVA'}</div>
+          <div style="font-size:.6rem;color:var(--text-sec);margin-top:3px">${isBenef ? '👆 Activo' : '🎁 Beneficios'}</div>
         </div>` : ''}` : ''}
-        <div class="form-card" style="padding:14px 16px;text-align:center;border-color:rgba(255,209,102,.3);background:rgba(255,209,102,.04)">
-          <div style="font-size:.65rem;color:var(--gold);margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em">📅 Cuotas próx. 2 meses</div>
-          <div style="font-family:'DM Mono',monospace;font-size:${futureUYU > 0 && futureUSD > 0 ? '.85rem' : '1.1rem'};font-weight:700;color:var(--gold);line-height:1.4">
-            ${futureCuotasRaw.length > 0
+        <div id="r-card-cuotas" class="form-card r-card" style="cursor:pointer;border-color:rgba(255,209,102,.3);background:rgba(255,209,102,.04);${isCuotas ? 'box-shadow:0 0 0 2px var(--gold)' : ''}" title="Ver proyección cuotas">
+          <div style="font-size:.6rem;color:var(--gold);margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em">📅 Cuotas 3m</div>
+          <div style="font-family:'DM Mono',monospace;font-size:${futureUYU > 0 && futureUSD > 0 ? '.82rem' : '1rem'};font-weight:700;color:var(--gold);line-height:1.4">
+            ${futureCount > 0
               ? (() => { const p = []; if (futureUYU > 0) p.push(this._fmtMon(futureUYU,'UYU')); if (futureUSD > 0) p.push(this._fmtUSD(futureUSD)); return p.join('<br>') || '—'; })()
-              : '<span style="font-size:.8rem;color:var(--text-sec)">Sin cuotas pendientes</span>'}
+              : '<span style="font-size:.78rem;color:var(--text-sec)">Sin cuotas</span>'}
           </div>
-          <div style="font-size:.65rem;color:var(--text-sec);margin-top:3px">${futureCuotasRaw.length > 0 ? `${futureCuotasRaw.length} cuota(s) · ` : ''}${todayStr.slice(0,7)} → ${twoMoLater.slice(0,7)}</div>
+          <div style="font-size:.6rem;color:var(--text-sec);margin-top:3px">${futureCount > 0 ? `${futureCount} cuota(s)` : projMonths[0].label + ' → ' + projMonths[2].label}</div>
         </div>
       </div>
 
       <!-- Bar chart -->
       <div class="form-card" style="padding:14px 16px;margin-bottom:.75rem">
         <div style="font-weight:600;font-size:.9rem;margin-bottom:8px">
-          ${isBenef ? 'Evolución de ahorro' : 'Evolución mensual'} · ${curLabel}${!isBenef && this._resCat ? ` · ${this._cats.find(c=>c.id===+this._resCat)?.nombre||''}` : ''}
+          ${isCuotas ? 'Proyección · cuotas + recurrentes' : isBenef ? 'Evolución de ahorro' : 'Evolución mensual'} · ${isCuotas ? projMonths[0].label + ' → ' + projMonths[2].label : curLabel}${!isBenef && !isCuotas && this._resCat ? ` · ${this._cats.find(c=>c.id===+this._resCat)?.nombre||''}` : ''}
         </div>
         <div id="g-bar-chart" style="height:300px"></div>
       </div>
@@ -3640,17 +3690,6 @@ window.Mods.gastos = {
 
     // ── Bar chart ─────────────────────────────────────────────────────────
     const tickPfx = convCur === 'UYU' ? '$U ' : 'USD ';
-    const barSrc  = isBenef ? byMonthSave : byMonth;
-    // Importes (gastos o ahorro) convertidos a la moneda de análisis
-    const fromUyuY = months.map(m => toC(barSrc[m.ym].UYU, 'UYU'));
-    const fromUsdY = months.map(m => toC(barSrc[m.ym].USD, 'USD'));
-    // Montos en moneda origen para el tooltip (sin conversión)
-    const origUyu  = months.map(m => barSrc[m.ym].UYU);
-    const origUsd  = months.map(m => barSrc[m.ym].USD);
-    const xLabels  = months.map(m => m.label);
-    const barNamePfx = isBenef ? 'Ahorro' : 'Gastos';
-    const barColUyu  = isBenef ? '#10b981' : '#3b82f6';
-    const barColUsd  = isBenef ? '#34d399' : '#10b981';
 
     const layoutBase = {
       paper_bgcolor: 'rgba(0,0,0,0)',
@@ -3658,60 +3697,146 @@ window.Mods.gastos = {
       font: { color: '#cfcfcf', family: 'DM Sans, sans-serif', size: 11 },
     };
 
-    Plotly.newPlot('g-bar-chart', [
-      {
-        x: xLabels, y: fromUyuY, type: 'bar', name: `${barNamePfx} en UYU`,
-        marker: { color: barColUyu }, customdata: origUyu,
-        hovertemplate: `<b>%{x}</b><br>$U %{customdata:,.0f}<extra></extra>`,
-      },
-      {
-        x: xLabels, y: fromUsdY, type: 'bar', name: `${barNamePfx} en USD`,
-        marker: { color: barColUsd }, customdata: origUsd,
-        hovertemplate: `<b>%{x}</b><br>USD %{customdata:,.0f}<extra></extra>`,
-      },
-    ], {
-      ...layoutBase,
-      barmode: 'stack',
-      dragmode: false,
-      margin: { t: 10, r: 10, b: 70, l: 70 },
-      xaxis: { tickangle: -30, gridcolor: 'rgba(255,255,255,.05)', fixedrange: true },
-      yaxis: { tickprefix: tickPfx, tickformat: ',d', gridcolor: 'rgba(255,255,255,.05)', zerolinecolor: 'rgba(255,255,255,.1)', fixedrange: true },
-      legend: { orientation: 'h', y: -0.25, x: 0 },
-    }, { displayModeBar: false, responsive: true, scrollZoom: false });
+    if (isCuotas) {
+      // Proyección: cuotas UYU/USD + recurrentes UYU/USD apilados por mes
+      const xProj = projMonths.map(m => m.label);
+      Plotly.newPlot('g-bar-chart', [
+        {
+          x: xProj,
+          y: projMonths.map(m => cuotasByMonth[m.ym].UYU),
+          type: 'bar', name: 'Cuotas $U',
+          marker: { color: '#fbbf24' },
+          hovertemplate: '<b>%{x}</b><br>$U %{y:,.0f}<extra></extra>',
+        },
+        {
+          x: xProj,
+          y: projMonths.map(m => cuotasByMonth[m.ym].USD),
+          type: 'bar', name: 'Cuotas USD',
+          marker: { color: '#f59e0b' },
+          hovertemplate: '<b>%{x}</b><br>USD %{y:,.2f}<extra></extra>',
+        },
+        {
+          x: xProj,
+          y: projMonths.map(() => recurUYU),
+          type: 'bar', name: 'Recurrentes $U',
+          marker: { color: '#a855f7' },
+          hovertemplate: '<b>%{x}</b><br>$U %{y:,.0f}<extra></extra>',
+        },
+        {
+          x: xProj,
+          y: projMonths.map(() => recurUSD),
+          type: 'bar', name: 'Recurrentes USD',
+          marker: { color: '#d8b4fe' },
+          hovertemplate: '<b>%{x}</b><br>USD %{y:,.2f}<extra></extra>',
+        },
+      ], {
+        ...layoutBase,
+        barmode: 'stack',
+        dragmode: false,
+        margin: { t: 10, r: 10, b: 70, l: 70 },
+        xaxis: { gridcolor: 'rgba(255,255,255,.05)', fixedrange: true },
+        yaxis: { tickformat: ',d', gridcolor: 'rgba(255,255,255,.05)', zerolinecolor: 'rgba(255,255,255,.1)', fixedrange: true },
+        legend: { orientation: 'h', y: -0.3, x: 0 },
+      }, { displayModeBar: false, responsive: true, scrollZoom: false });
+    } else {
+      const barSrc  = isBenef ? byMonthSave : byMonth;
+      const fromUyuY = months.map(m => toC(barSrc[m.ym].UYU, 'UYU'));
+      const fromUsdY = months.map(m => toC(barSrc[m.ym].USD, 'USD'));
+      const origUyu  = months.map(m => barSrc[m.ym].UYU);
+      const origUsd  = months.map(m => barSrc[m.ym].USD);
+      const xLabels  = months.map(m => m.label);
+      const barNamePfx = isBenef ? 'Ahorro' : 'Gastos';
+      const barColUyu  = isBenef ? '#10b981' : '#3b82f6';
+      const barColUsd  = isBenef ? '#34d399' : '#10b981';
+
+      Plotly.newPlot('g-bar-chart', [
+        {
+          x: xLabels, y: fromUyuY, type: 'bar', name: `${barNamePfx} en UYU`,
+          marker: { color: barColUyu }, customdata: origUyu,
+          hovertemplate: `<b>%{x}</b><br>$U %{customdata:,.0f}<extra></extra>`,
+        },
+        {
+          x: xLabels, y: fromUsdY, type: 'bar', name: `${barNamePfx} en USD`,
+          marker: { color: barColUsd }, customdata: origUsd,
+          hovertemplate: `<b>%{x}</b><br>USD %{customdata:,.0f}<extra></extra>`,
+        },
+      ], {
+        ...layoutBase,
+        barmode: 'stack',
+        dragmode: false,
+        margin: { t: 10, r: 10, b: 70, l: 70 },
+        xaxis: { tickangle: -30, gridcolor: 'rgba(255,255,255,.05)', fixedrange: true },
+        yaxis: { tickprefix: tickPfx, tickformat: ',d', gridcolor: 'rgba(255,255,255,.05)', zerolinecolor: 'rgba(255,255,255,.1)', fixedrange: true },
+        legend: { orientation: 'h', y: -0.25, x: 0 },
+      }, { displayModeBar: false, responsive: true, scrollZoom: false });
+    }
 
     // ── Pie chart ─────────────────────────────────────────────────────────
-    const palette = ['#3b82f6','#10b981','#f59e0b','#ef4444','#a855f7','#06b6d4','#ec4899','#84cc16','#f97316','#6366f1','#14b8a6','#eab308'];
-    const entries = Object.entries(isBenef ? bySaveCom : byCat).filter(([, v]) => v > 0).sort((a,b) => b[1] - a[1]);
-    if (!entries.length) {
-      document.getElementById('g-pie-chart').innerHTML =
-        '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text-sec);font-size:.85rem">Sin datos en el rango seleccionado</div>';
+    if (isCuotas) {
+      // En vista cuotas: mostrar desglose de planes activos
+      const planList = Object.values(planMap)
+        .filter(p => (p.cuotas_totales || 0) - (p.cuota_actual || 0) > 0)
+        .sort((a, b) => parseFloat(b.monto) - parseFloat(a.monto));
+      const pieEl = document.getElementById('g-pie-chart');
+      if (!planList.length) {
+        pieEl.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text-sec);font-size:.85rem">Sin planes de cuotas activos</div>';
+      } else {
+        pieEl.style.height = 'auto';
+        pieEl.innerHTML = `
+          <table style="width:100%;border-collapse:collapse;font-size:.8rem">
+            <thead><tr style="color:var(--text-sec);font-size:.72rem;text-transform:uppercase">
+              <th style="text-align:left;padding:6px 4px;border-bottom:1px solid var(--border)">Comercio</th>
+              <th style="text-align:center;padding:6px 4px;border-bottom:1px solid var(--border)">Cuota</th>
+              <th style="text-align:right;padding:6px 4px;border-bottom:1px solid var(--border)">Monto</th>
+              <th style="text-align:right;padding:6px 4px;border-bottom:1px solid var(--border)">Restantes</th>
+            </tr></thead>
+            <tbody>
+              ${planList.map(p => {
+                const rem = (p.cuotas_totales||0) - (p.cuota_actual||0);
+                const monStr = p.moneda === 'USD' ? this._fmtUSD(parseFloat(p.monto)) : this._fmtMon(parseFloat(p.monto), p.moneda);
+                return `<tr style="border-bottom:1px solid rgba(255,255,255,.04)">
+                  <td style="padding:6px 4px;color:var(--text)">${p.comercio || '—'}</td>
+                  <td style="padding:6px 4px;text-align:center;color:var(--text-sec)">${p.cuota_actual}/${p.cuotas_totales}</td>
+                  <td style="padding:6px 4px;text-align:right;font-family:'DM Mono',monospace;color:var(--gold)">${monStr}</td>
+                  <td style="padding:6px 4px;text-align:right;color:var(--text-sec)">${rem} mes${rem===1?'':'es'}</td>
+                </tr>`;
+              }).join('')}
+            </tbody>
+          </table>`;
+      }
     } else {
-      const pieLabels = entries.map(([id]) => {
-        if (isBenef) return id; // nombre de comercio
-        if (id === 'sin') return 'Sin categoría';
-        const c = this._cats.find(c => c.id === +id);
-        return c ? `${c.icono} ${c.nombre}` : 'Otros';
-      });
-      const pieValues = entries.map(([, v]) => v);
-      // Solo etiquetar las 5 categorías mayores; el resto sin texto (se ve en hover)
-      const pieText = pieLabels.map((lbl, i) => i < 5 ? lbl : '');
-      Plotly.newPlot('g-pie-chart', [{
-        values: pieValues,
-        labels: pieLabels,
-        text: pieText,
-        type: 'pie',
-        hole: 0.45,
-        textinfo: 'text',
-        textposition: 'inside',
-        insidetextorientation: 'horizontal',
-        textfont: { size: 11, color: '#fff' },
-        marker: { colors: palette.slice(0, pieValues.length), line: { color: 'rgba(0,0,0,.2)', width: 1 } },
-        hovertemplate: `<b>%{label}</b><br>${tickPfx}%{value:,.0f}<br>%{percent}<extra></extra>`,
-      }], {
-        ...layoutBase,
-        showlegend: false,
-        margin: { t: 20, r: 20, b: 20, l: 20 },
-      }, { displayModeBar: false, responsive: true, scrollZoom: false });
+      const palette = ['#3b82f6','#10b981','#f59e0b','#ef4444','#a855f7','#06b6d4','#ec4899','#84cc16','#f97316','#6366f1','#14b8a6','#eab308'];
+      const entries = Object.entries(isBenef ? bySaveCom : byCat).filter(([, v]) => v > 0).sort((a,b) => b[1] - a[1]);
+      if (!entries.length) {
+        document.getElementById('g-pie-chart').innerHTML =
+          '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text-sec);font-size:.85rem">Sin datos en el rango seleccionado</div>';
+      } else {
+        const pieLabels = entries.map(([id]) => {
+          if (isBenef) return id;
+          if (id === 'sin') return 'Sin categoría';
+          const c = this._cats.find(c => c.id === +id);
+          return c ? `${c.icono} ${c.nombre}` : 'Otros';
+        });
+        const pieValues = entries.map(([, v]) => v);
+        const pieText = pieLabels.map((lbl, i) => i < 5 ? lbl : '');
+        Plotly.newPlot('g-pie-chart', [{
+          values: pieValues,
+          labels: pieLabels,
+          text: pieText,
+          type: 'pie',
+          hole: 0.45,
+          textinfo: 'text',
+          textposition: 'inside',
+          insidetextorientation: 'horizontal',
+          textfont: { size: 11, color: '#fff' },
+          marker: { colors: palette.slice(0, pieValues.length), line: { color: 'rgba(0,0,0,.2)', width: 1 } },
+          hovertemplate: `<b>%{label}</b><br>${tickPfx}%{value:,.0f}<br>%{percent}<extra></extra>`,
+        }], {
+          ...layoutBase,
+          showlegend: false,
+          margin: { t: 20, r: 20, b: 20, l: 20 },
+        }, { displayModeBar: false, responsive: true, scrollZoom: false });
+      }
     }
 
     // Handlers
@@ -3720,6 +3845,10 @@ window.Mods.gastos = {
     });
     document.getElementById('r-card-benef')?.addEventListener('click', () => {
       this._resView = this._resView === 'beneficios' ? 'gastos' : 'beneficios';
+      this._drawResumen();
+    });
+    document.getElementById('r-card-cuotas')?.addEventListener('click', () => {
+      this._resView = this._resView === 'cuotas' ? 'gastos' : 'cuotas';
       this._drawResumen();
     });
     document.getElementById('r-cat')?.addEventListener('change', e => {
