@@ -37,7 +37,8 @@ window.Mods.gastos = {
   _bancotarjeta: '',      // Banco/tarjeta detectado por la IA en el EDC activo
   _resBanco:     '',      // Filtro por banco/tarjeta en Resumen
   _resTipo:      '',      // Filtro por tipo de gasto en Resumen
-  _resView:      'gastos',// Vista del Resumen: 'gastos' | 'beneficios'
+  _resView:      'gastos',// Vista del Resumen: 'gastos' | 'beneficios' | 'cuotas'
+  _cuotasProjWin: 3,     // Ventana en meses para tabla de cuotas en Resumen (3/6/12)
   _adicTitular:  '',      // Nombre titular adicional asignado en la vista previa
   _adicMes:      null,    // Filtro mes en panel Adicional
   _adicTitularFiltro: '', // Filtro titular en panel Adicional
@@ -3587,6 +3588,8 @@ window.Mods.gastos = {
     const isCuotas  = this._resView === 'cuotas';
 
     const selSt  = `font-size:.82rem;padding:5px 8px;border-radius:6px;border:1px solid var(--border);background:var(--surface);color:var(--text)`;
+    const projWin = this._cuotasProjWin || 3;
+    const winBtnSt = n => `font-size:.68rem;padding:2px 8px;border-radius:4px;border:1px solid var(--border);background:${projWin===n?'var(--accent)':'var(--surface)'};color:var(--text);cursor:pointer`;
 
     gc.innerHTML = `
       <!-- Filtros -->
@@ -3671,20 +3674,24 @@ window.Mods.gastos = {
         <div id="g-bar-chart" style="height:300px"></div>
       </div>
 
-      <!-- Pie chart -->
+      <!-- Detail panel (pie / table) -->
       <div class="form-card" style="padding:14px 16px;margin-bottom:.75rem">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:6px">
-          <div style="font-weight:600;font-size:.9rem">${isBenef ? 'Ahorro por comercio' : 'Gastos por categoría'} · ${curLabel}</div>
-          <div style="font-size:.78rem;color:var(--text-sec)">
+          <div style="font-weight:600;font-size:.9rem">
+            ${isCuotas ? `Planes activos · próximos ${projWin}M` : isBenef ? 'Ahorro por comercio · ' + curLabel : 'Gastos por categoría · ' + curLabel}
+          </div>
+          ${isCuotas ? `<div style="display:flex;gap:5px">
+            ${[3,6,12].map(n => `<button class="btn-proj-win" data-win="${n}" style="${winBtnSt(n)}">${n}M</button>`).join('')}
+          </div>` : `<div style="font-size:.78rem;color:var(--text-sec)">
             Total gastos: <span style="color:var(--accent);font-family:'DM Mono',monospace;font-weight:600">
               ${this._gastoMoneda === 'ORIGEN'
                 ? (() => { const p = []; if (totalGastUYU>0) p.push(this._fmtMon(totalGastUYU,'UYU')); if (totalGastUSD>0) p.push(this._fmtUSD(totalGastUSD)); return p.join(' · ') || '—'; })()
                 : fmtC(totalUSD)}
             </span>
             ${(totalSaved > 0 || totalSaveUYU > 0 || totalSaveUSD > 0) ? ` · <span style="color:#10b981;font-family:'DM Mono',monospace">Ahorro: ${this._gastoMoneda === 'ORIGEN' ? (() => { const p = []; if (totalSaveUYU>0) p.push(this._fmtMon(totalSaveUYU,'UYU')); if (totalSaveUSD>0) p.push(this._fmtUSD(totalSaveUSD)); return p.join(' · ') || '—'; })() : fmtC(totalSaved)}</span>` : ''}
-          </div>
+          </div>`}
         </div>
-        <div id="g-pie-chart" style="height:340px"></div>
+        <div id="g-pie-chart" style="${isCuotas || isBenef ? 'height:auto' : 'height:340px'}"></div>
       </div>
     `;
 
@@ -3700,43 +3707,55 @@ window.Mods.gastos = {
     if (isCuotas) {
       // Proyección: cuotas UYU/USD + recurrentes UYU/USD apilados por mes
       const xProj = projMonths.map(m => m.label);
+      const cuotaUYUvals = projMonths.map(m => cuotasByMonth[m.ym].UYU);
+      const cuotaUSDvals = projMonths.map(m => cuotasByMonth[m.ym].USD);
+      const recurUYUvals = projMonths.map(() => recurUYU);
+      const recurUSDvals = projMonths.map(() => recurUSD);
       Plotly.newPlot('g-bar-chart', [
         {
-          x: xProj,
-          y: projMonths.map(m => cuotasByMonth[m.ym].UYU),
-          type: 'bar', name: 'Cuotas $U',
+          x: xProj, y: cuotaUYUvals, type: 'bar',
+          name: `Cuotas $U · ${this._fmtMon(futureUYU, 'UYU')} tot.`,
           marker: { color: '#fbbf24' },
+          text: cuotaUYUvals.map(v => v >= 200 ? `$U ${fmt(v, 0)}` : ''),
+          textposition: 'inside', insidetextanchor: 'middle',
+          textfont: { size: 10, color: 'rgba(0,0,0,.8)' },
           hovertemplate: '<b>%{x}</b><br>$U %{y:,.0f}<extra></extra>',
         },
         {
-          x: xProj,
-          y: projMonths.map(m => cuotasByMonth[m.ym].USD),
-          type: 'bar', name: 'Cuotas USD',
+          x: xProj, y: cuotaUSDvals, type: 'bar',
+          name: `Cuotas USD · ${this._fmtUSD(futureUSD)} tot.`,
           marker: { color: '#f59e0b' },
+          text: cuotaUSDvals.map(v => v >= 1 ? `USD ${fmt(v, 0)}` : ''),
+          textposition: 'inside', insidetextanchor: 'middle',
+          textfont: { size: 10, color: 'rgba(0,0,0,.8)' },
           hovertemplate: '<b>%{x}</b><br>USD %{y:,.2f}<extra></extra>',
         },
         {
-          x: xProj,
-          y: projMonths.map(() => recurUYU),
-          type: 'bar', name: 'Recurrentes $U',
+          x: xProj, y: recurUYUvals, type: 'bar',
+          name: `Recurrentes $U · ${this._fmtMon(recurUYU, 'UYU')} /mes`,
           marker: { color: '#a855f7' },
+          text: recurUYUvals.map(v => v >= 200 ? `$U ${fmt(v, 0)}` : ''),
+          textposition: 'inside', insidetextanchor: 'middle',
+          textfont: { size: 10, color: '#fff' },
           hovertemplate: '<b>%{x}</b><br>$U %{y:,.0f}<extra></extra>',
         },
         {
-          x: xProj,
-          y: projMonths.map(() => recurUSD),
-          type: 'bar', name: 'Recurrentes USD',
+          x: xProj, y: recurUSDvals, type: 'bar',
+          name: `Recurrentes USD · ${this._fmtUSD(recurUSD)} /mes`,
           marker: { color: '#d8b4fe' },
+          text: recurUSDvals.map(v => v >= 1 ? `USD ${fmt(v, 0)}` : ''),
+          textposition: 'inside', insidetextanchor: 'middle',
+          textfont: { size: 10, color: 'rgba(0,0,0,.8)' },
           hovertemplate: '<b>%{x}</b><br>USD %{y:,.2f}<extra></extra>',
         },
       ], {
         ...layoutBase,
         barmode: 'stack',
         dragmode: false,
-        margin: { t: 10, r: 10, b: 70, l: 70 },
+        margin: { t: 10, r: 10, b: 90, l: 70 },
         xaxis: { gridcolor: 'rgba(255,255,255,.05)', fixedrange: true },
         yaxis: { tickformat: ',d', gridcolor: 'rgba(255,255,255,.05)', zerolinecolor: 'rgba(255,255,255,.1)', fixedrange: true },
-        legend: { orientation: 'h', y: -0.3, x: 0 },
+        legend: { orientation: 'h', y: -0.42, x: 0 },
       }, { displayModeBar: false, responsive: true, scrollZoom: false });
     } else {
       const barSrc  = isBenef ? byMonthSave : byMonth;
@@ -3771,48 +3790,90 @@ window.Mods.gastos = {
       }, { displayModeBar: false, responsive: true, scrollZoom: false });
     }
 
-    // ── Pie chart ─────────────────────────────────────────────────────────
+    // ── Detail panel ──────────────────────────────────────────────────────
+    const pieEl = document.getElementById('g-pie-chart');
+
     if (isCuotas) {
-      // En vista cuotas: mostrar desglose de planes activos
-      const planList = Object.values(planMap)
-        .filter(p => (p.cuotas_totales || 0) - (p.cuota_actual || 0) > 0)
-        .sort((a, b) => parseFloat(b.monto) - parseFloat(a.monto));
-      const pieEl = document.getElementById('g-pie-chart');
-      if (!planList.length) {
-        pieEl.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text-sec);font-size:.85rem">Sin planes de cuotas activos</div>';
+      // Tabla de planes activos filtrada por ventana (projWin meses)
+      const winEndDate = new Date(now.getFullYear(), now.getMonth() + projWin, 28);
+      const plansInWindow = Object.values(planMap).filter(p => {
+        const rem = (p.cuotas_totales||0) - (p.cuota_actual||0);
+        if (rem <= 0) return false;
+        const lastD = new Date(p.fecha + 'T00:00:00');
+        const nextD = new Date(lastD.getFullYear(), lastD.getMonth() + 1, 15);
+        return nextD <= winEndDate;
+      }).sort((a, b) => parseFloat(b.monto) - parseFloat(a.monto));
+
+      const thSt = 'text-align:left;padding:7px 6px;border-bottom:1px solid var(--border);font-size:.72rem;color:var(--text-sec);text-transform:uppercase;font-weight:500';
+      const tdSt = 'padding:7px 6px;border-bottom:1px solid rgba(255,255,255,.04);font-size:.8rem';
+
+      if (!plansInWindow.length) {
+        pieEl.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-sec);font-size:.85rem">Sin planes activos en los próximos ' + projWin + ' meses</div>';
       } else {
-        pieEl.style.height = 'auto';
-        pieEl.innerHTML = `
-          <table style="width:100%;border-collapse:collapse;font-size:.8rem">
-            <thead><tr style="color:var(--text-sec);font-size:.72rem;text-transform:uppercase">
-              <th style="text-align:left;padding:6px 4px;border-bottom:1px solid var(--border)">Comercio</th>
-              <th style="text-align:center;padding:6px 4px;border-bottom:1px solid var(--border)">Cuota</th>
-              <th style="text-align:right;padding:6px 4px;border-bottom:1px solid var(--border)">Monto</th>
-              <th style="text-align:right;padding:6px 4px;border-bottom:1px solid var(--border)">Restantes</th>
+        pieEl.innerHTML = `<div class="table-scroll" style="overflow-x:auto">
+          <table style="width:100%;border-collapse:collapse">
+            <thead><tr>
+              <th style="${thSt}">Compra</th>
+              <th style="${thSt};text-align:center">Cuota</th>
+              <th style="${thSt};text-align:right">Por mes</th>
+              <th style="${thSt};text-align:right">Total restante</th>
+              <th style="${thSt}">Tarjeta</th>
             </tr></thead>
             <tbody>
-              ${planList.map(p => {
+              ${plansInWindow.map(p => {
                 const rem = (p.cuotas_totales||0) - (p.cuota_actual||0);
-                const monStr = p.moneda === 'USD' ? this._fmtUSD(parseFloat(p.monto)) : this._fmtMon(parseFloat(p.monto), p.moneda);
-                return `<tr style="border-bottom:1px solid rgba(255,255,255,.04)">
-                  <td style="padding:6px 4px;color:var(--text)">${p.comercio || '—'}</td>
-                  <td style="padding:6px 4px;text-align:center;color:var(--text-sec)">${p.cuota_actual}/${p.cuotas_totales}</td>
-                  <td style="padding:6px 4px;text-align:right;font-family:'DM Mono',monospace;color:var(--gold)">${monStr}</td>
-                  <td style="padding:6px 4px;text-align:right;color:var(--text-sec)">${rem} mes${rem===1?'':'es'}</td>
+                const monto = parseFloat(p.monto);
+                const monStr = p.moneda === 'USD' ? this._fmtUSD(monto) : this._fmtMon(monto, p.moneda);
+                const totStr = p.moneda === 'USD' ? this._fmtUSD(monto * rem) : this._fmtMon(monto * rem, p.moneda);
+                return `<tr>
+                  <td style="${tdSt}">${p.comercio || '—'}
+                    <div style="font-size:.68rem;color:var(--text-sec)">${fmtDate(p.fecha)} · ${p.moneda}</div>
+                  </td>
+                  <td style="${tdSt};text-align:center;font-family:'DM Mono',monospace;color:var(--text-sec)">${p.cuota_actual}/${p.cuotas_totales}</td>
+                  <td style="${tdSt};text-align:right;font-family:'DM Mono',monospace;font-weight:600;color:var(--gold)">${monStr}</td>
+                  <td style="${tdSt};text-align:right;font-family:'DM Mono',monospace;color:var(--text-sec)">${totStr}</td>
+                  <td style="${tdSt};color:var(--text-sec);font-size:.74rem">${p.banco_tarjeta || '—'}</td>
                 </tr>`;
               }).join('')}
             </tbody>
-          </table>`;
+          </table></div>`;
+      }
+    } else if (isBenef) {
+      // Tabla de ahorro por comercio
+      const saveEntries = Object.entries(bySaveCom).filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1]);
+      const totalSaveAll = saveEntries.reduce((s, [, v]) => s + v, 0);
+      const thSt = 'text-align:left;padding:7px 6px;border-bottom:1px solid var(--border);font-size:.72rem;color:var(--text-sec);text-transform:uppercase;font-weight:500';
+      const tdSt = 'padding:7px 6px;border-bottom:1px solid rgba(255,255,255,.04);font-size:.8rem';
+      if (!saveEntries.length) {
+        pieEl.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-sec);font-size:.85rem">Sin datos de ahorro en el rango seleccionado</div>';
+      } else {
+        pieEl.innerHTML = `<div class="table-scroll" style="overflow-x:auto">
+          <table style="width:100%;border-collapse:collapse">
+            <thead><tr>
+              <th style="${thSt}">Comercio</th>
+              <th style="${thSt};text-align:right">Ahorro</th>
+              <th style="${thSt};text-align:right">%</th>
+            </tr></thead>
+            <tbody>
+              ${saveEntries.map(([name, val]) => {
+                const pct = totalSaveAll > 0 ? val / totalSaveAll * 100 : 0;
+                return `<tr>
+                  <td style="${tdSt}">${name}</td>
+                  <td style="${tdSt};text-align:right;font-family:'DM Mono',monospace;font-weight:600;color:#10b981">${fmtC(val)}</td>
+                  <td style="${tdSt};text-align:right;color:var(--text-sec)">${fmt(pct, 1)}%</td>
+                </tr>`;
+              }).join('')}
+            </tbody>
+          </table></div>`;
       }
     } else {
       const palette = ['#3b82f6','#10b981','#f59e0b','#ef4444','#a855f7','#06b6d4','#ec4899','#84cc16','#f97316','#6366f1','#14b8a6','#eab308'];
-      const entries = Object.entries(isBenef ? bySaveCom : byCat).filter(([, v]) => v > 0).sort((a,b) => b[1] - a[1]);
+      const entries = Object.entries(byCat).filter(([, v]) => v > 0).sort((a,b) => b[1] - a[1]);
       if (!entries.length) {
-        document.getElementById('g-pie-chart').innerHTML =
+        pieEl.innerHTML =
           '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text-sec);font-size:.85rem">Sin datos en el rango seleccionado</div>';
       } else {
         const pieLabels = entries.map(([id]) => {
-          if (isBenef) return id;
           if (id === 'sin') return 'Sin categoría';
           const c = this._cats.find(c => c.id === +id);
           return c ? `${c.icono} ${c.nombre}` : 'Otros';
@@ -3851,6 +3912,13 @@ window.Mods.gastos = {
       this._resView = this._resView === 'cuotas' ? 'gastos' : 'cuotas';
       this._drawResumen();
     });
+    document.querySelectorAll('.btn-proj-win').forEach(btn =>
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
+        this._cuotasProjWin = parseInt(btn.dataset.win);
+        this._drawResumen();
+      })
+    );
     document.getElementById('r-cat')?.addEventListener('change', e => {
       this._resCat = e.target.value || '';
       this._drawResumen();
