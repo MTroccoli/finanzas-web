@@ -716,6 +716,19 @@ tbody tr:hover td { background: rgba(46,127,217,.04); }
   border-color: rgba(255,255,255,.35);
   color: var(--text);
 }
+/* Mobile: replace button tabs with a native select */
+.g-tab-select {
+  display: none;
+  width: 100%;
+  margin-bottom: 1rem;
+  padding: 9px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border-strong);
+  background: var(--surface-alt);
+  color: var(--text);
+  font-size: .88rem;
+  font-family: 'DM Sans', sans-serif;
+}
 
 /* ── Gastos: upload zone ─────────────────────────────────────── */
 .g-upload-zone {
@@ -787,4 +800,7 @@ tbody tr:hover td { background: rgba(46,127,217,.04); }
   .metrics-row { grid-template-columns: repeat(2, 1fr); }
   .form-grid   { grid-template-columns: 1fr 1fr; }
   thead th, tbody td { padding: 9px 10px; font-size: 12px; }
+  .g-tabs { display: none; }
+  .g-tab-select { display: block; }
+  .js-plotly-plot { pointer-events: none; }
 }

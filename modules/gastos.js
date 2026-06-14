@@ -243,6 +243,9 @@ window.Mods.gastos = {
       <div class="g-tabs">
         ${tabs.map(([t,l]) => `<button class="g-tab${this._tab===t?' active':''}" data-tab="${t}">${l}</button>`).join('')}
       </div>
+      <select class="g-tab-select" id="g-tab-sel">
+        ${tabs.map(([t,l]) => `<option value="${t}"${this._tab===t?' selected':''}>${l}</option>`).join('')}
+      </select>
       <div id="g-moneda-bar" style="display:${barTabs.has(this._tab)?'flex':'none'};
         align-items:center;gap:10px;flex-wrap:wrap;padding:8px 12px;margin-bottom:.75rem;
         background:var(--surface);border:1px solid var(--border);border-radius:8px">
@@ -272,6 +275,13 @@ window.Mods.gastos = {
         this._drawTab();
       })
     );
+    document.getElementById('g-tab-sel')?.addEventListener('change', e => {
+      this._tab = e.target.value;
+      document.querySelectorAll('.g-tab').forEach(b => b.classList.toggle('active', b.dataset.tab === this._tab));
+      const bar = document.getElementById('g-moneda-bar');
+      if (bar) bar.style.display = barTabs.has(this._tab) ? 'flex' : 'none';
+      this._drawTab();
+    });
     document.querySelectorAll('.g-mon-btn').forEach(btn =>
       btn.addEventListener('click', () => {
         this._gastoMoneda = btn.dataset.mode;
@@ -1445,13 +1455,10 @@ window.Mods.gastos = {
 
     // ORIGEN: track UYU and USD separately so we can display them natively
     let totOrigUYU = 0, totOrigUSD = 0;
-    const bycatOrig = {};
     for (const g of gastos) {
-      const k = g.categoria_id ?? 'sin';
       const n = parseFloat(g.monto);
-      if (!bycatOrig[k]) bycatOrig[k] = { UYU: 0, USD: 0 };
-      if (g.moneda === 'USD') { bycatOrig[k].USD += n; totOrigUSD += n; }
-      else                    { bycatOrig[k].UYU += n; totOrigUYU += n; }
+      if (g.moneda === 'USD') totOrigUSD += n;
+      else                    totOrigUYU += n;
     }
     const fmtDual = (uyu, usd) => {
       const p = [];
@@ -1466,16 +1473,7 @@ window.Mods.gastos = {
     };
 
     const totalMes = gastos.reduce((s, g) => s + toVal(g.monto, g.moneda), 0);
-    const bycat = {};
-    for (const g of gastos) {
-      const k = g.categoria_id ?? 'sin';
-      bycat[k] = (bycat[k] || 0) + toVal(g.monto, g.moneda);
-    }
 
-    const catBadge = id => {
-      const c = this._cats.find(c => c.id === (id === 'sin' ? null : +id));
-      return c ? `${c.icono} ${c.nombre}` : '—';
-    };
     const catOpts = this._cats.map(c =>
       `<option value="${c.id}">${c.icono} ${c.nombre}</option>`).join('');
     const selSt = `font-size:.82rem;padding:5px 10px;border-radius:6px;border:1px solid var(--border);background:var(--surface);color:var(--text)`;
@@ -1492,7 +1490,10 @@ window.Mods.gastos = {
           </div>
           <div>
             <div style="font-size:.68rem;color:var(--text-sec);margin-bottom:2px">Categoría</div>
-            ${this._catComboHTML({ id: 'h-cat', value: catFilter || null, placeholder: 'Todas', style: selSt + ';min-width:150px' })}
+            <select id="h-cat" style="${selSt};min-width:150px">
+              <option value="">Todas las categorías</option>
+              ${this._cats.map(c => `<option value="${c.id}"${String(c.id)===catFilter?' selected':''}>${c.icono} ${c.nombre}</option>`).join('')}
+            </select>
           </div>
           <div>
             <div style="font-size:.68rem;color:var(--text-sec);margin-bottom:2px">Tipo de gasto</div>
@@ -1526,57 +1527,6 @@ window.Mods.gastos = {
           ⚠ Ingresá el T/C en la barra de arriba para convertir importes.</div>` : ''}
       </div>
 
-      <!-- Resumen por categoría -->
-      ${Object.keys(bycatOrig).length === 0 ? '' : `
-      <div class="form-card" style="padding:14px 16px;margin-bottom:.75rem">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:6px">
-          <span style="font-weight:600;font-size:.9rem">Resumen del mes
-            ${viewMode !== 'ORIGEN' && tc
-              ? `<span style="font-size:.7rem;color:var(--accent);font-weight:400"> · ${viewMode === 'UYU' ? 'en UYU' : 'en USD'} (TC ${tc})</span>`
-              : ''}
-          </span>
-          <span style="font-family:'DM Mono',monospace;font-size:.85rem;color:var(--accent);font-weight:600">
-            Total: ${viewMode === 'ORIGEN' ? fmtDual(totOrigUYU, totOrigUSD) : fmtTotal(totalMes)}
-          </span>
-        </div>
-        ${(() => {
-          if (viewMode === 'ORIGEN') {
-            const approxTc = tc || 40;
-            const approxTotal = totOrigUYU + totOrigUSD * approxTc;
-            return Object.entries(bycatOrig)
-              .sort((a, b) => (b[1].UYU + b[1].USD * approxTc) - (a[1].UYU + a[1].USD * approxTc))
-              .map(([id, {UYU, USD}]) => {
-                const approxAmt = UYU + USD * approxTc;
-                const pct = approxTotal > 0 ? (approxAmt / approxTotal * 100) : 0;
-                return `
-                  <div style="margin-bottom:9px">
-                    <div style="display:flex;justify-content:space-between;font-size:.78rem;margin-bottom:3px;flex-wrap:wrap;gap:4px">
-                      <span>${catBadge(id)}</span>
-                      <span style="font-family:'DM Mono',monospace">${fmtDual(UYU, USD)}</span>
-                    </div>
-                    <div style="height:4px;background:var(--border);border-radius:2px">
-                      <div style="height:4px;background:var(--accent);border-radius:2px;width:${pct.toFixed(1)}%"></div>
-                    </div>
-                  </div>`;
-              }).join('');
-          }
-          return Object.entries(bycat).sort((a,b) => b[1]-a[1]).map(([id, tot]) => {
-            const pct = totalMes > 0 ? (tot/totalMes*100) : 0;
-            return `
-              <div style="margin-bottom:9px">
-                <div style="display:flex;justify-content:space-between;font-size:.78rem;margin-bottom:3px">
-                  <span>${catBadge(id)}</span>
-                  <span style="font-family:'DM Mono',monospace">
-                    ${fmtTotal(tot)} <span style="color:var(--text-sec)">(${pct.toFixed(0)}%)</span>
-                  </span>
-                </div>
-                <div style="height:4px;background:var(--border);border-radius:2px">
-                  <div style="height:4px;background:var(--accent);border-radius:2px;width:${pct.toFixed(1)}%"></div>
-                </div>
-              </div>`;
-          }).join('');
-        })()}
-      </div>`}
 
       <!-- Recurrente vs Casual -->
       ${(() => {
@@ -1640,6 +1590,7 @@ window.Mods.gastos = {
           <div class="empty"><div class="empty-icon">💸</div>
           <div class="empty-text">Sin gastos para este período</div></div>
         ` : `
+          <div style="overflow-x:auto">
           <table>
             <thead id="g-hist-thead"><tr>
               ${this._thSort('fecha',    'Fecha',    this._histSort)}
@@ -1647,10 +1598,12 @@ window.Mods.gastos = {
               <th>Categoría</th>
               <th>Mon.</th>
               ${this._thSort('monto',    'Monto',    this._histSort)}
+              <th>Tarjeta</th>
               <th></th>
             </tr></thead>
             <tbody id="g-hist-tbody"></tbody>
           </table>
+          </div>
         `}
       </div>
     `;
@@ -1661,12 +1614,11 @@ window.Mods.gastos = {
 
     ['h-mes','h-cat','h-tipo','h-banco','h-titular'].forEach(id => {
       document.getElementById(id)?.addEventListener('change', () => {
-        const catId        = this._catIdFromLabel(document.getElementById('h-cat').value);
-        this._histMes      = document.getElementById('h-mes').value;
-        this._histCat      = catId != null ? String(catId) : '';
-        this._histTipo     = document.getElementById('h-tipo').value;
-        this._histBanco    = document.getElementById('h-banco')?.value    || '';
-        this._histTitular  = document.getElementById('h-titular')?.value  || '';
+        this._histMes     = document.getElementById('h-mes').value;
+        this._histCat     = document.getElementById('h-cat')?.value || '';
+        this._histTipo    = document.getElementById('h-tipo').value;
+        this._histBanco   = document.getElementById('h-banco')?.value   || '';
+        this._histTitular = document.getElementById('h-titular')?.value || '';
         this._drawHistorialGastos();
       });
     });
@@ -1716,7 +1668,7 @@ window.Mods.gastos = {
     filtered = this._sortGastos(filtered);
     tbody.innerHTML = filtered.length
       ? filtered.map(g => this._histRow(g, catOpts, viewMode, tc)).join('')
-      : `<tr><td colspan="6" style="text-align:center;color:var(--text-sec);padding:20px">Sin resultados</td></tr>`;
+      : `<tr><td colspan="7" style="text-align:center;color:var(--text-sec);padding:20px">Sin resultados</td></tr>`;
     const counter = document.getElementById('h-count');
     if (counter) counter.textContent = filtered.length;
   },
@@ -2472,6 +2424,7 @@ window.Mods.gastos = {
         <td>${catLabel}</td>
         <td>${monBadge}</td>
         <td style="font-family:'DM Mono',monospace;font-weight:600;white-space:nowrap;${montoColor}">${montoDisplay}</td>
+        <td style="font-size:.7rem;color:var(--text-sec);white-space:nowrap">${g.banco_tarjeta || '—'}</td>
         <td style="white-space:nowrap">
           <button class="btn btn-ghost btn-edit-g" data-id="${g.id}"
             style="font-size:.7rem;padding:2px 7px">✏️</button>
@@ -2484,7 +2437,7 @@ window.Mods.gastos = {
   _histEditRow(g, catOpts) {
     return `
       <tr class="g-editing" data-id="${g.id}" style="background:rgba(255,255,255,.04)">
-        <td colspan="6" style="padding:10px 8px">
+        <td colspan="7" style="padding:10px 8px">
           <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end">
             <div>
               <div style="font-size:.68rem;color:var(--text-sec);margin-bottom:2px">Fecha</div>
