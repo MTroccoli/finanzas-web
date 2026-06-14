@@ -3809,8 +3809,8 @@ window.Mods.gastos = {
           x: xProj, y: cuotasY, type: 'bar',
           name: `Cuotas${cuotNombre ? ' · ' + cuotNombre + ' tot.' : ''}`,
           marker: { color: '#fbbf24' },
-          hovertemplate: '<b>%{x}</b><br>%{text}<extra></extra>',
-          text: cuotasText,
+          customdata: cuotasText,
+          hovertemplate: '<b>%{x}</b><br>%{customdata}<extra></extra>',
         },
       ], {
         ...layoutBase,
