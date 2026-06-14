@@ -3058,7 +3058,7 @@ window.Mods.gastos = {
     const needsTC  = viewMode !== 'ORIGEN' && !tc;
 
     // Deduplicar: por cada compra en cuotas quedarse solo con la cuota más reciente
-    const purchaseKey = g => `${g.comercio}|${g.cuotas_totales}|${g.monto}|${g.moneda}`;
+    const purchaseKey = g => `${g.comercio}|${g.cuotas_totales}|${Math.round(parseFloat(g.monto))}|${g.moneda}`;
     const byPurchase = {};
     for (const g of rows || []) {
       const key = purchaseKey(g);
@@ -3504,7 +3504,7 @@ window.Mods.gastos = {
     // Encontrar el pago más reciente de cada plan (comercio + cuotas_totales + monto + moneda)
     const planMap = {};
     for (const r of activeCuotasAll) {
-      const key = `${(r.comercio || '').slice(0,30)}|${r.cuotas_totales}|${Math.round(parseFloat(r.monto)*100)}|${r.moneda}`;
+      const key = `${(r.comercio || '').slice(0,30)}|${r.cuotas_totales}|${Math.round(parseFloat(r.monto))}|${r.moneda}`;
       if (!planMap[key] || r.cuota_actual > planMap[key].cuota_actual) planMap[key] = r;
     }
     // Proyectar hasta la última cuota (mínimo 3 meses visibles en el gráfico)
@@ -3734,7 +3734,7 @@ window.Mods.gastos = {
       <!-- Bar chart -->
       <div class="form-card" style="padding:14px 16px;margin-bottom:.75rem">
         <div style="font-weight:600;font-size:.9rem;margin-bottom:8px">
-          ${isCuotas ? 'Proyección · cuotas + recurrentes' : isBenef ? 'Evolución de ahorro' : 'Evolución mensual'} · ${isCuotas ? projMonths[0].label + ' → ' + projMonths[2].label : curLabel}${!isBenef && !isCuotas && this._resCat ? ` · ${this._cats.find(c=>c.id===+this._resCat)?.nombre||''}` : ''}
+          ${isCuotas ? 'Proyección · cuotas + recurrentes' : isBenef ? 'Evolución de ahorro' : 'Evolución mensual'}${!isCuotas ? ' · ' + curLabel : ''}${!isBenef && !isCuotas && this._resCat ? ` · ${this._cats.find(c=>c.id===+this._resCat)?.nombre||''}` : ''}
         </div>
         <div id="g-bar-chart" style="height:300px"></div>
       </div>
@@ -3802,24 +3802,6 @@ window.Mods.gastos = {
         return parts.join(' / ');
       });
 
-      // Anotaciones totales encima de cada barra
-      const annotations = projMonths.map((m, i) => {
-        const totalY = recurY[i] + cuotasY[i];
-        const parts = [];
-        const totUYU = cuotasByMonth[m.ym].UYU + recurUYU;
-        const totUSD = cuotasByMonth[m.ym].USD + recurUSD;
-        if (totUYU >= 100) parts.push(`$U ${fmt(totUYU, 0)}`);
-        if (totUSD >= 1)   parts.push(`USD ${fmt(totUSD, 0)}`);
-        return {
-          x: m.label, y: totalY,
-          text: parts.join('<br>') || '',
-          showarrow: false,
-          font: { size: 9, color: '#e5e7eb' },
-          xanchor: 'center', yanchor: 'bottom', yshift: 6,
-          align: 'center',
-        };
-      });
-
       const recurNombre = [
         recurUYU >= 100 ? `$U ${fmt(recurUYU, 0)}` : '',
         recurUSD >= 1   ? `USD ${fmt(recurUSD, 0)}` : '',
@@ -3852,12 +3834,16 @@ window.Mods.gastos = {
         xaxis: { gridcolor: 'rgba(255,255,255,.05)', fixedrange: true },
         yaxis: { tickformat: ',d', gridcolor: 'rgba(255,255,255,.05)', zerolinecolor: 'rgba(255,255,255,.1)', fixedrange: true },
         legend: { orientation: 'h', y: -0.38, x: 0 },
-        annotations,
       }, { displayModeBar: false, responsive: true, scrollZoom: false });
     } else {
       const barSrc  = isBenef ? byMonthSave : byMonth;
-      const fromUyuY = months.map(m => toC(barSrc[m.ym].UYU, 'UYU'));
-      const fromUsdY = months.map(m => toC(barSrc[m.ym].USD, 'USD'));
+      const benefTc = tc || 40;
+      const fromUyuY = isBenef
+        ? months.map(m => barSrc[m.ym].UYU + barSrc[m.ym].USD * benefTc)
+        : months.map(m => toC(barSrc[m.ym].UYU, 'UYU'));
+      const fromUsdY = isBenef
+        ? months.map(() => 0)
+        : months.map(m => toC(barSrc[m.ym].USD, 'USD'));
       const origUyu  = months.map(m => barSrc[m.ym].UYU);
       const origUsd  = months.map(m => barSrc[m.ym].USD);
       const xLabels  = months.map(m => m.label);
@@ -3869,24 +3855,34 @@ window.Mods.gastos = {
       const selIdxB    = detailMonth ? months.findIndex(m => m.ym === detailMonth) : -1;
       const mkColB     = (full, dim) => months.map((_, i) => selIdxB < 0 || i === selIdxB ? full : dim);
 
+      const benefHov = months.map((m, i) => {
+        const parts = [];
+        if (origUyu[i] > 0) parts.push(`$U ${fmt(origUyu[i], 0)}`);
+        if (origUsd[i] > 0) parts.push(`USD ${fmt(origUsd[i], 0)}`);
+        return parts.join(' / ') || '—';
+      });
+
       Plotly.newPlot('g-bar-chart', [
         {
-          x: xLabels, y: fromUyuY, type: 'bar', name: `${barNamePfx} en UYU`,
-          marker: { color: mkColB(barColUyu, barDimUyu) }, customdata: origUyu,
-          hovertemplate: `<b>%{x}</b><br>$U %{customdata:,.0f}<extra></extra>`,
+          x: xLabels, y: fromUyuY, type: 'bar', name: `${barNamePfx}${isBenef ? '' : ' en UYU'}`,
+          marker: { color: mkColB(barColUyu, barDimUyu) },
+          customdata: isBenef ? benefHov : origUyu,
+          hovertemplate: isBenef
+            ? `<b>%{x}</b><br>%{customdata}<extra></extra>`
+            : `<b>%{x}</b><br>$U %{customdata:,.0f}<extra></extra>`,
         },
-        {
+        ...(isBenef ? [] : [{
           x: xLabels, y: fromUsdY, type: 'bar', name: `${barNamePfx} en USD`,
           marker: { color: mkColB(barColUsd, barDimUsd) }, customdata: origUsd,
           hovertemplate: `<b>%{x}</b><br>USD %{customdata:,.0f}<extra></extra>`,
-        },
+        }]),
       ], {
         ...layoutBase,
         barmode: 'stack',
         dragmode: false,
         margin: { t: 10, r: 10, b: 70, l: 70 },
         xaxis: { tickangle: -30, gridcolor: 'rgba(255,255,255,.05)', fixedrange: true },
-        yaxis: { tickprefix: tickPfx, tickformat: ',d', gridcolor: 'rgba(255,255,255,.05)', zerolinecolor: 'rgba(255,255,255,.1)', fixedrange: true },
+        yaxis: { tickprefix: isBenef ? '$U ' : tickPfx, tickformat: ',d', gridcolor: 'rgba(255,255,255,.05)', zerolinecolor: 'rgba(255,255,255,.1)', fixedrange: true },
         legend: { orientation: 'h', y: -0.25, x: 0 },
       }, { displayModeBar: false, responsive: true, scrollZoom: false });
     }
@@ -3949,6 +3945,15 @@ window.Mods.gastos = {
       if (!displayRows.length) {
         pieEl.innerHTML = `<div style="padding:20px;text-align:center;color:var(--text-sec);font-size:.85rem">${detailMonth ? 'Sin cuotas en este mes' : 'Sin planes de cuotas activos'}</div>`;
       } else {
+        const footInstCount = detailMonth ? 1 : null;
+        const footTotalUYU = displayRows.filter(p => p.moneda !== 'USD').reduce((s, p) => s + p.montoN * (footInstCount ?? p.futInst), 0);
+        const footTotalUSD = displayRows.filter(p => p.moneda === 'USD').reduce((s, p) => s + p.montoN * (footInstCount ?? p.futInst), 0);
+        const footParts = [];
+        if (footTotalUYU >= 1) footParts.push(this._fmtMon(footTotalUYU, 'UYU'));
+        if (footTotalUSD >= 1) footParts.push(this._fmtUSD(footTotalUSD));
+        const footTotStr = footParts.join(' + ') || '—';
+        const tfSt = 'padding:8px 6px;border-top:1px solid var(--border);font-size:.78rem;font-weight:600';
+
         pieEl.innerHTML = `<div class="table-scroll" style="overflow-x:auto">
           <table style="width:100%;border-collapse:collapse">
             <thead><tr>
@@ -3975,6 +3980,10 @@ window.Mods.gastos = {
                 </tr>`;
               }).join('')}
             </tbody>
+            <tfoot><tr>
+              <td colspan="3" style="${tfSt};color:var(--text-sec);font-size:.72rem;text-transform:uppercase">Total a pagar${detailMonth ? ' · ' + (projMonths.find(m => m.ym === detailMonth) || months.find(m => m.ym === detailMonth))?.label ?? detailMonth : ''}</td>
+              <td colspan="2" style="${tfSt};text-align:right;font-family:'DM Mono',monospace;color:var(--gold)">${footTotStr}</td>
+            </tr></tfoot>
           </table></div>`;
       }
     } else if (isBenef) {
