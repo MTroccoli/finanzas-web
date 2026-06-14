@@ -3654,6 +3654,20 @@ window.Mods.gastos = {
       ? (projMonths.find(m => m.ym === detailMonth) || months.find(m => m.ym === detailMonth))?.label
       : null;
 
+    // Totales filtrados al mes seleccionado (para el header del panel de detalle)
+    let detailGastUYU = totalGastUYU, detailGastUSD = totalGastUSD;
+    let detailSaveUYU = totalSaveUYU, detailSaveUSD = totalSaveUSD;
+    let detailTotalUSD = totalUSD, detailSaved = totalSaved;
+    if (detailMonth) {
+      const md = allData.filter(r => r.fecha.slice(0, 7) === detailMonth);
+      detailGastUYU  = md.filter(r => !isBenefit(r) && r.moneda !== 'USD').reduce((s,r) => s + parseFloat(r.monto), 0);
+      detailGastUSD  = md.filter(r => !isBenefit(r) && r.moneda === 'USD').reduce((s,r) => s + parseFloat(r.monto), 0);
+      detailSaveUYU  = md.filter(r => isBenefit(r) && r.moneda !== 'USD').reduce((s,r) => s - parseFloat(r.monto), 0);
+      detailSaveUSD  = md.filter(r => isBenefit(r) && r.moneda === 'USD').reduce((s,r) => s - parseFloat(r.monto), 0);
+      detailTotalUSD = toC(detailGastUYU, 'UYU') + toC(detailGastUSD, 'USD');
+      detailSaved    = toC(detailSaveUYU, 'UYU') + toC(detailSaveUSD, 'USD');
+    }
+
     const selSt  = `font-size:.82rem;padding:5px 8px;border-radius:6px;border:1px solid var(--border);background:var(--surface);color:var(--text)`;
 
     gc.innerHTML = `
@@ -3743,16 +3757,16 @@ window.Mods.gastos = {
       <div class="form-card" style="padding:14px 16px;margin-bottom:.75rem">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:6px">
           <div style="font-weight:600;font-size:.9rem;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-            ${isCuotas ? 'Planes activos con cuotas pendientes' : isBenef ? 'Ahorro por comercio · ' + curLabel : 'Gastos por categoría · ' + curLabel}
+            ${isCuotas ? 'Planes activos con cuotas pendientes' : isBenef ? 'Ahorro por comercio · ' + (detailMonthLabel || curLabel) : 'Gastos por categoría · ' + (detailMonthLabel || curLabel)}
             ${detailMonthLabel ? `<button class="btn-clear-res-filter" style="font-size:.7rem;padding:2px 8px;border-radius:12px;border:1px solid var(--accent);background:rgba(46,127,217,.15);color:var(--accent);cursor:pointer">📅 ${detailMonthLabel} ✕</button>` : ''}
           </div>
           ${isCuotas ? '' : `<div style="font-size:.78rem;color:var(--text-sec)">
             Total gastos: <span style="color:var(--accent);font-family:'DM Mono',monospace;font-weight:600">
               ${this._gastoMoneda === 'ORIGEN'
-                ? (() => { const p = []; if (totalGastUYU>0) p.push(this._fmtMon(totalGastUYU,'UYU')); if (totalGastUSD>0) p.push(this._fmtUSD(totalGastUSD)); return p.join(' · ') || '—'; })()
-                : fmtC(totalUSD)}
+                ? (() => { const p = []; if (detailGastUYU>0) p.push(this._fmtMon(detailGastUYU,'UYU')); if (detailGastUSD>0) p.push(this._fmtUSD(detailGastUSD)); return p.join(' · ') || '—'; })()
+                : fmtC(detailTotalUSD)}
             </span>
-            ${(totalSaved > 0 || totalSaveUYU > 0 || totalSaveUSD > 0) ? ` · <span style="color:#10b981;font-family:'DM Mono',monospace">Ahorro: ${this._gastoMoneda === 'ORIGEN' ? (() => { const p = []; if (totalSaveUYU>0) p.push(this._fmtMon(totalSaveUYU,'UYU')); if (totalSaveUSD>0) p.push(this._fmtUSD(totalSaveUSD)); return p.join(' · ') || '—'; })() : fmtC(totalSaved)}</span>` : ''}
+            ${(detailSaved > 0 || detailSaveUYU > 0 || detailSaveUSD > 0) ? ` · <span style="color:#10b981;font-family:'DM Mono',monospace">Ahorro: ${this._gastoMoneda === 'ORIGEN' ? (() => { const p = []; if (detailSaveUYU>0) p.push(this._fmtMon(detailSaveUYU,'UYU')); if (detailSaveUSD>0) p.push(this._fmtUSD(detailSaveUSD)); return p.join(' · ') || '—'; })() : fmtC(detailSaved)}</span>` : ''}
           </div>`}
         </div>
         <div id="g-pie-chart" style="${isCuotas || isBenef ? 'height:auto' : 'height:340px'}"></div>
@@ -4085,7 +4099,7 @@ window.Mods.gastos = {
                     <td style="${tdS}">${desc}
                       <div style="font-size:.66rem;color:var(--text-sec)">${catStr}</div>
                     </td>
-                    <td style="${tdS};text-align:right;font-family:'DM Mono',monospace;font-weight:600;white-space:nowrap;color:${isNeg ? '#10b981' : 'var(--gold)'}">${monStr}</td>
+                    <td style="${tdS};text-align:right;font-family:'DM Mono',monospace;font-weight:600;white-space:nowrap;color:${isNeg ? '#10b981' : '#3b82f6'}">${monStr}</td>
                   </tr>`;
                 }).join('')}
               </tbody>
