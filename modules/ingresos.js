@@ -4,72 +4,105 @@ window.Mods.ingresos = {
 
   async render() {
     const c = document.getElementById('content');
+
+    // Check auto-presets before rendering (silent, no await-blocking UI)
+    this._checkAutoPresets().catch(() => {});
+
     const [ingresos, tipos] = await Promise.all([
       dbFetch('ingresos',      { order: { col: 'fecha', asc: false }, limit: 200 }),
       dbFetch('tipos_ingreso', { filters: { activo: 1 }, order: { col: 'nombre', asc: true } }),
     ]);
 
     const presets = this._loadPresets();
-    const selSt   = `font-size:.82rem;padding:5px 8px;border-radius:6px;border:1px solid var(--border);background:var(--surface);color:var(--text)`;
+    const inp = `font-size:.82rem;padding:5px 8px;border-radius:6px;border:1px solid var(--border);background:var(--surface);color:var(--text);width:100%`;
 
     c.innerHTML = `
       <h1>Ingresos</h1>
       <p class="page-subtitle">Registro de entradas</p>
 
       <div class="form-card">
-        <h3>Nuevo ingreso</h3>
+        <h3 style="margin-bottom:12px">Nuevo ingreso</h3>
 
         ${presets.length ? `
         <details id="presets-wrap" style="margin-bottom:14px">
-          <summary style="cursor:pointer;font-size:.82rem;color:var(--accent);list-style:none;display:flex;align-items:center;gap:6px">
-            <span>📂 Guardados (${presets.length})</span>
+          <summary style="cursor:pointer;font-size:.82rem;color:var(--accent);list-style:none;user-select:none">
+            📂 Guardados (${presets.length})
           </summary>
           <div style="margin-top:8px;display:flex;flex-direction:column;gap:6px">
             ${presets.map((p, i) => `
-              <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:6px;background:var(--surface);border:1px solid var(--border)">
-                <span style="flex:1;font-size:.8rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
-                  ${p.desc || 'Sin nombre'} · <span style="color:var(--text-sec)">${p.moneda} ${p.monto}</span>
-                </span>
-                <button class="btn-load-preset" data-idx="${i}" style="font-size:.75rem;padding:2px 8px;border-radius:10px;border:1px solid #3b82f6;background:rgba(59,130,246,.12);color:#3b82f6;cursor:pointer;white-space:nowrap">⚡ Cargar</button>
-                <button class="btn-del-preset" data-idx="${i}" style="font-size:.75rem;padding:2px 6px;border-radius:10px;border:1px solid var(--border);background:none;color:var(--text-sec);cursor:pointer">✕</button>
+              <div style="display:flex;align-items:center;gap:6px;padding:7px 10px;border-radius:6px;background:var(--surface);border:1px solid var(--border)">
+                <div style="flex:1;min-width:0">
+                  <div style="font-size:.8rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
+                    ${p.desc || 'Sin nombre'} · <span style="color:var(--text-sec)">${p.moneda || 'USD'} ${p.monto}</span>${p.frecuencia ? ` · <span style="color:var(--accent)">${p.frecuencia}</span>` : ''}${p.auto ? ` · <span style="color:#10b981">⚡auto</span>` : ''}
+                  </div>
+                  ${p.frecuencia && p.ultima_carga ? `<div style="font-size:.65rem;color:var(--text-sec);margin-top:2px">Próx: ${this._nextDue(p.ultima_carga, p.frecuencia)}</div>` : ''}
+                </div>
+                <button class="btn-load-preset" data-idx="${i}" style="font-size:.72rem;padding:2px 8px;border-radius:10px;border:1px solid #3b82f6;background:rgba(59,130,246,.12);color:#3b82f6;cursor:pointer;white-space:nowrap;flex-shrink:0">⚡ Cargar</button>
+                <button class="btn-del-preset" data-idx="${i}" style="font-size:.72rem;padding:2px 6px;border-radius:10px;border:1px solid var(--border);background:none;color:var(--text-sec);cursor:pointer;flex-shrink:0">✕</button>
               </div>`).join('')}
           </div>
         </details>` : ''}
 
         <form id="form-ingreso">
-          <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap">
-            <div class="form-group" style="flex:0 1 138px;min-width:110px">
+          <!-- Row 1: Fecha · Moneda · Monto -->
+          <div style="display:flex;gap:8px;margin-bottom:10px">
+            <div class="form-group" style="flex:1.6;min-width:0">
               <label>Fecha</label>
-              <input id="i-fecha" type="date" value="${new Date().toISOString().slice(0,10)}" style="${selSt};width:100%" required>
+              <input id="i-fecha" type="date" value="${new Date().toISOString().slice(0,10)}" style="${inp}" required>
             </div>
-            <div class="form-group" style="flex:0 1 90px;min-width:80px">
+            <div class="form-group" style="flex:0 0 72px">
               <label>Moneda</label>
-              <select id="i-moneda" style="${selSt};width:100%">
+              <select id="i-moneda" style="${inp}">
                 <option value="USD">USD</option>
                 <option value="UYU">UYU</option>
               </select>
             </div>
-          </div>
-          <div class="form-grid">
-            <div class="form-group">
+            <div class="form-group" style="flex:1.4;min-width:0">
               <label id="i-monto-lbl">Monto</label>
-              <input id="i-monto" type="number" step="0.01" min="0.01" placeholder="1000.00" required>
+              <input id="i-monto" type="number" step="0.01" min="0.01" placeholder="0.00" style="${inp}" required>
             </div>
-            <div class="form-group">
-              <label>Descripción</label>
-              <input id="i-desc" type="text" placeholder="Salario, freelance...">
-            </div>
-            <div class="form-group">
+          </div>
+
+          <!-- Row 2: Tipo · Descripción -->
+          <div style="display:flex;gap:8px;margin-bottom:12px">
+            <div class="form-group" style="flex:1;min-width:0">
               <label>Tipo</label>
-              <select id="i-tipo">
+              <select id="i-tipo" style="${inp}">
                 <option value="">Sin tipo</option>
                 ${tipos.map(t => `<option value="${t.id}">${t.nombre}</option>`).join('')}
               </select>
             </div>
+            <div class="form-group" style="flex:2;min-width:0">
+              <label>Descripción</label>
+              <input id="i-desc" type="text" placeholder="Salario, freelance..." style="${inp}">
+            </div>
           </div>
+
+          <!-- Row 3: Botones -->
           <div style="display:flex;gap:8px;flex-wrap:wrap">
             <button type="submit" class="btn btn-primary">✚ Registrar ingreso</button>
             <button type="button" id="btn-save-preset" class="btn" style="border:1px solid var(--border)">💾 Guardar recurrente</button>
+          </div>
+
+          <!-- Panel de frecuencia (oculto por defecto) -->
+          <div id="preset-freq-panel" style="display:none;margin-top:12px;padding:12px;border-radius:8px;border:1px solid var(--border);background:rgba(255,255,255,.03)">
+            <div style="font-size:.72rem;color:var(--text-sec);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Opciones de recurrencia</div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end">
+              <div class="form-group" style="flex:1;min-width:120px">
+                <label>Frecuencia</label>
+                <select id="preset-freq" style="${inp}">
+                  <option value="mensual">Mensual</option>
+                  <option value="bimensual">Bimensual (c/2 meses)</option>
+                  <option value="semestral">Semestral (c/6 meses)</option>
+                  <option value="anual">Anual</option>
+                </select>
+              </div>
+              <div style="display:flex;align-items:center;gap:6px;padding-bottom:6px">
+                <input type="checkbox" id="preset-auto" style="width:15px;height:15px;accent-color:var(--accent)">
+                <label for="preset-auto" style="font-size:.8rem;cursor:pointer;user-select:none">Carga automática al vencer</label>
+              </div>
+            </div>
+            <button type="button" id="btn-confirm-preset" class="btn btn-primary" style="margin-top:10px">💾 Confirmar y guardar</button>
           </div>
         </form>
       </div>
@@ -77,7 +110,7 @@ window.Mods.ingresos = {
       <div class="table-wrap">
         <div class="table-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
           <span class="table-title">Ingresos</span>
-          <select id="ing-filter-tipo" style="${selSt}">
+          <select id="ing-filter-tipo" style="font-size:.82rem;padding:5px 8px;border-radius:6px;border:1px solid var(--border);background:var(--surface);color:var(--text)">
             <option value="">Todos los tipos</option>
             ${tipos.map(t => `<option value="${t.id}" ${this._filterTipo == t.id ? 'selected' : ''}>${t.nombre}</option>`).join('')}
           </select>
@@ -93,7 +126,34 @@ window.Mods.ingresos = {
       document.getElementById('i-monto-lbl').textContent = `Monto (${e.target.value})`;
     });
 
-    // load preset buttons
+    // toggle frecuencia panel
+    document.getElementById('btn-save-preset').addEventListener('click', () => {
+      const panel = document.getElementById('preset-freq-panel');
+      panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+    });
+
+    // confirm & save preset
+    document.getElementById('btn-confirm-preset').addEventListener('click', () => {
+      const monto = document.getElementById('i-monto').value;
+      if (!monto) { toast('⚠️ Completá el monto antes de guardar', 'err'); return; }
+      const p = {
+        monto,
+        moneda:       document.getElementById('i-moneda').value,
+        desc:         document.getElementById('i-desc').value.trim(),
+        tipo:         document.getElementById('i-tipo').value,
+        frecuencia:   document.getElementById('preset-freq').value,
+        auto:         document.getElementById('preset-auto').checked,
+        ultima_carga: new Date().toISOString().slice(0, 10),
+      };
+      const arr = this._loadPresets();
+      arr.unshift(p);
+      if (arr.length > 10) arr.length = 10;
+      localStorage.setItem('ingresos_presets', JSON.stringify(arr));
+      toast('💾 Ingreso recurrente guardado');
+      this.render();
+    });
+
+    // load preset
     document.querySelectorAll('.btn-load-preset').forEach(btn =>
       btn.addEventListener('click', () => {
         const p = this._loadPresets()[parseInt(btn.dataset.idx)];
@@ -105,34 +165,15 @@ window.Mods.ingresos = {
       })
     );
 
-    // delete preset buttons
+    // delete preset
     document.querySelectorAll('.btn-del-preset').forEach(btn =>
       btn.addEventListener('click', () => {
-        const idx = parseInt(btn.dataset.idx);
         const arr = this._loadPresets();
-        arr.splice(idx, 1);
+        arr.splice(parseInt(btn.dataset.idx), 1);
         localStorage.setItem('ingresos_presets', JSON.stringify(arr));
         this.render();
       })
     );
-
-    // save preset
-    document.getElementById('btn-save-preset').addEventListener('click', () => {
-      const monto = document.getElementById('i-monto').value;
-      if (!monto) { toast('⚠️ Completá el monto antes de guardar', 'err'); return; }
-      const p = {
-        monto,
-        moneda: document.getElementById('i-moneda').value,
-        desc:   document.getElementById('i-desc').value.trim(),
-        tipo:   document.getElementById('i-tipo').value,
-      };
-      const arr = this._loadPresets();
-      arr.unshift(p);
-      if (arr.length > 10) arr.length = 10;
-      localStorage.setItem('ingresos_presets', JSON.stringify(arr));
-      toast('💾 Ingreso recurrente guardado');
-      this.render();
-    });
 
     // submit
     document.getElementById('form-ingreso').addEventListener('submit', async e => {
@@ -171,12 +212,13 @@ window.Mods.ingresos = {
       ? ingresos.filter(i => String(i.tipo_id) === String(filterTipo))
       : ingresos;
     if (!rows.length) return `<div class="empty"><div class="empty-icon">💵</div><div class="empty-text">Sin ingresos registrados</div></div>`;
-    return `<div style="overflow-x:auto"><table style="min-width:360px">
-      <thead><tr><th>Fecha</th><th>Descripción</th><th>Tipo</th><th>Monto</th><th></th></tr></thead>
-      <tbody id="ing-tbody">
-        ${rows.map(i => this._row(i, tipos)).join('')}
-      </tbody>
-    </table></div>`;
+    return `<div style="overflow-x:auto;-webkit-overflow-scrolling:touch">
+      <table style="min-width:340px;width:100%">
+        <thead><tr><th>Fecha</th><th>Descripción</th><th>Tipo</th><th>Monto</th><th></th></tr></thead>
+        <tbody id="ing-tbody">
+          ${rows.map(i => this._row(i, tipos)).join('')}
+        </tbody>
+      </table></div>`;
   },
 
   _bindDelete(tipos) {
@@ -201,15 +243,45 @@ window.Mods.ingresos = {
     return `<tr>
       <td style="white-space:nowrap">${fmtDate(i.fecha)}</td>
       <td>${i.descripcion ?? '—'}</td>
-      <td>${tipo ? tipo.nombre : '—'}</td>
-      <td><strong class="pos">${monStr}</strong></td>
-      <td><button class="ing-del" data-id="${i.id}" title="Eliminar" style="background:none;border:none;cursor:pointer;opacity:.5;font-size:.9rem;padding:2px 4px">🗑</button></td>
+      <td style="white-space:nowrap">${tipo ? tipo.nombre : '—'}</td>
+      <td style="white-space:nowrap"><strong class="pos">${monStr}</strong></td>
+      <td><button class="ing-del" data-id="${i.id}" title="Eliminar" style="background:none;border:none;cursor:pointer;opacity:.45;font-size:.9rem;padding:2px 4px">🗑</button></td>
     </tr>`;
+  },
+
+  async _checkAutoPresets() {
+    const today   = new Date().toISOString().slice(0, 10);
+    const presets = this._loadPresets();
+    let changed   = false;
+    for (let i = 0; i < presets.length; i++) {
+      const p = presets[i];
+      if (!p.auto || !p.frecuencia || !p.ultima_carga) continue;
+      if (today < this._nextDue(p.ultima_carga, p.frecuencia)) continue;
+      try {
+        await dbInsert('ingresos', {
+          fecha:       today,
+          monto:       parseFloat(p.monto),
+          moneda:      p.moneda || 'USD',
+          descripcion: p.desc || null,
+          tipo_id:     p.tipo ? parseInt(p.tipo) : null,
+        });
+        presets[i].ultima_carga = today;
+        changed = true;
+        toast(`⚡ Auto-ingreso: ${p.desc || 'Ingreso'} (${p.moneda || 'USD'} ${p.monto})`);
+      } catch { /* silent */ }
+    }
+    if (changed) localStorage.setItem('ingresos_presets', JSON.stringify(presets));
+  },
+
+  _nextDue(lastDate, frecuencia) {
+    const d = new Date(lastDate + 'T00:00:00');
+    const months = { mensual: 1, bimensual: 2, semestral: 6, anual: 12 };
+    d.setMonth(d.getMonth() + (months[frecuencia] || 1));
+    return d.toISOString().slice(0, 10);
   },
 
   _loadPresets() {
     try {
-      // migrate single old preset
       const old = localStorage.getItem('ingreso_preset');
       if (old && !localStorage.getItem('ingresos_presets')) {
         const arr = [JSON.parse(old)];
