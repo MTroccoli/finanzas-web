@@ -13,9 +13,18 @@ window.Mods.ingresos = {
       dbFetch('tipos_ingreso', { filters: { activo: 1 }, order: { col: 'nombre', asc: true } }),
     ]);
 
+    const today   = new Date().toISOString().slice(0,10);
     const presets = this._loadPresets();
     const inp = `font-size:.82rem;padding:7px 8px;border-radius:6px;border:1px solid var(--border);background:var(--surface);color:var(--text);width:100%;max-width:100%;box-sizing:border-box`;
     const lbl = `display:block;font-family:'DM Mono',monospace;font-size:.62rem;text-transform:uppercase;letter-spacing:.1em;color:var(--text-sec);margin-bottom:5px`;
+
+    const fechaRowHTML = (val = today) =>
+      `<div class="i-fecha-row" style="display:flex;gap:6px;align-items:center">
+        <input class="i-fecha-item" type="date" value="${val}" required
+          style="${inp};-webkit-appearance:none;appearance:none;width:auto">
+        <button type="button" class="i-fecha-rm"
+          style="background:none;border:none;color:var(--text-sec);cursor:pointer;font-size:.9rem;padding:0 6px;line-height:1">✕</button>
+      </div>`;
 
     c.innerHTML = `
       <h1>Ingresos</h1>
@@ -45,13 +54,18 @@ window.Mods.ingresos = {
         </details>` : ''}
 
         <form id="form-ingreso" style="display:flex;flex-direction:column;gap:10px">
-          <!-- Row 1: Fecha (fijo) · Moneda (fijo) · Monto (resto) -->
-          <div style="display:grid;grid-template-columns:112px 62px 1fr;gap:8px">
-            <div style="overflow:hidden">
-              <span style="${lbl}">Fecha</span>
-              <input id="i-fecha" type="date" value="${new Date().toISOString().slice(0,10)}"
-                style="${inp};-webkit-appearance:none;appearance:none" required>
+          <!-- Fecha(s) -->
+          <div>
+            <span style="${lbl}">Fecha(s)</span>
+            <div id="i-fechas-wrap" style="display:flex;flex-direction:column;gap:6px;margin-bottom:6px">
+              ${fechaRowHTML()}
             </div>
+            <button type="button" id="i-add-fecha" class="btn btn-ghost"
+              style="font-size:.78rem;padding:4px 14px">＋ Agregar fecha</button>
+          </div>
+
+          <!-- Row 1: Moneda · Monto -->
+          <div style="display:grid;grid-template-columns:62px 1fr;gap:8px">
             <div>
               <span style="${lbl}">Moneda</span>
               <select id="i-moneda" style="${inp}">
@@ -123,6 +137,27 @@ window.Mods.ingresos = {
       </div>
     `;
 
+    const _getFechas = () =>
+      [...document.querySelectorAll('.i-fecha-item')].map(el => el.value).filter(Boolean);
+
+    const _bindRemoveFecha = () => {
+      document.querySelectorAll('.i-fecha-rm').forEach(btn => {
+        btn.onclick = () => {
+          if (document.querySelectorAll('.i-fecha-row').length <= 1) return;
+          btn.closest('.i-fecha-row').remove();
+        };
+      });
+    };
+    _bindRemoveFecha();
+
+    document.getElementById('i-add-fecha')?.addEventListener('click', () => {
+      const wrap = document.getElementById('i-fechas-wrap');
+      const div = document.createElement('div');
+      div.innerHTML = fechaRowHTML();
+      wrap.appendChild(div.firstElementChild);
+      _bindRemoveFecha();
+    });
+
     // moneda label
     document.getElementById('i-moneda').addEventListener('change', e => {
       document.getElementById('i-monto-lbl').textContent = `Monto (${e.target.value})`;
@@ -138,7 +173,7 @@ window.Mods.ingresos = {
     document.getElementById('btn-confirm-preset').addEventListener('click', async () => {
       const monto = document.getElementById('i-monto').value;
       if (!monto) { toast('⚠️ Completá el monto antes de guardar', 'err'); return; }
-      const fecha  = document.getElementById('i-fecha').value;
+      const fecha  = document.querySelector('.i-fecha-item')?.value || today;
       const moneda = document.getElementById('i-moneda').value;
       const desc   = document.getElementById('i-desc').value.trim();
       const tipo   = document.getElementById('i-tipo').value;
@@ -146,15 +181,13 @@ window.Mods.ingresos = {
         monto, moneda, desc, tipo,
         frecuencia:   document.getElementById('preset-freq').value,
         auto:         document.getElementById('preset-auto').checked,
-        ultima_carga: fecha, // usar la fecha ingresada como punto de partida
+        ultima_carga: fecha,
       };
       const arr = this._loadPresets();
       arr.unshift(p);
       if (arr.length > 10) arr.length = 10;
       localStorage.setItem('ingresos_presets', JSON.stringify(arr));
 
-      // Si la fecha es <= hoy, registrar el ingreso inmediatamente
-      const today = new Date().toISOString().slice(0, 10);
       if (fecha <= today) {
         try {
           await dbInsert('ingresos', {
@@ -199,17 +232,20 @@ window.Mods.ingresos = {
     // submit
     document.getElementById('form-ingreso').addEventListener('submit', async e => {
       e.preventDefault();
+      const fechas = _getFechas();
+      if (!fechas.length) { toast('Ingresá al menos una fecha', 'err'); return; }
       try {
-        await dbInsert('ingresos', {
-          fecha:       document.getElementById('i-fecha').value,
-          monto:       parseFloat(document.getElementById('i-monto').value),
-          moneda:      document.getElementById('i-moneda').value,
-          descripcion: document.getElementById('i-desc').value.trim() || null,
-          tipo_id:     document.getElementById('i-tipo').value ? parseInt(document.getElementById('i-tipo').value) : null,
-        });
-        toast('✅ Ingreso registrado');
+        const monto       = parseFloat(document.getElementById('i-monto').value);
+        const moneda      = document.getElementById('i-moneda').value;
+        const descripcion = document.getElementById('i-desc').value.trim() || null;
+        const tipo_id     = document.getElementById('i-tipo').value ? parseInt(document.getElementById('i-tipo').value) : null;
+        for (const fecha of fechas) {
+          await dbInsert('ingresos', { fecha, monto, moneda, descripcion, tipo_id });
+        }
+        toast(fechas.length > 1 ? `✅ ${fechas.length} ingresos registrados` : '✅ Ingreso registrado');
         e.target.reset();
-        document.getElementById('i-fecha').value = new Date().toISOString().slice(0,10);
+        document.getElementById('i-fechas-wrap').innerHTML = fechaRowHTML();
+        _bindRemoveFecha();
         document.getElementById('i-monto-lbl').textContent = 'Monto';
         const rows = await dbFetch('ingresos', { order: { col: 'fecha', asc: false }, limit: 200 });
         document.getElementById('ing-list').innerHTML = this._renderList(rows, tipos, this._filterTipo);

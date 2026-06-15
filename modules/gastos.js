@@ -46,7 +46,7 @@ window.Mods.gastos = {
   _adicTitularFiltro: '', // Filtro titular en panel Adicional
   _adicCards:    [],      // [{ digits, name, editedName }] — tarjetas adicionales detectadas en el EDC
   _tarjOpen:     new Set(),// tarjetas abiertas en acordeón del tab Tarjetas
-  _lastTdcTab:   'historial', // último sub-tab de TDC visitado
+  _lastTdcTab:   'cuotas',    // último sub-tab de TDC visitado
   _manualSaved:  [],      // gastos guardados en esta sesión desde el panel Nuevo gasto
 
   // Normalizar comercio para matching: lowercase, sin tildes, sin códigos de comercio
@@ -226,7 +226,6 @@ window.Mods.gastos = {
   _drawShell() {
     const c = document.getElementById('content');
     const tdcTabDefs = [
-      ['historial','📋 Historial'],
       ['cuotas',   '📅 Cuotas'],
       ['comercios','🏷️ Comercios'],
       ['adicional','👤 Adicional'],
@@ -234,7 +233,7 @@ window.Mods.gastos = {
     ];
     const tdcSet   = new Set(tdcTabDefs.map(([t]) => t));
     const isTdc    = tdcSet.has(this._tab);
-    const barTabs  = new Set(['resumen','historial','cuotas']);
+    const barTabs  = new Set(['resumen','detalle','cuotas']);
     const gm       = this._gastoMoneda || 'ORIGEN';
     const monLabels = { ORIGEN: 'Origen', UYU: 'Todo UYU', USD: 'Todo USD' };
     const btnSt = (mode) => {
@@ -249,6 +248,7 @@ window.Mods.gastos = {
         <p class="page-subtitle">Control de egresos · importación automática de EDC</p>
         <div class="g-tabs">
           <button class="g-tab${this._tab==='resumen'?' active':''}" data-tab="resumen">📊 Resumen</button>
+          <button class="g-tab${this._tab==='detalle'?' active':''}" data-tab="detalle">📋 Detalle</button>
           <button class="g-tab${isTdc?' active':''}" data-tab="_tdc">💳 Tarjetas de Crédito</button>
           <button class="g-tab${this._tab==='manual'?' active':''}" data-tab="manual">✚ Nuevo gasto</button>
         </div>
@@ -259,6 +259,7 @@ window.Mods.gastos = {
         </div>
         <select class="g-tab-select" id="g-tab-sel">
           <option value="resumen"${this._tab==='resumen'?' selected':''}>📊 Resumen</option>
+          <option value="detalle"${this._tab==='detalle'?' selected':''}>📋 Detalle</option>
           <optgroup label="💳 Tarjetas de Crédito">
             ${tdcTabDefs.map(([t,l]) => `<option value="${t}"${this._tab===t?' selected':''}>${l}</option>`).join('')}
           </optgroup>
@@ -305,7 +306,7 @@ window.Mods.gastos = {
       btn.addEventListener('click', () => {
         const tgt = btn.dataset.tab;
         if (tgt === '_tdc') {
-          this._tab = this._lastTdcTab || 'historial';
+          this._tab = this._lastTdcTab || 'cuotas';
         } else {
           this._tab = tgt;
           if (tdcSet.has(tgt)) this._lastTdcTab = tgt;
@@ -371,6 +372,7 @@ window.Mods.gastos = {
   _drawTab() {
     switch (this._tab) {
       case 'resumen':   return this._drawResumen();
+      case 'detalle':   return this._drawHistorialGastos();
       case 'historial': return this._drawHistorialGastos();
       case 'cuotas':    return this._drawCuotas();
       case 'comercios': return this._drawHistorialComercios();
@@ -1358,9 +1360,15 @@ window.Mods.gastos = {
   },
 
   // ── Manual ──────────────────────────────────────────────────────────────
-  _drawManual() {
-    const savedSt = `font-size:.72rem;padding:2px 8px;border-radius:4px;border:1px solid var(--border);background:var(--surface);color:var(--text-sec);cursor:pointer`;
+  async _drawManual() {
+    const gc = document.getElementById('g-content');
+    const today = new Date().toISOString().slice(0,10);
 
+    const { data: bancosData } = await getDB().from('gastos')
+      .select('banco_tarjeta').not('banco_tarjeta', 'is', null).order('banco_tarjeta');
+    const bancosList = [...new Set((bancosData||[]).map(r => r.banco_tarjeta).filter(Boolean))];
+
+    const savedSt = `font-size:.72rem;padding:2px 8px;border-radius:4px;border:1px solid var(--border);background:var(--surface);color:var(--text-sec);cursor:pointer`;
     const savedHTML = this._manualSaved.length ? `
       <div class="form-card" style="margin-bottom:.75rem;padding:14px 16px">
         <h3 style="margin-bottom:10px">Guardados en esta sesión (${this._manualSaved.length})</h3>
@@ -1375,16 +1383,28 @@ window.Mods.gastos = {
           </div>`).join('')}
       </div>` : '';
 
-    document.getElementById('g-content').innerHTML = `
+    const inputSt = `-webkit-appearance:none;appearance:none`;
+    const fechaRowHTML = (val = today) =>
+      `<div class="g-fecha-row" style="display:flex;gap:6px;align-items:center">
+        <input class="g-fecha-item" type="date" value="${val}" required style="${inputSt}">
+        <button type="button" class="g-fecha-rm"
+          style="background:none;border:none;color:var(--text-sec);cursor:pointer;font-size:.9rem;padding:0 6px;line-height:1">✕</button>
+      </div>`;
+
+    gc.innerHTML = `
       ${savedHTML}
       <div class="form-card">
         <h3>Nuevo gasto</h3>
         <form id="form-gasto">
-          <div class="form-grid">
-            <div class="form-group">
-              <label>Fecha</label>
-              <input id="g-fecha" type="date" value="${new Date().toISOString().slice(0,10)}" required>
+          <div class="form-group" style="margin-bottom:14px">
+            <label>Fecha(s)</label>
+            <div id="g-fechas-wrap" style="display:flex;flex-direction:column;gap:6px">
+              ${fechaRowHTML()}
             </div>
+            <button type="button" id="g-add-fecha" class="btn btn-ghost"
+              style="margin-top:6px;font-size:.78rem;padding:4px 14px">＋ Agregar fecha</button>
+          </div>
+          <div class="form-grid">
             <div class="form-group">
               <label>Monto</label>
               <input id="g-monto" type="number" step="0.01" min="0.01" placeholder="5000" required>
@@ -1410,6 +1430,14 @@ window.Mods.gastos = {
                 <option value="casual">💳 Casual</option>
                 <option value="recurrente">🔁 Recurrente</option>
                 <option value="tdc">🏦 Cargo TDC</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Medio de pago</label>
+              <select id="g-banco">
+                <option value="">— Sin asignar</option>
+                <option value="Efectivo">💵 Efectivo</option>
+                ${bancosList.map(b => `<option value="${b}">${b}</option>`).join('')}
               </select>
             </div>
             <div class="form-group">
@@ -1452,6 +1480,27 @@ window.Mods.gastos = {
       </div>
     `;
 
+    const _getFechas = () =>
+      [...document.querySelectorAll('.g-fecha-item')].map(el => el.value).filter(Boolean);
+
+    const _bindRemoveFecha = () => {
+      document.querySelectorAll('.g-fecha-rm').forEach(btn => {
+        btn.onclick = () => {
+          if (document.querySelectorAll('.g-fecha-row').length <= 1) return;
+          btn.closest('.g-fecha-row').remove();
+        };
+      });
+    };
+    _bindRemoveFecha();
+
+    document.getElementById('g-add-fecha')?.addEventListener('click', () => {
+      const wrap = document.getElementById('g-fechas-wrap');
+      const div = document.createElement('div');
+      div.innerHTML = fechaRowHTML();
+      wrap.appendChild(div.firstElementChild);
+      _bindRemoveFecha();
+    });
+
     const _readForm = () => {
       const rawMonto = parseFloat(document.getElementById('g-monto').value);
       const N        = parseInt(document.getElementById('g-dividir-entre').value) || 1;
@@ -1461,11 +1510,11 @@ window.Mods.gastos = {
       const notas    = document.getElementById('g-notas').value.trim();
       return { rawMonto, N, catId, cuotaA, cuotaT, notas,
         monto: rawMonto / N,
-        fecha: document.getElementById('g-fecha').value,
         moneda: document.getElementById('g-moneda').value,
         comercio: document.getElementById('g-comercio').value.trim() || null,
         tipo_gasto: document.getElementById('g-tipo-gasto').value,
         usuario: document.getElementById('g-usuario').value,
+        banco_tarjeta: document.getElementById('g-banco').value || null,
       };
     };
 
@@ -1476,11 +1525,12 @@ window.Mods.gastos = {
       return true;
     };
 
-    const _buildRecord = ({ fecha, monto, rawMonto, N, moneda, comercio, catId, tipo_gasto, usuario, cuotaA, cuotaT, notas }) => ({
+    const _buildRecord = ({ fecha, monto, rawMonto, N, moneda, comercio, catId, tipo_gasto, usuario, banco_tarjeta, cuotaA, cuotaT, notas }) => ({
       fecha, monto, moneda, tipo_gasto, usuario,
       comercio: comercio || null,
       categoria_id: catId ? +catId : null,
       dividido_entre: N, fuente: 'manual',
+      banco_tarjeta: banco_tarjeta || null,
       cuota_actual: cuotaA, cuotas_totales: cuotaT,
       notas: N > 1 ? `Total original: ${rawMonto} · dividido entre ${N}` : (notas || null),
     });
@@ -1489,34 +1539,43 @@ window.Mods.gastos = {
       e.preventDefault();
       const data = _readForm();
       if (!_validate(data)) return;
+      const fechas = _getFechas();
+      if (!fechas.length) { toast('Ingresá al menos una fecha', 'err'); return; }
       try {
-        await dbInsert('gastos', _buildRecord(data));
-        toast('✅ Gasto registrado');
+        for (const fecha of fechas) await dbInsert('gastos', _buildRecord({ ...data, fecha }));
+        toast(fechas.length > 1 ? `✅ ${fechas.length} gastos registrados` : '✅ Gasto registrado');
         e.target.reset();
-        document.getElementById('g-fecha').value = new Date().toISOString().slice(0,10);
+        document.getElementById('g-fechas-wrap').innerHTML = fechaRowHTML();
+        _bindRemoveFecha();
+        document.getElementById('g-banco').value = '';
       } catch(err) { toast('❌ ' + err.message, 'err'); }
     });
 
     document.getElementById('g-guardar-btn')?.addEventListener('click', async () => {
       const data = _readForm();
       if (!_validate(data)) return;
-      const record = _buildRecord(data);
+      const fechas = _getFechas();
+      if (!fechas.length) { toast('Ingresá al menos una fecha', 'err'); return; }
       try {
-        await dbInsert('gastos', record);
-        const catId = data.catId;
-        this._manualSaved.unshift({
-          ...record,
-          monto_orig: data.rawMonto,
-          _catLabel: catId ? (this._catLabel(+catId) || '') : '',
-        });
-        toast('✅ Guardado');
-        // Partial reset: keep fecha, moneda, tipo, usuario
+        for (const fecha of fechas) {
+          const record = _buildRecord({ ...data, fecha });
+          await dbInsert('gastos', record);
+          this._manualSaved.unshift({
+            ...record,
+            monto_orig: data.rawMonto,
+            _catLabel: data.catId ? (this._catLabel(+data.catId) || '') : '',
+          });
+        }
+        toast(fechas.length > 1 ? `✅ ${fechas.length} gastos guardados` : '✅ Guardado');
+        // Partial reset: keep moneda, tipo, usuario, banco
         document.getElementById('g-monto').value = '';
         document.getElementById('g-comercio').value = '';
         document.getElementById('g-cuota-actual').value = '';
         document.getElementById('g-cuotas-totales').value = '';
         document.getElementById('g-notas').value = '';
         document.getElementById('g-dividir-entre').value = '1';
+        document.getElementById('g-fechas-wrap').innerHTML = fechaRowHTML();
+        _bindRemoveFecha();
         const catEl = document.getElementById('g-categoria');
         if (catEl) { catEl.value = ''; catEl.dataset.catid = ''; }
         this._drawManual();
@@ -1527,12 +1586,14 @@ window.Mods.gastos = {
       btn.addEventListener('click', () => {
         const g = this._manualSaved[+btn.dataset.idx];
         if (!g) return;
-        document.getElementById('g-fecha').value = g.fecha || '';
+        const wrap = document.getElementById('g-fechas-wrap');
+        if (wrap) { wrap.innerHTML = fechaRowHTML(g.fecha || today); _bindRemoveFecha(); }
         document.getElementById('g-monto').value = g.monto_orig ?? g.monto;
         document.getElementById('g-moneda').value = g.moneda || 'UYU';
         document.getElementById('g-comercio').value = g.comercio || '';
         document.getElementById('g-tipo-gasto').value = g.tipo_gasto || 'casual';
         document.getElementById('g-usuario').value = g.usuario || 'compartido';
+        document.getElementById('g-banco').value = g.banco_tarjeta || '';
         document.getElementById('g-dividir-entre').value = g.dividido_entre || 1;
         document.getElementById('g-cuota-actual').value = g.cuota_actual || '';
         document.getElementById('g-cuotas-totales').value = g.cuotas_totales || '';
@@ -1624,11 +1685,49 @@ window.Mods.gastos = {
 
     const totalMes = gastos.reduce((s, g) => s + toVal(g.monto, g.moneda), 0);
 
+    // Summary: split gastos vs beneficios/ahorro
+    const benefitCatIds = new Set(
+      this._cats.filter(c => ['Beneficio','Puntos BBVA'].includes(c.nombre)).map(c => c.id)
+    );
+    const isBenefit = r => r.categoria_id != null && benefitCatIds.has(r.categoria_id);
+    let gUYU = 0, gUSD = 0, sUYU = 0, sUSD = 0;
+    for (const g of gastos) {
+      const n = parseFloat(g.monto) || 0;
+      const isB = isBenefit(g);
+      if ((g.moneda||'UYU') === 'USD') { if (isB) sUSD += n; else gUSD += n; }
+      else                             { if (isB) sUYU += n; else gUYU += n; }
+    }
+    const fmtSumG = () => {
+      if (viewMode === 'ORIGEN') return fmtDual(gUYU, gUSD) || '—';
+      if (viewMode === 'UYU') return this._fmtMon(gUYU + gUSD * (tc||0), 'UYU');
+      return this._fmtUSD(gUSD + (tc ? gUYU/tc : 0));
+    };
+    const fmtSumS = () => {
+      if (viewMode === 'ORIGEN') return fmtDual(sUYU, sUSD) || '—';
+      if (viewMode === 'UYU') return this._fmtMon(sUYU + sUSD * (tc||0), 'UYU');
+      return this._fmtUSD(sUSD + (tc ? sUYU/tc : 0));
+    };
+
     const catOpts = this._cats.map(c =>
       `<option value="${c.id}">${c.icono} ${c.nombre}</option>`).join('');
     const selSt = `font-size:.82rem;padding:5px 10px;border-radius:6px;border:1px solid var(--border);background:var(--surface);color:var(--text)`;
 
     gc.innerHTML = `
+      <!-- Resumen del período -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:.75rem">
+        <div class="form-card" style="padding:10px 14px;text-align:center">
+          <div style="font-size:.58rem;color:var(--text-sec);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">Gastos</div>
+          <div style="font-family:'DM Mono',monospace;font-size:.84rem;font-weight:700;color:var(--accent)">${fmtSumG()}</div>
+        </div>
+        <div class="form-card" style="padding:10px 14px;text-align:center">
+          <div style="font-size:.58rem;color:var(--text-sec);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">Ahorro</div>
+          <div style="font-family:'DM Mono',monospace;font-size:.84rem;font-weight:700;color:#10b981">${fmtSumS() || '—'}</div>
+        </div>
+        <div class="form-card" style="padding:10px 14px;text-align:center">
+          <div style="font-size:.58rem;color:var(--text-sec);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">Registros</div>
+          <div style="font-family:'DM Mono',monospace;font-size:.84rem;font-weight:700;color:var(--text)">${gastos.length}</div>
+        </div>
+      </div>
       <!-- Filtros -->
       <div class="form-card" style="padding:12px 16px;margin-bottom:.75rem">
         <div class="g-filters">
@@ -1657,14 +1756,14 @@ window.Mods.gastos = {
               <option value="cuotas"${tipoFilter==='cuotas'?' selected':''}>📅 Solo cuotas</option>
             </select>
           </div>
-          ${bancosHist.length > 0 ? `
           <div>
-            <div class="g-fl-lbl">Tarjeta</div>
+            <div class="g-fl-lbl">Medios de Pago</div>
             <select id="h-banco" style="${selSt}">
-              <option value="">Todas</option>
-              ${bancosHist.map(b => `<option value="${b}"${b===this._histBanco?' selected':''}>${b}</option>`).join('')}
+              <option value="">Todos</option>
+              <option value="Efectivo"${'Efectivo'===this._histBanco?' selected':''}>💵 Efectivo</option>
+              ${bancosHist.filter(b => b !== 'Efectivo').map(b => `<option value="${b}"${b===this._histBanco?' selected':''}>${b}</option>`).join('')}
             </select>
-          </div>` : ''}
+          </div>
           ${titularesHist.length > 0 ? `
           <div>
             <div class="g-fl-lbl">Tarjetahabiente</div>
@@ -1707,7 +1806,7 @@ window.Mods.gastos = {
               <th>Categoría</th>
               <th>Mon.</th>
               ${this._thSort('monto',    'Monto',    this._histSort)}
-              <th>Tarjeta</th>
+              <th>Medio de pago</th>
               <th></th>
             </tr></thead>
             <tbody id="g-hist-tbody"></tbody>
@@ -3711,10 +3810,11 @@ window.Mods.gastos = {
             </select>
           </div>
           <div>
-            <div class="g-fl-lbl">Tarjeta</div>
+            <div class="g-fl-lbl">Medios de Pago</div>
             <select id="r-banco" style="${selSt}">
-              <option value="">Todas</option>
-              ${bancos.map(b => `<option value="${b}"${b===this._resBanco?' selected':''}>${b}</option>`).join('')}
+              <option value="">Todos</option>
+              <option value="Efectivo"${'Efectivo'===this._resBanco?' selected':''}>💵 Efectivo</option>
+              ${bancos.filter(b => b !== 'Efectivo').map(b => `<option value="${b}"${b===this._resBanco?' selected':''}>${b}</option>`).join('')}
             </select>
           </div>
         </div>
