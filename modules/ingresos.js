@@ -14,7 +14,8 @@ window.Mods.ingresos = {
     ]);
 
     const presets = this._loadPresets();
-    const inp = `font-size:.82rem;padding:5px 8px;border-radius:6px;border:1px solid var(--border);background:var(--surface);color:var(--text);width:100%`;
+    const inp = `font-size:.82rem;padding:7px 8px;border-radius:6px;border:1px solid var(--border);background:var(--surface);color:var(--text);width:100%;max-width:100%;box-sizing:border-box`;
+    const lbl = `display:block;font-family:'DM Mono',monospace;font-size:.62rem;text-transform:uppercase;letter-spacing:.1em;color:var(--text-sec);margin-bottom:5px`;
 
     c.innerHTML = `
       <h1>Ingresos</h1>
@@ -43,37 +44,37 @@ window.Mods.ingresos = {
           </div>
         </details>` : ''}
 
-        <form id="form-ingreso">
-          <!-- Row 1: Fecha · Moneda · Monto (min-width:0 fuerza celdas a respetar el grid) -->
-          <div style="display:grid;grid-template-columns:minmax(0,1.3fr) 72px minmax(0,1fr);gap:8px;margin-bottom:10px">
-            <div class="form-group" style="min-width:0;overflow:hidden">
-              <label>Fecha</label>
+        <form id="form-ingreso" style="display:flex;flex-direction:column;gap:10px">
+          <!-- Row 1: Fecha · Moneda · Monto -->
+          <div style="display:grid;grid-template-columns:1fr 64px 1fr;gap:8px">
+            <div style="min-width:0;overflow:hidden">
+              <span style="${lbl}">Fecha</span>
               <input id="i-fecha" type="date" value="${new Date().toISOString().slice(0,10)}" style="${inp}" required>
             </div>
-            <div class="form-group" style="min-width:0">
-              <label>Moneda</label>
+            <div style="min-width:0">
+              <span style="${lbl}">Moneda</span>
               <select id="i-moneda" style="${inp}">
                 <option value="USD">USD</option>
                 <option value="UYU">UYU</option>
               </select>
             </div>
-            <div class="form-group" style="min-width:0">
-              <label id="i-monto-lbl">Monto</label>
+            <div style="min-width:0">
+              <span id="i-monto-lbl" style="${lbl}">Monto</span>
               <input id="i-monto" type="number" step="0.01" min="0.01" placeholder="0.00" style="${inp}" required>
             </div>
           </div>
 
           <!-- Row 2: Tipo · Descripción -->
-          <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:8px;margin-bottom:12px">
-            <div class="form-group" style="min-width:0">
-              <label>Tipo</label>
+          <div style="display:grid;grid-template-columns:1fr 2fr;gap:8px">
+            <div style="min-width:0">
+              <span style="${lbl}">Tipo</span>
               <select id="i-tipo" style="${inp}">
                 <option value="">Sin tipo</option>
                 ${tipos.map(t => `<option value="${t.id}">${t.nombre}</option>`).join('')}
               </select>
             </div>
-            <div class="form-group" style="min-width:0">
-              <label>Descripción</label>
+            <div style="min-width:0">
+              <span style="${lbl}">Descripción</span>
               <input id="i-desc" type="text" placeholder="Salario, freelance..." style="${inp}">
             </div>
           </div>
