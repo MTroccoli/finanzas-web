@@ -1436,16 +1436,8 @@ window.Mods.gastos = {
               <label>Medio de pago</label>
               <select id="g-banco">
                 <option value="">— Sin asignar</option>
-                <option value="Efectivo">💵 Efectivo</option>
-                ${bancosList.map(b => `<option value="${b}">${b}</option>`).join('')}
-              </select>
-            </div>
-            <div class="form-group">
-              <label>Usuario</label>
-              <select id="g-usuario">
-                <option value="compartido">Compartido</option>
-                <option value="usuario1">Usuario 1</option>
-                <option value="usuario2">Usuario 2</option>
+                <option value="Efectivo">Efectivo</option>
+                ${bancosList.filter(b => b !== 'Efectivo').map(b => `<option value="${b}">${b}</option>`).join('')}
               </select>
             </div>
           </div>
@@ -1513,7 +1505,6 @@ window.Mods.gastos = {
         moneda: document.getElementById('g-moneda').value,
         comercio: document.getElementById('g-comercio').value.trim() || null,
         tipo_gasto: document.getElementById('g-tipo-gasto').value,
-        usuario: document.getElementById('g-usuario').value,
         banco_tarjeta: document.getElementById('g-banco').value || null,
       };
     };
@@ -1525,8 +1516,8 @@ window.Mods.gastos = {
       return true;
     };
 
-    const _buildRecord = ({ fecha, monto, rawMonto, N, moneda, comercio, catId, tipo_gasto, usuario, banco_tarjeta, cuotaA, cuotaT, notas }) => ({
-      fecha, monto, moneda, tipo_gasto, usuario,
+    const _buildRecord = ({ fecha, monto, rawMonto, N, moneda, comercio, catId, tipo_gasto, banco_tarjeta, cuotaA, cuotaT, notas }) => ({
+      fecha, monto, moneda, tipo_gasto,
       comercio: comercio || null,
       categoria_id: catId ? +catId : null,
       dividido_entre: N, fuente: 'manual',
@@ -1592,7 +1583,6 @@ window.Mods.gastos = {
         document.getElementById('g-moneda').value = g.moneda || 'UYU';
         document.getElementById('g-comercio').value = g.comercio || '';
         document.getElementById('g-tipo-gasto').value = g.tipo_gasto || 'casual';
-        document.getElementById('g-usuario').value = g.usuario || 'compartido';
         document.getElementById('g-banco').value = g.banco_tarjeta || '';
         document.getElementById('g-dividir-entre').value = g.dividido_entre || 1;
         document.getElementById('g-cuota-actual').value = g.cuota_actual || '';
@@ -1685,27 +1675,29 @@ window.Mods.gastos = {
 
     const totalMes = gastos.reduce((s, g) => s + toVal(g.monto, g.moneda), 0);
 
-    // Summary: split gastos vs beneficios/ahorro
-    const benefitCatIds = new Set(
-      this._cats.filter(c => ['Beneficio','Puntos BBVA'].includes(c.nombre)).map(c => c.id)
-    );
-    const isBenefit = r => r.categoria_id != null && benefitCatIds.has(r.categoria_id);
-    let gUYU = 0, gUSD = 0, sUYU = 0, sUSD = 0;
+    // Summary: split positive gastos vs negative (cashbacks/reembolsos)
+    let gPosUYU = 0, gPosUSD = 0, gNegUYU = 0, gNegUSD = 0;
     for (const g of gastos) {
       const n = parseFloat(g.monto) || 0;
-      const isB = isBenefit(g);
-      if ((g.moneda||'UYU') === 'USD') { if (isB) sUSD += n; else gUSD += n; }
-      else                             { if (isB) sUYU += n; else gUYU += n; }
+      if ((g.moneda||'UYU') === 'USD') { if (n >= 0) gPosUSD += n; else gNegUSD += Math.abs(n); }
+      else                             { if (n >= 0) gPosUYU += n; else gNegUYU += Math.abs(n); }
     }
+    const fmtAmts = (uyu, usd) => {
+      const parts = [];
+      if (uyu > 0) parts.push(this._fmtMon(uyu, 'UYU'));
+      if (usd > 0) parts.push(this._fmtUSD(usd));
+      return parts.join(' · ') || '—';
+    };
     const fmtSumG = () => {
-      if (viewMode === 'ORIGEN') return fmtDual(gUYU, gUSD) || '—';
-      if (viewMode === 'UYU') return this._fmtMon(gUYU + gUSD * (tc||0), 'UYU');
-      return this._fmtUSD(gUSD + (tc ? gUYU/tc : 0));
+      if (viewMode === 'ORIGEN') return fmtAmts(gPosUYU, gPosUSD);
+      if (viewMode === 'UYU') return this._fmtMon(gPosUYU + gPosUSD * (tc||0), 'UYU');
+      return this._fmtUSD(gPosUSD + (tc ? gPosUYU/tc : 0));
     };
     const fmtSumS = () => {
-      if (viewMode === 'ORIGEN') return fmtDual(sUYU, sUSD) || '—';
-      if (viewMode === 'UYU') return this._fmtMon(sUYU + sUSD * (tc||0), 'UYU');
-      return this._fmtUSD(sUSD + (tc ? sUYU/tc : 0));
+      if (gNegUYU === 0 && gNegUSD === 0) return '—';
+      if (viewMode === 'ORIGEN') return fmtAmts(gNegUYU, gNegUSD);
+      if (viewMode === 'UYU') return this._fmtMon(gNegUYU + gNegUSD * (tc||0), 'UYU');
+      return this._fmtUSD(gNegUSD + (tc ? gNegUYU/tc : 0));
     };
 
     const catOpts = this._cats.map(c =>
@@ -1719,9 +1711,9 @@ window.Mods.gastos = {
           <div style="font-size:.58rem;color:var(--text-sec);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">Gastos</div>
           <div style="font-family:'DM Mono',monospace;font-size:.84rem;font-weight:700;color:var(--accent)">${fmtSumG()}</div>
         </div>
-        <div class="form-card" style="padding:10px 14px;text-align:center">
-          <div style="font-size:.58rem;color:var(--text-sec);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">Ahorro</div>
-          <div style="font-family:'DM Mono',monospace;font-size:.84rem;font-weight:700;color:#10b981">${fmtSumS() || '—'}</div>
+        <div class="form-card" style="padding:10px 14px;text-align:center;border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.05)">
+          <div style="font-size:.58rem;color:#10b981;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">Ahorro</div>
+          <div style="font-family:'DM Mono',monospace;font-size:.84rem;font-weight:700;color:#10b981">${fmtSumS()}</div>
         </div>
         <div class="form-card" style="padding:10px 14px;text-align:center">
           <div style="font-size:.58rem;color:var(--text-sec);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">Registros</div>
@@ -1760,7 +1752,7 @@ window.Mods.gastos = {
             <div class="g-fl-lbl">Medios de Pago</div>
             <select id="h-banco" style="${selSt}">
               <option value="">Todos</option>
-              <option value="Efectivo"${'Efectivo'===this._histBanco?' selected':''}>💵 Efectivo</option>
+              <option value="Efectivo"${'Efectivo'===this._histBanco?' selected':''}>Efectivo</option>
               ${bancosHist.filter(b => b !== 'Efectivo').map(b => `<option value="${b}"${b===this._histBanco?' selected':''}>${b}</option>`).join('')}
             </select>
           </div>
@@ -3813,7 +3805,7 @@ window.Mods.gastos = {
             <div class="g-fl-lbl">Medios de Pago</div>
             <select id="r-banco" style="${selSt}">
               <option value="">Todos</option>
-              <option value="Efectivo"${'Efectivo'===this._resBanco?' selected':''}>💵 Efectivo</option>
+              <option value="Efectivo"${'Efectivo'===this._resBanco?' selected':''}>Efectivo</option>
               ${bancos.filter(b => b !== 'Efectivo').map(b => `<option value="${b}"${b===this._resBanco?' selected':''}>${b}</option>`).join('')}
             </select>
           </div>

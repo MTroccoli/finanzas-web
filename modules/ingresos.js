@@ -8,13 +8,13 @@ window.Mods.ingresos = {
     // Check auto-presets before rendering (silent, no await-blocking UI)
     this._checkAutoPresets().catch(() => {});
 
-    const [ingresos, tipos] = await Promise.all([
+    const [ingresos, tipos, presets] = await Promise.all([
       dbFetch('ingresos',      { order: { col: 'fecha', asc: false }, limit: 200 }),
       dbFetch('tipos_ingreso', { filters: { activo: 1 }, order: { col: 'nombre', asc: true } }),
+      this._loadPresets(),
     ]);
 
     const today   = new Date().toISOString().slice(0,10);
-    const presets = this._loadPresets();
     const inp = `font-size:.82rem;padding:7px 8px;border-radius:6px;border:1px solid var(--border);background:var(--surface);color:var(--text);width:100%;max-width:100%;box-sizing:border-box`;
     const lbl = `display:block;font-family:'DM Mono',monospace;font-size:.62rem;text-transform:uppercase;letter-spacing:.1em;color:var(--text-sec);margin-bottom:5px`;
 
@@ -43,7 +43,7 @@ window.Mods.ingresos = {
               <div style="display:flex;align-items:center;gap:6px;padding:7px 10px;border-radius:6px;background:var(--surface);border:1px solid var(--border)">
                 <div style="flex:1;min-width:0">
                   <div style="font-size:.8rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
-                    ${p.desc || 'Sin nombre'} · <span style="color:var(--text-sec)">${p.moneda || 'USD'} ${p.monto}</span>${p.frecuencia ? ` · <span style="color:var(--accent)">${p.frecuencia}</span>` : ''}${p.auto ? ` · <span style="color:#10b981">⚡auto</span>` : ''}
+                    ${p.desc || 'Sin nombre'} · <span style="color:var(--text-sec)">${p.moneda || 'UYU'} ${p.monto}</span>${p.frecuencia ? ` · <span style="color:var(--accent)">${p.frecuencia}</span>` : ''}${p.auto ? ` · <span style="color:#10b981">⚡auto</span>` : ''}
                   </div>
                   ${p.frecuencia && p.ultima_carga ? `<div style="font-size:.65rem;color:var(--text-sec);margin-top:2px">Próx: ${this._nextDue(p.ultima_carga, p.frecuencia)}</div>` : ''}
                 </div>
@@ -69,12 +69,12 @@ window.Mods.ingresos = {
             <div>
               <span style="${lbl}">Moneda</span>
               <select id="i-moneda" style="${inp}">
+                <option value="UYU" selected>UYU</option>
                 <option value="USD">USD</option>
-                <option value="UYU">UYU</option>
               </select>
             </div>
             <div>
-              <span id="i-monto-lbl" style="${lbl}">Monto</span>
+              <span id="i-monto-lbl" style="${lbl}">Monto (UYU)</span>
               <input id="i-monto" type="number" step="0.01" min="0.01" placeholder="0.00" style="${inp}" required>
             </div>
           </div>
@@ -183,10 +183,9 @@ window.Mods.ingresos = {
         auto:         document.getElementById('preset-auto').checked,
         ultima_carga: fecha,
       };
-      const arr = this._loadPresets();
+      const arr = await this._loadPresets();
       arr.unshift(p);
-      if (arr.length > 10) arr.length = 10;
-      localStorage.setItem('ingresos_presets', JSON.stringify(arr));
+      await this._savePresets(arr);
 
       if (fecha <= today) {
         try {
@@ -209,8 +208,9 @@ window.Mods.ingresos = {
 
     // load preset
     document.querySelectorAll('.btn-load-preset').forEach(btn =>
-      btn.addEventListener('click', () => {
-        const p = this._loadPresets()[parseInt(btn.dataset.idx)];
+      btn.addEventListener('click', async () => {
+        const arr = await this._loadPresets();
+        const p = arr[parseInt(btn.dataset.idx)];
         if (!p) return;
         if (p.monto)  document.getElementById('i-monto').value  = p.monto;
         if (p.moneda) { document.getElementById('i-moneda').value = p.moneda; document.getElementById('i-monto-lbl').textContent = `Monto (${p.moneda})`; }
@@ -221,10 +221,10 @@ window.Mods.ingresos = {
 
     // delete preset
     document.querySelectorAll('.btn-del-preset').forEach(btn =>
-      btn.addEventListener('click', () => {
-        const arr = this._loadPresets();
+      btn.addEventListener('click', async () => {
+        const arr = await this._loadPresets();
         arr.splice(parseInt(btn.dataset.idx), 1);
-        localStorage.setItem('ingresos_presets', JSON.stringify(arr));
+        await this._savePresets(arr);
         this.render();
       })
     );
@@ -246,7 +246,7 @@ window.Mods.ingresos = {
         e.target.reset();
         document.getElementById('i-fechas-wrap').innerHTML = fechaRowHTML();
         _bindRemoveFecha();
-        document.getElementById('i-monto-lbl').textContent = 'Monto';
+        document.getElementById('i-monto-lbl').textContent = 'Monto (UYU)';
         const rows = await dbFetch('ingresos', { order: { col: 'fecha', asc: false }, limit: 200 });
         document.getElementById('ing-list').innerHTML = this._renderList(rows, tipos, this._filterTipo);
         this._bindDelete(tipos);
@@ -308,7 +308,7 @@ window.Mods.ingresos = {
 
   async _checkAutoPresets() {
     const today   = new Date().toISOString().slice(0, 10);
-    const presets = this._loadPresets();
+    const presets = await this._loadPresets();
     let changed   = false;
     for (let i = 0; i < presets.length; i++) {
       const p = presets[i];
@@ -318,16 +318,16 @@ window.Mods.ingresos = {
         await dbInsert('ingresos', {
           fecha:       today,
           monto:       parseFloat(p.monto),
-          moneda:      p.moneda || 'USD',
+          moneda:      p.moneda || 'UYU',
           descripcion: p.desc || null,
           tipo_id:     p.tipo ? parseInt(p.tipo) : null,
         });
         presets[i].ultima_carga = today;
         changed = true;
-        toast(`⚡ Auto-ingreso: ${p.desc || 'Ingreso'} (${p.moneda || 'USD'} ${p.monto})`);
+        toast(`⚡ Auto-ingreso: ${p.desc || 'Ingreso'} (${p.moneda || 'UYU'} ${p.monto})`);
       } catch { /* silent */ }
     }
-    if (changed) localStorage.setItem('ingresos_presets', JSON.stringify(presets));
+    if (changed) await this._savePresets(presets);
   },
 
   _nextDue(lastDate, frecuencia) {
@@ -337,16 +337,26 @@ window.Mods.ingresos = {
     return d.toISOString().slice(0, 10);
   },
 
-  _loadPresets() {
+  async _loadPresets() {
     try {
-      const old = localStorage.getItem('ingreso_preset');
-      if (old && !localStorage.getItem('ingresos_presets')) {
-        const arr = [JSON.parse(old)];
-        localStorage.setItem('ingresos_presets', JSON.stringify(arr));
+      // Migrate from localStorage on first run
+      const lsRaw = localStorage.getItem('ingresos_presets') || localStorage.getItem('ingreso_preset');
+      if (lsRaw) {
+        let arr;
+        try { const p = JSON.parse(lsRaw); arr = Array.isArray(p) ? p : [p]; }
+        catch { arr = []; }
+        localStorage.removeItem('ingresos_presets');
         localStorage.removeItem('ingreso_preset');
+        if (arr.length) await setConfig('ingresos_presets', JSON.stringify(arr));
         return arr;
       }
-      return JSON.parse(localStorage.getItem('ingresos_presets') || '[]');
+      const val = await getConfig('ingresos_presets');
+      return JSON.parse(val || '[]');
     } catch { return []; }
+  },
+
+  async _savePresets(arr) {
+    if (arr.length > 10) arr.length = 10;
+    await setConfig('ingresos_presets', JSON.stringify(arr));
   },
 };
