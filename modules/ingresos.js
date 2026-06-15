@@ -79,9 +79,9 @@ window.Mods.ingresos = {
           </div>
 
           <!-- Row 3: Botones -->
-          <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <button type="submit" class="btn btn-primary">✚ Registrar ingreso</button>
-            <button type="button" id="btn-save-preset" class="btn" style="border:1px solid var(--border)">💾 Guardar recurrente</button>
+          <div style="display:flex;gap:8px">
+            <button type="submit" class="btn btn-primary" style="flex:1;justify-content:center">✚ Registrar</button>
+            <button type="button" id="btn-save-preset" class="btn" style="flex:1;justify-content:center;border:1px solid var(--border)">💾 Recurrente</button>
           </div>
 
           <!-- Panel de frecuencia (oculto por defecto) -->
