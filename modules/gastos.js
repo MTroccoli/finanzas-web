@@ -2550,9 +2550,17 @@ window.Mods.gastos = {
       </tr>`;
   },
 
+  _onDivChange(el) {
+    const row   = el.closest('tr.g-editing');
+    const orig  = parseFloat(row?.dataset.orig) || 0;
+    const newD  = parseInt(el.value) || 1;
+    const mEl   = row?.querySelector('.ge-monto');
+    if (mEl && orig > 0) mEl.value = (orig / newD).toFixed(2);
+  },
+
   _histEditRow(g, catOpts) {
     return `
-      <tr class="g-editing" data-id="${g.id}" style="background:rgba(255,255,255,.04)">
+      <tr class="g-editing" data-id="${g.id}" data-orig="${((parseFloat(g.monto)||0) * (g.dividido_entre||1)).toFixed(2)}" style="background:rgba(255,255,255,.04)">
         <td colspan="7" style="padding:10px 8px">
           <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end">
             <div>
@@ -2598,6 +2606,7 @@ window.Mods.gastos = {
               <div style="font-size:.68rem;color:var(--text-sec);margin-bottom:2px">Dividir entre</div>
               <input type="number" class="ge-div" min="1" step="1"
                 value="${g.dividido_entre || 1}"
+                oninput="window.Mods.gastos._onDivChange(this)"
                 style="width:60px;font-size:.78rem;padding:4px 7px;border-radius:5px;
                   border:1px solid var(--border);background:var(--surface);color:var(--text);
                   text-align:center;-moz-appearance:textfield">

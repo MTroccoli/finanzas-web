@@ -58,7 +58,7 @@ window.Mods.dashboard = {
     const byMonth6 = {};
     months6.forEach(m => { byMonth6[m.ym] = {ing: 0, gas: 0}; });
 
-    gastos.filter(g => g.incluido_en_gastos !== false && byMonth6[g.fecha.slice(0,7)] !== undefined)
+    gastos.filter(g => byMonth6[g.fecha.slice(0,7)] !== undefined)
       .forEach(g => { byMonth6[g.fecha.slice(0,7)].gas += toDisp(g.monto, g.moneda || 'UYU'); });
     ingresos.forEach(i => {
       const ym = i.fecha.slice(0,7);
@@ -88,7 +88,7 @@ window.Mods.dashboard = {
     // Averages from last 3 complete months (months6[2..4])
     const last3 = months6.slice(2, 5).map(m => m.ym);
     const recAvg = gastos
-      .filter(g => g.tipo_gasto === 'recurrente' && last3.includes(g.fecha.slice(0,7)) && g.incluido_en_gastos !== false)
+      .filter(g => g.tipo_gasto === 'recurrente' && last3.includes(g.fecha.slice(0,7)))
       .reduce((s, g) => s + toDisp(g.monto, g.moneda || 'UYU'), 0) / 3;
     const ingAvg = last3.reduce((s, ym) => s + (byMonth6[ym]?.ing || 0), 0) / 3;
 
@@ -98,7 +98,7 @@ window.Mods.dashboard = {
       const d = new Date(curY, curM - 1 - i, 1);
       all12YMs.add(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`);
     }
-    const isCasual = g => g.tipo_gasto !== 'recurrente' && (g.cuotas_totales || 1) <= 1 && g.incluido_en_gastos !== false;
+    const isCasual = g => g.tipo_gasto !== 'recurrente' && (g.cuotas_totales || 1) <= 1;
     const casualRows = gastos.filter(g => isCasual(g) && all12YMs.has(g.fecha.slice(0,7)));
     const casualMonthsWithData = new Set(casualRows.map(g => g.fecha.slice(0,7)));
     const casualTotal = casualRows.reduce((s, g) => s + toDisp(g.monto, g.moneda || 'UYU'), 0);
