@@ -45,43 +45,43 @@ window.Mods.ingresos = {
 
         <form id="form-ingreso">
           <!-- Row 1: Fecha · Moneda · Monto -->
-          <div style="display:flex;gap:8px;margin-bottom:10px">
-            <div class="form-group" style="flex:1.6;min-width:0">
+          <div style="display:grid;grid-template-columns:1fr 76px 1fr;gap:8px;margin-bottom:10px">
+            <div class="form-group">
               <label>Fecha</label>
               <input id="i-fecha" type="date" value="${new Date().toISOString().slice(0,10)}" style="${inp}" required>
             </div>
-            <div class="form-group" style="flex:0 0 72px">
+            <div class="form-group">
               <label>Moneda</label>
               <select id="i-moneda" style="${inp}">
                 <option value="USD">USD</option>
                 <option value="UYU">UYU</option>
               </select>
             </div>
-            <div class="form-group" style="flex:1.4;min-width:0">
+            <div class="form-group">
               <label id="i-monto-lbl">Monto</label>
               <input id="i-monto" type="number" step="0.01" min="0.01" placeholder="0.00" style="${inp}" required>
             </div>
           </div>
 
           <!-- Row 2: Tipo · Descripción -->
-          <div style="display:flex;gap:8px;margin-bottom:12px">
-            <div class="form-group" style="flex:1;min-width:0">
+          <div style="display:grid;grid-template-columns:1fr 2fr;gap:8px;margin-bottom:12px">
+            <div class="form-group">
               <label>Tipo</label>
               <select id="i-tipo" style="${inp}">
                 <option value="">Sin tipo</option>
                 ${tipos.map(t => `<option value="${t.id}">${t.nombre}</option>`).join('')}
               </select>
             </div>
-            <div class="form-group" style="flex:2;min-width:0">
+            <div class="form-group">
               <label>Descripción</label>
               <input id="i-desc" type="text" placeholder="Salario, freelance..." style="${inp}">
             </div>
           </div>
 
           <!-- Row 3: Botones -->
-          <div style="display:flex;gap:8px">
-            <button type="submit" class="btn btn-primary" style="flex:1;justify-content:center">✚ Registrar</button>
-            <button type="button" id="btn-save-preset" class="btn" style="flex:1;justify-content:center;border:1px solid var(--border)">💾 Recurrente</button>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <button type="submit" class="btn btn-primary" style="justify-content:center;width:100%">✚ Registrar</button>
+            <button type="button" id="btn-save-preset" class="btn" style="justify-content:center;width:100%;border:1px solid var(--border)">💾 Recurrente</button>
           </div>
 
           <!-- Panel de frecuencia (oculto por defecto) -->
