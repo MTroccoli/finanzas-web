@@ -4073,33 +4073,33 @@ window.Mods.gastos = {
     if (detailRowsEl) {
       if (detailMonth && !isCuotas && !isBenef) {
         const monthRows = allData
-          .filter(r => !isBenefit(r) && r.fecha.slice(0, 7) === detailMonth)
+          .filter(r => r.fecha.slice(0, 7) === detailMonth)
           .sort((a, b) => parseFloat(b.monto) - parseFloat(a.monto));
         const detailLabel = months.find(m => m.ym === detailMonth)?.label ?? detailMonth;
         if (!monthRows.length) {
           detailRowsEl.innerHTML = '';
         } else {
-          const tdS = 'padding:6px 6px;border-bottom:1px solid rgba(255,255,255,.04);font-size:.78rem';
+          const tdS = 'padding:6px 4px;border-bottom:1px solid rgba(255,255,255,.04);font-size:.78rem';
           detailRowsEl.innerHTML = `
             <div style="margin-top:14px;font-size:.72rem;color:var(--text-sec);text-transform:uppercase;font-weight:500;padding:0 2px 6px">
               Gastos · ${detailLabel}
             </div>
-            <div class="table-scroll" style="overflow-x:auto">
-            <table style="width:100%;border-collapse:collapse">
+            <div style="overflow-x:auto">
+            <table style="width:100%;min-width:280px;border-collapse:collapse">
               <tbody>
                 ${monthRows.map(r => {
                   const cat    = r.categoria_id != null ? this._cats.find(c => c.id === r.categoria_id) : null;
                   const catStr = cat ? `${cat.icono} ${cat.nombre}` : '—';
-                  const desc   = (r.comercio || r.descripcion || '—').slice(0, 40);
+                  const desc   = (r.comercio || r.descripcion || '—').slice(0, 36);
                   const montoN = parseFloat(r.monto);
-                  const monStr = r.moneda === 'USD' ? this._fmtUSD(montoN) : this._fmtMon(montoN, r.moneda);
-                  const isNeg  = montoN < 0;
+                  const monStr = r.moneda === 'USD' ? this._fmtUSD(Math.abs(montoN)) : this._fmtMon(Math.abs(montoN), r.moneda);
+                  const isBen  = isBenefit(r) || montoN < 0;
                   return `<tr>
-                    <td style="${tdS};color:var(--text-sec);white-space:nowrap">${fmtDate(r.fecha)}</td>
-                    <td style="${tdS}">${desc}
-                      <div style="font-size:.66rem;color:var(--text-sec)">${catStr}</div>
+                    <td style="${tdS};color:var(--text-sec);white-space:nowrap;width:58px">${fmtDate(r.fecha)}</td>
+                    <td style="${tdS}"><span style="display:block;max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${desc}</span>
+                      <span style="font-size:.64rem;color:var(--text-sec)">${catStr}</span>
                     </td>
-                    <td style="${tdS};text-align:right;font-family:'DM Mono',monospace;font-weight:600;white-space:nowrap;color:${isNeg ? '#10b981' : '#3b82f6'}">${monStr}</td>
+                    <td style="${tdS};text-align:right;font-family:'DM Mono',monospace;font-weight:600;white-space:nowrap;color:${isBen ? '#10b981' : '#3b82f6'}">${isBen ? '−' : ''}${monStr}</td>
                   </tr>`;
                 }).join('')}
               </tbody>
