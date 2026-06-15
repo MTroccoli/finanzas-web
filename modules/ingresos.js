@@ -44,35 +44,35 @@ window.Mods.ingresos = {
         </details>` : ''}
 
         <form id="form-ingreso">
-          <!-- Row 1: Fecha · Moneda · Monto -->
-          <div style="display:grid;grid-template-columns:1fr 76px 1fr;gap:8px;margin-bottom:10px">
-            <div class="form-group">
+          <!-- Row 1: Fecha · Moneda · Monto (min-width:0 fuerza celdas a respetar el grid) -->
+          <div style="display:grid;grid-template-columns:minmax(0,1.3fr) 72px minmax(0,1fr);gap:8px;margin-bottom:10px">
+            <div class="form-group" style="min-width:0;overflow:hidden">
               <label>Fecha</label>
               <input id="i-fecha" type="date" value="${new Date().toISOString().slice(0,10)}" style="${inp}" required>
             </div>
-            <div class="form-group">
+            <div class="form-group" style="min-width:0">
               <label>Moneda</label>
               <select id="i-moneda" style="${inp}">
                 <option value="USD">USD</option>
                 <option value="UYU">UYU</option>
               </select>
             </div>
-            <div class="form-group">
+            <div class="form-group" style="min-width:0">
               <label id="i-monto-lbl">Monto</label>
               <input id="i-monto" type="number" step="0.01" min="0.01" placeholder="0.00" style="${inp}" required>
             </div>
           </div>
 
           <!-- Row 2: Tipo · Descripción -->
-          <div style="display:grid;grid-template-columns:1fr 2fr;gap:8px;margin-bottom:12px">
-            <div class="form-group">
+          <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:8px;margin-bottom:12px">
+            <div class="form-group" style="min-width:0">
               <label>Tipo</label>
               <select id="i-tipo" style="${inp}">
                 <option value="">Sin tipo</option>
                 ${tipos.map(t => `<option value="${t.id}">${t.nombre}</option>`).join('')}
               </select>
             </div>
-            <div class="form-group">
+            <div class="form-group" style="min-width:0">
               <label>Descripción</label>
               <input id="i-desc" type="text" placeholder="Salario, freelance..." style="${inp}">
             </div>
@@ -133,23 +133,42 @@ window.Mods.ingresos = {
     });
 
     // confirm & save preset
-    document.getElementById('btn-confirm-preset').addEventListener('click', () => {
+    document.getElementById('btn-confirm-preset').addEventListener('click', async () => {
       const monto = document.getElementById('i-monto').value;
       if (!monto) { toast('⚠️ Completá el monto antes de guardar', 'err'); return; }
+      const fecha  = document.getElementById('i-fecha').value;
+      const moneda = document.getElementById('i-moneda').value;
+      const desc   = document.getElementById('i-desc').value.trim();
+      const tipo   = document.getElementById('i-tipo').value;
       const p = {
-        monto,
-        moneda:       document.getElementById('i-moneda').value,
-        desc:         document.getElementById('i-desc').value.trim(),
-        tipo:         document.getElementById('i-tipo').value,
+        monto, moneda, desc, tipo,
         frecuencia:   document.getElementById('preset-freq').value,
         auto:         document.getElementById('preset-auto').checked,
-        ultima_carga: new Date().toISOString().slice(0, 10),
+        ultima_carga: fecha, // usar la fecha ingresada como punto de partida
       };
       const arr = this._loadPresets();
       arr.unshift(p);
       if (arr.length > 10) arr.length = 10;
       localStorage.setItem('ingresos_presets', JSON.stringify(arr));
-      toast('💾 Ingreso recurrente guardado');
+
+      // Si la fecha es <= hoy, registrar el ingreso inmediatamente
+      const today = new Date().toISOString().slice(0, 10);
+      if (fecha <= today) {
+        try {
+          await dbInsert('ingresos', {
+            fecha,
+            monto:       parseFloat(monto),
+            moneda,
+            descripcion: desc || null,
+            tipo_id:     tipo ? parseInt(tipo) : null,
+          });
+          toast('✅ Ingreso registrado y guardado como recurrente');
+        } catch(err) {
+          toast('💾 Guardado como recurrente (error al registrar: ' + err.message + ')', 'err');
+        }
+      } else {
+        toast('💾 Ingreso recurrente guardado');
+      }
       this.render();
     });
 
