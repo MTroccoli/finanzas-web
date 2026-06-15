@@ -45,20 +45,21 @@ window.Mods.ingresos = {
         </details>` : ''}
 
         <form id="form-ingreso" style="display:flex;flex-direction:column;gap:10px">
-          <!-- Row 1: Fecha · Moneda · Monto -->
-          <div style="display:grid;grid-template-columns:1fr 64px 1fr;gap:8px">
-            <div style="min-width:0;overflow:hidden">
+          <!-- Row 1: Fecha (fijo) · Moneda (fijo) · Monto (resto) -->
+          <div style="display:grid;grid-template-columns:112px 62px 1fr;gap:8px">
+            <div style="overflow:hidden">
               <span style="${lbl}">Fecha</span>
-              <input id="i-fecha" type="date" value="${new Date().toISOString().slice(0,10)}" style="${inp}" required>
+              <input id="i-fecha" type="date" value="${new Date().toISOString().slice(0,10)}"
+                style="${inp};-webkit-appearance:none;appearance:none" required>
             </div>
-            <div style="min-width:0">
+            <div>
               <span style="${lbl}">Moneda</span>
               <select id="i-moneda" style="${inp}">
                 <option value="USD">USD</option>
                 <option value="UYU">UYU</option>
               </select>
             </div>
-            <div style="min-width:0">
+            <div>
               <span id="i-monto-lbl" style="${lbl}">Monto</span>
               <input id="i-monto" type="number" step="0.01" min="0.01" placeholder="0.00" style="${inp}" required>
             </div>
