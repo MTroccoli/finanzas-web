@@ -94,7 +94,7 @@ window.Mods.dashboard = {
     const recAvg = gastos
       .filter(g => g.tipo_gasto === 'recurrente' && g.fecha.slice(0,7) === lastClosedYM)
       .reduce((s, g) => s + toDisp(g.monto, g.moneda || 'UYU'), 0);
-    const ingAvg = last3.reduce((s, ym) => s + (byMonth6[ym]?.ing || 0), 0) / 3;
+    const ingAvg = months6.slice(2, 5).reduce((s, m) => s + (byMonth6[m.ym]?.ing || 0), 0) / 3;
 
     // Casual avg — last 12 months excluding current month (rolling year)
     const all12YMs = new Set();

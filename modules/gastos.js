@@ -3763,7 +3763,7 @@ window.Mods.gastos = {
     const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1).toISOString().slice(0,10);
     const lastMonthEnd   = new Date(now.getFullYear(), now.getMonth(), 0).toISOString().slice(0,10);
     let qRecurrentes = getDB().from('gastos')
-      .select('monto, moneda')
+      .select('monto, moneda, comercio, categoria_id')
       .eq('tipo_gasto', 'recurrente')
       .gte('fecha', lastMonthStart)
       .lte('fecha', lastMonthEnd)
@@ -4231,8 +4231,34 @@ window.Mods.gastos = {
       };
       const tdSt  = 'padding:7px 6px;border-bottom:1px solid rgba(255,255,255,.04);font-size:.8rem';
 
-      if (!displayRows.length) {
-        pieEl.innerHTML = `<div style="padding:20px;text-align:center;color:var(--text-sec);font-size:.85rem">${detailMonth ? 'Sin cuotas en este mes' : 'Sin planes de cuotas activos'}</div>`;
+      // Recurrentes proyectados (violeta) — base del gráfico
+      const recurSection = detailMonth && recurrentesLast.length ? `
+        <div style="margin-bottom:${displayRows.length ? '14px' : '0'}">
+          <div style="font-size:.68rem;color:#a78bfa;text-transform:uppercase;font-weight:500;padding:0 2px 6px;letter-spacing:.06em">
+            🔁 Recurrentes — proyectado desde ${lastMonthStart.slice(0,7)}
+          </div>
+          <table style="width:100%;border-collapse:collapse">
+            <tbody>
+              ${recurrentesLast.map(r => {
+                const cat    = r.categoria_id != null ? this._cats.find(c => c.id === r.categoria_id) : null;
+                const catStr = cat ? `${cat.icono} ${cat.nombre}` : '—';
+                const montoN = parseFloat(r.monto);
+                const monStr = r.moneda === 'USD' ? this._fmtUSD(montoN) : this._fmtMon(montoN, r.moneda);
+                return `<tr>
+                  <td style="${tdSt}">${r.comercio || '—'}
+                    <div style="font-size:.68rem;color:var(--text-sec)">${catStr}</div>
+                  </td>
+                  <td style="${tdSt};text-align:right;font-family:'DM Mono',monospace;font-weight:600;color:#a78bfa">${monStr}</td>
+                </tr>`;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>` : '';
+
+      if (!displayRows.length && !recurSection) {
+        pieEl.innerHTML = `<div style="padding:20px;text-align:center;color:var(--text-sec);font-size:.85rem">${detailMonth ? 'Sin cuotas ni recurrentes en este mes' : 'Sin planes de cuotas activos'}</div>`;
+      } else if (!displayRows.length) {
+        pieEl.innerHTML = `<div style="overflow-x:auto">${recurSection}</div>`;
       } else {
         const footInstCount = detailMonth ? 1 : null;
         const footTotalUYU = displayRows.filter(p => p.moneda !== 'USD').reduce((s, p) => s + p.montoN * (footInstCount ?? p.futInst), 0);
@@ -4243,7 +4269,12 @@ window.Mods.gastos = {
         const footTotStr = footParts.join(' + ') || '—';
         const tfSt = 'padding:8px 6px;border-top:1px solid var(--border);font-size:.78rem;font-weight:600';
 
-        pieEl.innerHTML = `<div class="table-scroll" style="overflow-x:auto">
+        // Label header for cuotas section when combined
+        const cuotasHeader = recurSection
+          ? `<div style="font-size:.68rem;color:var(--gold);text-transform:uppercase;font-weight:500;padding:0 2px 6px;letter-spacing:.06em">📅 Cuotas</div>`
+          : '';
+
+        pieEl.innerHTML = `<div style="overflow-x:auto">${recurSection}${cuotasHeader}
           <table style="width:100%;border-collapse:collapse">
             <thead><tr>
               <th style="${thSt};text-align:left">Compra</th>
