@@ -1,7 +1,9 @@
 window.Mods = window.Mods || {};
 window.Mods.dashboard = {
-  _mode: localStorage.getItem('panorama_mode') || 'UYU',
-  _tc:   null,
+  _mode:       localStorage.getItem('panorama_mode') || 'UYU',
+  _tc:         null,
+  _cuotasOpen: false,
+  _recurOpen:  false,
 
   async render() {
     const c = document.getElementById('content');
@@ -18,7 +20,7 @@ window.Mods.dashboard = {
     const desde6  = `${start6.getFullYear()}-${String(start6.getMonth()+1).padStart(2,'0')}-01`;
 
     const [gastosRes, ingresosRes, cuotasRes, tcCfg] = await Promise.all([
-      getDB().from('gastos').select('fecha,monto,moneda,tipo_gasto,incluido_en_gastos,cuotas_totales,cuota_actual,comercio')
+      getDB().from('gastos').select('fecha,monto,moneda,tipo_gasto,incluido_en_gastos,cuotas_totales,cuota_actual,comercio,banco_tarjeta')
         .gte('fecha', desde12).order('fecha', {ascending: true}),
       getDB().from('ingresos').select('fecha,monto,moneda')
         .gte('fecha', desde6).order('fecha', {ascending: true}),
@@ -111,6 +113,15 @@ window.Mods.dashboard = {
     // Current month: use projection instead of partial actuals
     const cuotasCurMonth = cuotaSchedule[curYM] || 0;
     const curProjGas = recAvg + casualAvg + cuotasCurMonth;
+
+    const totalCuotasPending = activePlans.reduce((s, p) => {
+      const rem = p.cuotas_totales - p.cuota_actual;
+      return s + toDisp(p.monto, p.moneda || 'UYU') * rem;
+    }, 0);
+    const recurRows = gastos
+      .filter(g => g.tipo_gasto === 'recurrente' && g.fecha.slice(0,7) === lastClosedYM)
+      .sort((a, b) => toDisp(b.monto, b.moneda || 'UYU') - toDisp(a.monto, a.moneda || 'UYU'));
+    const recurTotal = recurRows.reduce((s, g) => s + toDisp(g.monto, g.moneda || 'UYU'), 0);
     byMonth6[curYM].gas = curProjGas;
 
     const cur     = byMonth6[curYM];
@@ -175,19 +186,26 @@ window.Mods.dashboard = {
         <div class="metric-card">
           <div class="metric-label">Gastos proyectados <span style="font-size:.55rem;color:var(--text-sec)">(est.)</span></div>
           <div class="metric-value">${fmtD(curProjGas)}</div>
-          <span style="font-size:.65rem;font-family:'DM Mono',monospace;margin-top:5px;display:block;color:var(--text-sec)">rec + casual + cuotas</span>
+          <div style="margin-top:6px;display:flex;flex-direction:column;gap:2px">
+            <div style="display:flex;justify-content:space-between;font-size:.63rem;font-family:'DM Mono',monospace">
+              <span style="color:var(--text-sec)">Casual</span>
+              <span style="color:var(--text-sec)">${fmtD(casualAvg)}</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:.63rem;font-family:'DM Mono',monospace">
+              <span style="color:var(--text-sec)">Cuotas</span>
+              <span style="color:var(--gold)">${fmtD(cuotasCurMonth)}</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:.63rem;font-family:'DM Mono',monospace">
+              <span style="color:var(--text-sec)">Recurrentes</span>
+              <span style="color:#a78bfa">${fmtD(recAvg)}</span>
+            </div>
+          </div>
         </div>
         <div class="metric-card">
           <div class="metric-label">Balance estimado</div>
           <div class="metric-value ${plClass(balance)}">${plSign(balance)}${fmtD(balance)}</div>
           ${delta(balance - prevBal, true)}
-        </div>
-        <div class="metric-card">
-          <div class="metric-label">Tasa de ahorro est.</div>
-          <div class="metric-value ${plClass(tasa)}">${tasa}%</div>
-          <span style="font-size:.65rem;font-family:'DM Mono',monospace;margin-top:5px;display:block;color:${dTasa>=0?'var(--green)':'var(--red)'}">
-            ${dTasa>=0?'+':''}${dTasa}pp vs mes ant.
-          </span>
+          <span style="font-size:.63rem;font-family:'DM Mono',monospace;margin-top:3px;display:block;color:${tasa>=20?'var(--green)':tasa>=0?'var(--text-sec)':'var(--red)'}">Tasa ahorro: ${tasa>0?'+':''}${tasa}%</span>
         </div>
       </div>
 
@@ -236,32 +254,82 @@ window.Mods.dashboard = {
         </div>
       </div>
 
-      ${activePlans.length > 0 ? `
-        <div class="table-wrap">
-          <div class="table-header">
-            <span class="table-title">Cuotas activas · ${activePlans.length} planes</span>
-          </div>
-          <div style="overflow-x:auto;-webkit-overflow-scrolling:touch">
-            <table style="min-width:360px">
-              <thead><tr>
-                <th>Comercio</th><th>Progreso</th><th>Mensual</th><th>Pendiente total</th>
-              </tr></thead>
-              <tbody>
-                ${activePlans
-                  .sort((a, b) => (b.cuotas_totales - b.cuota_actual) - (a.cuotas_totales - a.cuota_actual))
-                  .map(p => {
-                    const rem   = p.cuotas_totales - p.cuota_actual;
-                    const cuota = toDisp(p.monto, p.moneda || 'UYU');
-                    return `<tr>
-                      <td>${p.comercio || '—'}</td>
-                      <td style="color:var(--text);font-family:'DM Mono',monospace;font-size:.75rem">${p.cuota_actual}/${p.cuotas_totales} · ${rem} rest.</td>
-                      <td style="color:var(--gold);font-family:'DM Mono',monospace">${fmtD(cuota)}</td>
-                      <td style="color:var(--text-sec);font-family:'DM Mono',monospace;text-align:right">${fmtD(cuota * rem)}</td>
-                    </tr>`;
-                  }).join('')}
-              </tbody>
-            </table>
-          </div>
+      ${activePlans.length > 0 || recurRows.length > 0 ? `
+        <div class="form-card" style="padding:14px 16px;margin-bottom:24px">
+          ${activePlans.length > 0 ? `
+            <details class="dash-cuotas-det" ${this._cuotasOpen ? 'open' : ''}>
+              <summary style="list-style:none;cursor:pointer;user-select:none;padding:2px 2px 8px">
+                <div style="display:flex;justify-content:space-between;align-items:center">
+                  <span style="display:flex;align-items:center;gap:5px">
+                    <span class="dash-arr-c" style="display:inline-block;font-size:.6rem;transition:transform .15s;color:var(--text-sec)">▶</span>
+                    <span style="font-size:.68rem;color:var(--gold);text-transform:uppercase;font-weight:500;letter-spacing:.06em">📅 Cuotas activas · ${activePlans.length} planes</span>
+                  </span>
+                  <span style="font-family:'DM Mono',monospace;font-size:.78rem;color:var(--gold)">${fmtD(totalCuotasPending)}</span>
+                </div>
+              </summary>
+              <div style="overflow-x:auto;-webkit-overflow-scrolling:touch">
+                <table style="width:100%;min-width:360px;border-collapse:collapse">
+                  <thead><tr>
+                    <th style="text-align:left;padding:7px 6px;border-bottom:1px solid var(--border);font-size:.72rem;color:var(--text-sec);text-transform:uppercase;font-weight:500">Comercio</th>
+                    <th style="text-align:left;padding:7px 6px;border-bottom:1px solid var(--border);font-size:.72rem;color:var(--text-sec);text-transform:uppercase;font-weight:500">Progreso</th>
+                    <th style="text-align:right;padding:7px 6px;border-bottom:1px solid var(--border);font-size:.72rem;color:var(--text-sec);text-transform:uppercase;font-weight:500">Mensual</th>
+                    <th style="text-align:right;padding:7px 6px;border-bottom:1px solid var(--border);font-size:.72rem;color:var(--text-sec);text-transform:uppercase;font-weight:500">Pendiente</th>
+                  </tr></thead>
+                  <tbody>
+                    ${activePlans
+                      .sort((a, b) => (b.cuotas_totales - b.cuota_actual) - (a.cuotas_totales - a.cuota_actual))
+                      .map(p => {
+                        const rem   = p.cuotas_totales - p.cuota_actual;
+                        const cuota = toDisp(p.monto, p.moneda || 'UYU');
+                        return `<tr>
+                          <td style="padding:7px 6px;border-bottom:1px solid rgba(255,255,255,.04);font-size:.8rem">${p.comercio || '—'}</td>
+                          <td style="padding:7px 6px;border-bottom:1px solid rgba(255,255,255,.04);font-size:.75rem;font-family:'DM Mono',monospace;color:var(--text)">${p.cuota_actual}/${p.cuotas_totales} · ${rem} rest.</td>
+                          <td style="padding:7px 6px;border-bottom:1px solid rgba(255,255,255,.04);font-size:.8rem;text-align:right;font-family:'DM Mono',monospace;color:var(--gold)">${fmtD(cuota)}</td>
+                          <td style="padding:7px 6px;border-bottom:1px solid rgba(255,255,255,.04);font-size:.8rem;text-align:right;font-family:'DM Mono',monospace;color:var(--text-sec)">${fmtD(cuota * rem)}</td>
+                        </tr>`;
+                      }).join('')}
+                  </tbody>
+                  <tfoot><tr>
+                    <td colspan="3" style="padding:8px 6px;border-top:1px solid var(--border);font-size:.72rem;font-weight:600;color:var(--text-sec);text-transform:uppercase">Total pendiente</td>
+                    <td style="padding:8px 6px;border-top:1px solid var(--border);font-size:.78rem;font-weight:600;text-align:right;font-family:'DM Mono',monospace;color:var(--gold)">${fmtD(totalCuotasPending)}</td>
+                  </tr></tfoot>
+                </table>
+              </div>
+            </details>
+          ` : ''}
+          ${recurRows.length > 0 ? `
+            <details class="dash-recur-det" ${this._recurOpen ? 'open' : ''} style="${activePlans.length > 0 ? 'margin-top:10px' : ''}">
+              <summary style="list-style:none;cursor:pointer;user-select:none;padding:2px 2px 8px">
+                <div style="display:flex;justify-content:space-between;align-items:center">
+                  <span style="display:flex;align-items:center;gap:5px">
+                    <span class="dash-arr-r" style="display:inline-block;font-size:.6rem;transition:transform .15s;color:var(--text-sec)">▶</span>
+                    <span style="font-size:.68rem;color:#a78bfa;text-transform:uppercase;font-weight:500;letter-spacing:.06em">🔁 Recurrentes · ${lastClosedYM}</span>
+                  </span>
+                  <span style="font-family:'DM Mono',monospace;font-size:.78rem;color:#a78bfa">${fmtD(recurTotal)}</span>
+                </div>
+              </summary>
+              <div style="overflow-x:auto;-webkit-overflow-scrolling:touch">
+                <table style="width:100%;min-width:300px;border-collapse:collapse">
+                  <thead><tr>
+                    <th style="text-align:left;padding:7px 6px;border-bottom:1px solid var(--border);font-size:.72rem;color:var(--text-sec);text-transform:uppercase;font-weight:500">Comercio</th>
+                    <th style="text-align:left;padding:7px 6px;border-bottom:1px solid var(--border);font-size:.72rem;color:var(--text-sec);text-transform:uppercase;font-weight:500">Medio de pago</th>
+                    <th style="text-align:right;padding:7px 6px;border-bottom:1px solid var(--border);font-size:.72rem;color:var(--text-sec);text-transform:uppercase;font-weight:500">Monto</th>
+                  </tr></thead>
+                  <tbody>
+                    ${recurRows.map(g => `<tr>
+                      <td style="padding:7px 6px;border-bottom:1px solid rgba(255,255,255,.04);font-size:.8rem">${g.comercio || '—'}</td>
+                      <td style="padding:7px 6px;border-bottom:1px solid rgba(255,255,255,.04);font-size:.72rem;color:var(--text-sec)">${g.banco_tarjeta || '—'}</td>
+                      <td style="padding:7px 6px;border-bottom:1px solid rgba(255,255,255,.04);font-size:.8rem;text-align:right;font-family:'DM Mono',monospace;color:#a78bfa">${fmtD(toDisp(g.monto, g.moneda || 'UYU'))}</td>
+                    </tr>`).join('')}
+                  </tbody>
+                  <tfoot><tr>
+                    <td colspan="2" style="padding:8px 6px;border-top:1px solid var(--border);font-size:.72rem;font-weight:600;color:var(--text-sec);text-transform:uppercase">Total recurrentes</td>
+                    <td style="padding:8px 6px;border-top:1px solid var(--border);font-size:.78rem;font-weight:600;text-align:right;font-family:'DM Mono',monospace;color:#a78bfa">${fmtD(recurTotal)}</td>
+                  </tr></tfoot>
+                </table>
+              </div>
+            </details>
+          ` : ''}
         </div>
       ` : ''}
     `;
@@ -300,6 +368,17 @@ window.Mods.dashboard = {
       xaxis: {fixedrange: true, gridcolor: 'rgba(255,255,255,.05)'},
       yaxis: {fixedrange: true, gridcolor: 'rgba(255,255,255,.05)', tickprefix: tickpfx},
     }, {displayModeBar: false, responsive: true, scrollZoom: false});
+
+    // Accordion arrow bindings
+    [{sel: '.dash-cuotas-det', key: '_cuotasOpen', arrSel: '.dash-arr-c'},
+     {sel: '.dash-recur-det',  key: '_recurOpen',  arrSel: '.dash-arr-r'}].forEach(({sel, key, arrSel}) => {
+      const det = document.querySelector(sel);
+      if (!det) return;
+      const arr = det.querySelector(arrSel);
+      const upd = () => { if (arr) arr.style.transform = det.open ? 'rotate(90deg)' : 'rotate(0deg)'; };
+      upd();
+      det.addEventListener('toggle', () => { this[key] = det.open; upd(); });
+    });
   },
 
   _setMode(mode) {
