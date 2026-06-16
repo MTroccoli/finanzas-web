@@ -54,6 +54,8 @@ window.Mods.gastos = {
   _tarjOpen:     new Set(),// tarjetas abiertas en acordeón del tab Tarjetas
   _lastTdcTab:   'cuotas',    // último sub-tab de TDC visitado
   _manualSaved:  [],      // gastos guardados en esta sesión desde el panel Nuevo gasto
+  _resCache:     null,    // { allDataRaw, activeCuotasAll, recurrentesLast } — datos cacheados
+  _resCacheKey:  null,    // clave del cache: "desde|hasta|cat|tipo|banco"
 
   // Normalizar comercio para matching: lowercase, sin tildes, sin códigos de comercio
   _normMerchant(s) {
@@ -114,6 +116,8 @@ window.Mods.gastos = {
 
   async render() {
     const c = document.getElementById('content');
+    this._resCache = null;
+    this._resCacheKey = null;
 
     this._checkAutoPresetsGastos().catch(() => {});
 
@@ -3758,9 +3762,8 @@ window.Mods.gastos = {
   // ── Resumen (gráficos) ──────────────────────────────────────────────────
   async _drawResumen() {
     const gc = document.getElementById('g-content');
-    gc.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
-
     const now = new Date();
+
     // Default: año móvil (12 meses hacia atrás hasta hoy)
     if (!this._resDesde) {
       const d = new Date(now.getFullYear(), now.getMonth() - 11, 1);
@@ -3784,38 +3787,46 @@ window.Mods.gastos = {
       cur = new Date(cur.getFullYear(), cur.getMonth() + 1, 1);
     }
 
-    // Query principal + cuotas próximas en paralelo
-    let q = getDB().from('gastos')
-      .select('fecha, monto, moneda, categoria_id, banco_tarjeta, tipo_gasto, cuota_actual, comercio')
-      .gte('fecha', this._resDesde)
-      .lte('fecha', this._resHasta);
-    if (this._resCat) q = q.eq('categoria_id', +this._resCat);
-    if (this._resTipo === 'cuotas') q = q.not('cuota_actual', 'is', null);
-    else if (this._resTipo) q = q.eq('tipo_gasto', this._resTipo);
+    // ── Cache: sólo re-fetchar cuando cambien los filtros que afectan la query ──
+    const cacheKey = `${this._resDesde}|${this._resHasta}|${this._resCat}|${this._resTipo}|${this._resBanco}`;
+    let allDataRaw, activeCuotasAll, recurrentesLast;
 
-    const todayStr = now.toISOString().slice(0, 10);
+    if (this._resCache && this._resCacheKey === cacheKey) {
+      ({ allDataRaw, activeCuotasAll, recurrentesLast } = this._resCache);
+    } else {
+      gc.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
 
-    // Query 2: cuotas activas — busca el último pago conocido de cada plan (sin restricción de fecha, igual que _drawCuotas)
-    let qActiveCuotas = getDB().from('gastos')
-      .select('fecha, monto, moneda, cuota_actual, cuotas_totales, comercio, banco_tarjeta')
-      .not('cuotas_totales', 'is', null)
-      .or('titular_adicional.is.null,incluido_en_gastos.eq.true')
-      .order('fecha', { ascending: false });
-    if (this._resBanco) qActiveCuotas = qActiveCuotas.eq('banco_tarjeta', this._resBanco);
+      let q = getDB().from('gastos')
+        .select('fecha, monto, moneda, categoria_id, banco_tarjeta, tipo_gasto, cuota_actual, comercio')
+        .gte('fecha', this._resDesde)
+        .lte('fecha', this._resHasta);
+      if (this._resCat) q = q.eq('categoria_id', +this._resCat);
+      if (this._resTipo === 'cuotas') q = q.not('cuota_actual', 'is', null);
+      else if (this._resTipo) q = q.eq('tipo_gasto', this._resTipo);
 
-    // Query 3: recurrentes del último mes completo (base para proyectar)
-    const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1).toISOString().slice(0,10);
-    const lastMonthEnd   = new Date(now.getFullYear(), now.getMonth(), 0).toISOString().slice(0,10);
-    let qRecurrentes = getDB().from('gastos')
-      .select('monto, moneda, comercio, categoria_id, banco_tarjeta')
-      .eq('tipo_gasto', 'recurrente')
-      .gte('fecha', lastMonthStart)
-      .lte('fecha', lastMonthEnd)
-      .or('titular_adicional.is.null,incluido_en_gastos.eq.true');
-    if (this._resBanco) qRecurrentes = qRecurrentes.eq('banco_tarjeta', this._resBanco);
+      let qActiveCuotas = getDB().from('gastos')
+        .select('fecha, monto, moneda, cuota_actual, cuotas_totales, comercio, banco_tarjeta')
+        .not('cuotas_totales', 'is', null)
+        .or('titular_adicional.is.null,incluido_en_gastos.eq.true')
+        .order('fecha', { ascending: false });
+      if (this._resBanco) qActiveCuotas = qActiveCuotas.eq('banco_tarjeta', this._resBanco);
 
-    const [{ data: allDataRaw = [] }, { data: activeCuotasAll = [] }, { data: recurrentesLast = [] }] =
-      await Promise.all([q, qActiveCuotas, qRecurrentes]);
+      const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1).toISOString().slice(0,10);
+      const lastMonthEnd   = new Date(now.getFullYear(), now.getMonth(), 0).toISOString().slice(0,10);
+      let qRecurrentes = getDB().from('gastos')
+        .select('monto, moneda, comercio, categoria_id, banco_tarjeta')
+        .eq('tipo_gasto', 'recurrente')
+        .gte('fecha', lastMonthStart)
+        .lte('fecha', lastMonthEnd)
+        .or('titular_adicional.is.null,incluido_en_gastos.eq.true');
+      if (this._resBanco) qRecurrentes = qRecurrentes.eq('banco_tarjeta', this._resBanco);
+
+      const [{ data: r1 = [] }, { data: r2 = [] }, { data: r3 = [] }] =
+        await Promise.all([q, qActiveCuotas, qRecurrentes]);
+      allDataRaw = r1; activeCuotasAll = r2; recurrentesLast = r3;
+      this._resCache    = { allDataRaw, activeCuotasAll, recurrentesLast };
+      this._resCacheKey = cacheKey;
+    }
 
     // ── Proyección de cuotas activas ────────────────────────────────────────
     // Encontrar el pago más reciente de cada plan (comercio + cuotas_totales + monto + moneda)
