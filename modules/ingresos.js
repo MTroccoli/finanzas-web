@@ -1,6 +1,9 @@
 window.Mods = window.Mods || {};
 window.Mods.ingresos = {
-  _filterTipo: '',
+  _filterTipo:     '',
+  _presetsEditIdx: null,
+  _ingEditId:      null,
+  _tipos:          [],
 
   async render() {
     const c = document.getElementById('content');
@@ -13,6 +16,7 @@ window.Mods.ingresos = {
       dbFetch('tipos_ingreso', { filters: { activo: 1 }, order: { col: 'nombre', asc: true } }),
       this._loadPresets(),
     ]);
+    this._tipos = tipos;
 
     const today   = new Date().toISOString().slice(0,10);
     const inp = `font-size:.82rem;padding:7px 8px;border-radius:6px;border:1px solid var(--border);background:var(--surface);color:var(--text);width:100%;max-width:100%;box-sizing:border-box`;
@@ -34,22 +38,71 @@ window.Mods.ingresos = {
         <h3 style="margin-bottom:12px">Nuevo ingreso</h3>
 
         ${presets.length ? `
-        <details id="presets-wrap" style="margin-bottom:14px">
+        <details id="presets-wrap" style="margin-bottom:14px" ${this._presetsEditIdx !== null ? 'open' : ''}>
           <summary style="cursor:pointer;font-size:.82rem;color:var(--accent);list-style:none;user-select:none">
             📂 Guardados (${presets.length})
           </summary>
           <div style="margin-top:8px;display:flex;flex-direction:column;gap:6px">
-            ${presets.map((p, i) => `
-              <div style="display:flex;align-items:center;gap:6px;padding:7px 10px;border-radius:6px;background:var(--surface);border:1px solid var(--border)">
+            ${presets.map((p, i) => {
+              if (this._presetsEditIdx === i) {
+                return `<div style="padding:12px;border-radius:8px;background:var(--surface);border:1px solid var(--accent)">
+                  <div style="display:grid;grid-template-columns:62px 1fr;gap:6px;margin-bottom:6px">
+                    <div>
+                      <span style="${lbl}">Moneda</span>
+                      <select class="pe-moneda" style="${inp}">
+                        <option value="UYU" ${(p.moneda||'UYU')==='UYU'?'selected':''}>UYU</option>
+                        <option value="USD" ${p.moneda==='USD'?'selected':''}>USD</option>
+                      </select>
+                    </div>
+                    <div>
+                      <span style="${lbl}">Monto</span>
+                      <input class="pe-monto" type="number" step="0.01" value="${p.monto||''}" style="${inp}">
+                    </div>
+                  </div>
+                  <div style="margin-bottom:6px">
+                    <span style="${lbl}">Descripción</span>
+                    <input class="pe-desc" type="text" value="${p.desc||''}" style="${inp}">
+                  </div>
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px">
+                    <div>
+                      <span style="${lbl}">Tipo</span>
+                      <select class="pe-tipo" style="${inp}">
+                        <option value="">Sin tipo</option>
+                        ${tipos.map(t => `<option value="${t.id}" ${p.tipo==t.id?'selected':''}>${t.nombre}</option>`).join('')}
+                      </select>
+                    </div>
+                    <div>
+                      <span style="${lbl}">Frecuencia</span>
+                      <select class="pe-freq" style="${inp}">
+                        <option value="mensual" ${p.frecuencia==='mensual'?'selected':''}>Mensual</option>
+                        <option value="trimestral" ${p.frecuencia==='trimestral'?'selected':''}>Trimestral</option>
+                        <option value="semestral" ${p.frecuencia==='semestral'?'selected':''}>Semestral</option>
+                        <option value="anual" ${p.frecuencia==='anual'?'selected':''}>Anual</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:6px;margin-bottom:10px">
+                    <input type="checkbox" class="pe-auto" id="pe-auto-${i}" style="accent-color:var(--accent)" ${p.auto?'checked':''}>
+                    <label for="pe-auto-${i}" style="font-size:.8rem;cursor:pointer">Auto-carga al vencer</label>
+                  </div>
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+                    <button class="btn-pe-save btn btn-primary" data-idx="${i}" style="justify-content:center">✅ Guardar</button>
+                    <button class="btn-pe-cancel btn btn-ghost" style="justify-content:center">✕ Cancelar</button>
+                  </div>
+                </div>`;
+              }
+              return `<div style="display:flex;align-items:center;gap:6px;padding:7px 10px;border-radius:6px;background:var(--surface);border:1px solid var(--border)">
                 <div style="flex:1;min-width:0">
                   <div style="font-size:.8rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
                     ${p.desc || 'Sin nombre'} · <span style="color:var(--text-sec)">${p.moneda || 'UYU'} ${p.monto}</span>${p.frecuencia ? ` · <span style="color:var(--accent)">${p.frecuencia}</span>` : ''}${p.auto ? ` · <span style="color:#10b981">⚡auto</span>` : ''}
                   </div>
                   ${p.frecuencia && p.ultima_carga ? `<div style="font-size:.65rem;color:var(--text-sec);margin-top:2px">Próx: ${this._nextDue(p.ultima_carga, p.frecuencia)}</div>` : ''}
                 </div>
+                <button class="btn-edit-preset" data-idx="${i}" style="font-size:.72rem;padding:2px 8px;border-radius:10px;border:1px solid #a78bfa;background:rgba(167,139,250,.08);color:#a78bfa;cursor:pointer;white-space:nowrap;flex-shrink:0">✏️</button>
                 <button class="btn-load-preset" data-idx="${i}" style="font-size:.72rem;padding:2px 8px;border-radius:10px;border:1px solid #3b82f6;background:rgba(59,130,246,.12);color:#3b82f6;cursor:pointer;white-space:nowrap;flex-shrink:0">⚡ Cargar</button>
                 <button class="btn-del-preset" data-idx="${i}" style="font-size:.72rem;padding:2px 6px;border-radius:10px;border:1px solid var(--border);background:none;color:var(--text-sec);cursor:pointer;flex-shrink:0">✕</button>
-              </div>`).join('')}
+              </div>`;
+            }).join('')}
           </div>
         </details>` : ''}
 
@@ -97,7 +150,7 @@ window.Mods.ingresos = {
           <!-- Row 3: Botones -->
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
             <button type="submit" class="btn btn-primary" style="justify-content:center;width:100%">✚ Registrar</button>
-            <button type="button" id="btn-save-preset" class="btn" style="justify-content:center;width:100%;border:1px solid var(--border)">💾 Recurrente</button>
+            <button type="button" id="btn-save-preset" class="btn" style="justify-content:center;width:100%;border:1px solid #a78bfa;background:rgba(167,139,250,.08);color:#a78bfa">⚡ Recurrente</button>
           </div>
 
           <!-- Panel de frecuencia (oculto por defecto) -->
@@ -225,6 +278,47 @@ window.Mods.ingresos = {
         const arr = await this._loadPresets();
         arr.splice(parseInt(btn.dataset.idx), 1);
         await this._savePresets(arr);
+        this._presetsEditIdx = null;
+        this.render();
+      })
+    );
+
+    // edit preset — open inline form
+    document.querySelectorAll('.btn-edit-preset').forEach(btn =>
+      btn.addEventListener('click', () => {
+        this._presetsEditIdx = parseInt(btn.dataset.idx);
+        this.render();
+      })
+    );
+
+    // save preset edit
+    document.querySelectorAll('.btn-pe-save').forEach(btn =>
+      btn.addEventListener('click', async () => {
+        const idx = parseInt(btn.dataset.idx);
+        const card = btn.closest('div[style*="border:1px solid var(--accent)"]');
+        const arr = await this._loadPresets();
+        if (arr[idx]) {
+          arr[idx] = {
+            ...arr[idx],
+            monto:      card.querySelector('.pe-monto').value,
+            moneda:     card.querySelector('.pe-moneda').value,
+            desc:       card.querySelector('.pe-desc').value.trim(),
+            tipo:       card.querySelector('.pe-tipo').value,
+            frecuencia: card.querySelector('.pe-freq').value,
+            auto:       card.querySelector('.pe-auto').checked,
+          };
+          await this._savePresets(arr);
+          toast('💾 Recurrente actualizado');
+        }
+        this._presetsEditIdx = null;
+        this.render();
+      })
+    );
+
+    // cancel preset edit
+    document.querySelectorAll('.btn-pe-cancel').forEach(btn =>
+      btn.addEventListener('click', () => {
+        this._presetsEditIdx = null;
         this.render();
       })
     );
@@ -249,7 +343,7 @@ window.Mods.ingresos = {
         document.getElementById('i-monto-lbl').textContent = 'Monto (UYU)';
         const rows = await dbFetch('ingresos', { order: { col: 'fecha', asc: false }, limit: 200 });
         document.getElementById('ing-list').innerHTML = this._renderList(rows, tipos, this._filterTipo);
-        this._bindDelete(tipos);
+        this._bindDelete(tipos); this._bindEdit(tipos);
       } catch(err) { toast('❌ ' + err.message, 'err'); }
     });
 
@@ -258,10 +352,11 @@ window.Mods.ingresos = {
       this._filterTipo = e.target.value;
       const rows = await dbFetch('ingresos', { order: { col: 'fecha', asc: false }, limit: 200 });
       document.getElementById('ing-list').innerHTML = this._renderList(rows, tipos, this._filterTipo);
-      this._bindDelete(tipos);
+      this._bindDelete(tipos); this._bindEdit(tipos);
     });
 
     this._bindDelete(tipos);
+    this._bindEdit(tipos);
   },
 
   _renderList(ingresos, tipos, filterTipo) {
@@ -287,13 +382,35 @@ window.Mods.ingresos = {
           toast('🗑 Eliminado');
           const rows = await dbFetch('ingresos', { order: { col: 'fecha', asc: false }, limit: 200 });
           document.getElementById('ing-list').innerHTML = this._renderList(rows, tipos, this._filterTipo);
-          this._bindDelete(tipos);
+          this._bindDelete(tipos); this._bindEdit(tipos);
         } catch(err) { toast('❌ ' + err.message, 'err'); }
       })
     );
   },
 
   _row(i, tipos) {
+    if (this._ingEditId === i.id) {
+      const inpS = 'font-size:.78rem;padding:4px 6px;border-radius:4px;border:1px solid var(--border);background:var(--surface);color:var(--text);width:100%;box-sizing:border-box';
+      return `<tr data-ing-edit="${i.id}">
+        <td><input class="ie-fecha" type="date" value="${i.fecha}" style="${inpS};-webkit-appearance:none;appearance:none;width:100px"></td>
+        <td><input class="ie-desc" type="text" value="${i.descripcion||''}" placeholder="Descripción" style="${inpS}"></td>
+        <td><select class="ie-tipo" style="${inpS}">
+          <option value="">—</option>
+          ${tipos.map(t => `<option value="${t.id}" ${i.tipo_id===t.id?'selected':''}>${t.nombre}</option>`).join('')}
+        </select></td>
+        <td style="white-space:nowrap">
+          <select class="ie-moneda" style="${inpS};width:56px;display:inline-block">
+            <option value="UYU" ${i.moneda!=='USD'?'selected':''}>UYU</option>
+            <option value="USD" ${i.moneda==='USD'?'selected':''}>USD</option>
+          </select>
+          <input class="ie-monto" type="number" step="0.01" value="${i.monto}" style="${inpS};width:80px;display:inline-block;margin-top:2px">
+        </td>
+        <td style="white-space:nowrap">
+          <button class="ie-save" data-id="${i.id}" style="font-size:.72rem;padding:2px 7px;border-radius:4px;border:1px solid var(--accent);background:rgba(46,127,217,.1);color:var(--accent);cursor:pointer;margin-right:2px">✅</button>
+          <button class="ie-cancel" style="font-size:.72rem;padding:2px 5px;border-radius:4px;border:none;background:none;color:var(--text-sec);cursor:pointer">✕</button>
+        </td>
+      </tr>`;
+    }
     const tipo   = tipos.find(t => t.id === i.tipo_id);
     const moneda = i.moneda || 'USD';
     const monStr = moneda === 'USD' ? fmtUSD(i.monto) : `$U ${fmt(i.monto, 0)}`;
@@ -302,8 +419,53 @@ window.Mods.ingresos = {
       <td>${i.descripcion ?? '—'}</td>
       <td style="white-space:nowrap">${tipo ? tipo.nombre : '—'}</td>
       <td style="white-space:nowrap"><strong class="pos">${monStr}</strong></td>
-      <td><button class="ing-del" data-id="${i.id}" title="Eliminar" style="background:none;border:none;cursor:pointer;opacity:.45;font-size:.9rem;padding:2px 4px">🗑</button></td>
+      <td style="white-space:nowrap">
+        <button class="ing-edit" data-id="${i.id}" title="Editar" style="background:none;border:none;cursor:pointer;opacity:.45;font-size:.9rem;padding:2px 4px">✏️</button>
+        <button class="ing-del" data-id="${i.id}" title="Eliminar" style="background:none;border:none;cursor:pointer;opacity:.45;font-size:.9rem;padding:2px 4px">🗑</button>
+      </td>
     </tr>`;
+  },
+
+  _bindEdit(tipos) {
+    document.querySelectorAll('.ing-edit').forEach(btn =>
+      btn.addEventListener('click', async () => {
+        this._ingEditId = parseInt(btn.dataset.id);
+        const rows = await dbFetch('ingresos', { order: { col: 'fecha', asc: false }, limit: 200 });
+        document.getElementById('ing-list').innerHTML = this._renderList(rows, tipos, this._filterTipo);
+        this._bindDelete(tipos);
+        this._bindEdit(tipos);
+      })
+    );
+    document.querySelectorAll('.ie-save').forEach(btn =>
+      btn.addEventListener('click', async () => {
+        const id  = parseInt(btn.dataset.id);
+        const row = btn.closest('tr[data-ing-edit]');
+        try {
+          await dbUpdate('ingresos', {
+            fecha:       row.querySelector('.ie-fecha').value,
+            monto:       parseFloat(row.querySelector('.ie-monto').value),
+            moneda:      row.querySelector('.ie-moneda').value,
+            descripcion: row.querySelector('.ie-desc').value.trim() || null,
+            tipo_id:     row.querySelector('.ie-tipo').value ? parseInt(row.querySelector('.ie-tipo').value) : null,
+          }, { id });
+          toast('✅ Ingreso actualizado');
+          this._ingEditId = null;
+          const rows = await dbFetch('ingresos', { order: { col: 'fecha', asc: false }, limit: 200 });
+          document.getElementById('ing-list').innerHTML = this._renderList(rows, tipos, this._filterTipo);
+          this._bindDelete(tipos);
+          this._bindEdit(tipos);
+        } catch(err) { toast('❌ ' + err.message, 'err'); }
+      })
+    );
+    document.querySelectorAll('.ie-cancel').forEach(btn =>
+      btn.addEventListener('click', async () => {
+        this._ingEditId = null;
+        const rows = await dbFetch('ingresos', { order: { col: 'fecha', asc: false }, limit: 200 });
+        document.getElementById('ing-list').innerHTML = this._renderList(rows, tipos, this._filterTipo);
+        this._bindDelete(tipos);
+        this._bindEdit(tipos);
+      })
+    );
   },
 
   async _checkAutoPresets() {

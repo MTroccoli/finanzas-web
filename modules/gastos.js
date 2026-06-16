@@ -42,6 +42,8 @@ window.Mods.gastos = {
   _cuotasProjWin: 3,     // Ventana en meses para tabla de cuotas en Resumen (3/6/12)
   _cuotasResSort: { col: 'total', dir: 'desc' }, // Sort de la tabla de cuotas en Resumen
   _resFilterMonth: null,  // Mes seleccionado al clickear una barra del gráfico (YYYY-MM)
+  _cuotasDetOpen:  false, // estado acordeón cuotas en panel detalle
+  _recurDetOpen:   false, // estado acordeón recurrentes en panel detalle
   _adicTitular:  '',      // Nombre titular adicional asignado en la vista previa
   _adicMes:      null,    // Filtro mes en panel Adicional
   _adicTitularFiltro: '', // Filtro titular en panel Adicional
@@ -1409,6 +1411,7 @@ window.Mods.gastos = {
             <table style="width:100%;border-collapse:collapse;font-size:.78rem;min-width:380px">
               <thead><tr style="border-bottom:1px solid var(--border)">
                 <th style="padding:4px 6px;text-align:left;font-size:.62rem;text-transform:uppercase;color:var(--text-sec)">Comercio</th>
+                <th style="padding:4px 6px;font-size:.62rem;text-transform:uppercase;color:var(--text-sec)">Moneda</th>
                 <th style="padding:4px 6px;text-align:right;font-size:.62rem;text-transform:uppercase;color:var(--text-sec)">Monto</th>
                 <th style="padding:4px 6px;font-size:.62rem;text-transform:uppercase;color:var(--text-sec)">Frecuencia</th>
                 <th style="padding:4px 6px;text-align:center;font-size:.62rem;text-transform:uppercase;color:var(--text-sec)" title="Carga automática">Auto</th>
@@ -1420,7 +1423,8 @@ window.Mods.gastos = {
                 ${gasPresets.map((p, i) => `
                   <tr data-pidx="${i}" style="border-bottom:1px solid rgba(255,255,255,.03)">
                     <td style="${tdS0}">${p.comercio || '—'}</td>
-                    <td style="${tdS0};text-align:right;font-family:'DM Mono',monospace;color:var(--accent)">${p.monto} <span style="color:var(--text-sec)">${p.moneda||'UYU'}</span></td>
+                    <td style="${tdS0};color:var(--text-sec);font-size:.72rem">${p.moneda||'UYU'}</td>
+                    <td style="${tdS0};text-align:right;font-family:'DM Mono',monospace;color:var(--accent)">${p.monto}</td>
                     <td style="${tdS0};color:var(--accent)">${p.frecuencia || '—'}</td>
                     <td style="${tdS0};text-align:center">
                       <input type="checkbox" class="g-preset-auto" data-idx="${i}" ${p.auto ? 'checked' : ''}
@@ -4239,19 +4243,22 @@ window.Mods.gastos = {
         return parts.join(' + ') || '—';
       })();
       const recurSection = detailMonth && recurrentesLast.length ? `
-        <details open style="margin-top:${displayRows.length ? '14px' : '0'}">
+        <details class="det-recur" ${this._recurDetOpen ? 'open' : ''} style="margin-top:${displayRows.length ? '14px' : '0'}">
           <summary style="list-style:none;cursor:pointer;user-select:none;padding:2px 2px 8px">
             <div style="display:flex;justify-content:space-between;align-items:center">
-              <span style="font-size:.68rem;color:#a78bfa;text-transform:uppercase;font-weight:500;letter-spacing:.06em">🔁 Recurrentes · ${lastMonthStart.slice(0,7)}</span>
+              <span style="display:flex;align-items:center;gap:5px">
+                <span class="det-arr" style="display:inline-block;font-size:.6rem;transition:transform .15s;color:var(--text-sec)">▶</span>
+                <span style="font-size:.68rem;color:#a78bfa;text-transform:uppercase;font-weight:500;letter-spacing:.06em">🔁 Recurrentes · ${lastMonthStart.slice(0,7)}</span>
+              </span>
               <span style="font-family:'DM Mono',monospace;font-size:.78rem;color:#a78bfa">${recurTotStr}</span>
             </div>
           </summary>
           <table style="width:100%;border-collapse:collapse">
             <thead><tr>
               <th style="${thSt};text-align:left">Comercio</th>
+              <th style="${thSt};text-align:left">Medio de pago</th>
               <th style="${thSt};text-align:left">Categoría</th>
               <th style="${thSt};text-align:right">Monto</th>
-              <th style="${thSt};text-align:left">Medio de pago</th>
             </tr></thead>
             <tbody>
               ${recurrentesLast.map(r => {
@@ -4261,16 +4268,15 @@ window.Mods.gastos = {
                 const monStr = r.moneda === 'USD' ? this._fmtUSD(montoN) : this._fmtMon(montoN, r.moneda);
                 return `<tr>
                   <td style="${tdSt}">${r.comercio || '—'}</td>
+                  <td style="${tdSt};color:var(--text-sec);font-size:.72rem">${r.banco_tarjeta || '—'}</td>
                   <td style="${tdSt};color:var(--text-sec);font-size:.72rem">${catStr}</td>
                   <td style="${tdSt};text-align:right;font-family:'DM Mono',monospace;font-weight:600;color:#a78bfa">${monStr}</td>
-                  <td style="${tdSt};color:var(--text-sec);font-size:.72rem">${r.banco_tarjeta || '—'}</td>
                 </tr>`;
               }).join('')}
             </tbody>
             <tfoot><tr>
-              <td colspan="2" style="padding:8px 6px;border-top:1px solid var(--border);font-size:.72rem;font-weight:600;color:var(--text-sec);text-transform:uppercase">Total recurrentes</td>
+              <td colspan="3" style="padding:8px 6px;border-top:1px solid var(--border);font-size:.72rem;font-weight:600;color:var(--text-sec);text-transform:uppercase">Total recurrentes</td>
               <td style="padding:8px 6px;border-top:1px solid var(--border);font-size:.78rem;font-weight:600;text-align:right;font-family:'DM Mono',monospace;color:#a78bfa">${recurTotStr}</td>
-              <td style="padding:8px 6px;border-top:1px solid var(--border)"></td>
             </tr></tfoot>
           </table>
         </details>` : '';
@@ -4290,10 +4296,13 @@ window.Mods.gastos = {
         const tfSt = 'padding:8px 6px;border-top:1px solid var(--border);font-size:.78rem;font-weight:600';
 
         pieEl.innerHTML = `<div style="overflow-x:auto">
-          <details open>
+          <details class="det-cuotas" ${this._cuotasDetOpen ? 'open' : ''}>
             <summary style="list-style:none;cursor:pointer;user-select:none;padding:2px 2px 8px">
               <div style="display:flex;justify-content:space-between;align-items:center">
-                <span style="font-size:.68rem;color:var(--gold);text-transform:uppercase;font-weight:500;letter-spacing:.06em">📅 Cuotas · ${displayRows.length} planes</span>
+                <span style="display:flex;align-items:center;gap:5px">
+                  <span class="det-arr" style="display:inline-block;font-size:.6rem;transition:transform .15s;color:var(--text-sec)">▶</span>
+                  <span style="font-size:.68rem;color:var(--gold);text-transform:uppercase;font-weight:500;letter-spacing:.06em">📅 Cuotas · ${displayRows.length} planes</span>
+                </span>
                 <span style="font-family:'DM Mono',monospace;font-size:.78rem;color:var(--gold)">${footTotStr}</span>
               </div>
             </summary>
@@ -4397,6 +4406,19 @@ window.Mods.gastos = {
       }
     }
 
+    // Bind accordion arrow rotation + state persistence (isCuotas detail panel)
+    if (isCuotas) {
+      const detC = pieEl?.querySelector('details.det-cuotas');
+      const detR = pieEl?.querySelector('details.det-recur');
+      [{ det: detC, key: '_cuotasDetOpen' }, { det: detR, key: '_recurDetOpen' }].forEach(({ det, key }) => {
+        if (!det) return;
+        const arr = det.querySelector('.det-arr');
+        const upd = () => { if (arr) arr.style.transform = det.open ? 'rotate(90deg)' : 'rotate(0deg)'; };
+        upd();
+        det.addEventListener('toggle', () => { this[key] = det.open; upd(); });
+      });
+    }
+
     // ── Detalle de gastos del mes seleccionado ────────────────────────────
     const detailRowsEl = document.getElementById('g-detail-rows');
     if (detailRowsEl) {
@@ -4461,6 +4483,15 @@ window.Mods.gastos = {
       const src = isCuotas ? projMonths : months;
       const m   = src.find(m => m.label === lbl);
       if (!m) return;
+      if (isCuotas) {
+        const _pp = document.getElementById('g-pie-chart');
+        if (_pp) {
+          const _detC = _pp.querySelector('details.det-cuotas');
+          const _detR = _pp.querySelector('details.det-recur');
+          if (_detC) this._cuotasDetOpen = _detC.open;
+          if (_detR) this._recurDetOpen  = _detR.open;
+        }
+      }
       this._resFilterMonth = this._resFilterMonth === m.ym ? null : m.ym;
       this._drawResumen();
     });
