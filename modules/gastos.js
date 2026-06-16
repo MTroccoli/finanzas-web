@@ -109,6 +109,9 @@ window.Mods.gastos = {
 
   async render() {
     const c = document.getElementById('content');
+
+    this._checkAutoPresetsGastos().catch(() => {});
+
     c.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
     const [cats, learnedRows, excludedCards, savedTC, divRows] = await Promise.all([
       dbFetch('categorias_gastos', { filters: { activo: 1 }, order: { col: 'nombre', asc: true } }),
@@ -1423,7 +1426,10 @@ window.Mods.gastos = {
             </div>
             <div class="form-group">
               <label>Categoría</label>
-              ${this._catComboHTML({ id: 'g-categoria', placeholder: 'Sin categoría', style: 'width:100%' })}
+              <select id="g-categoria" style="width:100%">
+                <option value="">Sin categoría</option>
+                ${this._cats.map(c => `<option value="${c.id}">${c.icono} ${c.nombre}</option>`).join('')}
+              </select>
             </div>
             <div class="form-group">
               <label>Tipo de gasto</label>
@@ -1440,6 +1446,24 @@ window.Mods.gastos = {
                 <option value="Efectivo">Efectivo</option>
                 ${bancosList.filter(b => b !== 'Efectivo').map(b => `<option value="${b}">${b}</option>`).join('')}
               </select>
+            </div>
+          </div>
+          <div id="g-rec-panel" style="display:none;margin-bottom:14px;padding:12px;border-radius:8px;border:1px solid rgba(59,130,246,.3);background:rgba(59,130,246,.05)">
+            <div style="font-size:.72rem;color:var(--text-sec);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">⚡ Recurrencia</div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end">
+              <div style="flex:1;min-width:130px">
+                <label style="font-size:.82rem;margin-bottom:4px;display:block">Frecuencia</label>
+                <select id="g-rec-freq" style="width:100%">
+                  <option value="mensual">Mensual</option>
+                  <option value="trimestral">Trimestral (c/3 meses)</option>
+                  <option value="semestral">Semestral (c/6 meses)</option>
+                  <option value="anual">Anual</option>
+                </select>
+              </div>
+              <div style="display:flex;align-items:center;gap:6px;padding-bottom:6px">
+                <input type="checkbox" id="g-rec-auto" checked style="width:15px;height:15px;accent-color:var(--accent)">
+                <label for="g-rec-auto" style="font-size:.8rem;cursor:pointer;user-select:none">Carga automática al vencer</label>
+              </div>
             </div>
           </div>
           <div id="g-div-wrap" style="margin-bottom:14px">
@@ -1494,10 +1518,14 @@ window.Mods.gastos = {
       _bindRemoveFecha();
     });
 
+    document.getElementById('g-tipo-gasto').addEventListener('change', e => {
+      document.getElementById('g-rec-panel').style.display = e.target.value === 'recurrente' ? 'block' : 'none';
+    });
+
     const _readForm = () => {
       const rawMonto = parseFloat(document.getElementById('g-monto').value);
       const N        = parseInt(document.getElementById('g-dividir-entre').value) || 1;
-      const catId    = this._catIdFromLabel(document.getElementById('g-categoria').value);
+      const catId    = parseInt(document.getElementById('g-categoria').value) || null;
       const cuotaA   = parseInt(document.getElementById('g-cuota-actual').value)   || null;
       const cuotaT   = parseInt(document.getElementById('g-cuotas-totales').value) || null;
       const notas    = document.getElementById('g-notas').value.trim();
@@ -1535,11 +1563,26 @@ window.Mods.gastos = {
       if (!fechas.length) { toast('Ingresá al menos una fecha', 'err'); return; }
       try {
         for (const fecha of fechas) await dbInsert('gastos', _buildRecord({ ...data, fecha }));
-        toast(fechas.length > 1 ? `✅ ${fechas.length} gastos registrados` : '✅ Gasto registrado');
+        let msg = fechas.length > 1 ? `✅ ${fechas.length} gastos registrados` : '✅ Gasto registrado';
+        const recPanel = document.getElementById('g-rec-panel');
+        if (data.tipo_gasto === 'recurrente' && recPanel?.style.display !== 'none') {
+          try {
+            const arr = await this._loadGastosPresets();
+            arr.unshift({ comercio: data.comercio, monto: data.rawMonto, moneda: data.moneda,
+              categoria_id: data.catId, banco_tarjeta: data.banco_tarjeta, dividido_entre: data.N,
+              frecuencia: document.getElementById('g-rec-freq').value,
+              auto: document.getElementById('g-rec-auto').checked,
+              ultima_carga: fechas[fechas.length - 1] });
+            await this._saveGastosPresets(arr);
+            msg += ' · ⚡ recurrente guardado';
+          } catch {}
+        }
+        toast(msg);
         e.target.reset();
         document.getElementById('g-fechas-wrap').innerHTML = fechaRowHTML();
         _bindRemoveFecha();
         document.getElementById('g-banco').value = '';
+        document.getElementById('g-rec-panel').style.display = 'none';
       } catch(err) { toast('❌ ' + err.message, 'err'); }
     });
 
@@ -1558,8 +1601,22 @@ window.Mods.gastos = {
             _catLabel: data.catId ? (this._catLabel(+data.catId) || '') : '',
           });
         }
-        toast(fechas.length > 1 ? `✅ ${fechas.length} gastos guardados` : '✅ Guardado');
-        // Partial reset: keep moneda, tipo, usuario, banco
+        let msg = fechas.length > 1 ? `✅ ${fechas.length} gastos guardados` : '✅ Guardado';
+        const recPanel = document.getElementById('g-rec-panel');
+        if (data.tipo_gasto === 'recurrente' && recPanel?.style.display !== 'none') {
+          try {
+            const arr = await this._loadGastosPresets();
+            arr.unshift({ comercio: data.comercio, monto: data.rawMonto, moneda: data.moneda,
+              categoria_id: data.catId, banco_tarjeta: data.banco_tarjeta, dividido_entre: data.N,
+              frecuencia: document.getElementById('g-rec-freq').value,
+              auto: document.getElementById('g-rec-auto').checked,
+              ultima_carga: fechas[fechas.length - 1] });
+            await this._saveGastosPresets(arr);
+            msg += ' · ⚡ recurrente guardado';
+          } catch {}
+        }
+        toast(msg);
+        // Partial reset: keep moneda, tipo, banco
         document.getElementById('g-monto').value = '';
         document.getElementById('g-comercio').value = '';
         document.getElementById('g-cuota-actual').value = '';
@@ -1568,8 +1625,7 @@ window.Mods.gastos = {
         document.getElementById('g-dividir-entre').value = '1';
         document.getElementById('g-fechas-wrap').innerHTML = fechaRowHTML();
         _bindRemoveFecha();
-        const catEl = document.getElementById('g-categoria');
-        if (catEl) { catEl.value = ''; catEl.dataset.catid = ''; }
+        document.getElementById('g-categoria').value = '';
         this._drawManual();
       } catch(err) { toast('❌ ' + err.message, 'err'); }
     });
@@ -1590,10 +1646,7 @@ window.Mods.gastos = {
         document.getElementById('g-cuotas-totales').value = g.cuotas_totales || '';
         document.getElementById('g-notas').value = g.notas || '';
         const catEl = document.getElementById('g-categoria');
-        if (catEl && g.categoria_id) {
-          catEl.dataset.catid = g.categoria_id;
-          catEl.value = this._catLabel(g.categoria_id) || '';
-        } else if (catEl) { catEl.value = ''; catEl.dataset.catid = ''; }
+        if (catEl) catEl.value = g.categoria_id || '';
         document.getElementById('g-monto')?.focus();
       });
     });
@@ -1882,7 +1935,7 @@ window.Mods.gastos = {
       });
     });
 
-    this._attachHistHandlers(gastos, catOpts, viewMode, tc);
+    this._attachHistHandlers(gastos, catOpts, viewMode, tc, bancosHist);
   },
 
   _renderGastosTbody() {
@@ -2677,7 +2730,7 @@ window.Mods.gastos = {
     if (mEl && orig > 0) mEl.value = (orig / newD).toFixed(2);
   },
 
-  _histEditRow(g, catOpts) {
+  _histEditRow(g, catOpts, bancosList) {
     return `
       <tr class="g-editing" data-id="${g.id}" data-orig="${((parseFloat(g.monto)||0) * (g.dividido_entre||1)).toFixed(2)}" style="background:rgba(255,255,255,.04)">
         <td colspan="7" style="padding:10px 8px">
@@ -2722,6 +2775,15 @@ window.Mods.gastos = {
               </select>
             </div>
             <div>
+              <div style="font-size:.68rem;color:var(--text-sec);margin-bottom:2px">Medio de pago</div>
+              <select class="ge-banco" style="font-size:.78rem;padding:4px 7px;border-radius:5px;
+                border:1px solid var(--border);background:var(--surface);color:var(--text)">
+                <option value="">— Sin asignar</option>
+                <option value="Efectivo"${g.banco_tarjeta==='Efectivo'?' selected':''}>Efectivo</option>
+                ${(bancosList||[]).filter(b=>b!=='Efectivo').map(b=>`<option value="${b}"${g.banco_tarjeta===b?' selected':''}>${b}</option>`).join('')}
+              </select>
+            </div>
+            <div>
               <div style="font-size:.68rem;color:var(--text-sec);margin-bottom:2px">Dividir entre</div>
               <input type="number" class="ge-div" min="1" step="1"
                 value="${g.dividido_entre || 1}"
@@ -2741,7 +2803,7 @@ window.Mods.gastos = {
       </tr>`;
   },
 
-  _attachHistHandlers(gastos, catOpts, viewMode, tc) {
+  _attachHistHandlers(gastos, catOpts, viewMode, tc, bancosList) {
     const tbody = document.getElementById('g-hist-tbody');
     if (!tbody) return;
 
@@ -2765,7 +2827,7 @@ window.Mods.gastos = {
         if (!dataRow) return;
         const g = gastos.find(x => x.id === id);
         if (!g) return;
-        dataRow.insertAdjacentHTML('afterend', this._histEditRow(g, catOpts));
+        dataRow.insertAdjacentHTML('afterend', this._histEditRow(g, catOpts, bancosList));
         tbody.querySelector(`.ge-comercio`).focus();
         return;
       }
@@ -2790,6 +2852,7 @@ window.Mods.gastos = {
             moneda:        editRow.querySelector('.ge-moneda').value,
             categoria_id:  this._catIdFromLabel(editRow.querySelector('.ge-cat').value),
             tipo_gasto:    editRow.querySelector('.ge-tipo').value,
+            banco_tarjeta: editRow.querySelector('.ge-banco')?.value || null,
             dividido_entre: +editRow.querySelector('.ge-div').value || 1,
           }, { id });
           toast('✅ Guardado');
@@ -4299,5 +4362,54 @@ window.Mods.gastos = {
         this._drawResumen();
       });
     });
+  },
+
+  // ── Gastos recurrentes — presets ─────────────────────────────────────────
+
+  _nextDueGasto(lastDate, freq) {
+    const d = new Date(lastDate + 'T00:00:00');
+    const m = { mensual: 1, trimestral: 3, semestral: 6, anual: 12 };
+    d.setMonth(d.getMonth() + (m[freq] || 1));
+    return d.toISOString().slice(0, 10);
+  },
+
+  async _loadGastosPresets() {
+    try {
+      const val = await getConfig('gastos_presets');
+      return JSON.parse(val || '[]');
+    } catch { return []; }
+  },
+
+  async _saveGastosPresets(arr) {
+    if (arr.length > 20) arr.length = 20;
+    await setConfig('gastos_presets', JSON.stringify(arr));
+  },
+
+  async _checkAutoPresetsGastos() {
+    const today   = new Date().toISOString().slice(0, 10);
+    const presets = await this._loadGastosPresets();
+    let changed   = false;
+    for (let i = 0; i < presets.length; i++) {
+      const p = presets[i];
+      if (!p.auto || !p.frecuencia || !p.ultima_carga) continue;
+      if (today < this._nextDueGasto(p.ultima_carga, p.frecuencia)) continue;
+      try {
+        await dbInsert('gastos', {
+          fecha:         today,
+          monto:         parseFloat(p.monto),
+          moneda:        p.moneda || 'UYU',
+          comercio:      p.comercio || null,
+          categoria_id:  p.categoria_id ? +p.categoria_id : null,
+          tipo_gasto:    'recurrente',
+          banco_tarjeta: p.banco_tarjeta || null,
+          dividido_entre: p.dividido_entre || 1,
+          fuente:        'manual',
+        });
+        presets[i].ultima_carga = today;
+        changed = true;
+        toast(`⚡ Auto-gasto: ${p.comercio || 'Gasto'} (${p.moneda || 'UYU'} ${p.monto})`);
+      } catch { /* silent */ }
+    }
+    if (changed) await this._saveGastosPresets(presets);
   },
 };

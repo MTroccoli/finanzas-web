@@ -108,7 +108,7 @@ window.Mods.ingresos = {
                 <label>Frecuencia</label>
                 <select id="preset-freq" style="${inp}">
                   <option value="mensual">Mensual</option>
-                  <option value="bimensual">Bimensual (c/2 meses)</option>
+                  <option value="trimestral">Trimestral (c/3 meses)</option>
                   <option value="semestral">Semestral (c/6 meses)</option>
                   <option value="anual">Anual</option>
                 </select>
@@ -332,7 +332,7 @@ window.Mods.ingresos = {
 
   _nextDue(lastDate, frecuencia) {
     const d = new Date(lastDate + 'T00:00:00');
-    const months = { mensual: 1, bimensual: 2, semestral: 6, anual: 12 };
+    const months = { mensual: 1, bimensual: 2, trimestral: 3, semestral: 6, anual: 12 };
     d.setMonth(d.getMonth() + (months[frecuencia] || 1));
     return d.toISOString().slice(0, 10);
   },
