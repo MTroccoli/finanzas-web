@@ -861,4 +861,53 @@ tbody tr:hover td { background: rgba(46,127,217,.04); }
 
   .r-cards-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
   .r-card { padding: 10px 6px; }
+
+  /* Gas subnav — fixed bottom pill bar for gastos module */
+  #gas-subnav {
+    display: flex;
+    position: fixed;
+    bottom: calc(var(--mob-nav-h) + env(safe-area-inset-bottom, 0px));
+    left: 0; right: 0;
+    z-index: 997;
+    height: var(--subnav-h);
+    background: rgba(4,15,32,.9);
+    backdrop-filter: blur(8px);
+    border-top: 1px solid var(--border);
+    align-items: center;
+    gap: 6px;
+    padding: 0 12px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  #gas-subnav::-webkit-scrollbar { display: none; }
+  .gas-sub-pill {
+    font-family: 'DM Mono', monospace;
+    font-size: .72rem;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: var(--text-sec);
+    padding: 5px 14px;
+    border-radius: 20px;
+    border: 1px solid transparent;
+    background: transparent;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all .15s;
+    flex-shrink: 0;
+  }
+  .gas-sub-pill.active {
+    color: var(--accent);
+    background: rgba(46,127,217,.12);
+    border-color: rgba(46,127,217,.4);
+  }
+  .gas-sub-back {
+    color: var(--text-sec);
+    border-color: var(--border);
+  }
+  /* Hide dropdown tab selector when gas-subnav is present */
+  body:has(#gas-subnav) .g-tab-select { display: none; }
+  /* Extra bottom padding for gas content */
+  body:has(#gas-subnav) #content {
+    padding-bottom: calc(var(--mob-nav-h) + env(safe-area-inset-bottom, 0px) + var(--subnav-h) + 16px);
+  }
 }

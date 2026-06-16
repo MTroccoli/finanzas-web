@@ -311,6 +311,33 @@ window.Mods.gastos = {
       if (bar) bar.style.display = barTabs.has(this._tab) ? 'flex' : 'none';
     };
 
+    const _refreshGasSubnav = () => {
+      const gn = document.getElementById('gas-subnav');
+      if (!gn) return;
+      const isTdcNow = tdcSet.has(this._tab);
+      gn.innerHTML = isTdcNow
+        ? `<button class="gas-sub-pill gas-sub-back" data-tab="resumen">← Gastos</button>
+           ${tdcTabDefs.map(([t,l]) => `<button class="gas-sub-pill${this._tab===t?' active':''}" data-tab="${t}">${l}</button>`).join('')}`
+        : `<button class="gas-sub-pill${this._tab==='resumen'?' active':''}" data-tab="resumen">📊 Resumen</button>
+           <button class="gas-sub-pill${this._tab==='detalle'?' active':''}" data-tab="detalle">📋 Detalle</button>
+           <button class="gas-sub-pill" data-tab="_tdc">💳 Tarjetas</button>
+           <button class="gas-sub-pill${this._tab==='manual'?' active':''}" data-tab="manual">✚ Nuevo</button>`;
+      gn.querySelectorAll('.gas-sub-pill').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const tgt = btn.dataset.tab;
+          if (tgt === '_tdc') {
+            this._tab = this._lastTdcTab || 'cuotas';
+          } else {
+            this._tab = tgt;
+            if (tdcSet.has(tgt)) this._lastTdcTab = tgt;
+          }
+          _refreshNav();
+          _refreshGasSubnav();
+          this._drawTab();
+        });
+      });
+    };
+
     document.querySelectorAll('.g-tab').forEach(btn =>
       btn.addEventListener('click', () => {
         const tgt = btn.dataset.tab;
@@ -321,6 +348,7 @@ window.Mods.gastos = {
           if (tdcSet.has(tgt)) this._lastTdcTab = tgt;
         }
         _refreshNav();
+        _refreshGasSubnav();
         this._drawTab();
       })
     );
@@ -328,6 +356,7 @@ window.Mods.gastos = {
       this._tab = e.target.value;
       if (tdcSet.has(this._tab)) this._lastTdcTab = this._tab;
       _refreshNav();
+      _refreshGasSubnav();
       this._drawTab();
     });
     document.querySelectorAll('.g-mon-btn').forEach(btn =>
@@ -348,6 +377,14 @@ window.Mods.gastos = {
       this._drawTab();
     });
     this._bindCatComboUX();
+
+    // Subnav mobile de gastos: inyectado en body, CSS lo oculta en desktop
+    const oldGn = document.getElementById('gas-subnav');
+    if (oldGn) oldGn.remove();
+    const gasNav = document.createElement('nav');
+    gasNav.id = 'gas-subnav';
+    document.body.appendChild(gasNav);
+    _refreshGasSubnav();
   },
 
   // Mejora la UX de los combos de categoría (input + datalist):

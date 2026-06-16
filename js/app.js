@@ -10,6 +10,7 @@ const PAGES = {
 const WITH_SUBNAV = new Set(['inversiones']);
 
 async function handleRoute() {
+  document.getElementById('gas-subnav')?.remove();
   const hash = window.location.hash.slice(1) || 'dashboard';
   const [page, sub] = hash.split('/');
   const route = PAGES[page] || PAGES.dashboard;
