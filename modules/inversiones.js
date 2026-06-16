@@ -1,5 +1,6 @@
 window.Mods = window.Mods || {};
 window.Mods.inversiones = {
+  _portfolioCache: null,
 
   async render(sub = 'portafolio') {
     switch (sub) {
@@ -458,7 +459,12 @@ window.Mods.inversiones = {
     `;
 
     try {
-      const allOps = await dbFetch('operaciones', { order: { col: 'fecha', asc: true } });
+      let allOps;
+      if (this._portfolioCache) {
+        allOps = this._portfolioCache.allOps;
+      } else {
+        allOps = await dbFetch('operaciones', { order: { col: 'fecha', asc: true } });
+      }
       const allUniqueTickers = [...new Set(allOps.map(op => op.ticker))].sort();
 
       const pos = {}, realByTicker = {};
@@ -510,10 +516,17 @@ window.Mods.inversiones = {
 
       const tickers = positions.map(p => p.ticker);
 
-      const [liveData, savedRows] = await Promise.all([
-        this.fetchLivePrices(tickers).catch(() => ({})),
-        dbFetch('precios_historicos', { order: { col: 'fecha', asc: false }, limit: 500 }).catch(() => []),
-      ]);
+      let liveData, savedRows;
+      if (this._portfolioCache) {
+        savedRows = this._portfolioCache.savedRows;
+        liveData  = await this.fetchLivePrices(tickers).catch(() => ({}));
+      } else {
+        [liveData, savedRows] = await Promise.all([
+          this.fetchLivePrices(tickers).catch(() => ({})),
+          dbFetch('precios_historicos', { order: { col: 'fecha', asc: false }, limit: 500 }).catch(() => []),
+        ]);
+        this._portfolioCache = { allOps, savedRows };
+      }
 
       const savedPrices = {};
       for (const r of savedRows) {
@@ -1616,6 +1629,7 @@ window.Mods.inversiones = {
   },
 
   async _refreshTable() {
+    this._portfolioCache = null;
     const newOps = await dbFetch('operaciones', { order: { col: 'fecha', asc: false }, limit: this._opLimit });
     this._lastOps = newOps;
     const wrap = document.getElementById('ops-table-wrap');

@@ -165,6 +165,15 @@ input, select, textarea { font-family: inherit; }
   margin-top: calc(var(--topbar-h) + var(--nav-h) + var(--subnav-h));
 }
 
+/* ── Page transition ────────────────────────────────────────────────────── */
+#content > * {
+  animation: page-fadein .18s ease;
+}
+@keyframes page-fadein {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
 /* ── Grid rejilla fondo ────────────────────────────────────────────────── */
 body {
   background-image:
