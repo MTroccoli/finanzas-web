@@ -4093,8 +4093,8 @@ window.Mods.gastos = {
           </div>`}
         </div>
         <div id="g-pie-chart" style="${isCuotas || isBenef ? 'height:auto' : 'height:340px'}"></div>
-        <div id="g-detail-rows"></div>
       </div>
+      <div id="g-detail-rows"></div>
     `;
 
     // ── Bar chart ─────────────────────────────────────────────────────────
@@ -4529,7 +4529,8 @@ window.Mods.gastos = {
             : catFil !== null ? (() => { const cc = this._cats.find(c => c.id === +catFil); return cc ? `${cc.icono} ${cc.nombre}` : 'Otros'; })()
             : null;
           detailRowsEl.innerHTML = `
-            <details class="det-gas" ${this._gasDetOpen ? 'open' : ''} style="margin-top:14px">
+            <div class="form-card" style="padding:14px 16px;margin-bottom:.75rem">
+            <details class="det-gas" ${this._gasDetOpen ? 'open' : ''}>
               <summary style="list-style:none;cursor:pointer;user-select:none;padding:2px 2px 8px">
                 <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:4px">
                   <span style="display:flex;align-items:center;gap:5px">
@@ -4561,7 +4562,8 @@ window.Mods.gastos = {
                   }).join('')}
                 </tbody>
               </table></div>
-            </details>`;
+            </details>
+            </div>`;
           // Arrow toggle
           const detG = detailRowsEl.querySelector('details.det-gas');
           if (detG) {
