@@ -42,8 +42,11 @@ window.Mods.gastos = {
   _cuotasProjWin: 3,     // Ventana en meses para tabla de cuotas en Resumen (3/6/12)
   _cuotasResSort: { col: 'total', dir: 'desc' }, // Sort de la tabla de cuotas en Resumen
   _resFilterMonth: null,  // Mes seleccionado al clickear una barra del gráfico (YYYY-MM)
-  _cuotasDetOpen:  false, // estado acordeón cuotas en panel detalle
-  _recurDetOpen:   false, // estado acordeón recurrentes en panel detalle
+  _cuotasDetOpen:   false,
+  _recurDetOpen:    false,
+  _benefDetOpen:    false,
+  _gasDetOpen:      false,
+  _resCatPieFilter: null,
   _adicTitular:  '',      // Nombre titular adicional asignado en la vista previa
   _adicMes:      null,    // Filtro mes en panel Adicional
   _adicTitularFiltro: '', // Filtro titular en panel Adicional
@@ -3889,17 +3892,20 @@ window.Mods.gastos = {
     const byMonthSave = {};
     for (const m of months) byMonthSave[m.ym] = { UYU: 0, USD: 0 };
     const bySaveCom = {};
-    const bySaveComNative = {}; // { comercio: { UYU, USD } } — montos en moneda origen
+    const bySaveComNative = {};
+    const bySaveComBanco  = {};
     for (const r of allData) {
       if (!isBenefit(r)) continue;
       const ym = r.fecha.slice(0, 7);
-      const monto = -parseFloat(r.monto); // beneficios se guardan negativos
+      const monto = -parseFloat(r.monto);
       if (byMonthSave[ym]) byMonthSave[ym][r.moneda === 'USD' ? 'USD' : 'UYU'] += monto;
       const k = (r.comercio || '').trim() || 'Sin comercio';
       bySaveCom[k] = (bySaveCom[k] || 0) - toC(r.monto, r.moneda);
       if (!bySaveComNative[k]) bySaveComNative[k] = { UYU: 0, USD: 0 };
       if (r.moneda === 'USD') bySaveComNative[k].USD += monto;
       else bySaveComNative[k].UYU += monto;
+      if (!bySaveComBanco[k]) bySaveComBanco[k] = new Set();
+      if (r.banco_tarjeta) bySaveComBanco[k].add(r.banco_tarjeta);
     }
 
     const hasBenef  = totalSaved > 0 || totalSaveUYU > 0 || totalSaveUSD > 0;
@@ -3908,9 +3914,9 @@ window.Mods.gastos = {
 
     // Panel de detalle filtrado por barra clickeada
     const detailMonth = this._resFilterMonth || null;
-    let byCatDetail = byCat, bySaveComDetail = bySaveCom, bySaveComNativeDetail = bySaveComNative;
+    let byCatDetail = byCat, bySaveComDetail = bySaveCom, bySaveComNativeDetail = bySaveComNative, bySaveComBancoDetail = bySaveComBanco;
     if (detailMonth) {
-      byCatDetail = {}; bySaveComDetail = {}; bySaveComNativeDetail = {};
+      byCatDetail = {}; bySaveComDetail = {}; bySaveComNativeDetail = {}; bySaveComBancoDetail = {};
       for (const r of allData) {
         if (r.fecha.slice(0,7) !== detailMonth) continue;
         const k = r.categoria_id ?? 'sin';
@@ -3922,6 +3928,8 @@ window.Mods.gastos = {
           const m = -parseFloat(r.monto);
           if (r.moneda === 'USD') bySaveComNativeDetail[kc].USD += m;
           else bySaveComNativeDetail[kc].UYU += m;
+          if (!bySaveComBancoDetail[kc]) bySaveComBancoDetail[kc] = new Set();
+          if (r.banco_tarjeta) bySaveComBancoDetail[kc].add(r.banco_tarjeta);
         } else {
           byCatDetail[k] = (byCatDetail[k] || 0) + v;
         }
@@ -4181,6 +4189,7 @@ window.Mods.gastos = {
     }
 
     // ── Detail panel ──────────────────────────────────────────────────────
+    let _renderDetailRowsFn = null; // set later; called by pie click handler
     const pieEl = document.getElementById('g-pie-chart');
 
     if (isCuotas) {
@@ -4340,7 +4349,7 @@ window.Mods.gastos = {
           ${recurSection}</div>`;
       }
     } else if (isBenef) {
-      // Tabla de ahorro por comercio
+      // Tabla de ahorro por comercio — acordeón
       const saveEntries = Object.entries(bySaveComDetail).filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1]);
       const totalSaveAll = saveEntries.reduce((s, [, v]) => s + v, 0);
       const thSt = 'text-align:left;padding:7px 6px;border-bottom:1px solid var(--border);font-size:.72rem;color:var(--text-sec);text-transform:uppercase;font-weight:500';
@@ -4348,29 +4357,47 @@ window.Mods.gastos = {
       if (!saveEntries.length) {
         pieEl.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-sec);font-size:.85rem">Sin datos de ahorro en el rango seleccionado</div>';
       } else {
-        pieEl.innerHTML = `<div class="table-scroll" style="overflow-x:auto">
-          <table style="width:100%;border-collapse:collapse">
-            <thead><tr>
-              <th style="${thSt}">Comercio</th>
-              <th style="${thSt};text-align:right">Ahorro</th>
-              <th style="${thSt};text-align:right">%</th>
-            </tr></thead>
-            <tbody>
-              ${saveEntries.map(([name, val]) => {
-                const pct = totalSaveAll > 0 ? val / totalSaveAll * 100 : 0;
-                const nat = bySaveComNativeDetail[name] || { UYU: 0, USD: 0 };
-                const natParts = [];
-                if (nat.UYU > 0) natParts.push(this._fmtMon(nat.UYU, 'UYU'));
-                if (nat.USD > 0) natParts.push(this._fmtUSD(nat.USD));
-                const monStr = natParts.join(' · ') || fmtC(val);
-                return `<tr>
-                  <td style="${tdSt}">${name}</td>
-                  <td style="${tdSt};text-align:right;font-family:'DM Mono',monospace;font-weight:600;color:#10b981">${monStr}</td>
-                  <td style="${tdSt};text-align:right;color:var(--text-sec)">${fmt(pct, 1)}%</td>
-                </tr>`;
-              }).join('')}
-            </tbody>
-          </table></div>`;
+        const saveTotParts = [];
+        if (detailSaveUYU > 0) saveTotParts.push(this._fmtMon(detailSaveUYU, 'UYU'));
+        if (detailSaveUSD > 0) saveTotParts.push(this._fmtUSD(detailSaveUSD));
+        const saveTotStr = saveTotParts.join(' + ') || '—';
+        pieEl.innerHTML = `<div style="overflow-x:auto">
+          <details class="det-benef" ${this._benefDetOpen ? 'open' : ''}>
+            <summary style="list-style:none;cursor:pointer;user-select:none;padding:2px 2px 8px">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <span style="display:flex;align-items:center;gap:5px">
+                  <span class="det-arr" style="display:inline-block;font-size:.6rem;transition:transform .15s;color:var(--text-sec)">▶</span>
+                  <span style="font-size:.68rem;color:#10b981;text-transform:uppercase;font-weight:500;letter-spacing:.06em">🎁 Beneficios · ${saveEntries.length} comercios</span>
+                </span>
+                <span style="font-family:'DM Mono',monospace;font-size:.78rem;color:#10b981">${saveTotStr}</span>
+              </div>
+            </summary>
+            <table style="width:100%;border-collapse:collapse">
+              <thead><tr>
+                <th style="${thSt}">Comercio</th>
+                <th style="${thSt}">Medio de pago</th>
+                <th style="${thSt};text-align:right">%</th>
+                <th style="${thSt};text-align:right">Ahorro</th>
+              </tr></thead>
+              <tbody>
+                ${saveEntries.map(([name, val]) => {
+                  const pct    = totalSaveAll > 0 ? val / totalSaveAll * 100 : 0;
+                  const nat    = bySaveComNativeDetail[name] || { UYU: 0, USD: 0 };
+                  const natParts = [];
+                  if (nat.UYU > 0) natParts.push(this._fmtMon(nat.UYU, 'UYU'));
+                  if (nat.USD > 0) natParts.push(this._fmtUSD(nat.USD));
+                  const monStr = natParts.join(' · ') || fmtC(val);
+                  const bancos = [...(bySaveComBancoDetail[name] || [])].join(', ') || '—';
+                  return `<tr>
+                    <td style="${tdSt}">${name}</td>
+                    <td style="${tdSt};color:var(--text-sec);font-size:.72rem">${bancos}</td>
+                    <td style="${tdSt};text-align:right;color:var(--text-sec)">${fmt(pct, 1)}%</td>
+                    <td style="${tdSt};text-align:right;font-family:'DM Mono',monospace;font-weight:600;color:#10b981">${monStr}</td>
+                  </tr>`;
+                }).join('')}
+              </tbody>
+            </table>
+          </details></div>`;
       }
     } else {
       const palette = ['#3b82f6','#10b981','#f59e0b','#ef4444','#a855f7','#06b6d4','#ec4899','#84cc16','#f97316','#6366f1','#14b8a6','#eab308'];
@@ -4403,10 +4430,18 @@ window.Mods.gastos = {
           showlegend: false,
           margin: { t: 20, r: 20, b: 20, l: 20 },
         }, { displayModeBar: false, responsive: true, scrollZoom: false });
+        // Pie chart → filter detail rows by clicking a category slice
+        document.getElementById('g-pie-chart')?.on('plotly_click', pieData => {
+          if (!pieData?.points?.length || !detailMonth) return;
+          const catId = entries[pieData.points[0].pointIndex]?.[0];
+          if (catId === undefined) return;
+          this._resCatPieFilter = this._resCatPieFilter === catId ? null : catId;
+          _renderDetailRowsFn?.();
+        });
       }
     }
 
-    // Bind accordion arrow rotation + state persistence (isCuotas detail panel)
+    // Bind accordion arrow rotation + state persistence
     if (isCuotas) {
       const detC = pieEl?.querySelector('details.det-cuotas');
       const detR = pieEl?.querySelector('details.det-recur');
@@ -4418,6 +4453,15 @@ window.Mods.gastos = {
         det.addEventListener('toggle', () => { this[key] = det.open; upd(); });
       });
     }
+    if (isBenef) {
+      const detB = pieEl?.querySelector('details.det-benef');
+      if (detB) {
+        const arr = detB.querySelector('.det-arr');
+        const upd = () => { if (arr) arr.style.transform = detB.open ? 'rotate(90deg)' : 'rotate(0deg)'; };
+        upd();
+        detB.addEventListener('toggle', () => { this._benefDetOpen = detB.open; upd(); });
+      }
+    }
 
     // ── Detalle de gastos del mes seleccionado ────────────────────────────
     const detailRowsEl = document.getElementById('g-detail-rows');
@@ -4427,35 +4471,73 @@ window.Mods.gastos = {
           .filter(r => r.fecha.slice(0, 7) === detailMonth)
           .sort((a, b) => parseFloat(b.monto) - parseFloat(a.monto));
         const detailLabel = months.find(m => m.ym === detailMonth)?.label ?? detailMonth;
-        if (!monthRows.length) {
-          detailRowsEl.innerHTML = '';
-        } else {
-          const tdS = 'padding:6px 4px;border-bottom:1px solid rgba(255,255,255,.04);font-size:.78rem';
+
+        _renderDetailRowsFn = () => {
+          if (!monthRows.length) { detailRowsEl.innerHTML = ''; return; }
+          const tdS    = 'padding:6px 4px;border-bottom:1px solid rgba(255,255,255,.04);font-size:.78rem';
+          const catFil = this._resCatPieFilter;
+          const filtRows = catFil !== null
+            ? monthRows.filter(r => String(r.categoria_id ?? 'sin') === String(catFil))
+            : monthRows;
+          const totUYU = filtRows.filter(r => r.moneda !== 'USD' && !isBenefit(r)).reduce((s,r) => s + parseFloat(r.monto), 0);
+          const totUSD = filtRows.filter(r => r.moneda === 'USD' && !isBenefit(r)).reduce((s,r) => s + parseFloat(r.monto), 0);
+          const totParts = [];
+          if (totUYU > 0) totParts.push(this._fmtMon(totUYU, 'UYU'));
+          if (totUSD > 0) totParts.push(this._fmtUSD(totUSD));
+          const catName = catFil === 'sin' ? 'Sin categoría'
+            : catFil !== null ? (() => { const cc = this._cats.find(c => c.id === +catFil); return cc ? `${cc.icono} ${cc.nombre}` : 'Otros'; })()
+            : null;
           detailRowsEl.innerHTML = `
-            <div style="margin-top:14px;font-size:.72rem;color:var(--text-sec);text-transform:uppercase;font-weight:500;padding:0 2px 6px">
-              Gastos · ${detailLabel}
-            </div>
-            <div style="overflow-x:auto">
-            <table style="width:100%;min-width:280px;border-collapse:collapse">
-              <tbody>
-                ${monthRows.map(r => {
-                  const cat    = r.categoria_id != null ? this._cats.find(c => c.id === r.categoria_id) : null;
-                  const catStr = cat ? `${cat.icono} ${cat.nombre}` : '—';
-                  const desc   = (r.comercio || r.descripcion || '—').slice(0, 36);
-                  const montoN = parseFloat(r.monto);
-                  const monStr = r.moneda === 'USD' ? this._fmtUSD(Math.abs(montoN)) : this._fmtMon(Math.abs(montoN), r.moneda);
-                  const isBen  = isBenefit(r) || montoN < 0;
-                  return `<tr>
-                    <td style="${tdS};color:var(--text-sec);white-space:nowrap;width:58px">${fmtDate(r.fecha)}</td>
-                    <td style="${tdS}"><span style="display:block;max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${desc}</span>
-                      <span style="font-size:.64rem;color:var(--text-sec)">${catStr}</span>
-                    </td>
-                    <td style="${tdS};text-align:right;font-family:'DM Mono',monospace;font-weight:600;white-space:nowrap;color:${isBen ? '#10b981' : r.tipo_gasto === 'recurrente' ? '#a78bfa' : '#3b82f6'}">${isBen ? '−' : ''}${monStr}${r.tipo_gasto === 'recurrente' ? ' <span style="font-size:.6rem;opacity:.8">🔁</span>' : ''}</td>
-                  </tr>`;
-                }).join('')}
-              </tbody>
-            </table></div>`;
-        }
+            <details class="det-gas" ${this._gasDetOpen ? 'open' : ''} style="margin-top:14px">
+              <summary style="list-style:none;cursor:pointer;user-select:none;padding:2px 2px 8px">
+                <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:4px">
+                  <span style="display:flex;align-items:center;gap:5px">
+                    <span class="det-arr" style="display:inline-block;font-size:.6rem;transition:transform .15s;color:var(--text-sec)">▶</span>
+                    <span style="font-size:.68rem;color:var(--accent);text-transform:uppercase;font-weight:500;letter-spacing:.06em">📋 Gastos · ${detailLabel}${catName ? ' · ' + catName : ''} · ${filtRows.length} reg.</span>
+                    ${catName ? `<button class="btn-clear-pie-filter" style="font-size:.65rem;padding:1px 6px;border-radius:10px;border:1px solid var(--accent);background:rgba(46,127,217,.1);color:var(--accent);cursor:pointer">✕ filtro</button>` : ''}
+                  </span>
+                  <span style="font-family:'DM Mono',monospace;font-size:.78rem;color:var(--accent)">${totParts.join(' + ') || '—'}</span>
+                </div>
+              </summary>
+              <div style="overflow-x:auto">
+              <table style="width:100%;min-width:320px;border-collapse:collapse">
+                <tbody>
+                  ${filtRows.map(r => {
+                    const cat    = r.categoria_id != null ? this._cats.find(c => c.id === r.categoria_id) : null;
+                    const catStr = cat ? `${cat.icono} ${cat.nombre}` : '—';
+                    const desc   = (r.comercio || r.descripcion || '—').slice(0, 28);
+                    const montoN = parseFloat(r.monto);
+                    const monStr = r.moneda === 'USD' ? this._fmtUSD(Math.abs(montoN)) : this._fmtMon(Math.abs(montoN), r.moneda);
+                    const isBen  = isBenefit(r) || montoN < 0;
+                    return `<tr>
+                      <td style="${tdS};color:var(--text-sec);white-space:nowrap;width:56px">${fmtDate(r.fecha)}</td>
+                      <td style="${tdS}"><span style="display:block;max-width:120px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${desc}</span>
+                        <span style="font-size:.64rem;color:var(--text-sec)">${catStr}</span>
+                      </td>
+                      <td style="${tdS};color:var(--text-sec);font-size:.72rem;white-space:nowrap">${r.banco_tarjeta || '—'}</td>
+                      <td style="${tdS};text-align:right;font-family:'DM Mono',monospace;font-weight:600;white-space:nowrap;color:${isBen ? '#10b981' : r.tipo_gasto === 'recurrente' ? '#a78bfa' : '#3b82f6'}">${isBen ? '−' : ''}${monStr}${r.tipo_gasto === 'recurrente' ? ' <span style="font-size:.6rem;opacity:.8">🔁</span>' : ''}</td>
+                    </tr>`;
+                  }).join('')}
+                </tbody>
+              </table></div>
+            </details>`;
+          // Arrow toggle
+          const detG = detailRowsEl.querySelector('details.det-gas');
+          if (detG) {
+            const arr = detG.querySelector('.det-arr');
+            const upd = () => { if (arr) arr.style.transform = detG.open ? 'rotate(90deg)' : 'rotate(0deg)'; };
+            upd();
+            detG.addEventListener('toggle', () => { this._gasDetOpen = detG.open; upd(); });
+          }
+          // Clear pie filter button
+          detailRowsEl.querySelector('.btn-clear-pie-filter')?.addEventListener('click', e => {
+            e.stopPropagation();
+            this._resCatPieFilter = null;
+            _renderDetailRowsFn?.();
+          });
+        };
+
+        _renderDetailRowsFn();
       } else {
         detailRowsEl.innerHTML = '';
       }
@@ -4463,16 +4545,16 @@ window.Mods.gastos = {
 
     // Handlers
     document.getElementById('r-card-gastos')?.addEventListener('click', () => {
-      if (this._resView !== 'gastos') { this._resView = 'gastos'; this._resFilterMonth = null; this._drawResumen(); }
+      if (this._resView !== 'gastos') { this._resView = 'gastos'; this._resFilterMonth = null; this._resCatPieFilter = null; this._drawResumen(); }
     });
     document.getElementById('r-card-benef')?.addEventListener('click', () => {
       this._resView = this._resView === 'beneficios' ? 'gastos' : 'beneficios';
-      this._resFilterMonth = null;
+      this._resFilterMonth = null; this._resCatPieFilter = null;
       this._drawResumen();
     });
     document.getElementById('r-card-cuotas')?.addEventListener('click', () => {
       this._resView = this._resView === 'cuotas' ? 'gastos' : 'cuotas';
-      this._resFilterMonth = null;
+      this._resFilterMonth = null; this._resCatPieFilter = null;
       this._drawResumen();
     });
 
@@ -4492,6 +4574,7 @@ window.Mods.gastos = {
           if (_detR) this._recurDetOpen  = _detR.open;
         }
       }
+      this._resCatPieFilter = null;
       this._resFilterMonth = this._resFilterMonth === m.ym ? null : m.ym;
       this._drawResumen();
     });
