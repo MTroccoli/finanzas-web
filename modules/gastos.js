@@ -4083,7 +4083,7 @@ window.Mods.gastos = {
             ${isCuotas ? 'Planes activos con cuotas pendientes' : isBenef ? 'Ahorro por comercio · ' + (detailMonthLabel || curLabel) : 'Gastos por categoría · ' + (detailMonthLabel || curLabel)}
             ${detailMonthLabel ? `<button class="btn-clear-res-filter" style="font-size:.7rem;padding:2px 8px;border-radius:12px;border:1px solid var(--accent);background:rgba(46,127,217,.15);color:var(--accent);cursor:pointer">📅 ${detailMonthLabel} ✕</button>` : ''}
           </div>
-          ${isCuotas ? '' : `<div style="font-size:.78rem;color:var(--text-sec)">
+          ${(isCuotas || isBenef) ? '' : `<div style="font-size:.78rem;color:var(--text-sec)">
             Total gastos: <span style="color:var(--accent);font-family:'DM Mono',monospace;font-weight:600">
               ${this._gastoMoneda === 'ORIGEN'
                 ? (() => { const p = []; if (detailGastUYU>0) p.push(this._fmtMon(detailGastUYU,'UYU')); if (detailGastUSD>0) p.push(this._fmtUSD(detailGastUSD)); return p.join(' · ') || '—'; })()
