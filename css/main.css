@@ -16,7 +16,7 @@
   --topbar-h:     0px;
   --nav-h:        46px;
   --subnav-h:     44px;
-  --mob-nav-h:    62px;
+  --mob-nav-h:    66px;
 }
 
 /* ── Reset & base ──────────────────────────────────────────────────────── */
@@ -795,9 +795,9 @@ tbody tr:hover td { background: rgba(46,127,217,.04); }
   #mainnav {
     top: auto;
     bottom: 0;
-    height: var(--mob-nav-h);
+    height: calc(var(--mob-nav-h) + env(safe-area-inset-bottom, 0px));
+    padding: 0 0 env(safe-area-inset-bottom, 0px);
     justify-content: space-around;
-    padding: 0;
     border-top: 1px solid var(--border);
     border-bottom: none;
     background: rgba(7,30,61,.97);
@@ -805,15 +805,15 @@ tbody tr:hover td { background: rgba(46,127,217,.04); }
   }
   .nav-item {
     flex-direction: column;
-    gap: 3px;
-    padding: 6px 4px;
+    gap: 4px;
+    padding: 6px 2px;
     border-bottom: none;
     border-top: 2px solid transparent;
     flex: 1;
     justify-content: center;
     text-align: center;
-    font-size: 8px;
-    letter-spacing: .04em;
+    font-size: 10px;
+    letter-spacing: .03em;
     text-transform: uppercase;
   }
   .nav-item.active {
@@ -821,19 +821,23 @@ tbody tr:hover td { background: rgba(46,127,217,.04); }
     border-top-color: var(--accent);
     background: rgba(46,127,217,.07);
   }
-  .nav-icon { font-size: 20px; }
+  .nav-icon { font-size: 22px; }
 
+  /* Subnav al fondo, encima del main nav */
   #subnav {
-    top: 0;
+    top: auto;
+    bottom: calc(var(--mob-nav-h) + env(safe-area-inset-bottom, 0px));
     padding: 0 12px;
   }
 
   #content {
     margin-top: var(--nav-h);
-    padding: 16px 14px calc(var(--mob-nav-h) + 16px);
+    padding: 16px 14px calc(var(--mob-nav-h) + env(safe-area-inset-bottom, 0px) + 16px);
   }
+  /* Con subnav: mismo margin-top que el resto (título arriba, subnav abajo) */
   #content.with-subnav {
-    margin-top: calc(var(--nav-h) + var(--subnav-h));
+    margin-top: var(--nav-h);
+    padding-bottom: calc(var(--mob-nav-h) + env(safe-area-inset-bottom, 0px) + var(--subnav-h) + 16px);
   }
 
   .metrics-row { grid-template-columns: repeat(2, 1fr); }
