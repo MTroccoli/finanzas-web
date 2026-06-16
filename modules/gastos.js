@@ -1368,8 +1368,11 @@ window.Mods.gastos = {
     const gc = document.getElementById('g-content');
     const today = new Date().toISOString().slice(0,10);
 
-    const { data: bancosData } = await getDB().from('gastos')
-      .select('banco_tarjeta').not('banco_tarjeta', 'is', null).order('banco_tarjeta');
+    const [bancosRes, gasPresets] = await Promise.all([
+      getDB().from('gastos').select('banco_tarjeta').not('banco_tarjeta', 'is', null).order('banco_tarjeta'),
+      this._loadGastosPresets(),
+    ]);
+    const { data: bancosData } = bancosRes;
     const bancosList = [...new Set((bancosData||[]).map(r => r.banco_tarjeta).filter(Boolean))];
 
     const savedSt = `font-size:.72rem;padding:2px 8px;border-radius:4px;border:1px solid var(--border);background:var(--surface);color:var(--text-sec);cursor:pointer`;
@@ -1395,7 +1398,52 @@ window.Mods.gastos = {
           style="background:none;border:none;color:var(--text-sec);cursor:pointer;font-size:.9rem;padding:0 6px;line-height:1">✕</button>
       </div>`;
 
+    const tdS0 = 'padding:6px 6px;border-bottom:1px solid rgba(255,255,255,.04);font-size:.78rem';
+    const presetsHTML = gasPresets.length ? `
+      <div class="form-card" style="margin-bottom:.75rem;padding:14px 16px">
+        <details id="g-presets-details" open>
+          <summary style="cursor:pointer;font-size:.84rem;font-weight:600;list-style:none;user-select:none;display:flex;align-items:center;gap:8px">
+            ⚡ Recurrentes guardados <span style="font-size:.72rem;font-weight:400;color:var(--text-sec)">(${gasPresets.length})</span>
+          </summary>
+          <div style="margin-top:10px;overflow-x:auto">
+            <table style="width:100%;border-collapse:collapse;font-size:.78rem;min-width:380px">
+              <thead><tr style="border-bottom:1px solid var(--border)">
+                <th style="padding:4px 6px;text-align:left;font-size:.62rem;text-transform:uppercase;color:var(--text-sec)">Comercio</th>
+                <th style="padding:4px 6px;text-align:right;font-size:.62rem;text-transform:uppercase;color:var(--text-sec)">Monto</th>
+                <th style="padding:4px 6px;font-size:.62rem;text-transform:uppercase;color:var(--text-sec)">Frecuencia</th>
+                <th style="padding:4px 6px;text-align:center;font-size:.62rem;text-transform:uppercase;color:var(--text-sec)" title="Carga automática">Auto</th>
+                <th style="padding:4px 6px;font-size:.62rem;text-transform:uppercase;color:var(--text-sec)">Medio</th>
+                <th style="padding:4px 6px;font-size:.62rem;text-transform:uppercase;color:var(--text-sec)">Próx.</th>
+                <th></th>
+              </tr></thead>
+              <tbody>
+                ${gasPresets.map((p, i) => `
+                  <tr data-pidx="${i}" style="border-bottom:1px solid rgba(255,255,255,.03)">
+                    <td style="${tdS0}">${p.comercio || '—'}</td>
+                    <td style="${tdS0};text-align:right;font-family:'DM Mono',monospace;color:var(--accent)">${p.monto} <span style="color:var(--text-sec)">${p.moneda||'UYU'}</span></td>
+                    <td style="${tdS0};color:var(--accent)">${p.frecuencia || '—'}</td>
+                    <td style="${tdS0};text-align:center">
+                      <input type="checkbox" class="g-preset-auto" data-idx="${i}" ${p.auto ? 'checked' : ''}
+                        ${(!p.banco_tarjeta || p.banco_tarjeta === 'Efectivo') ? '' : 'disabled title="TDC: viene del EDC"'}
+                        style="accent-color:var(--accent);cursor:pointer">
+                    </td>
+                    <td style="${tdS0};font-size:.72rem;color:${(!p.banco_tarjeta||p.banco_tarjeta==='Efectivo')?'#10b981':'var(--text-sec)'}">
+                      ${p.banco_tarjeta || '—'}${(!p.banco_tarjeta||p.banco_tarjeta==='Efectivo')?'':' <span title="No auto-carga; viene del EDC" style="opacity:.6">🚫</span>'}
+                    </td>
+                    <td style="${tdS0};font-size:.7rem;color:var(--text-sec);white-space:nowrap">${p.frecuencia && p.ultima_carga ? this._nextDueGasto(p.ultima_carga, p.frecuencia) : '—'}</td>
+                    <td style="${tdS0};white-space:nowrap">
+                      <button class="g-preset-load" data-idx="${i}" style="font-size:.68rem;padding:2px 6px;border-radius:4px;border:1px solid var(--accent);background:rgba(46,127,217,.1);color:var(--accent);cursor:pointer;margin-right:3px">📝</button>
+                      <button class="g-preset-del" data-idx="${i}" style="font-size:.68rem;padding:2px 5px;border-radius:4px;border:none;background:none;color:var(--red);cursor:pointer">✕</button>
+                    </td>
+                  </tr>`).join('')}
+              </tbody>
+            </table>
+          </div>
+        </details>
+      </div>` : '';
+
     gc.innerHTML = `
+      ${presetsHTML}
       ${savedHTML}
       <div class="form-card">
         <h3>Nuevo gasto</h3>
@@ -1520,6 +1568,43 @@ window.Mods.gastos = {
 
     document.getElementById('g-tipo-gasto').addEventListener('change', e => {
       document.getElementById('g-rec-panel').style.display = e.target.value === 'recurrente' ? 'block' : 'none';
+    });
+
+    // ── Gestión de presets recurrentes ───────────────────────────────────────
+    document.querySelectorAll('.g-preset-auto').forEach(chk => {
+      chk.addEventListener('change', async () => {
+        const arr = await this._loadGastosPresets();
+        if (arr[+chk.dataset.idx]) { arr[+chk.dataset.idx].auto = chk.checked; await this._saveGastosPresets(arr); }
+      });
+    });
+
+    document.querySelectorAll('.g-preset-del').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const arr = await this._loadGastosPresets();
+        arr.splice(+btn.dataset.idx, 1);
+        await this._saveGastosPresets(arr);
+        this._drawManual();
+      });
+    });
+
+    document.querySelectorAll('.g-preset-load').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const arr = await this._loadGastosPresets();
+        const p = arr[+btn.dataset.idx];
+        if (!p) return;
+        document.getElementById('g-monto').value          = p.monto || '';
+        document.getElementById('g-moneda').value         = p.moneda || 'UYU';
+        document.getElementById('g-comercio').value       = p.comercio || '';
+        document.getElementById('g-tipo-gasto').value     = 'recurrente';
+        document.getElementById('g-rec-panel').style.display = 'block';
+        document.getElementById('g-rec-freq').value       = p.frecuencia || 'mensual';
+        document.getElementById('g-rec-auto').checked     = !!p.auto;
+        const bancoEl = document.getElementById('g-banco');
+        if (bancoEl) bancoEl.value = p.banco_tarjeta || '';
+        const catEl = document.getElementById('g-categoria');
+        if (catEl) catEl.value = p.categoria_id || '';
+        document.getElementById('g-monto')?.focus();
+      });
     });
 
     const _readForm = () => {
@@ -3666,13 +3751,10 @@ window.Mods.gastos = {
 
     const todayStr = now.toISOString().slice(0, 10);
 
-    // Query 2: cuotas activas — busca el último pago conocido de cada plan
-    const oneYrAgo = new Date(now.getFullYear() - 1, now.getMonth(), 1).toISOString().slice(0, 10);
+    // Query 2: cuotas activas — busca el último pago conocido de cada plan (sin restricción de fecha, igual que _drawCuotas)
     let qActiveCuotas = getDB().from('gastos')
       .select('fecha, monto, moneda, cuota_actual, cuotas_totales, comercio, banco_tarjeta')
-      .not('cuota_actual', 'is', null)
       .not('cuotas_totales', 'is', null)
-      .gte('fecha', oneYrAgo)
       .or('titular_adicional.is.null,incluido_en_gastos.eq.true')
       .order('fecha', { ascending: false });
     if (this._resBanco) qActiveCuotas = qActiveCuotas.eq('banco_tarjeta', this._resBanco);
@@ -3695,7 +3777,7 @@ window.Mods.gastos = {
     // Encontrar el pago más reciente de cada plan (comercio + cuotas_totales + monto + moneda)
     const planMap = {};
     for (const r of activeCuotasAll) {
-      const key = `${(r.comercio || '').slice(0,30)}|${r.cuotas_totales}|${Math.round(parseFloat(r.monto))}|${r.moneda}`;
+      const key = `${r.comercio || ''}|${r.cuotas_totales}|${Math.round(parseFloat(r.monto))}|${r.moneda}`;
       if (!planMap[key] || r.cuota_actual > planMap[key].cuota_actual) planMap[key] = r;
     }
     // Proyectar hasta la última cuota (mínimo 3 meses visibles en el gráfico)
@@ -4291,7 +4373,7 @@ window.Mods.gastos = {
                     <td style="${tdS}"><span style="display:block;max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${desc}</span>
                       <span style="font-size:.64rem;color:var(--text-sec)">${catStr}</span>
                     </td>
-                    <td style="${tdS};text-align:right;font-family:'DM Mono',monospace;font-weight:600;white-space:nowrap;color:${isBen ? '#10b981' : '#3b82f6'}">${isBen ? '−' : ''}${monStr}</td>
+                    <td style="${tdS};text-align:right;font-family:'DM Mono',monospace;font-weight:600;white-space:nowrap;color:${isBen ? '#10b981' : r.tipo_gasto === 'recurrente' ? '#a78bfa' : '#3b82f6'}">${isBen ? '−' : ''}${monStr}${r.tipo_gasto === 'recurrente' ? ' <span style="font-size:.6rem;opacity:.8">🔁</span>' : ''}</td>
                   </tr>`;
                 }).join('')}
               </tbody>
@@ -4392,6 +4474,8 @@ window.Mods.gastos = {
     for (let i = 0; i < presets.length; i++) {
       const p = presets[i];
       if (!p.auto || !p.frecuencia || !p.ultima_carga) continue;
+      // TDC recurrentes no se auto-cargan — vienen por el EDC; solo Efectivo/sin medio
+      if (p.banco_tarjeta && p.banco_tarjeta !== 'Efectivo') continue;
       if (today < this._nextDueGasto(p.ultima_carga, p.frecuencia)) continue;
       try {
         await dbInsert('gastos', {

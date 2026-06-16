@@ -23,7 +23,7 @@ window.Mods.dashboard = {
       getDB().from('ingresos').select('fecha,monto,moneda')
         .gte('fecha', desde6).order('fecha', {ascending: true}),
       getDB().from('gastos').select('comercio,monto,moneda,cuota_actual,cuotas_totales,fecha')
-        .eq('tipo_gasto', 'cuota').order('fecha', {ascending: false}),
+        .not('cuotas_totales', 'is', null).order('fecha', {ascending: false}),
       getConfig('tipo_cambio'),
     ]);
 
@@ -68,15 +68,10 @@ window.Mods.dashboard = {
 
     const prev = byMonth6[months6[4].ym];
 
-    // Active cuota plans — use fecha-based deduplication (highest cuota_actual per plan key)
+    // Active cuota plans — same deduplication key as _drawCuotas() in gastos.js
     const planMap = {};
     allCuotas.forEach(r => {
-      const key = `${(r.comercio||'').slice(0,30)}|${r.cuotas_totales}|${Math.round(parseFloat(r.monto))}|${r.moneda}`;
-      if (!planMap[key] || r.cuota_actual > planMap[key].cuota_actual) planMap[key] = r;
-    });
-    // Also pick up cuota plans embedded in regular gastos
-    gastos.filter(g => (g.cuotas_totales || 1) > 1).forEach(r => {
-      const key = `${(r.comercio||'').slice(0,30)}|${r.cuotas_totales}|${Math.round(parseFloat(r.monto))}|${r.moneda}`;
+      const key = `${r.comercio||''}|${r.cuotas_totales}|${Math.round(parseFloat(r.monto))}|${r.moneda}`;
       if (!planMap[key] || r.cuota_actual > planMap[key].cuota_actual) planMap[key] = r;
     });
     const activePlans = Object.values(planMap).filter(p => p.cuota_actual < p.cuotas_totales);
@@ -94,11 +89,11 @@ window.Mods.dashboard = {
       }
     }
 
-    // Averages from last 3 complete months (months6[2..4], all before current)
-    const last3 = months6.slice(2, 5).map(m => m.ym);
+    // Recurrentes: use last closed month's actual amount (not an average)
+    const lastClosedYM = months6[4].ym;
     const recAvg = gastos
-      .filter(g => g.tipo_gasto === 'recurrente' && last3.includes(g.fecha.slice(0,7)))
-      .reduce((s, g) => s + toDisp(g.monto, g.moneda || 'UYU'), 0) / 3;
+      .filter(g => g.tipo_gasto === 'recurrente' && g.fecha.slice(0,7) === lastClosedYM)
+      .reduce((s, g) => s + toDisp(g.monto, g.moneda || 'UYU'), 0);
     const ingAvg = last3.reduce((s, ym) => s + (byMonth6[ym]?.ing || 0), 0) / 3;
 
     // Casual avg — last 12 months excluding current month (rolling year)
