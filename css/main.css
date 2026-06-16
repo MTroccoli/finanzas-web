@@ -16,7 +16,7 @@
   --topbar-h:     0px;
   --nav-h:        46px;
   --subnav-h:     44px;
-  --mob-nav-h:    46px;
+  --mob-nav-h:    66px;
 }
 
 /* ── Reset & base ──────────────────────────────────────────────────────── */
@@ -792,38 +792,36 @@ tbody tr:hover td { background: rgba(46,127,217,.04); }
    MOBILE ≤ 768px
 ════════════════════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
-  /* Main nav → pills horizontales scrolleables (mismo estilo que subnav) */
   #mainnav {
     top: auto;
     bottom: 0;
     height: calc(var(--mob-nav-h) + env(safe-area-inset-bottom, 0px));
-    padding: 0 12px env(safe-area-inset-bottom, 0px);
-    justify-content: flex-start;
-    gap: 6px;
+    padding: 0 0 env(safe-area-inset-bottom, 0px);
+    justify-content: space-around;
     border-top: 1px solid var(--border);
     border-bottom: none;
     background: rgba(7,30,61,.97);
     backdrop-filter: blur(16px);
   }
   .nav-item {
-    flex-direction: row;
-    flex: none;
-    gap: 5px;
-    padding: 5px 14px;
-    border: 1px solid transparent;
-    border-radius: 20px;
-    font-family: 'DM Mono', monospace;
-    font-size: .72rem;
-    letter-spacing: .06em;
+    flex-direction: column;
+    gap: 4px;
+    padding: 6px 2px;
+    border-bottom: none;
+    border-top: 2px solid transparent;
+    flex: 1;
+    justify-content: center;
+    text-align: center;
+    font-size: 10px;
+    letter-spacing: .03em;
     text-transform: uppercase;
-    white-space: nowrap;
   }
   .nav-item.active {
-    color: var(--accent);
-    background: rgba(46,127,217,.12);
-    border: 1px solid rgba(46,127,217,.4);
+    border-bottom: none;
+    border-top-color: var(--accent);
+    background: rgba(46,127,217,.07);
   }
-  .nav-icon { font-size: 14px; }
+  .nav-icon { font-size: 22px; }
 
   /* Subnav al fondo, encima del main nav */
   #subnav {
