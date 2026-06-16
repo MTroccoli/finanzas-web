@@ -43,10 +43,10 @@ window.Mods.dashboard = {
     const fmtD = (n) => {
       if (mode === 'USD') return fmtUSD(n);
       const dec = Math.abs(n) >= 100 ? 0 : 2;
-      return '$U ' + fmt(n, dec);
+      return '$U ' + fmt(n, dec);
     };
 
-    // Build 6-month grid for trend chart
+    // Build 6-month grid for trend chart (5 past months + current)
     const months6 = [];
     for (let i = 5; i >= 0; i--) {
       const d = new Date(curY, curM - 1 - i, 1);
@@ -58,34 +58,43 @@ window.Mods.dashboard = {
     const byMonth6 = {};
     months6.forEach(m => { byMonth6[m.ym] = {ing: 0, gas: 0}; });
 
-    gastos.filter(g => byMonth6[g.fecha.slice(0,7)] !== undefined)
+    // Only past months use actual gastos in the chart; current month uses projection
+    gastos.filter(g => byMonth6[g.fecha.slice(0,7)] !== undefined && g.fecha.slice(0,7) !== curYM)
       .forEach(g => { byMonth6[g.fecha.slice(0,7)].gas += toDisp(g.monto, g.moneda || 'UYU'); });
     ingresos.forEach(i => {
       const ym = i.fecha.slice(0,7);
       if (byMonth6[ym] !== undefined) byMonth6[ym].ing += toDisp(i.monto, i.moneda || 'UYU');
     });
 
-    const cur  = byMonth6[curYM];
     const prev = byMonth6[months6[4].ym];
-    const balance = cur.ing - cur.gas;
-    const prevBal = prev.ing - prev.gas;
-    const tasa     = cur.ing  > 0 ? Math.round(balance  / cur.ing  * 100) : 0;
-    const prevTasa = prev.ing > 0 ? Math.round(prevBal / prev.ing * 100) : 0;
 
-    // Active cuota plans
+    // Active cuota plans — use fecha-based deduplication (highest cuota_actual per plan key)
     const planMap = {};
     allCuotas.forEach(r => {
       const key = `${(r.comercio||'').slice(0,30)}|${r.cuotas_totales}|${Math.round(parseFloat(r.monto))}|${r.moneda}`;
       if (!planMap[key] || r.cuota_actual > planMap[key].cuota_actual) planMap[key] = r;
     });
-    // Also pick up cuota plans embedded in casual gastos (cuotas_totales > 1)
+    // Also pick up cuota plans embedded in regular gastos
     gastos.filter(g => (g.cuotas_totales || 1) > 1).forEach(r => {
       const key = `${(r.comercio||'').slice(0,30)}|${r.cuotas_totales}|${Math.round(parseFloat(r.monto))}|${r.moneda}`;
       if (!planMap[key] || r.cuota_actual > planMap[key].cuota_actual) planMap[key] = r;
     });
     const activePlans = Object.values(planMap).filter(p => p.cuota_actual < p.cuotas_totales);
 
-    // Averages from last 3 complete months (months6[2..4])
+    // Build cuota schedule using actual fecha (same approach as Gastos module)
+    const cuotaSchedule = {};
+    for (const p of activePlans) {
+      const rem = p.cuotas_totales - p.cuota_actual;
+      const [yr, mo] = p.fecha.split('-').map(Number);
+      const base = new Date(yr, mo - 1, 1);
+      for (let k = 1; k <= rem; k++) {
+        const d = new Date(base.getFullYear(), base.getMonth() + k, 1);
+        const ym = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+        cuotaSchedule[ym] = (cuotaSchedule[ym] || 0) + toDisp(p.monto, p.moneda || 'UYU');
+      }
+    }
+
+    // Averages from last 3 complete months (months6[2..4], all before current)
     const last3 = months6.slice(2, 5).map(m => m.ym);
     const recAvg = gastos
       .filter(g => g.tipo_gasto === 'recurrente' && last3.includes(g.fecha.slice(0,7)))
@@ -104,13 +113,23 @@ window.Mods.dashboard = {
     const casualTotal = casualRows.reduce((s, g) => s + toDisp(g.monto, g.moneda || 'UYU'), 0);
     const casualAvg   = casualMonthsWithData.size > 0 ? casualTotal / casualMonthsWithData.size : 0;
 
-    // 3-month projection
+    // Current month: use projection instead of partial actuals
+    const cuotasCurMonth = cuotaSchedule[curYM] || 0;
+    const curProjGas = recAvg + casualAvg + cuotasCurMonth;
+    byMonth6[curYM].gas = curProjGas;
+
+    const cur     = byMonth6[curYM];
+    const balance = cur.ing - cur.gas;
+    const prevBal = prev.ing - prev.gas;
+    const tasa     = cur.ing  > 0 ? Math.round(balance  / cur.ing  * 100) : 0;
+    const prevTasa = prev.ing > 0 ? Math.round(prevBal / prev.ing * 100) : 0;
+
+    // 3-month projection (next months use cuotaSchedule for accuracy)
     const proj = Array.from({length: 3}, (_, idx) => {
       const i = idx + 1;
       const d = new Date(curY, curM - 1 + i, 1);
-      const cuotasProy = activePlans
-        .filter(p => (p.cuotas_totales - p.cuota_actual) >= i)
-        .reduce((s, p) => s + toDisp(p.monto, p.moneda || 'UYU'), 0);
+      const projYM = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+      const cuotasProy = cuotaSchedule[projYM] || 0;
       const totalGasto = recAvg + casualAvg + cuotasProy;
       return {
         label:      d.toLocaleDateString('es-AR', {month: 'long'}),
@@ -121,7 +140,7 @@ window.Mods.dashboard = {
     });
 
     const dIng  = cur.ing - prev.ing;
-    const dGas  = cur.gas - prev.gas;
+    const dGas  = curProjGas - (recAvg + casualAvg + (cuotaSchedule[months6[4].ym] || 0));
     const dTasa = tasa - prevTasa;
     const sym   = mode === 'USD' ? '$' : '$U';
 
@@ -137,8 +156,8 @@ window.Mods.dashboard = {
 
     c.innerHTML = `
       <div class="g-sticky-header">
-        <h1>Panorama</h1>
-        <p class="page-subtitle">${monthTitle} · flujo de caja</p>
+        <h1>Análisis</h1>
+        <p class="page-subtitle">${monthTitle} · flujo de caja proyectado</p>
         <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding-bottom:8px">
           <div style="display:flex;gap:6px">
             <button id="pan-usd" class="g-tab${mode==='USD'?' active':''}" onclick="window.Mods.dashboard._setMode('USD')">USD</button>
@@ -154,22 +173,22 @@ window.Mods.dashboard = {
 
       <div class="metrics-row" style="margin-top:16px">
         <div class="metric-card">
-          <div class="metric-label">Ingresos · jun.</div>
+          <div class="metric-label">Ingresos · ${now.toLocaleDateString('es-AR',{month:'short'})}</div>
           <div class="metric-value pos">${fmtD(cur.ing)}</div>
           ${delta(dIng, true)}
         </div>
         <div class="metric-card">
-          <div class="metric-label">Gastos · jun. <span style="font-size:.55rem;color:var(--text-sec)">(en curso)</span></div>
-          <div class="metric-value">${fmtD(cur.gas)}</div>
-          ${delta(dGas, false)}
+          <div class="metric-label">Gastos proyectados <span style="font-size:.55rem;color:var(--text-sec)">(est.)</span></div>
+          <div class="metric-value">${fmtD(curProjGas)}</div>
+          <span style="font-size:.65rem;font-family:'DM Mono',monospace;margin-top:5px;display:block;color:var(--text-sec)">rec + casual + cuotas</span>
         </div>
         <div class="metric-card">
-          <div class="metric-label">Balance</div>
+          <div class="metric-label">Balance estimado</div>
           <div class="metric-value ${plClass(balance)}">${plSign(balance)}${fmtD(balance)}</div>
           ${delta(balance - prevBal, true)}
         </div>
         <div class="metric-card">
-          <div class="metric-label">Tasa de ahorro</div>
+          <div class="metric-label">Tasa de ahorro est.</div>
           <div class="metric-value ${plClass(tasa)}">${tasa}%</div>
           <span style="font-size:.65rem;font-family:'DM Mono',monospace;margin-top:5px;display:block;color:${dTasa>=0?'var(--green)':'var(--red)'}">
             ${dTasa>=0?'+':''}${dTasa}pp vs mes ant.
@@ -179,7 +198,7 @@ window.Mods.dashboard = {
 
       <div class="chart-card">
         <div style="font-family:'DM Mono',monospace;font-size:.68rem;text-transform:uppercase;letter-spacing:.1em;color:var(--text-sec);margin-bottom:10px">
-          Flujo de caja · últimos 6 meses (${mode})
+          Flujo de caja · últimos 6 meses (${mode}) · mes actual = estimado
         </div>
         <div id="pan-trend" style="height:220px"></div>
       </div>
@@ -252,7 +271,7 @@ window.Mods.dashboard = {
       ` : ''}
     `;
 
-    // Trend chart
+    // Trend chart — current month bar slightly translucent to signal "estimated"
     const tickpfx = mode === 'USD' ? '$' : '$U ';
     Plotly.newPlot('pan-trend', [
       {
@@ -264,8 +283,12 @@ window.Mods.dashboard = {
       {
         x: months6.map(m => m.label),
         y: months6.map(m => byMonth6[m.ym].gas),
-        name: 'Gastos', type: 'bar',
-        marker: {color: 'rgba(46,127,217,.7)'},
+        name: 'Gastos (est. mes actual)', type: 'bar',
+        marker: {
+          color: months6.map((m, i) =>
+            i === 5 ? 'rgba(46,127,217,.45)' : 'rgba(46,127,217,.7)'
+          ),
+        },
       },
     ], {
       paper_bgcolor: 'rgba(0,0,0,0)',

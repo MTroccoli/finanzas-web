@@ -8,6 +8,7 @@ window.Mods.gastos = {
   _excludedCards: '',
   _splitCatNames: new Set(['Restaurantes', 'Viajes']),
   _histMes:      null,
+  _histHasta:    null,
   _histCat:      '',
   _gastoMoneda:  'ORIGEN', // 'ORIGEN' | 'UYU' | 'USD' — modo global de vista de importes
   _histTipo:     '',
@@ -1613,17 +1614,38 @@ window.Mods.gastos = {
 
     const now       = new Date();
     const mesAct    = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
-    const mesFilter = this._histMes    || mesAct;
+    const isAll     = this._histMes === '_all_';
+    const mesDesde  = isAll ? null : (this._histMes || mesAct);
+    const mesHasta  = isAll ? null : (this._histHasta || mesDesde);
     const catFilter = this._histCat    || '';
     const viewMode  = this._gastoMoneda || 'ORIGEN'; // 'ORIGEN' | 'UYU' | 'USD'
     const tipoFilter= this._histTipo   || '';
     const tc        = parseFloat(this._tc) || 0;
 
-    const [yr, mo] = mesFilter.split('-').map(Number);
-    const desde = `${yr}-${String(mo).padStart(2,'0')}-01`;
-    const hasta = `${yr}-${String(mo).padStart(2,'0')}-${new Date(yr, mo, 0).getDate()}`;
+    let desde, hasta;
+    if (isAll) {
+      const d12 = new Date(now.getFullYear(), now.getMonth() - 11, 1);
+      desde = `${d12.getFullYear()}-${String(d12.getMonth()+1).padStart(2,'0')}-01`;
+      hasta = `${mesAct}-${new Date(now.getFullYear(), now.getMonth()+1, 0).getDate()}`;
+    } else {
+      const [yr1, mo1] = mesDesde.split('-').map(Number);
+      const [yr2, mo2] = mesHasta.split('-').map(Number);
+      desde = `${yr1}-${String(mo1).padStart(2,'0')}-01`;
+      hasta = `${yr2}-${String(mo2).padStart(2,'0')}-${new Date(yr2, mo2, 0).getDate()}`;
+    }
+    const rangeLabel = isAll ? 'últimos 12 meses'
+      : mesDesde === mesHasta ? mesDesde
+      : `${mesDesde} → ${mesHasta}`;
 
     const meses = Array.from({ length: 12 }, (_, i) => {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      return {
+        val: `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`,
+        lbl: d.toLocaleDateString('es-UY', { month: 'long', year: 'numeric' }),
+      };
+    });
+
+    const meses = Array.from({ length: 24 }, (_, i) => {
       const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
       return {
         val: `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`,
@@ -1724,9 +1746,16 @@ window.Mods.gastos = {
       <div class="form-card" style="padding:12px 16px;margin-bottom:.75rem">
         <div class="g-filters">
           <div>
-            <div class="g-fl-lbl">Mes</div>
+            <div class="g-fl-lbl">Desde</div>
             <select id="h-mes" style="${selSt}">
-              ${meses.map(m => `<option value="${m.val}"${m.val===mesFilter?' selected':''}>${m.lbl}</option>`).join('')}
+              <option value="_all_"${isAll?' selected':''}>Todos (2 años)</option>
+              ${meses.map(m => `<option value="${m.val}"${!isAll&&m.val===mesDesde?' selected':''}>${m.lbl}</option>`).join('')}
+            </select>
+          </div>
+          <div${isAll?' style="display:none"':''} id="h-hasta-wrap">
+            <div class="g-fl-lbl">Hasta</div>
+            <select id="h-hasta" style="${selSt}">
+              ${meses.map(m => `<option value="${m.val}"${m.val===mesHasta?' selected':''}>${m.lbl}</option>`).join('')}
             </select>
           </div>
           <div>
@@ -1784,7 +1813,7 @@ window.Mods.gastos = {
                 cursor:pointer;font-size:.85rem;padding:2px 6px;
                 visibility:${this._histSearch?'visible':'hidden'}">✕</button>
           </div>
-          <span style="font-size:.68rem;color:var(--text-sec);font-family:'DM Mono',monospace">${mesFilter}</span>
+          <span style="font-size:.68rem;color:var(--text-sec);font-family:'DM Mono',monospace">${rangeLabel}</span>
         </div>
         ${gastos.length === 0 ? `
           <div class="empty"><div class="empty-icon">💸</div>
@@ -1812,9 +1841,16 @@ window.Mods.gastos = {
     this._gastosCache = { gastos, viewMode, tc, catOpts };
     this._renderGastosTbody();
 
-    ['h-mes','h-cat','h-tipo','h-banco','h-titular'].forEach(id => {
+    ['h-mes','h-hasta','h-cat','h-tipo','h-banco','h-titular'].forEach(id => {
       document.getElementById(id)?.addEventListener('change', () => {
-        this._histMes     = document.getElementById('h-mes').value;
+        const newMes = document.getElementById('h-mes').value;
+        this._histMes  = newMes;
+        if (newMes === '_all_') {
+          this._histHasta = null;
+        } else {
+          const hastaVal = document.getElementById('h-hasta')?.value || newMes;
+          this._histHasta = hastaVal < newMes ? newMes : hastaVal;
+        }
         this._histCat     = document.getElementById('h-cat')?.value || '';
         this._histTipo    = document.getElementById('h-tipo').value;
         this._histBanco   = document.getElementById('h-banco')?.value   || '';
