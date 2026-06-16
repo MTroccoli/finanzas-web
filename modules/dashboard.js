@@ -256,7 +256,7 @@ window.Mods.dashboard = {
                       <td>${p.comercio || '—'}</td>
                       <td style="color:var(--text);font-family:'DM Mono',monospace;font-size:.75rem">${p.cuota_actual}/${p.cuotas_totales} · ${rem} rest.</td>
                       <td style="color:var(--gold);font-family:'DM Mono',monospace">${fmtD(cuota)}</td>
-                      <td style="color:var(--gold);font-family:'DM Mono',monospace">${fmtD(cuota * rem)}</td>
+                      <td style="color:var(--text-sec);font-family:'DM Mono',monospace;text-align:right">${fmtD(cuota * rem)}</td>
                     </tr>`;
                   }).join('')}
               </tbody>
@@ -296,7 +296,7 @@ window.Mods.dashboard = {
       bargap: 0.25,
       bargroupgap: 0.08,
       margin: {t: 10, r: 10, b: 50, l: 65},
-      showlegend: false,
+      legend: {orientation: 'h', y: -0.28, x: 0.5, xanchor: 'center', font: {size: 11}},
       xaxis: {fixedrange: true, gridcolor: 'rgba(255,255,255,.05)'},
       yaxis: {fixedrange: true, gridcolor: 'rgba(255,255,255,.05)', tickprefix: tickpfx},
     }, {displayModeBar: false, responsive: true, scrollZoom: false});

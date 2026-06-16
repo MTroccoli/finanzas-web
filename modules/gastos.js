@@ -3763,7 +3763,7 @@ window.Mods.gastos = {
     const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1).toISOString().slice(0,10);
     const lastMonthEnd   = new Date(now.getFullYear(), now.getMonth(), 0).toISOString().slice(0,10);
     let qRecurrentes = getDB().from('gastos')
-      .select('monto, moneda, comercio, categoria_id')
+      .select('monto, moneda, comercio, categoria_id, banco_tarjeta')
       .eq('tipo_gasto', 'recurrente')
       .gte('fecha', lastMonthStart)
       .lte('fecha', lastMonthEnd)
@@ -4231,13 +4231,28 @@ window.Mods.gastos = {
       };
       const tdSt  = 'padding:7px 6px;border-bottom:1px solid rgba(255,255,255,.04);font-size:.8rem';
 
-      // Recurrentes proyectados (violeta) — base del gráfico
+      // Recurrentes proyectados (violeta) — acordeón con cabecera, medio de pago y total
+      const recurTotStr = (() => {
+        const parts = [];
+        if (recurUYU > 0) parts.push(this._fmtMon(recurUYU, 'UYU'));
+        if (recurUSD > 0) parts.push(this._fmtUSD(recurUSD));
+        return parts.join(' + ') || '—';
+      })();
       const recurSection = detailMonth && recurrentesLast.length ? `
-        <div style="margin-bottom:${displayRows.length ? '14px' : '0'}">
-          <div style="font-size:.68rem;color:#a78bfa;text-transform:uppercase;font-weight:500;padding:0 2px 6px;letter-spacing:.06em">
-            🔁 Recurrentes — proyectado desde ${lastMonthStart.slice(0,7)}
-          </div>
+        <details open style="margin-top:${displayRows.length ? '14px' : '0'}">
+          <summary style="list-style:none;cursor:pointer;user-select:none;padding:2px 2px 8px">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <span style="font-size:.68rem;color:#a78bfa;text-transform:uppercase;font-weight:500;letter-spacing:.06em">🔁 Recurrentes · ${lastMonthStart.slice(0,7)}</span>
+              <span style="font-family:'DM Mono',monospace;font-size:.78rem;color:#a78bfa">${recurTotStr}</span>
+            </div>
+          </summary>
           <table style="width:100%;border-collapse:collapse">
+            <thead><tr>
+              <th style="${thSt};text-align:left">Comercio</th>
+              <th style="${thSt};text-align:left">Categoría</th>
+              <th style="${thSt};text-align:right">Monto</th>
+              <th style="${thSt};text-align:left">Medio de pago</th>
+            </tr></thead>
             <tbody>
               ${recurrentesLast.map(r => {
                 const cat    = r.categoria_id != null ? this._cats.find(c => c.id === r.categoria_id) : null;
@@ -4245,15 +4260,20 @@ window.Mods.gastos = {
                 const montoN = parseFloat(r.monto);
                 const monStr = r.moneda === 'USD' ? this._fmtUSD(montoN) : this._fmtMon(montoN, r.moneda);
                 return `<tr>
-                  <td style="${tdSt}">${r.comercio || '—'}
-                    <div style="font-size:.68rem;color:var(--text-sec)">${catStr}</div>
-                  </td>
+                  <td style="${tdSt}">${r.comercio || '—'}</td>
+                  <td style="${tdSt};color:var(--text-sec);font-size:.72rem">${catStr}</td>
                   <td style="${tdSt};text-align:right;font-family:'DM Mono',monospace;font-weight:600;color:#a78bfa">${monStr}</td>
+                  <td style="${tdSt};color:var(--text-sec);font-size:.72rem">${r.banco_tarjeta || '—'}</td>
                 </tr>`;
               }).join('')}
             </tbody>
+            <tfoot><tr>
+              <td colspan="2" style="padding:8px 6px;border-top:1px solid var(--border);font-size:.72rem;font-weight:600;color:var(--text-sec);text-transform:uppercase">Total recurrentes</td>
+              <td style="padding:8px 6px;border-top:1px solid var(--border);font-size:.78rem;font-weight:600;text-align:right;font-family:'DM Mono',monospace;color:#a78bfa">${recurTotStr}</td>
+              <td style="padding:8px 6px;border-top:1px solid var(--border)"></td>
+            </tr></tfoot>
           </table>
-        </div>` : '';
+        </details>` : '';
 
       if (!displayRows.length && !recurSection) {
         pieEl.innerHTML = `<div style="padding:20px;text-align:center;color:var(--text-sec);font-size:.85rem">${detailMonth ? 'Sin cuotas ni recurrentes en este mes' : 'Sin planes de cuotas activos'}</div>`;
@@ -4269,42 +4289,46 @@ window.Mods.gastos = {
         const footTotStr = footParts.join(' + ') || '—';
         const tfSt = 'padding:8px 6px;border-top:1px solid var(--border);font-size:.78rem;font-weight:600';
 
-        // Label header for cuotas section when combined
-        const cuotasHeader = recurSection
-          ? `<div style="font-size:.68rem;color:var(--gold);text-transform:uppercase;font-weight:500;padding:0 2px 6px;letter-spacing:.06em">📅 Cuotas</div>`
-          : '';
-
-        pieEl.innerHTML = `<div style="overflow-x:auto">${cuotasHeader}
-          <table style="width:100%;border-collapse:collapse">
-            <thead><tr>
-              <th style="${thSt};text-align:left">Compra</th>
-              <th style="${thSt};text-align:left">Tarjeta</th>
-              <th style="${thSt};text-align:center">Cuota</th>
-              ${thSrt('mes', 'Por mes')}
-              ${thSrt('total', 'Total restante')}
-            </tr></thead>
-            <tbody>
-              ${displayRows.map(p => {
-                const monStr = p.moneda === 'USD' ? this._fmtUSD(p.montoN) : this._fmtMon(p.montoN, p.moneda);
-                const totStr = p.moneda === 'USD' ? this._fmtUSD(p.montoN * p.futInst) : this._fmtMon(p.montoN * p.futInst, p.moneda);
-                return `<tr>
-                  <td style="${tdSt}">${p.comercio || '—'}
-                    <div style="font-size:.68rem;color:var(--text-sec)">${p.nextLabel ? 'Próx: ' + p.nextLabel : '—'} · ${p.moneda}</div>
-                  </td>
-                  <td style="${tdSt};color:var(--text-sec);font-size:.74rem">${p.banco_tarjeta || '—'}</td>
-                  <td style="${tdSt};text-align:center;font-family:'DM Mono',monospace;font-size:.78rem">
-                    ${p.nextInstNum ?? p.cuota_actual + 1}/${p.cuotas_totales}
-                  </td>
-                  <td style="${tdSt};text-align:right;font-family:'DM Mono',monospace;font-weight:600;color:var(--gold)">${monStr}</td>
-                  <td style="${tdSt};text-align:right;font-family:'DM Mono',monospace;color:var(--text-sec)">${totStr}</td>
-                </tr>`;
-              }).join('')}
-            </tbody>
-            <tfoot><tr>
-              <td colspan="3" style="${tfSt};color:var(--text-sec);font-size:.72rem;text-transform:uppercase">Total a pagar${detailMonth ? ' · ' + (projMonths.find(m => m.ym === detailMonth) || months.find(m => m.ym === detailMonth))?.label ?? detailMonth : ''}</td>
-              <td colspan="2" style="${tfSt};text-align:right;font-family:'DM Mono',monospace;color:var(--gold)">${footTotStr}</td>
-            </tr></tfoot>
-          </table>${recurSection}</div>`;
+        pieEl.innerHTML = `<div style="overflow-x:auto">
+          <details open>
+            <summary style="list-style:none;cursor:pointer;user-select:none;padding:2px 2px 8px">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <span style="font-size:.68rem;color:var(--gold);text-transform:uppercase;font-weight:500;letter-spacing:.06em">📅 Cuotas · ${displayRows.length} planes</span>
+                <span style="font-family:'DM Mono',monospace;font-size:.78rem;color:var(--gold)">${footTotStr}</span>
+              </div>
+            </summary>
+            <table style="width:100%;border-collapse:collapse">
+              <thead><tr>
+                <th style="${thSt};text-align:left">Compra</th>
+                <th style="${thSt};text-align:left">Tarjeta</th>
+                <th style="${thSt};text-align:center">Cuota</th>
+                ${thSrt('mes', 'Por mes')}
+                ${thSrt('total', 'Total restante')}
+              </tr></thead>
+              <tbody>
+                ${displayRows.map(p => {
+                  const monStr = p.moneda === 'USD' ? this._fmtUSD(p.montoN) : this._fmtMon(p.montoN, p.moneda);
+                  const totStr = p.moneda === 'USD' ? this._fmtUSD(p.montoN * p.futInst) : this._fmtMon(p.montoN * p.futInst, p.moneda);
+                  return `<tr>
+                    <td style="${tdSt}">${p.comercio || '—'}
+                      <div style="font-size:.68rem;color:var(--text-sec)">${p.nextLabel ? 'Próx: ' + p.nextLabel : '—'} · ${p.moneda}</div>
+                    </td>
+                    <td style="${tdSt};color:var(--text-sec);font-size:.74rem">${p.banco_tarjeta || '—'}</td>
+                    <td style="${tdSt};text-align:center;font-family:'DM Mono',monospace;font-size:.78rem">
+                      ${p.nextInstNum ?? p.cuota_actual + 1}/${p.cuotas_totales}
+                    </td>
+                    <td style="${tdSt};text-align:right;font-family:'DM Mono',monospace;font-weight:600;color:var(--gold)">${monStr}</td>
+                    <td style="${tdSt};text-align:right;font-family:'DM Mono',monospace;color:var(--text-sec)">${totStr}</td>
+                  </tr>`;
+                }).join('')}
+              </tbody>
+              <tfoot><tr>
+                <td colspan="3" style="${tfSt};color:var(--text-sec);font-size:.72rem;text-transform:uppercase">Total a pagar${detailMonth ? ' · ' + (projMonths.find(m => m.ym === detailMonth) || months.find(m => m.ym === detailMonth))?.label ?? detailMonth : ''}</td>
+                <td colspan="2" style="${tfSt};text-align:right;font-family:'DM Mono',monospace;color:var(--gold)">${footTotStr}</td>
+              </tr></tfoot>
+            </table>
+          </details>
+          ${recurSection}</div>`;
       }
     } else if (isBenef) {
       // Tabla de ahorro por comercio
