@@ -4,6 +4,7 @@ window.Mods.ingresos = {
   _presetsEditIdx: null,
   _ingEditId:      null,
   _tipos:          [],
+  _rows:           [],
 
   async render() {
     const c = document.getElementById('content');
@@ -17,6 +18,7 @@ window.Mods.ingresos = {
       this._loadPresets(),
     ]);
     this._tipos = tipos;
+    this._rows  = ingresos;
 
     const today   = new Date().toISOString().slice(0,10);
     const inp = `font-size:.82rem;padding:7px 8px;border-radius:6px;border:1px solid var(--border);background:var(--surface);color:var(--text);width:100%;max-width:100%;box-sizing:border-box`;
@@ -333,25 +335,26 @@ window.Mods.ingresos = {
         const moneda      = document.getElementById('i-moneda').value;
         const descripcion = document.getElementById('i-desc').value.trim() || null;
         const tipo_id     = document.getElementById('i-tipo').value ? parseInt(document.getElementById('i-tipo').value) : null;
+        const newRows = [];
         for (const fecha of fechas) {
-          await dbInsert('ingresos', { fecha, monto, moneda, descripcion, tipo_id });
+          const row = await dbInsert('ingresos', { fecha, monto, moneda, descripcion, tipo_id });
+          if (row) newRows.push(row);
         }
         toast(fechas.length > 1 ? `✅ ${fechas.length} ingresos registrados` : '✅ Ingreso registrado');
         e.target.reset();
         document.getElementById('i-fechas-wrap').innerHTML = fechaRowHTML();
         _bindRemoveFecha();
         document.getElementById('i-monto-lbl').textContent = 'Monto (UYU)';
-        const rows = await dbFetch('ingresos', { order: { col: 'fecha', asc: false }, limit: 200 });
-        document.getElementById('ing-list').innerHTML = this._renderList(rows, tipos, this._filterTipo);
+        this._rows = [...newRows, ...this._rows].sort((a, b) => b.fecha.localeCompare(a.fecha));
+        document.getElementById('ing-list').innerHTML = this._renderList(this._rows, tipos, this._filterTipo);
         this._bindDelete(tipos); this._bindEdit(tipos);
       } catch(err) { toast('❌ ' + err.message, 'err'); }
     });
 
-    // tipo filter
-    document.getElementById('ing-filter-tipo').addEventListener('change', async e => {
+    // tipo filter — instant, uses cached rows
+    document.getElementById('ing-filter-tipo').addEventListener('change', e => {
       this._filterTipo = e.target.value;
-      const rows = await dbFetch('ingresos', { order: { col: 'fecha', asc: false }, limit: 200 });
-      document.getElementById('ing-list').innerHTML = this._renderList(rows, tipos, this._filterTipo);
+      document.getElementById('ing-list').innerHTML = this._renderList(this._rows, tipos, this._filterTipo);
       this._bindDelete(tipos); this._bindEdit(tipos);
     });
 
@@ -378,10 +381,11 @@ window.Mods.ingresos = {
       btn.addEventListener('click', async () => {
         if (!confirm('¿Eliminar este ingreso?')) return;
         try {
-          await dbDelete('ingresos', { id: parseInt(btn.dataset.id) });
+          const id = parseInt(btn.dataset.id);
+          await dbDelete('ingresos', { id });
           toast('🗑 Eliminado');
-          const rows = await dbFetch('ingresos', { order: { col: 'fecha', asc: false }, limit: 200 });
-          document.getElementById('ing-list').innerHTML = this._renderList(rows, tipos, this._filterTipo);
+          this._rows = this._rows.filter(r => r.id !== id);
+          document.getElementById('ing-list').innerHTML = this._renderList(this._rows, tipos, this._filterTipo);
           this._bindDelete(tipos); this._bindEdit(tipos);
         } catch(err) { toast('❌ ' + err.message, 'err'); }
       })
@@ -428,10 +432,9 @@ window.Mods.ingresos = {
 
   _bindEdit(tipos) {
     document.querySelectorAll('.ing-edit').forEach(btn =>
-      btn.addEventListener('click', async () => {
+      btn.addEventListener('click', () => {
         this._ingEditId = parseInt(btn.dataset.id);
-        const rows = await dbFetch('ingresos', { order: { col: 'fecha', asc: false }, limit: 200 });
-        document.getElementById('ing-list').innerHTML = this._renderList(rows, tipos, this._filterTipo);
+        document.getElementById('ing-list').innerHTML = this._renderList(this._rows, tipos, this._filterTipo);
         this._bindDelete(tipos);
         this._bindEdit(tipos);
       })
@@ -441,27 +444,28 @@ window.Mods.ingresos = {
         const id  = parseInt(btn.dataset.id);
         const row = btn.closest('tr[data-ing-edit]');
         try {
-          await dbUpdate('ingresos', {
+          const updated = {
             fecha:       row.querySelector('.ie-fecha').value,
             monto:       parseFloat(row.querySelector('.ie-monto').value),
             moneda:      row.querySelector('.ie-moneda').value,
             descripcion: row.querySelector('.ie-desc').value.trim() || null,
             tipo_id:     row.querySelector('.ie-tipo').value ? parseInt(row.querySelector('.ie-tipo').value) : null,
-          }, { id });
+          };
+          await dbUpdate('ingresos', updated, { id });
           toast('✅ Ingreso actualizado');
           this._ingEditId = null;
-          const rows = await dbFetch('ingresos', { order: { col: 'fecha', asc: false }, limit: 200 });
-          document.getElementById('ing-list').innerHTML = this._renderList(rows, tipos, this._filterTipo);
+          const idx = this._rows.findIndex(r => r.id === id);
+          if (idx >= 0) this._rows[idx] = { ...this._rows[idx], ...updated };
+          document.getElementById('ing-list').innerHTML = this._renderList(this._rows, tipos, this._filterTipo);
           this._bindDelete(tipos);
           this._bindEdit(tipos);
         } catch(err) { toast('❌ ' + err.message, 'err'); }
       })
     );
     document.querySelectorAll('.ie-cancel').forEach(btn =>
-      btn.addEventListener('click', async () => {
+      btn.addEventListener('click', () => {
         this._ingEditId = null;
-        const rows = await dbFetch('ingresos', { order: { col: 'fecha', asc: false }, limit: 200 });
-        document.getElementById('ing-list').innerHTML = this._renderList(rows, tipos, this._filterTipo);
+        document.getElementById('ing-list').innerHTML = this._renderList(this._rows, tipos, this._filterTipo);
         this._bindDelete(tipos);
         this._bindEdit(tipos);
       })

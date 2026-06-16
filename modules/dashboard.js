@@ -4,16 +4,13 @@ window.Mods.dashboard = {
   _tc:         null,
   _cuotasOpen: false,
   _recurOpen:  false,
+  _cache:      null,
 
   async render() {
     const c = document.getElementById('content');
-    const mode = this._mode;
     const now  = new Date();
     const curY = now.getFullYear();
     const curM = now.getMonth() + 1;
-    const curYM = `${curY}-${String(curM).padStart(2,'0')}`;
-
-    // 12-month window for casual avg; 6-month for trend chart
     const start12 = new Date(curY, curM - 13, 1);
     const desde12 = `${start12.getFullYear()}-${String(start12.getMonth()+1).padStart(2,'0')}-01`;
     const start6  = new Date(curY, curM - 6, 1);
@@ -29,13 +26,25 @@ window.Mods.dashboard = {
       getConfig('tipo_cambio'),
     ]);
 
-    const gastos    = gastosRes.data   || [];
-    const ingresos  = ingresosRes.data  || [];
-    const allCuotas = cuotasRes.data    || [];
-
-    // TC: use saved override, then config, then fallback
+    this._cache = {
+      gastos:    gastosRes.data  || [],
+      ingresos:  ingresosRes.data || [],
+      allCuotas: cuotasRes.data  || [],
+    };
     if (this._tc === null) this._tc = parseFloat(tcCfg) || 42;
-    const tc = this._tc;
+    this._redraw();
+  },
+
+  _redraw() {
+    const c = document.getElementById('content');
+    if (!this._cache) return;
+    const { gastos, ingresos, allCuotas } = this._cache;
+    const mode = this._mode;
+    const tc   = this._tc;
+    const now  = new Date();
+    const curY = now.getFullYear();
+    const curM = now.getMonth() + 1;
+    const curYM = `${curY}-${String(curM).padStart(2,'0')}`;
 
     const toDisp = (n, mon) => {
       const v = parseFloat(n) || 0;
@@ -60,7 +69,6 @@ window.Mods.dashboard = {
     const byMonth6 = {};
     months6.forEach(m => { byMonth6[m.ym] = {ing: 0, gas: 0}; });
 
-    // Only past months use actual gastos in the chart; current month uses projection
     gastos.filter(g => byMonth6[g.fecha.slice(0,7)] !== undefined && g.fecha.slice(0,7) !== curYM)
       .forEach(g => { byMonth6[g.fecha.slice(0,7)].gas += toDisp(g.monto, g.moneda || 'UYU'); });
     ingresos.forEach(i => {
@@ -146,10 +154,6 @@ window.Mods.dashboard = {
     });
 
     const dIng  = cur.ing - prev.ing;
-    const dGas  = curProjGas - (recAvg + casualAvg + (cuotaSchedule[months6[4].ym] || 0));
-    const dTasa = tasa - prevTasa;
-    const sym   = mode === 'USD' ? '$' : '$U';
-
     const delta = (v, posIsGood = true) => {
       const good  = posIsGood ? v >= 0 : v <= 0;
       const color = good ? 'var(--green)' : 'var(--red)';
@@ -384,7 +388,7 @@ window.Mods.dashboard = {
   _setMode(mode) {
     this._mode = mode;
     localStorage.setItem('panorama_mode', mode);
-    this.render();
+    if (this._cache) this._redraw(); else this.render();
   },
 
   async _saveTc() {
@@ -394,6 +398,6 @@ window.Mods.dashboard = {
     this._tc = val;
     await setConfig('tipo_cambio', String(val));
     toast('Tipo de cambio actualizado');
-    this.render();
+    if (this._cache) this._redraw(); else this.render();
   },
 };
