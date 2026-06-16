@@ -4274,7 +4274,7 @@ window.Mods.gastos = {
           ? `<div style="font-size:.68rem;color:var(--gold);text-transform:uppercase;font-weight:500;padding:0 2px 6px;letter-spacing:.06em">📅 Cuotas</div>`
           : '';
 
-        pieEl.innerHTML = `<div style="overflow-x:auto">${recurSection}${cuotasHeader}
+        pieEl.innerHTML = `<div style="overflow-x:auto">${cuotasHeader}
           <table style="width:100%;border-collapse:collapse">
             <thead><tr>
               <th style="${thSt};text-align:left">Compra</th>
@@ -4304,7 +4304,7 @@ window.Mods.gastos = {
               <td colspan="3" style="${tfSt};color:var(--text-sec);font-size:.72rem;text-transform:uppercase">Total a pagar${detailMonth ? ' · ' + (projMonths.find(m => m.ym === detailMonth) || months.find(m => m.ym === detailMonth))?.label ?? detailMonth : ''}</td>
               <td colspan="2" style="${tfSt};text-align:right;font-family:'DM Mono',monospace;color:var(--gold)">${footTotStr}</td>
             </tr></tfoot>
-          </table></div>`;
+          </table>${recurSection}</div>`;
       }
     } else if (isBenef) {
       // Tabla de ahorro por comercio

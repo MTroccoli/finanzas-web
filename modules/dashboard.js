@@ -254,9 +254,9 @@ window.Mods.dashboard = {
                     const cuota = toDisp(p.monto, p.moneda || 'UYU');
                     return `<tr>
                       <td>${p.comercio || '—'}</td>
-                      <td style="color:var(--gold);font-family:'DM Mono',monospace;font-size:.75rem">${p.cuota_actual}/${p.cuotas_totales} · ${rem} rest.</td>
-                      <td>${fmtD(cuota)}</td>
-                      <td class="neg">${fmtD(cuota * rem)}</td>
+                      <td style="color:var(--text);font-family:'DM Mono',monospace;font-size:.75rem">${p.cuota_actual}/${p.cuotas_totales} · ${rem} rest.</td>
+                      <td style="color:var(--gold);font-family:'DM Mono',monospace">${fmtD(cuota)}</td>
+                      <td style="color:var(--gold);font-family:'DM Mono',monospace">${fmtD(cuota * rem)}</td>
                     </tr>`;
                   }).join('')}
               </tbody>
@@ -274,6 +274,7 @@ window.Mods.dashboard = {
         y: months6.map(m => byMonth6[m.ym].ing),
         name: 'Ingresos', type: 'bar',
         marker: {color: 'rgba(41,217,133,.75)'},
+        hovertemplate: `${tickpfx}%{y:,.0f}<extra></extra>`,
       },
       {
         x: months6.map(m => m.label),
@@ -284,6 +285,7 @@ window.Mods.dashboard = {
             i === 5 ? 'rgba(46,127,217,.45)' : 'rgba(46,127,217,.7)'
           ),
         },
+        hovertemplate: `${tickpfx}%{y:,.0f}<extra></extra>`,
       },
     ], {
       paper_bgcolor: 'rgba(0,0,0,0)',
@@ -294,9 +296,9 @@ window.Mods.dashboard = {
       bargap: 0.25,
       bargroupgap: 0.08,
       margin: {t: 10, r: 10, b: 50, l: 65},
+      showlegend: false,
       xaxis: {fixedrange: true, gridcolor: 'rgba(255,255,255,.05)'},
       yaxis: {fixedrange: true, gridcolor: 'rgba(255,255,255,.05)', tickprefix: tickpfx},
-      legend: {orientation: 'h', y: -0.28, x: 0.5, xanchor: 'center', font: {size: 11}},
     }, {displayModeBar: false, responsive: true, scrollZoom: false});
   },
 
