@@ -4541,8 +4541,8 @@ window.Mods.gastos = {
                   <span style="font-family:'DM Mono',monospace;font-size:.78rem;color:var(--accent)">${totParts.join(' + ') || '—'}</span>
                 </div>
               </summary>
-              <div style="overflow-x:auto">
-              <table style="width:100%;min-width:320px;border-collapse:collapse">
+              <div>
+              <table style="width:100%;border-collapse:collapse">
                 <tbody>
                   ${filtRows.map(r => {
                     const cat    = r.categoria_id != null ? this._cats.find(c => c.id === r.categoria_id) : null;
@@ -4551,12 +4551,13 @@ window.Mods.gastos = {
                     const montoN = parseFloat(r.monto);
                     const monStr = r.moneda === 'USD' ? this._fmtUSD(Math.abs(montoN)) : this._fmtMon(Math.abs(montoN), r.moneda);
                     const isBen  = isBenefit(r) || montoN < 0;
+                    const ddmm   = r.fecha.slice(8) + '/' + r.fecha.slice(5, 7);
                     return `<tr>
-                      <td style="${tdS};color:var(--text-sec);white-space:nowrap;width:56px">${fmtDate(r.fecha)}</td>
-                      <td style="${tdS}"><span style="display:block;max-width:120px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${desc}</span>
+                      <td style="${tdS};color:var(--text-sec);white-space:nowrap;width:36px">${ddmm}</td>
+                      <td style="${tdS}"><span style="display:block;max-width:110px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${desc}</span>
                         <span style="font-size:.64rem;color:var(--text-sec)">${catStr}</span>
                       </td>
-                      <td style="${tdS};color:var(--text-sec);font-size:.72rem;white-space:nowrap">${r.banco_tarjeta || '—'}</td>
+                      <td style="${tdS};color:var(--text-sec);font-size:.72rem"><span style="display:block;max-width:72px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${r.banco_tarjeta || '—'}</span></td>
                       <td style="${tdS};text-align:right;font-family:'DM Mono',monospace;font-weight:600;white-space:nowrap;color:${isBen ? '#10b981' : r.tipo_gasto === 'recurrente' ? '#a78bfa' : '#3b82f6'}">${isBen ? '−' : ''}${monStr}${r.tipo_gasto === 'recurrente' ? ' <span style="font-size:.6rem;opacity:.8">🔁</span>' : ''}</td>
                     </tr>`;
                   }).join('')}

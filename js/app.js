@@ -54,8 +54,6 @@ function toast(msg, type = 'ok', ms = 2800) {
 
 window.addEventListener('hashchange', handleRoute);
 window.addEventListener('load', () => {
-  if (!window.location.hash || window.location.hash === '#') {
-    window.location.hash = '#dashboard';
-  }
+  window.location.hash = '#dashboard';
   handleRoute();
 });
