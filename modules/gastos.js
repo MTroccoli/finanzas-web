@@ -4396,6 +4396,10 @@ window.Mods.gastos = {
                   </tr>`;
                 }).join('')}
               </tbody>
+              <tfoot><tr>
+                <td colspan="3" style="padding:8px 6px;border-top:1px solid var(--border);font-size:.72rem;font-weight:600;color:var(--text-sec);text-transform:uppercase">Total ahorro</td>
+                <td style="padding:8px 6px;border-top:1px solid var(--border);font-size:.78rem;font-weight:600;text-align:right;font-family:'DM Mono',monospace;color:#10b981">${saveTotStr}</td>
+              </tr></tfoot>
             </table>
           </details></div>`;
       }
