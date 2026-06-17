@@ -55,19 +55,23 @@ window.Mods.gastos = {
   _lastTdcTab:   'cuotas',    // último sub-tab de TDC visitado
   _manualSaved:  [],      // gastos guardados en esta sesión desde el panel Nuevo gasto
 
-  // ── Cache de tablas (NO incluye Resumen ni Cuotas, que usan Plotly) ──────
+  // ── Cache de datos (tablas + Resumen gastos/beneficios; NUNCA la vista cuotas) ──
   _histRawCache:  null,   // filas crudas de _drawHistorialGastos (clave en _histCacheKey)
   _histCacheKey:  null,   // `${desde}|${hasta}|${catFilter}|${tipoFilter}`
   _comRawCache:   null,   // filas crudas de _drawHistorialComercios (la query nunca varía)
   _adicRawCache:  null,   // { adicRows, descRows } de _drawHistorialAdicional
+  _resCache:      null,   // { allDataRaw, activeCuotasAll, recurrentesLast } del Resumen
+  _resCacheKey:   null,   // `${desde}|${hasta}|${cat}|${tipo}|${banco}` — solo vistas gastos/beneficios
 
-  // Invalida los caches de las 3 tablas cacheadas. Se llama tras cualquier
+  // Invalida todos los caches de datos de gastos. Se llama tras cualquier
   // mutación de gastos y al entrar a pestañas que mutan (importar/manual/cuotas).
   _invalidateGastosCaches() {
     this._histRawCache = null;
     this._histCacheKey = null;
     this._comRawCache  = null;
     this._adicRawCache = null;
+    this._resCache     = null;
+    this._resCacheKey  = null;
   },
 
   // Normalizar comercio para matching: lowercase, sin tildes, sin códigos de comercio
@@ -3836,38 +3840,58 @@ window.Mods.gastos = {
       cur = new Date(cur.getFullYear(), cur.getMonth() + 1, 1);
     }
 
-    // Query principal + cuotas próximas en paralelo
-    let q = getDB().from('gastos')
-      .select('fecha, monto, moneda, categoria_id, banco_tarjeta, tipo_gasto, cuota_actual, comercio')
-      .gte('fecha', this._resDesde)
-      .lte('fecha', this._resHasta);
-    if (this._resCat) q = q.eq('categoria_id', +this._resCat);
-    if (this._resTipo === 'cuotas') q = q.not('cuota_actual', 'is', null);
-    else if (this._resTipo) q = q.eq('tipo_gasto', this._resTipo);
-
-    const todayStr = now.toISOString().slice(0, 10);
-
-    // Query 2: cuotas activas — busca el último pago conocido de cada plan (sin restricción de fecha, igual que _drawCuotas)
-    let qActiveCuotas = getDB().from('gastos')
-      .select('fecha, monto, moneda, cuota_actual, cuotas_totales, comercio, banco_tarjeta')
-      .not('cuotas_totales', 'is', null)
-      .or('titular_adicional.is.null,incluido_en_gastos.eq.true')
-      .order('fecha', { ascending: false });
-    if (this._resBanco) qActiveCuotas = qActiveCuotas.eq('banco_tarjeta', this._resBanco);
-
-    // Query 3: recurrentes del último mes completo (base para proyectar)
+    // lastMonthStart/lastMonthEnd se usan en la query de recurrentes Y más
+    // abajo al renderizar la cabecera de Recurrentes, así que viven a nivel de
+    // función (NO dentro del else del cache — ese fue un bug previo).
     const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1).toISOString().slice(0,10);
     const lastMonthEnd   = new Date(now.getFullYear(), now.getMonth(), 0).toISOString().slice(0,10);
-    let qRecurrentes = getDB().from('gastos')
-      .select('monto, moneda, comercio, categoria_id, banco_tarjeta')
-      .eq('tipo_gasto', 'recurrente')
-      .gte('fecha', lastMonthStart)
-      .lte('fecha', lastMonthEnd)
-      .or('titular_adicional.is.null,incluido_en_gastos.eq.true');
-    if (this._resBanco) qRecurrentes = qRecurrentes.eq('banco_tarjeta', this._resBanco);
 
-    const [{ data: allDataRaw = [] }, { data: activeCuotasAll = [] }, { data: recurrentesLast = [] }] =
-      await Promise.all([q, qActiveCuotas, qRecurrentes]);
+    // Cache de datos del Resumen — SOLO para las vistas gastos/beneficios.
+    // La vista cuotas (el gráfico problemático) nunca toma el cache-hit: siempre
+    // refetcha, conservando exactamente su comportamiento original.
+    const resCacheKey = `${this._resDesde}|${this._resHasta}|${this._resCat}|${this._resTipo}|${this._resBanco}`;
+    let allDataRaw, activeCuotasAll, recurrentesLast;
+
+    if (this._resView !== 'cuotas' && this._resCache && this._resCacheKey === resCacheKey) {
+      // El spinner (arriba) ya destruyó el bar chart de Plotly de forma síncrona.
+      // El yield deja que Plotly termine su ciclo de eventos antes de redibujar,
+      // replicando el gap async que antes aportaba el fetch.
+      await new Promise(r => setTimeout(r, 0));
+      ({ allDataRaw, activeCuotasAll, recurrentesLast } = this._resCache);
+    } else {
+      // Query principal + cuotas próximas en paralelo
+      let q = getDB().from('gastos')
+        .select('fecha, monto, moneda, categoria_id, banco_tarjeta, tipo_gasto, cuota_actual, comercio')
+        .gte('fecha', this._resDesde)
+        .lte('fecha', this._resHasta);
+      if (this._resCat) q = q.eq('categoria_id', +this._resCat);
+      if (this._resTipo === 'cuotas') q = q.not('cuota_actual', 'is', null);
+      else if (this._resTipo) q = q.eq('tipo_gasto', this._resTipo);
+
+      // Query 2: cuotas activas — último pago conocido de cada plan (sin restricción de fecha)
+      let qActiveCuotas = getDB().from('gastos')
+        .select('fecha, monto, moneda, cuota_actual, cuotas_totales, comercio, banco_tarjeta')
+        .not('cuotas_totales', 'is', null)
+        .or('titular_adicional.is.null,incluido_en_gastos.eq.true')
+        .order('fecha', { ascending: false });
+      if (this._resBanco) qActiveCuotas = qActiveCuotas.eq('banco_tarjeta', this._resBanco);
+
+      // Query 3: recurrentes del último mes completo (base para proyectar)
+      let qRecurrentes = getDB().from('gastos')
+        .select('monto, moneda, comercio, categoria_id, banco_tarjeta')
+        .eq('tipo_gasto', 'recurrente')
+        .gte('fecha', lastMonthStart)
+        .lte('fecha', lastMonthEnd)
+        .or('titular_adicional.is.null,incluido_en_gastos.eq.true');
+      if (this._resBanco) qRecurrentes = qRecurrentes.eq('banco_tarjeta', this._resBanco);
+
+      const [r1, r2, r3] = await Promise.all([q, qActiveCuotas, qRecurrentes]);
+      allDataRaw      = r1.data || [];
+      activeCuotasAll = r2.data || [];
+      recurrentesLast = r3.data || [];
+      this._resCache    = { allDataRaw, activeCuotasAll, recurrentesLast };
+      this._resCacheKey = resCacheKey;
+    }
 
     // ── Proyección de cuotas activas ────────────────────────────────────────
     // Encontrar el pago más reciente de cada plan (comercio + cuotas_totales + monto + moneda)
