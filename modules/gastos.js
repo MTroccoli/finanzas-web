@@ -57,11 +57,11 @@ window.Mods.gastos = {
 
   // ── Cache de datos (tablas + Resumen gastos/beneficios; NUNCA la vista cuotas) ──
   _histRawCache:  null,   // filas crudas de _drawHistorialGastos (clave en _histCacheKey)
-  _histCacheKey:  null,   // `${desde}|${hasta}|${catFilter}|${tipoFilter}`
+  _histCacheKey:  null,   // `${desde}|${hasta}`
   _comRawCache:   null,   // filas crudas de _drawHistorialComercios (la query nunca varía)
   _adicRawCache:  null,   // { adicRows, descRows } de _drawHistorialAdicional
   _resCache:      null,   // { allDataRaw, activeCuotasAll, recurrentesLast } del Resumen
-  _resCacheKey:   null,   // `${desde}|${hasta}|${cat}|${tipo}|${banco}` — solo vistas gastos/beneficios
+  _resCacheKey:   null,   // `${desde}|${hasta}|${banco}` — solo vistas gastos/beneficios (cat/tipo son client-side)
 
   // Invalida todos los caches de datos de gastos. Se llama tras cualquier
   // mutación de gastos y al entrar a pestañas que mutan (importar/manual/cuotas).
@@ -1852,18 +1852,15 @@ window.Mods.gastos = {
       };
     });
 
-    const histCacheKey = `${desde}|${hasta}|${catFilter}|${tipoFilter}`;
+    const histCacheKey = `${desde}|${hasta}`;
     let gastosRaw;
     if (this._histRawCache && this._histCacheKey === histCacheKey) {
       gastosRaw = this._histRawCache;
     } else {
       gc.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
-      let q = getDB().from('gastos').select('*').gte('fecha', desde).lte('fecha', hasta)
-                     .or('titular_adicional.is.null,incluido_en_gastos.eq.true');
-      if (catFilter)                   q = q.eq('categoria_id', +catFilter);
-      if (tipoFilter === 'cuotas')     q = q.not('cuota_actual', 'is', null);
-      else if (tipoFilter)             q = q.eq('tipo_gasto', tipoFilter);
-      const { data, error } = await q.order('fecha', { ascending: false });
+      const { data, error } = await getDB().from('gastos').select('*').gte('fecha', desde).lte('fecha', hasta)
+                     .or('titular_adicional.is.null,incluido_en_gastos.eq.true')
+                     .order('fecha', { ascending: false });
       if (error) throw error;
       gastosRaw = data;
       this._histRawCache = gastosRaw;
@@ -1876,6 +1873,9 @@ window.Mods.gastos = {
     if (this._histBanco) gastos = gastos.filter(g => g.banco_tarjeta === this._histBanco);
     if (this._histTitular === '__titular__')  gastos = gastos.filter(g => !g.titular_adicional);
     else if (this._histTitular)              gastos = gastos.filter(g => g.titular_adicional === this._histTitular);
+    if (catFilter)               gastos = gastos.filter(g => g.categoria_id === +catFilter);
+    if (tipoFilter === 'cuotas') gastos = gastos.filter(g => g.cuota_actual != null);
+    else if (tipoFilter)         gastos = gastos.filter(g => g.tipo_gasto === tipoFilter);
 
     const needsTC = viewMode !== 'ORIGEN' && !tc;
 
@@ -3849,7 +3849,7 @@ window.Mods.gastos = {
     // Cache de datos del Resumen — SOLO para las vistas gastos/beneficios.
     // La vista cuotas (el gráfico problemático) nunca toma el cache-hit: siempre
     // refetcha, conservando exactamente su comportamiento original.
-    const resCacheKey = `${this._resDesde}|${this._resHasta}|${this._resCat}|${this._resTipo}|${this._resBanco}`;
+    const resCacheKey = `${this._resDesde}|${this._resHasta}|${this._resBanco}`;
     let allDataRaw, activeCuotasAll, recurrentesLast;
 
     if (this._resView !== 'cuotas' && this._resCache && this._resCacheKey === resCacheKey) {
@@ -3860,13 +3860,12 @@ window.Mods.gastos = {
       ({ allDataRaw, activeCuotasAll, recurrentesLast } = this._resCache);
     } else {
       // Query principal + cuotas próximas en paralelo
+      // cat/tipo NO se filtran aquí — se aplican client-side sobre allDataRaw para
+      // que cambiar esos filtros sea instantáneo sin volver a la DB.
       let q = getDB().from('gastos')
         .select('fecha, monto, moneda, categoria_id, banco_tarjeta, tipo_gasto, cuota_actual, comercio')
         .gte('fecha', this._resDesde)
         .lte('fecha', this._resHasta);
-      if (this._resCat) q = q.eq('categoria_id', +this._resCat);
-      if (this._resTipo === 'cuotas') q = q.not('cuota_actual', 'is', null);
-      else if (this._resTipo) q = q.eq('tipo_gasto', this._resTipo);
 
       // Query 2: cuotas activas — último pago conocido de cada plan (sin restricción de fecha)
       let qActiveCuotas = getDB().from('gastos')
@@ -3951,10 +3950,14 @@ window.Mods.gastos = {
     // Lista única de bancos/tarjetas para el filtro
     const bancos = [...new Set(allDataRaw.map(r => r.banco_tarjeta).filter(Boolean))].sort();
 
-    // Aplicar filtro banco en JS (así siempre tenemos la lista completa de bancos disponibles)
-    const allData = this._resBanco
+    // Aplicar filtros banco/cat/tipo en JS — siempre tenemos la lista completa de bancos
+    // y los filtros de cat/tipo son instantáneos sin re-fetch.
+    let allData = this._resBanco
       ? allDataRaw.filter(r => r.banco_tarjeta === this._resBanco)
       : allDataRaw;
+    if (this._resCat)              allData = allData.filter(r => r.categoria_id === +this._resCat);
+    if (this._resTipo === 'cuotas') allData = allData.filter(r => r.cuota_actual != null);
+    else if (this._resTipo)         allData = allData.filter(r => r.tipo_gasto === this._resTipo);
 
     // Categorías de beneficio (excluir de gastos)
     const benefitCatIds = new Set(
