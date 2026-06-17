@@ -3834,6 +3834,12 @@ window.Mods.gastos = {
     const cacheKey = `${this._resDesde}|${this._resHasta}|${this._resCat}|${this._resTipo}|${this._resBanco}`;
     let allDataRaw, activeCuotasAll, recurrentesLast;
 
+    // Mes completo anterior — usado en la query de recurrentes Y al renderizar
+    // la cabecera de la sección Recurrentes (debe estar en scope de la función,
+    // no del else, porque se referencia en el render aunque haya cache hit).
+    const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1).toISOString().slice(0,10);
+    const lastMonthEnd   = new Date(now.getFullYear(), now.getMonth(), 0).toISOString().slice(0,10);
+
     if (this._resCache && this._resCacheKey === cacheKey) {
       // Spinner destroys the old Plotly chart DOM synchronously (same as cache-miss path).
       // Then we yield one macrotask so Plotly finishes any internal event handling before
@@ -3864,8 +3870,6 @@ window.Mods.gastos = {
       if (this._resBanco) qActiveCuotas = qActiveCuotas.eq('banco_tarjeta', this._resBanco);
 
       // Query 3: recurrentes del último mes completo (base para proyectar)
-      const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1).toISOString().slice(0,10);
-      const lastMonthEnd   = new Date(now.getFullYear(), now.getMonth(), 0).toISOString().slice(0,10);
       let qRecurrentes = getDB().from('gastos')
         .select('monto, moneda, comercio, categoria_id, banco_tarjeta')
         .eq('tipo_gasto', 'recurrente')
