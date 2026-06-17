@@ -54,13 +54,6 @@ window.Mods.gastos = {
   _tarjOpen:     new Set(),// tarjetas abiertas en acordeón del tab Tarjetas
   _lastTdcTab:   'cuotas',    // último sub-tab de TDC visitado
   _manualSaved:  [],      // gastos guardados en esta sesión desde el panel Nuevo gasto
-  _resCache:      null,  // { allDataRaw, activeCuotasAll, recurrentesLast }
-  _resCacheKey:   null,
-  _histRawCache:  null,  // raw rows for _drawHistorialGastos
-  _histCacheKey:  null,
-  _comRawCache:   null,  // raw rows for _drawHistorialComercios
-  _adicRawCache:  null,  // { adicRows, descRows } for _drawHistorialAdicional
-  _cuotasRawCache: null, // raw rows for _drawCuotas tab
 
   // Normalizar comercio para matching: lowercase, sin tildes, sin códigos de comercio
   _normMerchant(s) {
@@ -159,11 +152,6 @@ window.Mods.gastos = {
     this._splitCatIds = new Set(
       cats.filter(c => this._splitCatNames.has(c.nombre)).map(c => c.id)
     );
-    this._resCache      = null; this._resCacheKey   = null;
-    this._histRawCache  = null; this._histCacheKey  = null;
-    this._comRawCache   = null;
-    this._adicRawCache  = null;
-    this._cuotasRawCache = null;
     this._drawShell();
     this._drawTab();
   },
@@ -1804,6 +1792,7 @@ window.Mods.gastos = {
 
   async _drawHistorialGastos() {
     const gc = document.getElementById('g-content');
+    gc.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
 
     const now       = new Date();
     const mesAct    = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
@@ -1838,23 +1827,13 @@ window.Mods.gastos = {
       };
     });
 
-    const histCacheKey = `${mesDesde}|${mesHasta}|${catFilter}|${tipoFilter}`;
-    let gastosRaw;
-    if (this._histRawCache && this._histCacheKey === histCacheKey) {
-      gastosRaw = this._histRawCache;
-    } else {
-      gc.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
-      let q = getDB().from('gastos').select('*').gte('fecha', desde).lte('fecha', hasta)
-                     .or('titular_adicional.is.null,incluido_en_gastos.eq.true');
-      if (catFilter)                   q = q.eq('categoria_id', +catFilter);
-      if (tipoFilter === 'cuotas')     q = q.not('cuota_actual', 'is', null);
-      else if (tipoFilter)             q = q.eq('tipo_gasto', tipoFilter);
-      const { data, error } = await q.order('fecha', { ascending: false });
-      if (error) throw error;
-      gastosRaw = data;
-      this._histRawCache = gastosRaw;
-      this._histCacheKey = histCacheKey;
-    }
+    let q = getDB().from('gastos').select('*').gte('fecha', desde).lte('fecha', hasta)
+                   .or('titular_adicional.is.null,incluido_en_gastos.eq.true');
+    if (catFilter)                   q = q.eq('categoria_id', +catFilter);
+    if (tipoFilter === 'cuotas')     q = q.not('cuota_actual', 'is', null);
+    else if (tipoFilter)             q = q.eq('tipo_gasto', tipoFilter);
+    const { data: gastosRaw, error } = await q.order('fecha', { ascending: false });
+    if (error) throw error;
 
     const bancosHist    = [...new Set((gastosRaw || []).map(g => g.banco_tarjeta).filter(Boolean))].sort();
     const titularesHist = [...new Set((gastosRaw || []).map(g => g.titular_adicional).filter(Boolean))].sort();
@@ -2107,20 +2086,14 @@ window.Mods.gastos = {
   // ── Comercios únicos (re-categorizar en bulk) ───────────────────────────
   async _drawHistorialComercios() {
     const gc = document.getElementById('g-content');
-    let rows;
-    if (this._comRawCache) {
-      rows = this._comRawCache;
-    } else {
-      gc.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
-      const { data, error } = await getDB()
-        .from('gastos').select('id, comercio, moneda, monto, categoria_id, fecha, tipo_gasto, cuota_actual, banco_tarjeta')
-        .not('comercio', 'is', null)
-        .or('titular_adicional.is.null,incluido_en_gastos.eq.true')
-        .order('fecha', { ascending: false });
-      if (error) throw error;
-      rows = data;
-      this._comRawCache = rows;
-    }
+    gc.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+
+    const { data: rows, error } = await getDB()
+      .from('gastos').select('id, comercio, moneda, monto, categoria_id, fecha, tipo_gasto, cuota_actual, banco_tarjeta')
+      .not('comercio', 'is', null)
+      .or('titular_adicional.is.null,incluido_en_gastos.eq.true')
+      .order('fecha', { ascending: false });
+    if (error) throw error;
 
     // Agrupar por comercio normalizado
     const groups = {};
@@ -2423,7 +2396,6 @@ window.Mods.gastos = {
         this._learned[newNorm] = item.currentCat;
       }
       toast(`✅ ${item.count} gasto/s actualizado/s`);
-      this._comRawCache = null;
       this._drawHistorialComercios();
     } catch(err) {
       toast('❌ ' + err.message, 'err');
@@ -2490,7 +2462,6 @@ window.Mods.gastos = {
       }
       this._comSelected.clear();
       toast(`✅ ${totalGastos} gasto/s unificados en "${nuevo}"`);
-      this._comRawCache = null;
       this._drawHistorialComercios();
     } catch(err) {
       toast('❌ ' + err.message, 'err');
@@ -2973,8 +2944,6 @@ window.Mods.gastos = {
         if (!confirm('¿Eliminar este gasto?')) return;
         await dbDelete('gastos', { id });
         toast('Eliminado');
-        this._histRawCache = null;
-        this._resCache = null;
         this._drawHistorialGastos();
         return;
       }
@@ -3016,8 +2985,6 @@ window.Mods.gastos = {
             dividido_entre: +editRow.querySelector('.ge-div').value || 1,
           }, { id });
           toast('✅ Guardado');
-          this._histRawCache = null;
-          this._resCache = null;
           this._drawHistorialGastos();
         } catch(err) { toast('❌ ' + err.message, 'err'); }
       }
@@ -3027,26 +2994,22 @@ window.Mods.gastos = {
   // ── Adicional (resumen de gastos de tarjeta adicional para cobrar) ──────
   async _drawHistorialAdicional() {
     const gc = document.getElementById('g-content');
-    let adicRows, descRows;
-    if (this._adicRawCache) {
-      ({ adicRows, descRows } = this._adicRawCache);
-    } else {
-      gc.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
-      const sb = getDB();
-      const [adicRes, descRes] = await Promise.all([
-        sb.from('gastos')
-          .select('id, fecha, monto, moneda, comercio, categoria_id, titular_adicional, banco_tarjeta, incluido_en_gastos')
-          .not('titular_adicional', 'is', null)
-          .order('fecha', { ascending: false }),
-        sb.from('gastos')
-          .select('id, fecha, monto, moneda, comercio, notas, titular_adicional, incluido_en_gastos')
-          .ilike('notas', 'desc_adic:%')
-          .order('fecha', { ascending: false }),
-      ]);
-      adicRows = adicRes.data || [];
-      descRows = descRes.data || [];
-      this._adicRawCache = { adicRows, descRows };
-    }
+    gc.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+
+    const sb = getDB();
+    const [adicRes, descRes] = await Promise.all([
+      sb.from('gastos')
+        .select('id, fecha, monto, moneda, comercio, categoria_id, titular_adicional, banco_tarjeta, incluido_en_gastos')
+        .not('titular_adicional', 'is', null)
+        .order('fecha', { ascending: false }),
+      sb.from('gastos')
+        .select('id, fecha, monto, moneda, comercio, notas, titular_adicional, incluido_en_gastos')
+        .ilike('notas', 'desc_adic:%')
+        .order('fecha', { ascending: false }),
+    ]);
+
+    const adicRows = adicRes.data || [];
+    const descRows = descRes.data || [];
     const discountIds = new Set(descRows.map(d => d.id));
 
     // Build discount lookup: ref_comercio → { monto, fecha, id, notas }
@@ -3358,7 +3321,6 @@ window.Mods.gastos = {
           }
           this._adicOpenMonths = updated;
           toast(`✅ Titular renombrado a "${newName}"`);
-          this._adicRawCache = null;
           this._drawHistorialAdicional();
         } catch(err) {
           toast('❌ ' + err.message, 'err');
@@ -3380,7 +3342,6 @@ window.Mods.gastos = {
         inclBtn.disabled = true;
         inclBtn.textContent = '…';
         await getDB().from('gastos').update({ incluido_en_gastos: newVal }).in('id', [id, ...linkedIds]);
-        this._adicRawCache = null;
         this._drawHistorialAdicional();
         return;
       }
@@ -3395,7 +3356,6 @@ window.Mods.gastos = {
         bulkBtn.disabled = true;
         bulkBtn.textContent = '…';
         await getDB().from('gastos').update({ incluido_en_gastos: newVal }).in('id', allIds);
-        this._adicRawCache = null;
         this._drawHistorialAdicional();
       }
     };
@@ -3405,19 +3365,13 @@ window.Mods.gastos = {
   // ── Cuotas (proyección de gastos futuros) ───────────────────────────────
   async _drawCuotas() {
     const gc = document.getElementById('g-content');
-    let rows;
-    if (this._cuotasRawCache) {
-      rows = this._cuotasRawCache;
-    } else {
-      gc.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
-      const sb = getDB();
-      const { data, error } = await sb.from('gastos')
-        .select('*').not('cuotas_totales', 'is', null)
-        .order('fecha', { ascending: false });
-      if (error) throw error;
-      rows = data;
-      this._cuotasRawCache = rows;
-    }
+    gc.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+
+    const sb = getDB();
+    const { data: rows, error } = await sb.from('gastos')
+      .select('*').not('cuotas_totales', 'is', null)
+      .order('fecha', { ascending: false });
+    if (error) throw error;
 
     const viewMode = this._gastoMoneda || 'ORIGEN'; // 'ORIGEN' | 'UYU' | 'USD'
     const tc       = parseFloat(this._tc) || 0;
@@ -3649,8 +3603,6 @@ window.Mods.gastos = {
         if (!confirm('¿Eliminar este gasto?')) return;
         await dbDelete('gastos', { id: +btn.dataset.id });
         toast('Eliminado');
-        this._cuotasRawCache = null;
-        this._resCache = null;
         this._drawCuotas();
       })
     );
@@ -3806,6 +3758,8 @@ window.Mods.gastos = {
   // ── Resumen (gráficos) ──────────────────────────────────────────────────
   async _drawResumen() {
     const gc = document.getElementById('g-content');
+    gc.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+
     const now = new Date();
     // Default: año móvil (12 meses hacia atrás hasta hoy)
     if (!this._resDesde) {
@@ -3831,59 +3785,37 @@ window.Mods.gastos = {
     }
 
     // Query principal + cuotas próximas en paralelo
-    const cacheKey = `${this._resDesde}|${this._resHasta}|${this._resCat}|${this._resTipo}|${this._resBanco}`;
-    let allDataRaw, activeCuotasAll, recurrentesLast;
+    let q = getDB().from('gastos')
+      .select('fecha, monto, moneda, categoria_id, banco_tarjeta, tipo_gasto, cuota_actual, comercio')
+      .gte('fecha', this._resDesde)
+      .lte('fecha', this._resHasta);
+    if (this._resCat) q = q.eq('categoria_id', +this._resCat);
+    if (this._resTipo === 'cuotas') q = q.not('cuota_actual', 'is', null);
+    else if (this._resTipo) q = q.eq('tipo_gasto', this._resTipo);
 
-    // Mes completo anterior — usado en la query de recurrentes Y al renderizar
-    // la cabecera de la sección Recurrentes (debe estar en scope de la función,
-    // no del else, porque se referencia en el render aunque haya cache hit).
+    const todayStr = now.toISOString().slice(0, 10);
+
+    // Query 2: cuotas activas — busca el último pago conocido de cada plan (sin restricción de fecha, igual que _drawCuotas)
+    let qActiveCuotas = getDB().from('gastos')
+      .select('fecha, monto, moneda, cuota_actual, cuotas_totales, comercio, banco_tarjeta')
+      .not('cuotas_totales', 'is', null)
+      .or('titular_adicional.is.null,incluido_en_gastos.eq.true')
+      .order('fecha', { ascending: false });
+    if (this._resBanco) qActiveCuotas = qActiveCuotas.eq('banco_tarjeta', this._resBanco);
+
+    // Query 3: recurrentes del último mes completo (base para proyectar)
     const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1).toISOString().slice(0,10);
     const lastMonthEnd   = new Date(now.getFullYear(), now.getMonth(), 0).toISOString().slice(0,10);
+    let qRecurrentes = getDB().from('gastos')
+      .select('monto, moneda, comercio, categoria_id, banco_tarjeta')
+      .eq('tipo_gasto', 'recurrente')
+      .gte('fecha', lastMonthStart)
+      .lte('fecha', lastMonthEnd)
+      .or('titular_adicional.is.null,incluido_en_gastos.eq.true');
+    if (this._resBanco) qRecurrentes = qRecurrentes.eq('banco_tarjeta', this._resBanco);
 
-    if (this._resCache && this._resCacheKey === cacheKey) {
-      // Spinner destroys the old Plotly chart DOM synchronously (same as cache-miss path).
-      // Then we yield one macrotask so Plotly finishes any internal event handling before
-      // we create new charts. Without this, tapping a bar while Plotly is still processing
-      // the click leaves its internal state corrupted and freezes all page interaction.
-      gc.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
-      await new Promise(r => setTimeout(r, 0));
-      ({ allDataRaw, activeCuotasAll, recurrentesLast } = this._resCache);
-    } else {
-      gc.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
-
-      let q = getDB().from('gastos')
-        .select('fecha, monto, moneda, categoria_id, banco_tarjeta, tipo_gasto, cuota_actual, comercio')
-        .gte('fecha', this._resDesde)
-        .lte('fecha', this._resHasta);
-      if (this._resCat) q = q.eq('categoria_id', +this._resCat);
-      if (this._resTipo === 'cuotas') q = q.not('cuota_actual', 'is', null);
-      else if (this._resTipo) q = q.eq('tipo_gasto', this._resTipo);
-
-      const todayStr = now.toISOString().slice(0, 10);
-
-      // Query 2: cuotas activas — busca el último pago conocido de cada plan (sin restricción de fecha, igual que _drawCuotas)
-      let qActiveCuotas = getDB().from('gastos')
-        .select('fecha, monto, moneda, cuota_actual, cuotas_totales, comercio, banco_tarjeta')
-        .not('cuotas_totales', 'is', null)
-        .or('titular_adicional.is.null,incluido_en_gastos.eq.true')
-        .order('fecha', { ascending: false });
-      if (this._resBanco) qActiveCuotas = qActiveCuotas.eq('banco_tarjeta', this._resBanco);
-
-      // Query 3: recurrentes del último mes completo (base para proyectar)
-      let qRecurrentes = getDB().from('gastos')
-        .select('monto, moneda, comercio, categoria_id, banco_tarjeta')
-        .eq('tipo_gasto', 'recurrente')
-        .gte('fecha', lastMonthStart)
-        .lte('fecha', lastMonthEnd)
-        .or('titular_adicional.is.null,incluido_en_gastos.eq.true');
-      if (this._resBanco) qRecurrentes = qRecurrentes.eq('banco_tarjeta', this._resBanco);
-
-      const [{ data: r1 = [] }, { data: r2 = [] }, { data: r3 = [] }] =
-        await Promise.all([q, qActiveCuotas, qRecurrentes]);
-      allDataRaw = r1; activeCuotasAll = r2; recurrentesLast = r3;
-      this._resCache    = { allDataRaw, activeCuotasAll, recurrentesLast };
-      this._resCacheKey = cacheKey;
-    }
+    const [{ data: allDataRaw = [] }, { data: activeCuotasAll = [] }, { data: recurrentesLast = [] }] =
+      await Promise.all([q, qActiveCuotas, qRecurrentes]);
 
     // ── Proyección de cuotas activas ────────────────────────────────────────
     // Encontrar el pago más reciente de cada plan (comercio + cuotas_totales + monto + moneda)
