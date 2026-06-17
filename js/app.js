@@ -52,6 +52,21 @@ function toast(msg, type = 'ok', ms = 2800) {
   setTimeout(() => { el.className = 'toast hidden'; }, ms);
 }
 
+// Red de seguridad global: Plotly adjunta un <div class="dragcover"> de
+// pantalla completa (position:fixed, z-index altísimo) a document.body al
+// iniciar un gesto sobre un gráfico. Normalmente lo quita al soltar, pero si
+// el gráfico se re-renderiza durante el gesto, el cover queda huérfano y
+// bloquea TODOS los clicks de la página (invisible). Ningún gráfico de esta
+// app usa drag (todos con fixedrange:true), así que cualquier .dragcover que
+// sobreviva a un pointerup/touchend es basura y se puede eliminar siempre.
+['pointerup', 'touchend', 'mouseup'].forEach(ev =>
+  document.addEventListener(ev, () => {
+    setTimeout(() => {
+      document.querySelectorAll('.dragcover').forEach(el => el.remove());
+    }, 0);
+  }, true)
+);
+
 window.addEventListener('hashchange', handleRoute);
 window.addEventListener('load', () => {
   window.location.hash = '#dashboard';

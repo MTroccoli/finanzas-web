@@ -3805,8 +3805,18 @@ window.Mods.gastos = {
     } catch(err) { toast('❌ ' + err.message, 'err'); }
   },
 
+  // Plotly adjunta un <div class="dragcover"> fijo de pantalla completa a
+  // document.body al iniciar una interacción táctil/click. Si el gráfico se
+  // re-renderiza durante ese gesto, el cover queda huérfano sobre el body y
+  // bloquea TODOS los clicks de la página (invisible, z-index altísimo).
+  // Plotly.purge() no lo elimina porque vive en body, no en el gráfico.
+  _sweepPlotlyOverlays() {
+    document.querySelectorAll('.dragcover, .plotly-notifier').forEach(el => el.remove());
+  },
+
   // ── Resumen (gráficos) ──────────────────────────────────────────────────
   async _drawResumen() {
+    this._sweepPlotlyOverlays();
     const gc = document.getElementById('g-content');
     const now = new Date();
 
@@ -4680,7 +4690,10 @@ window.Mods.gastos = {
       }
       this._resCatPieFilter = null;
       this._resFilterMonth = this._resFilterMonth === m.ym ? null : m.ym;
-      setTimeout(() => this._drawResumen(), 0);
+      // Esperar a que Plotly termine el ciclo de touch/click y limpiar cualquier
+      // overlay (.dragcover) que haya quedado huérfano sobre el body antes de
+      // re-renderizar. Sin esto, la página queda congelada tras tocar la barra.
+      setTimeout(() => { this._sweepPlotlyOverlays(); this._drawResumen(); }, 0);
     });
     document.querySelector('.btn-clear-res-filter')?.addEventListener('click', e => {
       e.stopPropagation();
