@@ -183,6 +183,35 @@ Claves usadas:
 
 ## Módulo `gastos.js` — Estado actual y arquitectura interna
 
+**Versión actual:** `v=20260617i` · commit `cdc377e`
+
+### Sistema de caché (agregado en sesiones recientes)
+
+El módulo mantiene caché en memoria para evitar re-fetches en navegación entre sub-tabs y al cambiar filtros client-side:
+
+```js
+// Propiedades de caché en el objeto
+_histRawCache:  null,  // filas crudas de _drawHistorialGastos
+_histCacheKey:  null,  // clave: `${desde}|${hasta}` (solo rango de fechas)
+_comRawCache:   null,  // filas crudas de _drawHistorialComercios (query fija)
+_adicRawCache:  null,  // { adicRows, descRows } de _drawHistorialAdicional
+_resCache:      null,  // { allDataRaw, activeCuotasAll, recurrentesLast } del Resumen
+_resCacheKey:   null,  // clave: `${desde}|${hasta}|${banco}` (cat/tipo son client-side)
+```
+
+**Regla crítica de invalidación:**
+- `_invalidateGastosCaches()` se llama en toda mutación (delete, edit, import) y al entrar a pestañas que mutan (importar/manual).
+- La vista `cuotas` en Resumen **nunca** toma el cache-hit: siempre re-fetcha (preserva comportamiento del gráfico Plotly que tuvo un bug histórico con block-scoped variables).
+
+**Filtros client-side vs server-side:**
+| Filtro | Historial | Resumen |
+|---|---|---|
+| Fecha desde/hasta | server-side (en cache key) | server-side (en cache key) |
+| Banco/tarjeta | client-side (sobre gastosRaw) | server-side en cuotas/recurrentes; client-side en allDataRaw |
+| Categoría | **client-side** (sobre gastosRaw) | **client-side** (sobre allDataRaw) |
+| Tipo de gasto | **client-side** (sobre gastosRaw) | **client-side** (sobre allDataRaw) |
+| Titular/búsqueda | client-side | N/A |
+
 ### Estado del objeto
 ```js
 {
@@ -193,8 +222,8 @@ Claves usadas:
   _tc:              '',          // tipo de cambio UYU/USD (string numérico)
   _gastoMoneda:     'ORIGEN',    // 'ORIGEN' | 'UYU' | 'USD' — modo conversión
   _resBanco:        '',          // filtro banco/tarjeta
-  _resTipo:         '',          // filtro tipo_gasto
-  _resCat:          '',          // filtro categoria_id
+  _resTipo:         '',          // filtro tipo_gasto (client-side)
+  _resCat:          '',          // filtro categoria_id (client-side)
   _resDesde:        null,        // fecha desde (string ISO)
   _resHasta:        null,        // fecha hasta
   _cats:            [],          // array de categorías cargado en render
@@ -426,3 +455,45 @@ Plotly.newPlot('id', traces, {
   yaxis: { fixedrange: true, gridcolor: 'rgba(255,255,255,.05)' },
 }, { displayModeBar: false, responsive: true, scrollZoom: false });
 ```
+
+---
+
+## Estado actual del proyecto — respaldo sesión 2026-06-17
+
+### Versiones de archivos clave
+| Archivo | Versión en index.html | Commit |
+|---|---|---|
+| `css/main.css` | `v=20260616c` | — |
+| `js/config.js` | `v=20260625` | — |
+| `js/db.js` | `v=20260625` | — |
+| `modules/dashboard.js` | `v=20260616g` | — |
+| `modules/inversiones.js` | `v=20260616p` | — |
+| `modules/gastos.js` | `v=20260617i` | `cdc377e` |
+| `modules/ingresos.js` | `v=20260616e` | — |
+| `modules/presupuesto.js` | `v=20260625` | — |
+| `modules/config_page.js` | `v=20260625` | — |
+| `js/app.js` | `v=20260616e` | — |
+
+### Estado funcional de módulos
+- **dashboard.js**: estable, sin cambios recientes.
+- **inversiones.js**: estable. Diferenciador clave: rentabilidad realizada + ajuste por tipo de cambio UYU/USD.
+- **gastos.js**: estable con caché en memoria para todas las sub-vistas. Ver sección de caché arriba.
+- **ingresos.js**: estable. Presets recurrentes con auto-carga funcional.
+- **presupuesto.js**: estable.
+- **config_page.js**: estable.
+
+### Próximo trabajo planificado: autenticación multi-usuario
+La app es actualmente single-user (Supabase hardcodeado en `config.js`). El plan para permitir que otros usuarios la usen:
+
+1. **Activar Supabase Auth** (email/password) — incluido en plan free.
+2. **Agregar `user_id` (uuid FK → auth.users) a todas las tablas** con datos de usuario:
+   - `gastos`, `ingresos`, `operaciones`, `activos`, `precios_historicos`, `configuracion`, `categorias`, `tipos_ingreso`, `importaciones`
+3. **Habilitar Row Level Security (RLS)** en cada tabla:
+   ```sql
+   CREATE POLICY "user_data" ON gastos
+     USING (auth.uid() = user_id);
+   ```
+4. **Pantalla de login** antes de cargar la app (en `app.js` o `index.html`).
+5. **Adaptar `db.js`** para incluir `user_id: supabase.auth.getUser().id` en todos los inserts.
+
+**Restricción:** plan gratuito de Supabase — se pausa tras 7 días sin actividad (primer request reactiva en ~30s). Suficiente para testing con amigos.
