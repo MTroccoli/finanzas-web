@@ -3838,6 +3838,9 @@ window.Mods.gastos = {
     let allDataRaw, activeCuotasAll, recurrentesLast;
 
     if (this._resCache && this._resCacheKey === cacheKey) {
+      // Purge Plotly charts before replacing DOM — prevents stale global event state
+      try { Plotly.purge(document.getElementById('g-bar-chart')); } catch(_) {}
+      try { Plotly.purge(document.getElementById('g-pie-chart')); } catch(_) {}
       ({ allDataRaw, activeCuotasAll, recurrentesLast } = this._resCache);
     } else {
       gc.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
@@ -4677,7 +4680,7 @@ window.Mods.gastos = {
       }
       this._resCatPieFilter = null;
       this._resFilterMonth = this._resFilterMonth === m.ym ? null : m.ym;
-      requestAnimationFrame(() => this._drawResumen());
+      setTimeout(() => this._drawResumen(), 0);
     });
     document.querySelector('.btn-clear-res-filter')?.addEventListener('click', e => {
       e.stopPropagation();
