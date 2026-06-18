@@ -65,6 +65,18 @@ window.Mods.configuracion = {
         <div id="migrate-log" style="margin-top:10px;font-family:'DM Mono',monospace;font-size:.72rem;
           color:var(--text-sec);min-height:20px;white-space:pre-wrap"></div>
       </div>
+
+      <div class="form-card" style="border:1px solid rgba(239,68,68,.35);background:rgba(239,68,68,.04)">
+        <h3 style="color:var(--red)">⚠️ Zona de peligro</h3>
+        <p style="font-size:.82rem;color:var(--text-sec);margin:0 0 14px">
+          Elimina todos los gastos importados de EDC y sus registros de importación.
+          Los PDFs quedan en storage y se pueden recuperar, pero los ajustes manuales se pierden.
+          No se puede deshacer.
+        </p>
+        <button id="btn-del-all-imp" class="btn btn-ghost" style="color:var(--red);border-color:rgba(239,68,68,.45)">
+          🗑 Eliminar todos los gastos importados
+        </button>
+      </div>
     `;
 
     document.getElementById('btn-signout-cfg').addEventListener('click', () => window.Auth.signOut());
@@ -105,6 +117,31 @@ window.Mods.configuracion = {
         msg.style.display = 'inline';
         setTimeout(() => { msg.style.display = 'none'; }, 2500);
       } catch(err) { toast('❌ ' + err.message, 'err'); }
+    });
+
+    document.getElementById('btn-del-all-imp').addEventListener('click', async () => {
+      const btn = document.getElementById('btn-del-all-imp');
+      const { data: impsData } = await getDB().from('importaciones').select('id');
+      const ids = (impsData || []).map(i => i.id);
+      if (!ids.length) { toast('No hay importaciones para eliminar'); return; }
+      const { count } = await getDB().from('gastos').select('id', { count: 'exact', head: true }).not('importacion_id', 'is', null);
+      const ok = confirm(
+        `⚠️ ELIMINAR TODOS LOS GASTOS IMPORTADOS\n\n` +
+        `Se van a borrar ${count || '?'} gastos de ${ids.length} importaciones.\n\n` +
+        `Los PDFs quedan en storage y se pueden recuperar, ` +
+        `pero los ajustes manuales (nombres, divisiones, etc.) no.\n\n` +
+        `¿Confirmás?`
+      );
+      if (!ok) return;
+      btn.disabled = true;
+      btn.textContent = 'Eliminando…';
+      try {
+        await getDB().from('gastos').delete().not('importacion_id', 'is', null);
+        await getDB().from('importaciones').delete().gt('id', 0);
+        toast('✅ Todos los gastos importados eliminados');
+      } catch(err) { toast('❌ ' + err.message, 'err'); }
+      btn.disabled = false;
+      btn.textContent = '🗑 Eliminar todos los gastos importados';
     });
   },
 };

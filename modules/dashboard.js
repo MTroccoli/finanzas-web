@@ -162,22 +162,16 @@ window.Mods.dashboard = {
     };
 
     const monthTitle = now.toLocaleDateString('es-AR', {month: 'long', year: 'numeric'});
-    const inp = 'background:var(--surface-alt);border:1px solid var(--border-strong);border-radius:8px;color:var(--text);padding:7px 10px;font-size:.82rem;font-family:DM Mono,monospace;outline:none';
 
     c.innerHTML = `
-      <div class="g-sticky-header">
-        <h1>Análisis</h1>
-        <p class="page-subtitle">${monthTitle} · flujo de caja proyectado</p>
-        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding-bottom:8px">
-          <div style="display:flex;gap:6px">
-            <button id="pan-usd" class="g-tab${mode==='USD'?' active':''}" onclick="window.Mods.dashboard._setMode('USD')">USD</button>
-            <button id="pan-uyu" class="g-tab${mode==='UYU'?' active':''}" onclick="window.Mods.dashboard._setMode('UYU')">UYU</button>
-          </div>
-          <div style="display:flex;align-items:center;gap:8px">
-            <span style="font-family:'DM Mono',monospace;font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text-sec)">TC $U/$</span>
-            <input id="pan-tc" type="number" value="${tc}" min="1" step="0.5" style="${inp};width:72px">
-            <button class="btn btn-ghost" style="padding:6px 12px;font-size:.72rem" onclick="window.Mods.dashboard._saveTc()">Aplicar</button>
-          </div>
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:1rem">
+        <div>
+          <h1>Análisis</h1>
+          <p class="page-subtitle">${monthTitle} · flujo de caja proyectado</p>
+        </div>
+        <div style="display:flex;gap:6px;margin-top:6px">
+          <button id="pan-usd" class="g-tab${mode==='USD'?' active':''}" onclick="window.Mods.dashboard._setMode('USD')">USD</button>
+          <button id="pan-uyu" class="g-tab${mode==='UYU'?' active':''}" onclick="window.Mods.dashboard._setMode('UYU')">UYU</button>
         </div>
       </div>
 

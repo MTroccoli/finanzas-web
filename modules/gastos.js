@@ -254,10 +254,20 @@ window.Mods.gastos = {
   },
 
   _drawShell() {
+    const titles = {
+      resumen:   ['Resumen de Gastos',               'Evolución mensual y análisis de categorías'],
+      detalle:   ['Detalle de Gastos',               'Registro completo de transacciones'],
+      cuotas:    ['Cuotas Activas',                  'Planes de pago en curso'],
+      comercios: ['Tarjetas de Crédito — Comercios', 'Análisis por comercio'],
+      adicional: ['Tarjetas de Crédito — Adicional', 'Gastos de tarjetas adicionales'],
+      importar:  ['Tarjetas de Crédito — Importar',  'Procesamiento de estados de cuenta'],
+      manual:    ['Nuevo Gasto',                     'Registro manual de egresos'],
+    };
+    const [h1, sub] = titles[this._tab] || ['Gastos', 'Control de egresos'];
     const c = document.getElementById('content');
     c.innerHTML = `
-      <h1>Gastos</h1>
-      <p class="page-subtitle" style="margin-bottom:1rem">Control de egresos · importación automática de EDC</p>
+      <h1>${h1}</h1>
+      <p class="page-subtitle" style="margin-bottom:1rem">${sub}</p>
       <div id="g-content"></div>
       ${this._catDatalistHTML()}
     `;
@@ -406,6 +416,18 @@ window.Mods.gastos = {
     }
     const imps = impsRaw.map(i => ({ ...i, ...(impMap[i.id] || { count: 0, desde: null, hasta: null }) }));
 
+    // Group imports by banco_tarjeta for accordion display
+    const impsByCard = {};
+    for (const imp of imps) {
+      const key = imp.banco_tarjeta || '';
+      if (!impsByCard[key]) impsByCard[key] = [];
+      impsByCard[key].push(imp);
+    }
+    const cardKeys = Object.keys(impsByCard).sort((a, b) => {
+      if (!a) return 1; if (!b) return -1;
+      return (cardCounts[b] || 0) - (cardCounts[a] || 0) || a.localeCompare(b);
+    });
+
     document.getElementById('g-content').innerHTML = `
       <div class="form-card">
         <h3>Importar Estado de Cuenta VISA</h3>
@@ -427,42 +449,64 @@ window.Mods.gastos = {
 
       ${imps.length === 0 ? '' : `
       <div class="form-card" style="padding:14px 16px;margin-top:.75rem">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
-          <h3 style="margin:0;font-size:.9rem">Importaciones anteriores</h3>
+        <h3 style="margin:0 0 12px;font-size:.9rem">Importaciones anteriores</h3>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          ${cardKeys.map(key => {
+            const group = impsByCard[key];
+            const totalGastos = group.reduce((s, i) => s + i.count, 0);
+            const allDates = group.flatMap(i => [i.desde, i.hasta]).filter(Boolean);
+            const minDate = allDates.length ? allDates.reduce((a, b) => a < b ? a : b) : null;
+            const maxDate = allDates.length ? allDates.reduce((a, b) => a > b ? a : b) : null;
+            const label = key || 'Sin tarjeta';
+            return `
+              <details style="border:1px solid var(--border);border-radius:8px;overflow:hidden">
+                <summary style="display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;
+                  background:var(--surface-alt);flex-wrap:wrap;list-style:none;-webkit-appearance:none">
+                  <span style="font-weight:500;flex:1;min-width:100px;font-size:.85rem">${label}</span>
+                  <span style="font-family:'DM Mono',monospace;font-size:.75rem;color:var(--text-sec)">
+                    ${group.length} imp. · ${totalGastos} gastos
+                  </span>
+                  ${minDate ? `
+                  <span style="font-family:'DM Mono',monospace;font-size:.72rem;color:var(--text-sec);white-space:nowrap">
+                    ${fmtDate(minDate)} → ${fmtDate(maxDate)}
+                  </span>` : ''}
+                </summary>
+                <div style="padding:4px 0 8px">
+                  <div class="table-scroll">
+                  <table style="font-size:.8rem">
+                    <thead><tr>
+                      <th style="width:40px;padding-left:12px"></th>
+                      <th>#</th><th>Período</th><th>Gastos</th><th colspan="2"></th>
+                    </tr></thead>
+                    <tbody>
+                      ${group.map(imp => `
+                        <tr data-imp-id="${imp.id}">
+                          <td style="padding-left:12px"><input type="checkbox" class="g-imp-chk" data-id="${imp.id}"></td>
+                          <td style="font-family:'DM Mono',monospace;color:var(--text-sec)">#${imp.id}</td>
+                          <td style="white-space:nowrap">
+                            ${imp.desde ? `${fmtDate(imp.desde)} → ${fmtDate(imp.hasta)}` : '—'}
+                          </td>
+                          <td style="font-family:'DM Mono',monospace">${imp.count}</td>
+                          <td>
+                            <button class="btn btn-ghost g-imp-del-btn" data-id="${imp.id}" data-n="${imp.count}"
+                              style="font-size:.72rem;padding:2px 8px;color:var(--red)">✕ Eliminar</button>
+                          </td>
+                          <td>
+                            ${imp.archivo_path ? `
+                              <button class="btn btn-ghost g-imp-reparse-btn" data-path="${imp.archivo_path}"
+                                style="font-size:.72rem;padding:2px 8px">↺ Re-parsear</button>
+                            ` : ''}
+                          </td>
+                        </tr>`).join('')}
+                    </tbody>
+                  </table>
+                  </div>
+                </div>
+              </details>
+            `;
+          }).join('')}
         </div>
-        <div class="table-scroll">
-        <table style="font-size:.8rem">
-          <thead><tr>
-            <th style="width:40px">
-              <input type="checkbox" id="g-imp-chk-all" title="Seleccionar todos">
-            </th>
-            <th>#</th><th>Banco/Tarjeta</th><th>Período</th><th>Gastos</th><th colspan="2"></th>
-          </tr></thead>
-          <tbody>
-            ${imps.map(imp => `
-              <tr data-imp-id="${imp.id}">
-                <td><input type="checkbox" class="g-imp-chk" data-id="${imp.id}"></td>
-                <td style="font-family:'DM Mono',monospace;color:var(--text-sec)">#${imp.id}</td>
-                <td style="white-space:nowrap;font-size:.78rem">${imp.banco_tarjeta || '—'}</td>
-                <td style="white-space:nowrap">
-                  ${imp.desde ? `${fmtDate(imp.desde)} → ${fmtDate(imp.hasta)}` : '—'}
-                </td>
-                <td style="font-family:'DM Mono',monospace">${imp.count}</td>
-                <td>
-                  <button class="btn btn-ghost g-imp-del-btn" data-id="${imp.id}" data-n="${imp.count}"
-                    style="font-size:.72rem;padding:2px 8px;color:var(--red)">✕ Eliminar</button>
-                </td>
-                <td>
-                  ${imp.archivo_path ? `
-                    <button class="btn btn-ghost g-imp-reparse-btn" data-path="${imp.archivo_path}"
-                      style="font-size:.72rem;padding:2px 8px">↺ Re-parsear</button>
-                  ` : ''}
-                </td>
-              </tr>`).join('')}
-          </tbody>
-        </table>
-        </div>
-        <div id="g-imp-sel-bar" style="display:none;margin-top:10px;display:flex;gap:8px;align-items:center">
+        <div id="g-imp-sel-bar" style="display:none;margin-top:10px;gap:8px;align-items:center">
           <span id="g-imp-sel-count" style="font-size:.78rem;color:var(--text-sec)"></span>
           <button id="g-btn-del-sel" class="btn btn-ghost"
             style="font-size:.75rem;padding:4px 10px;color:var(--red);border-color:rgba(239,68,68,.3)">
@@ -505,19 +549,6 @@ window.Mods.gastos = {
         </table>
       </div>`}
 
-      ${imps.length === 0 ? '' : `
-      <div class="form-card" style="padding:14px 16px;margin-top:.75rem;
-        border:1px solid rgba(239,68,68,.35);background:rgba(239,68,68,.04)">
-        <h3 style="margin:0 0 4px;font-size:.88rem;color:var(--red)">⚠️ Zona de peligro</h3>
-        <p style="font-size:.76rem;color:var(--text-sec);margin:0 0 12px">
-          Esta acción elimina todos los gastos e importaciones. Los PDFs quedan en storage y
-          se pueden recuperar, pero los ajustes manuales se pierden. No se puede deshacer.
-        </p>
-        <button id="g-btn-del-all" class="btn btn-ghost"
-          style="font-size:.8rem;padding:6px 16px;color:var(--red);border-color:rgba(239,68,68,.45)">
-          🗑 Eliminar todos los gastos importados
-        </button>
-      </div>`}
     `;
 
     const zone     = document.getElementById('g-drop-zone');
@@ -1418,7 +1449,6 @@ window.Mods.gastos = {
               <label>Medio de pago</label>
               <select id="g-banco">
                 <option value="">— Sin asignar</option>
-                <option value="Efectivo">Efectivo</option>
                 ${bancosList.filter(b => b !== 'Efectivo').map(b => `<option value="${b}">${b}</option>`).join('')}
               </select>
             </div>
