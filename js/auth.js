@@ -46,7 +46,7 @@ window.Auth = {
     el.id = 'auth-screen';
     el.innerHTML = `
       <div class="auth-card">
-        <div class="auth-logo">Finanzas</div>
+        <div class="auth-logo"><img src="img/logo.png" alt="FinPro"></div>
         <div class="auth-tabs">
           <button class="auth-tab-btn active" data-tab="login">Ingresar</button>
           <button class="auth-tab-btn" data-tab="signup">Registrarse</button>
