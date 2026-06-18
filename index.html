@@ -5,9 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>FinPro</title>
   <link rel="icon" type="image/png" href="img/logo.png">
+  <link rel="apple-touch-icon" href="img/icon-192.png">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#071E3D">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="FinPro">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Text:wght@600&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/main.css?v=20260618g">
+  <link rel="stylesheet" href="css/main.css?v=20260618h">
 </head>
 <body>
 
@@ -129,6 +135,10 @@
     ['gesturestart','gesturechange','gestureend'].forEach(t =>
       document.addEventListener(t, function(e) { e.preventDefault(); }, { passive: false })
     );
+    // PWA service worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/finanzas-web/sw.js');
+    }
   </script>
 
 </body>
