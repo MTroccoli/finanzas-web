@@ -10,6 +10,7 @@ const PAGES = {
 const WITH_SUBNAV = new Set(['inversiones']);
 
 async function handleRoute() {
+  if (!window.Auth?._user) return;
   document.getElementById('gas-subnav')?.remove();
   const hash = window.location.hash.slice(1) || 'dashboard';
   const [page, sub] = hash.split('/');
@@ -54,6 +55,8 @@ function toast(msg, type = 'ok', ms = 2800) {
 
 window.addEventListener('hashchange', handleRoute);
 window.addEventListener('load', () => {
-  window.location.hash = '#dashboard';
-  handleRoute();
+  if (!window.location.hash || window.location.hash === '#') {
+    window.location.hash = '#dashboard';
+  }
+  window.Auth.init();
 });

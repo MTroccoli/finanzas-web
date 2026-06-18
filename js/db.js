@@ -42,13 +42,25 @@ async function dbUpsert(table, data) {
   return result;
 }
 
+async function getAuthUserId() {
+  const { data: { user } } = await getDB().auth.getUser();
+  return user?.id ?? null;
+}
+
 async function getConfig(clave) {
-  const rows = await dbFetch('configuracion', { select: 'valor', filters: { clave } });
-  return rows.length ? rows[0].valor : null;
+  const uid = await getAuthUserId();
+  if (!uid) return null;
+  const { data } = await getDB().from('configuracion')
+    .select('valor').eq('clave', clave).eq('user_id', uid).maybeSingle();
+  return data?.valor ?? null;
 }
 
 async function setConfig(clave, valor) {
-  await dbUpsert('configuracion', { clave, valor });
+  const uid = await getAuthUserId();
+  if (!uid) return;
+  const { error } = await getDB().from('configuracion')
+    .upsert({ clave, valor, user_id: uid }, { onConflict: 'clave,user_id' });
+  if (error) throw error;
 }
 
 function fmt(n, dec = 2) {
