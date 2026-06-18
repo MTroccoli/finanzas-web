@@ -13,7 +13,7 @@
   --green:        #29D985;
   --red:          #FF5E5E;
   --gold:         #FFD166;
-  --topbar-h:     48px;
+  --topbar-h:     calc(48px + env(safe-area-inset-top, 0px));
   --nav-h:        0px;
   --subnav-h:     44px;
   --mob-nav-h:    0px;
@@ -43,7 +43,7 @@ input, select, textarea { font-family: inherit; }
   border-bottom: 1px solid var(--border);
   display: flex;
   align-items: center;
-  padding: 0 12px 0 4px;
+  padding: env(safe-area-inset-top, 0px) 12px 0 4px;
   gap: 10px;
 }
 .tb-logo {
@@ -122,7 +122,7 @@ body.has-tdc-subnav #content {
 #sidenav {
   position: fixed;
   top: var(--topbar-h); bottom: 0; left: 0;
-  width: 220px;
+  width: calc(220px + env(safe-area-inset-left, 0px));
   z-index: 600;
   background: var(--surface);
   border-right: 1px solid var(--border);
@@ -130,8 +130,10 @@ body.has-tdc-subnav #content {
   flex-direction: column;
   overflow-y: auto;
   scrollbar-width: none;
-  transform: translateX(-220px);
+  transform: translateX(calc(-220px - env(safe-area-inset-left, 0px)));
   transition: transform .25s cubic-bezier(.4,0,.2,1);
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 #sidenav::-webkit-scrollbar { display: none; }
 body.nav-open #sidenav { transform: translateX(0); }
