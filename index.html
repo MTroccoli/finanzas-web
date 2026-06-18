@@ -6,32 +6,72 @@
   <title>Finanzas App</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/main.css?v=20260618a">
+  <link rel="stylesheet" href="css/main.css?v=20260618b">
 </head>
 <body>
 
-  <nav id="mainnav">
-    <a href="#dashboard"     class="nav-item" data-page="dashboard">
-      <span class="nav-icon">📊</span><span class="nav-label">Análisis</span>
-    </a>
-    <a href="#inversiones"   class="nav-item" data-page="inversiones">
-      <span class="nav-icon">📈</span><span class="nav-label">Inversiones</span>
-    </a>
-    <a href="#gastos"        class="nav-item" data-page="gastos">
-      <span class="nav-icon">💸</span><span class="nav-label">Gastos</span>
-    </a>
-    <a href="#ingresos"      class="nav-item" data-page="ingresos">
-      <span class="nav-icon">💵</span><span class="nav-label">Ingresos</span>
-    </a>
-    <a href="#configuracion" class="nav-item" data-page="configuracion">
-      <span class="nav-icon">⚙️</span><span class="nav-label">Config</span>
-    </a>
-  </nav>
+  <!-- Topbar -->
+  <div id="topbar-bar">
+    <button id="hamburger" aria-label="Menú">
+      <span></span><span></span><span></span>
+    </button>
+    <span class="tb-logo">Finanzas</span>
+    <span id="tb-page"></span>
+  </div>
 
-  <nav id="subnav" class="hidden">
-    <a href="#inversiones/portafolio"   class="sub-item" data-sub="portafolio">📋 Portafolio</a>
-    <a href="#inversiones/mercado"      class="sub-item" data-sub="mercado">🌐 Mercado</a>
-    <a href="#inversiones/operaciones"  class="sub-item" data-sub="operaciones">🔄 Operaciones</a>
+  <!-- Overlay -->
+  <div id="nav-overlay"></div>
+
+  <!-- Sidenav -->
+  <nav id="sidenav">
+    <div class="sn-section">Principal</div>
+
+    <a href="#dashboard" class="sn-item" data-page="dashboard">
+      <svg class="sn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      Análisis
+    </a>
+
+    <div class="sn-acc" data-acc="inversiones">
+      <div class="sn-item sn-acc-hd" data-page="inversiones">
+        <svg class="sn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+        Inversiones
+        <svg class="sn-arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+      <div class="sn-acc-body">
+        <a href="#inversiones/portafolio"  class="sn-sub" data-page="inversiones" data-sub="portafolio">Portafolio</a>
+        <a href="#inversiones/mercado"     class="sn-sub" data-page="inversiones" data-sub="mercado">Mercado</a>
+        <a href="#inversiones/operaciones" class="sn-sub" data-page="inversiones" data-sub="operaciones">Operaciones</a>
+      </div>
+    </div>
+
+    <div class="sn-acc" data-acc="gastos">
+      <div class="sn-item sn-acc-hd" data-page="gastos">
+        <svg class="sn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Gastos
+        <svg class="sn-arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+      <div class="sn-acc-body">
+        <a href="#gastos/resumen"   class="sn-sub" data-page="gastos" data-sub="resumen">Resumen</a>
+        <a href="#gastos/historial" class="sn-sub" data-page="gastos" data-sub="historial">Historial</a>
+        <a href="#gastos/comercios" class="sn-sub" data-page="gastos" data-sub="comercios">Comercios</a>
+        <a href="#gastos/cuotas"    class="sn-sub" data-page="gastos" data-sub="cuotas">Cuotas</a>
+      </div>
+    </div>
+
+    <a href="#ingresos" class="sn-item" data-page="ingresos">
+      <svg class="sn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      Ingresos
+    </a>
+
+    <hr class="sn-divider">
+    <div class="sn-section">Sistema</div>
+
+    <a href="#configuracion" class="sn-item" data-page="configuracion">
+      <svg class="sn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      Configuración
+    </a>
+
+    <div id="sn-user-area"></div>
   </nav>
 
   <main id="content"></main>
@@ -42,14 +82,14 @@
   <script src="https://cdn.plot.ly/plotly-2.35.0.min.js" charset="utf-8"></script>
   <script src="js/config.js?v=20260625"></script>
   <script src="js/db.js?v=20260618a"></script>
-  <script src="js/auth.js?v=20260618a"></script>
+  <script src="js/auth.js?v=20260618b"></script>
   <script src="modules/dashboard.js?v=20260616g"></script>
   <script src="modules/inversiones.js?v=20260616p"></script>
   <script src="modules/gastos.js?v=20260617i"></script>
   <script src="modules/ingresos.js?v=20260616e"></script>
   <script src="modules/presupuesto.js?v=20260625"></script>
   <script src="modules/config_page.js?v=20260625"></script>
-  <script src="js/app.js?v=20260618a"></script>
+  <script src="js/app.js?v=20260618b"></script>
   <script>
     // iOS 10+ ignora user-scalable=no — bloquear pinch/zoom vía events
     ['touchstart','touchmove'].forEach(t =>

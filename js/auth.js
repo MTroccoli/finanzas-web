@@ -24,24 +24,24 @@ window.Auth = {
   async _afterSignIn() {
     try { await getDB().rpc('claim_existing_data'); } catch (_) {}
     document.getElementById('auth-screen')?.remove();
-    const nav = document.getElementById('mainnav');
-    nav.style.display = '';
-    // Enlace de cierre de sesión al final del nav
-    if (!document.getElementById('btn-signout')) {
-      const a = document.createElement('a');
-      a.id = 'btn-signout';
-      a.className = 'nav-item';
-      a.href = '#';
-      a.title = this._user.email;
-      a.innerHTML = '<span class="nav-icon">🚪</span><span class="nav-label">Salir</span>';
-      a.addEventListener('click', e => { e.preventDefault(); this.signOut(); });
-      nav.appendChild(a);
+    const userArea = document.getElementById('sn-user-area');
+    if (userArea && !userArea.querySelector('.sn-signout')) {
+      userArea.innerHTML = `
+        <div class="sn-user-email">${this._user.email}</div>
+        <button class="sn-signout">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+            <polyline points="16 17 21 12 16 7"/>
+            <line x1="21" y1="12" x2="9" y2="12"/>
+          </svg>
+          Cerrar sesión
+        </button>`;
+      userArea.querySelector('.sn-signout').addEventListener('click', () => this.signOut());
     }
     handleRoute();
   },
 
   _showScreen() {
-    document.getElementById('mainnav').style.display = 'none';
     const el = document.createElement('div');
     el.id = 'auth-screen';
     el.innerHTML = `

@@ -1,40 +1,46 @@
 const PAGES = {
-  dashboard:     (sub) => window.Mods.dashboard.render(),
+  dashboard:     ()    => window.Mods.dashboard.render(),
   inversiones:   (sub) => window.Mods.inversiones.render(sub || 'portafolio'),
-  gastos:        (sub) => window.Mods.gastos.render(),
-  ingresos:      (sub) => window.Mods.ingresos.render(),
-  configuracion: (sub) => window.Mods.configuracion.render(),
+  gastos:        (sub) => { if (sub) window.Mods.gastos._tab = sub; return window.Mods.gastos.render(); },
+  ingresos:      ()    => window.Mods.ingresos.render(),
+  configuracion: ()    => window.Mods.configuracion.render(),
 };
 
-const WITH_SUBNAV = new Set(['inversiones']);
+const PAGE_NAMES = {
+  dashboard: 'Análisis', inversiones: 'Inversiones',
+  gastos: 'Gastos', ingresos: 'Ingresos', configuracion: 'Configuración',
+};
 
 async function handleRoute() {
   if (!window.Auth?._user) return;
   document.getElementById('gas-subnav')?.remove();
+
   const hash = window.location.hash.slice(1) || 'dashboard';
   const [page, sub] = hash.split('/');
   const route = PAGES[page] || PAGES.dashboard;
+  const activePage = PAGES[page] ? page : 'dashboard';
+  const activeSub = sub || (activePage === 'inversiones' ? 'portafolio' : 'resumen');
 
-  // Nav active state
-  document.querySelectorAll('.nav-item').forEach(el => {
-    el.classList.toggle('active', el.dataset.page === (PAGES[page] ? page : 'dashboard'));
+  document.body.classList.remove('nav-open');
+
+  // Sidenav active states
+  document.querySelectorAll('.sn-item[data-page]').forEach(el => {
+    el.classList.toggle('active', el.dataset.page === activePage);
+  });
+  document.querySelectorAll('.sn-sub').forEach(el => {
+    el.classList.toggle('active', el.dataset.page === activePage && el.dataset.sub === activeSub);
   });
 
-  // Subnav
-  const subnav = document.getElementById('subnav');
-  const content = document.getElementById('content');
-  if (WITH_SUBNAV.has(page)) {
-    subnav.classList.remove('hidden');
-    content.className = 'with-subnav';
-    document.querySelectorAll('.sub-item').forEach(el => {
-      el.classList.toggle('active', el.dataset.sub === (sub || 'portafolio'));
-    });
-  } else {
-    subnav.classList.add('hidden');
-    content.className = '';
-  }
+  // Open accordion for active page
+  document.querySelectorAll('.sn-acc').forEach(acc => {
+    if (acc.dataset.acc === activePage) acc.classList.add('open');
+  });
 
-  // Render
+  // Topbar page name
+  const tbPage = document.getElementById('tb-page');
+  if (tbPage) tbPage.textContent = PAGE_NAMES[activePage] || '';
+
+  const content = document.getElementById('content');
   content.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
   try {
     await route(sub);
@@ -44,7 +50,6 @@ async function handleRoute() {
   }
 }
 
-// Toast utility
 function toast(msg, type = 'ok', ms = 2800) {
   const el = document.getElementById('toast');
   el.textContent = msg;
@@ -57,5 +62,20 @@ window.addEventListener('load', () => {
   if (!window.location.hash || window.location.hash === '#') {
     window.location.hash = '#dashboard';
   }
+
+  document.getElementById('hamburger').addEventListener('click', () => {
+    document.body.classList.toggle('nav-open');
+  });
+
+  document.getElementById('nav-overlay').addEventListener('click', () => {
+    document.body.classList.remove('nav-open');
+  });
+
+  document.querySelectorAll('.sn-acc-hd').forEach(hd => {
+    hd.addEventListener('click', () => {
+      hd.closest('.sn-acc').classList.toggle('open');
+    });
+  });
+
   window.Auth.init();
 });
