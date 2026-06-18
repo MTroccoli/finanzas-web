@@ -3,7 +3,6 @@ const PAGES = {
   inversiones:   (sub) => window.Mods.inversiones.render(sub || 'portafolio'),
   gastos:        (sub) => window.Mods.gastos.render(),
   ingresos:      (sub) => window.Mods.ingresos.render(),
-  presupuesto:   (sub) => window.Mods.presupuesto.render(),
   configuracion: (sub) => window.Mods.configuracion.render(),
 };
 

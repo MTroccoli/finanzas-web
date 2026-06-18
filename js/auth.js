@@ -26,15 +26,16 @@ window.Auth = {
     document.getElementById('auth-screen')?.remove();
     const nav = document.getElementById('mainnav');
     nav.style.display = '';
-    // Botón de cierre de sesión al final del nav
+    // Enlace de cierre de sesión al final del nav
     if (!document.getElementById('btn-signout')) {
-      const btn = document.createElement('button');
-      btn.id = 'btn-signout';
-      btn.className = 'nav-item';
-      btn.title = this._user.email;
-      btn.innerHTML = '<span class="nav-icon">🚪</span><span class="nav-label">Salir</span>';
-      btn.addEventListener('click', () => this.signOut());
-      nav.appendChild(btn);
+      const a = document.createElement('a');
+      a.id = 'btn-signout';
+      a.className = 'nav-item';
+      a.href = '#';
+      a.title = this._user.email;
+      a.innerHTML = '<span class="nav-icon">🚪</span><span class="nav-label">Salir</span>';
+      a.addEventListener('click', e => { e.preventDefault(); this.signOut(); });
+      nav.appendChild(a);
     }
     handleRoute();
   },
