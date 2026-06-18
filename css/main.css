@@ -161,7 +161,7 @@ body.nav-open #nav-overlay { display: block; }
   gap: 11px;
   padding: 10px 20px;
   font-size: .88rem;
-  color: var(--text-sec);
+  color: rgba(180,205,240,0.82);
   border-left: 3px solid transparent;
   cursor: pointer;
   transition: background .12s, color .12s, border-color .12s;
@@ -176,7 +176,7 @@ body.nav-open #nav-overlay { display: block; }
 }
 .sn-icon {
   width: 17px; height: 17px;
-  opacity: .65;
+  opacity: .80;
   flex-shrink: 0;
 }
 .sn-item.active .sn-icon { opacity: 1; }
@@ -198,7 +198,7 @@ body.nav-open #nav-overlay { display: block; }
   display: block;
   padding: 7px 20px 7px 48px;
   font-size: .82rem;
-  color: var(--text-sec);
+  color: rgba(180,205,240,0.75);
   transition: color .12s, background .12s;
 }
 .sn-sub:hover { color: var(--text); background: rgba(255,255,255,.03); }

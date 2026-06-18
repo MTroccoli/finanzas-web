@@ -34,28 +34,36 @@ async function handleRoute() {
   }
   document.body.classList.toggle('has-tdc-subnav', isTdc);
 
-  // Sidenav active states
-  // sn-item: active by page; if item also has data-sub, match both page+sub
+  // Helper: checks if a sub-link matches the current route
+  const subMatches = el => {
+    const alts = el.dataset.subAlt ? el.dataset.subAlt.split(',') : [];
+    return el.dataset.page === activePage &&
+      (el.dataset.sub === activeSub || alts.includes(activeSub));
+  };
+
+  // sn-sub / sn-sub2 active state
+  document.querySelectorAll('.sn-sub, .sn-sub2').forEach(el => {
+    el.classList.toggle('active', subMatches(el));
+  });
+
+  // Accordion: open only when one of its subs is active; close otherwise
+  document.querySelectorAll('.sn-acc').forEach(acc => {
+    const hasActive = [...acc.querySelectorAll('.sn-sub, .sn-sub2')].some(subMatches);
+    acc.classList.toggle('open', hasActive);
+  });
+
+  // sn-item active state:
+  // - top-level links (data-sub present): match page+sub exactly
+  // - accordion headers (no data-sub): active only when one of their subs is active
   document.querySelectorAll('.sn-item[data-page]').forEach(el => {
     if (el.dataset.sub) {
       el.classList.toggle('active', el.dataset.page === activePage && el.dataset.sub === activeSub);
     } else {
-      el.classList.toggle('active', el.dataset.page === activePage);
-    }
-  });
-  // sn-sub: match page+sub; data-sub-alt allows alternate subs to also highlight the item
-  document.querySelectorAll('.sn-sub, .sn-sub2').forEach(el => {
-    const altSubs = el.dataset.subAlt ? el.dataset.subAlt.split(',') : [];
-    const match = el.dataset.page === activePage &&
-      (el.dataset.sub === activeSub || altSubs.includes(activeSub));
-    el.classList.toggle('active', match);
-  });
-
-  // Open accordion for active page
-  // Skip gastos accordion when on importar (it's a top-level nav item, not inside the accordion)
-  document.querySelectorAll('.sn-acc').forEach(acc => {
-    if (acc.dataset.acc === activePage && !(activePage === 'gastos' && activeSub === 'importar')) {
-      acc.classList.add('open');
+      const acc = el.closest('.sn-acc');
+      const isActive = acc
+        ? [...acc.querySelectorAll('.sn-sub, .sn-sub2')].some(subMatches)
+        : el.dataset.page === activePage;
+      el.classList.toggle('active', isActive);
     }
   });
 
