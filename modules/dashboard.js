@@ -177,13 +177,12 @@ window.Mods.dashboard = {
       </div>
 
       <div class="metrics-row" style="margin-top:16px">
-        <div class="metric-card">
+        <div class="metric-card" style="display:flex;flex-direction:column;align-items:center;text-align:center">
           <div class="metric-label">Ingresos · ${now.toLocaleDateString('es-AR',{month:'short'})}</div>
-          <div class="metric-value pos">${fmtD(cur.ing)}</div>
-          ${delta(dIng, true)}
+          <div class="metric-value pos" style="margin-top:auto;padding-top:6px">${fmtD(cur.ing)}</div>
         </div>
         <div class="metric-card">
-          <div class="metric-label">Gastos proyectados <span style="font-size:.55rem;color:var(--text-sec)">(est.)</span></div>
+          <div class="metric-label">Gastos proyectados</div>
           <div class="metric-value">${fmtD(curProjGas)}</div>
           <div style="margin-top:6px;display:flex;flex-direction:column;gap:2px">
             <div style="display:flex;justify-content:space-between;font-size:.63rem;font-family:'DM Mono',monospace">
@@ -195,7 +194,7 @@ window.Mods.dashboard = {
               <span style="color:var(--gold)">${fmtD(cuotasCurMonth)}</span>
             </div>
             <div style="display:flex;justify-content:space-between;font-size:.63rem;font-family:'DM Mono',monospace">
-              <span style="color:var(--text-sec)">Recurrentes</span>
+              <span style="color:var(--text-sec)">Fijos</span>
               <span style="color:#a78bfa">${fmtD(recAvg)}</span>
             </div>
           </div>
@@ -203,8 +202,7 @@ window.Mods.dashboard = {
         <div class="metric-card">
           <div class="metric-label">Balance estimado</div>
           <div class="metric-value ${plClass(balance)}">${plSign(balance)}${fmtD(balance)}</div>
-          ${delta(balance - prevBal, true)}
-          <span style="font-size:.63rem;font-family:'DM Mono',monospace;margin-top:3px;display:block;color:${tasa>=20?'var(--green)':tasa>=0?'var(--text-sec)':'var(--red)'}">Tasa ahorro: ${tasa>0?'+':''}${tasa}%</span>
+          <span style="font-size:.63rem;font-family:'DM Mono',monospace;margin-top:6px;display:block;color:${tasa>=20?'var(--green)':tasa>=0?'var(--text-sec)':'var(--red)'}">Tasa ahorro: ${tasa>0?'+':''}${tasa}%</span>
         </div>
       </div>
 
