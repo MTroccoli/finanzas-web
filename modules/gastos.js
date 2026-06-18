@@ -260,7 +260,7 @@ window.Mods.gastos = {
       cuotas:    ['Cuotas Activas',                  'Planes de pago en curso'],
       comercios: ['Tarjetas de Crédito — Comercios', 'Análisis por comercio'],
       adicional: ['Tarjetas de Crédito — Adicional', 'Gastos de tarjetas adicionales'],
-      importar:  ['Tarjetas de Crédito — Importar',  'Procesamiento de estados de cuenta'],
+      importar:  ['Importar EDC',                    'Carga de estados de cuenta VISA'],
       manual:    ['Nuevo Gasto',                     'Registro manual de egresos'],
     };
     const [h1, sub] = titles[this._tab] || ['Gastos', 'Control de egresos'];

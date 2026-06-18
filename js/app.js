@@ -11,8 +11,6 @@ const PAGE_NAMES = {
   gastos: 'Gastos', ingresos: 'Ingresos', configuracion: 'Configuración',
 };
 
-const TDC_SUBS = new Set(['comercios', 'adicional', 'importar', 'cuotas']);
-
 async function handleRoute() {
   if (!window.Auth?._user) return;
   document.getElementById('gas-subnav')?.remove();
@@ -25,23 +23,41 @@ async function handleRoute() {
 
   document.body.classList.remove('nav-open');
 
+  // TDC sub-nav (Comercios / Adicional tabs fixed below topbar)
+  const isTdc = activePage === 'gastos' && (activeSub === 'comercios' || activeSub === 'adicional');
+  const tdcSubnav = document.getElementById('tdc-subnav');
+  if (tdcSubnav) {
+    tdcSubnav.classList.toggle('visible', isTdc);
+    tdcSubnav.querySelectorAll('.tdc-tab').forEach(tab => {
+      tab.classList.toggle('active', tab.dataset.sub === activeSub);
+    });
+  }
+  document.body.classList.toggle('has-tdc-subnav', isTdc);
+
   // Sidenav active states
+  // sn-item: active by page; if item also has data-sub, match both page+sub
   document.querySelectorAll('.sn-item[data-page]').forEach(el => {
-    el.classList.toggle('active', el.dataset.page === activePage);
+    if (el.dataset.sub) {
+      el.classList.toggle('active', el.dataset.page === activePage && el.dataset.sub === activeSub);
+    } else {
+      el.classList.toggle('active', el.dataset.page === activePage);
+    }
   });
+  // sn-sub: match page+sub; data-sub-alt allows alternate subs to also highlight the item
   document.querySelectorAll('.sn-sub, .sn-sub2').forEach(el => {
-    el.classList.toggle('active', el.dataset.page === activePage && el.dataset.sub === activeSub);
+    const altSubs = el.dataset.subAlt ? el.dataset.subAlt.split(',') : [];
+    const match = el.dataset.page === activePage &&
+      (el.dataset.sub === activeSub || altSubs.includes(activeSub));
+    el.classList.toggle('active', match);
   });
 
   // Open accordion for active page
+  // Skip gastos accordion when on importar (it's a top-level nav item, not inside the accordion)
   document.querySelectorAll('.sn-acc').forEach(acc => {
-    if (acc.dataset.acc === activePage) acc.classList.add('open');
+    if (acc.dataset.acc === activePage && !(activePage === 'gastos' && activeSub === 'importar')) {
+      acc.classList.add('open');
+    }
   });
-
-  // Auto-open nested TDC accordion when a TDC sub is active
-  if (activePage === 'gastos' && TDC_SUBS.has(activeSub)) {
-    document.querySelectorAll('.sn-acc-nested[data-acc-nested="tdc"]').forEach(acc => acc.classList.add('open'));
-  }
 
   // Topbar page name
   const tbPage = document.getElementById('tb-page');
@@ -81,12 +97,6 @@ window.addEventListener('load', () => {
   document.querySelectorAll('.sn-acc-hd').forEach(hd => {
     hd.addEventListener('click', () => {
       hd.closest('.sn-acc').classList.toggle('open');
-    });
-  });
-
-  document.querySelectorAll('.sn-sub-acc-hd').forEach(hd => {
-    hd.addEventListener('click', () => {
-      hd.closest('.sn-acc-nested').classList.toggle('open');
     });
   });
 

@@ -6,7 +6,7 @@
   <title>Finanzas App</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/main.css?v=20260618c">
+  <link rel="stylesheet" href="css/main.css?v=20260618e">
 </head>
 <body>
 
@@ -17,6 +17,12 @@
     </button>
     <span class="tb-logo">Finanzas</span>
     <span id="tb-page"></span>
+  </div>
+
+  <!-- TDC sub-nav (Tarjetas de Crédito tabs) -->
+  <div id="tdc-subnav">
+    <a href="#gastos/comercios" class="tdc-tab" data-sub="comercios">Comercios</a>
+    <a href="#gastos/adicional" class="tdc-tab" data-sub="adicional">Adicional</a>
   </div>
 
   <!-- Overlay -->
@@ -51,28 +57,21 @@
         <svg class="sn-arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
       </div>
       <div class="sn-acc-body">
-        <a href="#gastos/resumen" class="sn-sub" data-page="gastos" data-sub="resumen">Resumen</a>
-        <a href="#gastos/detalle" class="sn-sub" data-page="gastos" data-sub="detalle">Detalle</a>
-
-        <div class="sn-acc-nested" data-acc-nested="tdc">
-          <div class="sn-sub sn-sub-acc-hd">
-            Tarjetas de Crédito
-            <svg class="sn-arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-          </div>
-          <div class="sn-acc-body-nested">
-            <a href="#gastos/comercios" class="sn-sub2" data-page="gastos" data-sub="comercios">Comercios</a>
-            <a href="#gastos/adicional" class="sn-sub2" data-page="gastos" data-sub="adicional">Adicional</a>
-            <a href="#gastos/importar"  class="sn-sub2" data-page="gastos" data-sub="importar">Importar Estado de Cuenta</a>
-          </div>
-        </div>
-
-        <a href="#gastos/manual" class="sn-sub" data-page="gastos" data-sub="manual">Nuevo Gasto</a>
+        <a href="#gastos/resumen"   class="sn-sub" data-page="gastos" data-sub="resumen">Resumen</a>
+        <a href="#gastos/detalle"   class="sn-sub" data-page="gastos" data-sub="detalle">Detalle</a>
+        <a href="#gastos/comercios" class="sn-sub" data-page="gastos" data-sub="comercios" data-sub-alt="adicional">Tarjetas de Crédito</a>
+        <a href="#gastos/manual"    class="sn-sub" data-page="gastos" data-sub="manual">Nuevo Gasto</a>
       </div>
     </div>
 
     <a href="#ingresos" class="sn-item" data-page="ingresos">
       <svg class="sn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
       Ingresos
+    </a>
+
+    <a href="#gastos/importar" class="sn-item" data-page="gastos" data-sub="importar">
+      <svg class="sn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      Importar EDC
     </a>
 
     <hr class="sn-divider">
@@ -97,11 +96,11 @@
   <script src="js/auth.js?v=20260618b"></script>
   <script src="modules/dashboard.js?v=20260618d"></script>
   <script src="modules/inversiones.js?v=20260616p"></script>
-  <script src="modules/gastos.js?v=20260618d"></script>
+  <script src="modules/gastos.js?v=20260618e"></script>
   <script src="modules/ingresos.js?v=20260616e"></script>
   <script src="modules/presupuesto.js?v=20260625"></script>
   <script src="modules/config_page.js?v=20260618d"></script>
-  <script src="js/app.js?v=20260618c"></script>
+  <script src="js/app.js?v=20260618e"></script>
   <script>
     // iOS 10+ ignora user-scalable=no — bloquear pinch/zoom vía events
     ['touchstart','touchmove'].forEach(t =>

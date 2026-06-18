@@ -83,6 +83,37 @@ body.nav-open #hamburger span:nth-child(1) { transform: translateY(7px) rotate(4
 body.nav-open #hamburger span:nth-child(2) { opacity: 0; }
 body.nav-open #hamburger span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
+/* ── TDC sub-nav ────────────────────────────────────────────────────────── */
+#tdc-subnav {
+  position: fixed;
+  top: var(--topbar-h); left: 0; right: 0;
+  height: 40px;
+  z-index: 90;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display: none;
+  align-items: center;
+  padding: 0 16px;
+  gap: 4px;
+}
+#tdc-subnav.visible { display: flex; }
+.tdc-tab {
+  padding: 5px 14px;
+  border-radius: 6px;
+  font-size: .82rem;
+  color: var(--text-sec);
+  transition: background .15s, color .15s;
+}
+.tdc-tab.active {
+  color: var(--accent);
+  background: rgba(46,127,217,.12);
+  font-weight: 500;
+}
+body.has-tdc-subnav #content {
+  margin-top: calc(var(--topbar-h) + 40px);
+  min-height: calc(100vh - var(--topbar-h) - 40px);
+}
+
 /* ── Sidenav ─────────────────────────────────────────────────────────────── */
 #sidenav {
   position: fixed;
