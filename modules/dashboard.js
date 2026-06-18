@@ -177,9 +177,9 @@ window.Mods.dashboard = {
       </div>
 
       <div class="metrics-row" style="margin-top:16px">
-        <div class="metric-card" style="display:flex;flex-direction:column;align-items:center;text-align:center">
+        <div class="metric-card" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:8px">
           <div class="metric-label">Ingresos · ${now.toLocaleDateString('es-AR',{month:'short'})}</div>
-          <div class="metric-value pos" style="margin-top:auto;padding-top:6px">${fmtD(cur.ing)}</div>
+          <div class="metric-value pos">${fmtD(cur.ing)}</div>
         </div>
         <div class="metric-card">
           <div class="metric-label">Gastos proyectados</div>
@@ -223,26 +223,26 @@ window.Mods.dashboard = {
               <div style="font-family:'Bebas Neue',sans-serif;font-size:1.25rem;letter-spacing:.06em;margin-bottom:10px;text-transform:capitalize">${p.label}</div>
               <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:3px">
                 <span style="font-family:'DM Mono',monospace;font-size:.58rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text-sec)">Ing. esperados</span>
-                <span style="font-size:.82rem;color:var(--green)">${fmtD(p.ingAvg)}</span>
+                <span style="font-size:.82rem;color:var(--green);white-space:nowrap">${fmtD(p.ingAvg)}</span>
               </div>
               <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:2px">
-                <span style="font-family:'DM Mono',monospace;font-size:.58rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text-sec)">Recurrentes</span>
-                <span style="font-size:.82rem;color:var(--text-sec)">${fmtD(p.recAvg)}</span>
+                <span style="font-family:'DM Mono',monospace;font-size:.58rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text-sec)">Fijos</span>
+                <span style="font-size:.82rem;color:var(--text-sec);white-space:nowrap">${fmtD(p.recAvg)}</span>
               </div>
               <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:2px">
-                <span style="font-family:'DM Mono',monospace;font-size:.58rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text-sec)">Promedio casual</span>
-                <span style="font-size:.82rem;color:var(--text-sec)">${fmtD(p.casualAvg)}</span>
+                <span style="font-family:'DM Mono',monospace;font-size:.58rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text-sec)">Casual</span>
+                <span style="font-size:.82rem;color:var(--text-sec);white-space:nowrap">${fmtD(p.casualAvg)}</span>
               </div>
               <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px">
                 <span style="font-family:'DM Mono',monospace;font-size:.58rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text-sec)">Cuotas</span>
-                <span style="font-size:.82rem;color:var(--gold)">${fmtD(p.cuotasProy)}</span>
+                <span style="font-size:.82rem;color:var(--gold);white-space:nowrap">${fmtD(p.cuotasProy)}</span>
               </div>
               <div style="height:3px;background:rgba(255,255,255,.07);border-radius:2px;margin-bottom:10px;overflow:hidden">
                 <div style="height:100%;width:${p.pctComp.toFixed(1)}%;background:${p.margen>=0?'var(--accent)':'var(--red)'};border-radius:2px"></div>
               </div>
               <div style="display:flex;justify-content:space-between;align-items:baseline;padding-top:8px;border-top:1px solid var(--border)">
                 <span style="font-family:'DM Mono',monospace;font-size:.58rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text-sec)">Margen libre</span>
-                <span style="font-size:.95rem;font-weight:600;color:${p.margen>=0?'var(--green)':'var(--red)'}">
+                <span style="font-size:.95rem;font-weight:600;white-space:nowrap;color:${p.margen>=0?'var(--green)':'var(--red)'}">
                   ${plSign(p.margen)}${fmtD(p.margen)}
                 </span>
               </div>
