@@ -47,7 +47,7 @@ window.Auth = {
     el.innerHTML = `
       <div class="auth-card">
         <div class="auth-logo">
-          <svg width="130" height="56" viewBox="0 0 230 64" xmlns="http://www.w3.org/2000/svg" style="overflow:visible">
+          <svg viewBox="-52 0 230 64" xmlns="http://www.w3.org/2000/svg">
             <defs>
               <filter id="spec-auth" color-interpolation-filters="sRGB" x="-5%" y="-5%" width="120%" height="120%">
                 <feGaussianBlur in="SourceAlpha" stdDeviation="2" result="blur"/>
