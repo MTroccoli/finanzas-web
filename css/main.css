@@ -166,6 +166,31 @@ body.nav-open #nav-overlay { display: block; }
 }
 .sn-sub:hover { color: var(--text); background: rgba(255,255,255,.03); }
 .sn-sub.active { color: var(--accent); font-weight: 500; }
+/* Nested accordion inside sn-acc-body */
+.sn-acc-nested {
+  /* container only — no extra styles needed */
+}
+.sn-sub-acc-hd {
+  cursor: pointer;
+  user-select: none;
+}
+.sn-acc-body-nested {
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height .2s ease;
+}
+.sn-acc-nested.open .sn-acc-body-nested { max-height: 160px; }
+.sn-acc-nested.open .sn-arr { transform: rotate(90deg); }
+.sn-sub2 {
+  display: block;
+  padding: 6px 20px 6px 60px;
+  font-size: .78rem;
+  color: var(--text-sec);
+  transition: color .12s, background .12s;
+}
+.sn-sub2:hover { color: var(--text); background: rgba(255,255,255,.03); }
+.sn-sub2.active { color: var(--accent); font-weight: 500; }
+
 .sn-divider {
   margin: 8px 16px;
   border: none;

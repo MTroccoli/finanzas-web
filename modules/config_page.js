@@ -2,8 +2,13 @@ window.Mods = window.Mods || {};
 window.Mods.configuracion = {
   async render() {
     const c = document.getElementById('content');
-    const { data: { user } } = await getDB().auth.getUser();
-    const bench = await getConfig('benchmark_ticker');
+    const [{ data: { user } }, bench, monedaVista, gastosTc] = await Promise.all([
+      getDB().auth.getUser(),
+      getConfig('benchmark_ticker'),
+      getConfig('moneda_vista').catch(() => null),
+      getConfig('gastos_tc').catch(() => ''),
+    ]);
+    const mv = monedaVista || 'ORIGEN';
 
     c.innerHTML = `
       <h1>Configuración</h1>
@@ -28,6 +33,23 @@ window.Mods.configuracion = {
             <input id="cfg-bench" type="text" value="${bench ?? 'SPY'}" placeholder="SPY" style="text-transform:uppercase">
           </div>
         </div>
+        <hr style="margin:20px 0">
+        <h3>Visualización de importes</h3>
+        <div class="form-grid" style="margin-bottom:14px">
+          <div class="form-group">
+            <label>Modo de visualización</label>
+            <select id="cfg-moneda-vista">
+              <option value="ORIGEN" ${mv==='ORIGEN'?'selected':''}>Moneda Origen</option>
+              <option value="UYU"    ${mv==='UYU'?'selected':''}>Todo UYU</option>
+              <option value="USD"    ${mv==='USD'?'selected':''}>Todo USD</option>
+            </select>
+          </div>
+          <div class="form-group" id="cfg-tc-wrap" style="display:${mv!=='ORIGEN'?'':'none'}">
+            <label>Tipo de Cambio UYU/USD</label>
+            <input id="cfg-tc" type="number" min="1" step="0.1"
+              value="${gastosTc}" placeholder="43.5">
+          </div>
+        </div>
         <button id="btn-save-cfg" class="btn btn-primary">Guardar configuración</button>
         <span id="cfg-msg" style="margin-left:12px;font-family:'DM Mono',monospace;font-size:.72rem;color:var(--green);display:none">✅ Guardado</span>
       </div>
@@ -46,6 +68,11 @@ window.Mods.configuracion = {
     `;
 
     document.getElementById('btn-signout-cfg').addEventListener('click', () => window.Auth.signOut());
+
+    document.getElementById('cfg-moneda-vista').addEventListener('change', e => {
+      const wrap = document.getElementById('cfg-tc-wrap');
+      wrap.style.display = e.target.value !== 'ORIGEN' ? '' : 'none';
+    });
 
     document.getElementById('btn-migrate-tc').addEventListener('click', async () => {
       const btn = document.getElementById('btn-migrate-tc');
@@ -67,7 +94,13 @@ window.Mods.configuracion = {
 
     document.getElementById('btn-save-cfg').addEventListener('click', async () => {
       try {
-        await setConfig('benchmark_ticker', document.getElementById('cfg-bench').value.trim().toUpperCase());
+        const monedaVal = document.getElementById('cfg-moneda-vista').value;
+        const tcVal = document.getElementById('cfg-tc')?.value.trim() || '';
+        await Promise.all([
+          setConfig('benchmark_ticker', document.getElementById('cfg-bench').value.trim().toUpperCase()),
+          setConfig('moneda_vista', monedaVal),
+          tcVal ? setConfig('gastos_tc', tcVal) : Promise.resolve(),
+        ]);
         const msg = document.getElementById('cfg-msg');
         msg.style.display = 'inline';
         setTimeout(() => { msg.style.display = 'none'; }, 2500);

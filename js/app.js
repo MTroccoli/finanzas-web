@@ -11,6 +11,8 @@ const PAGE_NAMES = {
   gastos: 'Gastos', ingresos: 'Ingresos', configuracion: 'Configuración',
 };
 
+const TDC_SUBS = new Set(['comercios', 'adicional', 'importar', 'cuotas']);
+
 async function handleRoute() {
   if (!window.Auth?._user) return;
   document.getElementById('gas-subnav')?.remove();
@@ -27,7 +29,7 @@ async function handleRoute() {
   document.querySelectorAll('.sn-item[data-page]').forEach(el => {
     el.classList.toggle('active', el.dataset.page === activePage);
   });
-  document.querySelectorAll('.sn-sub').forEach(el => {
+  document.querySelectorAll('.sn-sub, .sn-sub2').forEach(el => {
     el.classList.toggle('active', el.dataset.page === activePage && el.dataset.sub === activeSub);
   });
 
@@ -35,6 +37,11 @@ async function handleRoute() {
   document.querySelectorAll('.sn-acc').forEach(acc => {
     if (acc.dataset.acc === activePage) acc.classList.add('open');
   });
+
+  // Auto-open nested TDC accordion when a TDC sub is active
+  if (activePage === 'gastos' && TDC_SUBS.has(activeSub)) {
+    document.querySelectorAll('.sn-acc-nested[data-acc-nested="tdc"]').forEach(acc => acc.classList.add('open'));
+  }
 
   // Topbar page name
   const tbPage = document.getElementById('tb-page');
@@ -74,6 +81,12 @@ window.addEventListener('load', () => {
   document.querySelectorAll('.sn-acc-hd').forEach(hd => {
     hd.addEventListener('click', () => {
       hd.closest('.sn-acc').classList.toggle('open');
+    });
+  });
+
+  document.querySelectorAll('.sn-sub-acc-hd').forEach(hd => {
+    hd.addEventListener('click', () => {
+      hd.closest('.sn-acc-nested').classList.toggle('open');
     });
   });
 

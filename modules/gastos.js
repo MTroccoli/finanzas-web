@@ -137,18 +137,19 @@ window.Mods.gastos = {
     this._checkAutoPresetsGastos().catch(() => {});
 
     c.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
-    const [cats, learnedRows, excludedCards, savedTC, divRows] = await Promise.all([
+    const [cats, learnedRows, excludedCards, savedTC, monedaVista, divRows] = await Promise.all([
       dbFetch('categorias_gastos', { filters: { activo: 1 }, order: { col: 'nombre', asc: true } }),
       dbFetch('merchant_categorias', { order: { col: 'seen_count', asc: false } }).catch(() => []),
       getConfig('gastos_tarjetas_excluidas').catch(() => ''),
       getConfig('gastos_tc').catch(() => ''),
+      getConfig('moneda_vista').catch(() => null),
       getDB().from('gastos').select('comercio,dividido_entre').gt('dividido_entre', 1).not('comercio', 'is', null)
         .then(r => r.data || []).catch(() => []),
     ]);
     this._cats = cats;
     this._learned = {};
     this._learnedMoneda = {};
-    this._gastoMoneda  = 'ORIGEN';
+    this._gastoMoneda = monedaVista || 'ORIGEN';
     for (const r of learnedRows) {
       this._learned[r.merchant_normalizado] = r.categoria_id;
       if (r.moneda) this._learnedMoneda[r.merchant_normalizado] = r.moneda;
@@ -254,157 +255,13 @@ window.Mods.gastos = {
 
   _drawShell() {
     const c = document.getElementById('content');
-    const tdcTabDefs = [
-      ['cuotas',   '📅 Cuotas'],
-      ['comercios','🏷️ Comercios'],
-      ['adicional','👤 Adicional'],
-      ['importar', '📤 Importar EDC'],
-    ];
-    const tdcSet   = new Set(tdcTabDefs.map(([t]) => t));
-    const isTdc    = tdcSet.has(this._tab);
-    const barTabs  = new Set(['resumen','detalle','cuotas']);
-    const gm       = this._gastoMoneda || 'ORIGEN';
-    const monLabels = { ORIGEN: 'Origen', UYU: 'Todo UYU', USD: 'Todo USD' };
-    const btnSt = (mode) => {
-      const act = gm === mode;
-      return `font-size:.74rem;padding:4px 12px;border-radius:4px;border:none;cursor:pointer;
-        background:${act ? 'var(--accent)' : 'transparent'};
-        color:${act ? '#fff' : 'var(--text-sec)'};transition:background .15s,color .15s`;
-    };
     c.innerHTML = `
-      <div class="g-sticky-header">
-        <h1>Gastos</h1>
-        <p class="page-subtitle">Control de egresos · importación automática de EDC</p>
-        <div class="g-tabs">
-          <button class="g-tab${this._tab==='resumen'?' active':''}" data-tab="resumen">📊 Resumen</button>
-          <button class="g-tab${this._tab==='detalle'?' active':''}" data-tab="detalle">📋 Detalle</button>
-          <button class="g-tab${isTdc?' active':''}" data-tab="_tdc">💳 Tarjetas de Crédito</button>
-          <button class="g-tab${this._tab==='manual'?' active':''}" data-tab="manual">✚ Nuevo gasto</button>
-        </div>
-        <div id="g-subtab-row" class="g-tabs"
-          style="margin-top:-2px;margin-bottom:6px;display:${isTdc?'flex':'none'};flex-wrap:wrap">
-          ${tdcTabDefs.map(([t,l]) => `<button class="g-tab g-subtab${this._tab===t?' active':''}"
-            style="font-size:.75rem;padding:4px 12px" data-tab="${t}">${l}</button>`).join('')}
-        </div>
-        <select class="g-tab-select" id="g-tab-sel">
-          <option value="resumen"${this._tab==='resumen'?' selected':''}>📊 Resumen</option>
-          <option value="detalle"${this._tab==='detalle'?' selected':''}>📋 Detalle</option>
-          <optgroup label="💳 Tarjetas de Crédito">
-            ${tdcTabDefs.map(([t,l]) => `<option value="${t}"${this._tab===t?' selected':''}>${l}</option>`).join('')}
-          </optgroup>
-          <option value="manual"${this._tab==='manual'?' selected':''}>✚ Nuevo gasto</option>
-        </select>
-        <div id="g-moneda-bar" style="display:${barTabs.has(this._tab)?'flex':'none'};
-          align-items:center;gap:10px;flex-wrap:wrap;padding:8px 12px;margin-bottom:0;
-          background:var(--surface);border:1px solid var(--border);border-radius:8px">
-          <span style="font-size:.7rem;color:var(--text-sec);flex-shrink:0">Importes:</span>
-          <div style="display:flex;background:rgba(255,255,255,.06);border-radius:6px;padding:2px;gap:2px;flex-shrink:0">
-            ${['ORIGEN','UYU','USD'].map(m =>
-              `<button class="g-mon-btn" data-mode="${m}" style="${btnSt(m)}">${monLabels[m]}</button>`
-            ).join('')}
-          </div>
-          <div id="g-tc-wrap" style="display:${gm==='ORIGEN'?'none':'flex'};align-items:center;gap:6px">
-            <span style="font-size:.7rem;color:var(--text-sec)">Tipo de Cambio</span>
-            <input id="g-tc" type="number" min="1" step="0.1" value="${this._tc}" placeholder="43.5"
-              style="width:70px;font-size:.78rem;padding:4px 7px;border-radius:5px;
-                border:1px solid var(--border);background:var(--surface);color:var(--text);
-                font-family:'DM Mono',monospace">
-          </div>
-        </div>
-      </div>
-      <div id="g-content" style="padding-top:.75rem"></div>
+      <h1>Gastos</h1>
+      <p class="page-subtitle" style="margin-bottom:1rem">Control de egresos · importación automática de EDC</p>
+      <div id="g-content"></div>
       ${this._catDatalistHTML()}
     `;
-
-    const _refreshNav = () => {
-      const isTdcNow = tdcSet.has(this._tab);
-      document.querySelectorAll('.g-tab:not(.g-subtab)').forEach(b => {
-        const active = isTdcNow ? b.dataset.tab === '_tdc' : b.dataset.tab === this._tab;
-        b.classList.toggle('active', active);
-      });
-      document.querySelectorAll('.g-subtab').forEach(b =>
-        b.classList.toggle('active', b.dataset.tab === this._tab)
-      );
-      const subRow = document.getElementById('g-subtab-row');
-      if (subRow) subRow.style.display = isTdcNow ? 'flex' : 'none';
-      const bar = document.getElementById('g-moneda-bar');
-      if (bar) bar.style.display = barTabs.has(this._tab) ? 'flex' : 'none';
-    };
-
-    const _refreshGasSubnav = () => {
-      const gn = document.getElementById('gas-subnav');
-      if (!gn) return;
-      const isTdcNow = tdcSet.has(this._tab);
-      gn.innerHTML = isTdcNow
-        ? `<button class="gas-sub-pill gas-sub-back" data-tab="resumen">← Gastos</button>
-           ${tdcTabDefs.map(([t,l]) => `<button class="gas-sub-pill${this._tab===t?' active':''}" data-tab="${t}">${l}</button>`).join('')}`
-        : `<button class="gas-sub-pill${this._tab==='resumen'?' active':''}" data-tab="resumen">📊 Resumen</button>
-           <button class="gas-sub-pill${this._tab==='detalle'?' active':''}" data-tab="detalle">📋 Detalle</button>
-           <button class="gas-sub-pill" data-tab="_tdc">💳 Tarjetas</button>
-           <button class="gas-sub-pill${this._tab==='manual'?' active':''}" data-tab="manual">✚ Nuevo</button>`;
-      gn.querySelectorAll('.gas-sub-pill').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const tgt = btn.dataset.tab;
-          if (tgt === '_tdc') {
-            this._tab = this._lastTdcTab || 'cuotas';
-          } else {
-            this._tab = tgt;
-            if (tdcSet.has(tgt)) this._lastTdcTab = tgt;
-          }
-          _refreshNav();
-          _refreshGasSubnav();
-          this._drawTab();
-        });
-      });
-    };
-
-    document.querySelectorAll('.g-tab').forEach(btn =>
-      btn.addEventListener('click', () => {
-        const tgt = btn.dataset.tab;
-        if (tgt === '_tdc') {
-          this._tab = this._lastTdcTab || 'cuotas';
-        } else {
-          this._tab = tgt;
-          if (tdcSet.has(tgt)) this._lastTdcTab = tgt;
-        }
-        _refreshNav();
-        _refreshGasSubnav();
-        this._drawTab();
-      })
-    );
-    document.getElementById('g-tab-sel')?.addEventListener('change', e => {
-      this._tab = e.target.value;
-      if (tdcSet.has(this._tab)) this._lastTdcTab = this._tab;
-      _refreshNav();
-      _refreshGasSubnav();
-      this._drawTab();
-    });
-    document.querySelectorAll('.g-mon-btn').forEach(btn =>
-      btn.addEventListener('click', () => {
-        this._gastoMoneda = btn.dataset.mode;
-        document.querySelectorAll('.g-mon-btn').forEach(b => {
-          const act = b.dataset.mode === this._gastoMoneda;
-          b.style.background = act ? 'var(--accent)' : 'transparent';
-          b.style.color      = act ? '#fff' : 'var(--text-sec)';
-        });
-        const wrap = document.getElementById('g-tc-wrap');
-        if (wrap) wrap.style.display = this._gastoMoneda === 'ORIGEN' ? 'none' : 'flex';
-        this._drawTab();
-      })
-    );
-    document.getElementById('g-tc')?.addEventListener('change', e => {
-      this._saveTC(e.target.value.trim());
-      this._drawTab();
-    });
     this._bindCatComboUX();
-
-    // Subnav mobile de gastos: inyectado en body, CSS lo oculta en desktop
-    const oldGn = document.getElementById('gas-subnav');
-    if (oldGn) oldGn.remove();
-    const gasNav = document.createElement('nav');
-    gasNav.id = 'gas-subnav';
-    document.body.appendChild(gasNav);
-    _refreshGasSubnav();
   },
 
   // Mejora la UX de los combos de categoría (input + datalist):
