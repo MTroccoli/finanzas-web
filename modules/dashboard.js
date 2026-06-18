@@ -2,9 +2,10 @@ window.Mods = window.Mods || {};
 window.Mods.dashboard = {
   _mode:       localStorage.getItem('panorama_mode') || 'UYU',
   _tc:         null,
-  _cuotasOpen: false,
-  _recurOpen:  false,
-  _cache:      null,
+  _cuotasOpen:  false,
+  _recurOpen:   false,
+  _casualOpen:  false,
+  _cache:       null,
 
   async render() {
     const c = document.getElementById('content');
@@ -252,7 +253,7 @@ window.Mods.dashboard = {
         </div>
       </div>
 
-      ${activePlans.length > 0 || recurRows.length > 0 ? `
+      ${activePlans.length > 0 || recurRows.length > 0 || casualAvg > 0 ? `
         <div class="form-card" style="padding:14px 16px;margin-bottom:24px">
           ${activePlans.length > 0 ? `
             <details class="dash-cuotas-det" ${this._cuotasOpen ? 'open' : ''}>
@@ -295,8 +296,38 @@ window.Mods.dashboard = {
               </div>
             </details>
           ` : ''}
+          ${casualAvg > 0 ? `
+            <details class="dash-casual-det" ${this._casualOpen ? 'open' : ''} style="${activePlans.length > 0 || recurRows.length > 0 ? 'margin-top:10px' : ''}">
+              <summary style="list-style:none;cursor:pointer;user-select:none;padding:2px 2px 8px">
+                <div style="display:flex;justify-content:space-between;align-items:center">
+                  <span style="display:flex;align-items:center;gap:5px">
+                    <span class="dash-arr-cas" style="display:inline-block;font-size:.6rem;transition:transform .15s;color:var(--text-sec)">▶</span>
+                    <span style="font-size:.68rem;color:var(--text);text-transform:uppercase;font-weight:500;letter-spacing:.06em">💳 Gasto casual · promedio 12m</span>
+                  </span>
+                  <span style="font-family:'DM Mono',monospace;font-size:.78rem;color:var(--text)">${fmtD(casualAvg)}</span>
+                </div>
+              </summary>
+              <div style="padding:10px 6px 4px;font-size:.78rem;color:var(--text-sec);line-height:1.6">
+                <p style="margin:0 0 8px">
+                  Promedio mensual de gastos <em>no recurrentes y sin cuotas</em>
+                  (tipo_gasto ≠ recurrente y cuotas = 1) del último año.
+                </p>
+                <div style="display:grid;grid-template-columns:auto 1fr;gap:4px 16px;font-family:'DM Mono',monospace;font-size:.73rem">
+                  <span style="color:var(--text-sec)">Meses con datos</span>
+                  <span style="color:var(--text)">${casualMonthsWithData.size} / 12</span>
+                  <span style="color:var(--text-sec)">Total en esos meses</span>
+                  <span style="color:var(--text)">${fmtD(casualTotal)}</span>
+                  <span style="color:var(--text-sec)">Promedio mensual</span>
+                  <span style="color:var(--text);font-weight:600">${fmtD(casualAvg)}</span>
+                </div>
+                <p style="margin:8px 0 0;font-size:.7rem;color:rgba(200,210,230,.45)">
+                  Los meses sin ningún gasto casual no se incluyen en el denominador.
+                </p>
+              </div>
+            </details>
+          ` : ''}
           ${recurRows.length > 0 ? `
-            <details class="dash-recur-det" ${this._recurOpen ? 'open' : ''} style="${activePlans.length > 0 ? 'margin-top:10px' : ''}">
+            <details class="dash-recur-det" ${this._recurOpen ? 'open' : ''} style="${activePlans.length > 0 || casualAvg > 0 ? 'margin-top:10px' : ''}">
               <summary style="list-style:none;cursor:pointer;user-select:none;padding:2px 2px 8px">
                 <div style="display:flex;justify-content:space-between;align-items:center">
                   <span style="display:flex;align-items:center;gap:5px">
@@ -368,8 +399,9 @@ window.Mods.dashboard = {
     }, {displayModeBar: false, responsive: true, scrollZoom: false});
 
     // Accordion arrow bindings
-    [{sel: '.dash-cuotas-det', key: '_cuotasOpen', arrSel: '.dash-arr-c'},
-     {sel: '.dash-recur-det',  key: '_recurOpen',  arrSel: '.dash-arr-r'}].forEach(({sel, key, arrSel}) => {
+    [{sel: '.dash-cuotas-det',  key: '_cuotasOpen',  arrSel: '.dash-arr-c'},
+     {sel: '.dash-recur-det',   key: '_recurOpen',   arrSel: '.dash-arr-r'},
+     {sel: '.dash-casual-det',  key: '_casualOpen',  arrSel: '.dash-arr-cas'}].forEach(({sel, key, arrSel}) => {
       const det = document.querySelector(sel);
       if (!det) return;
       const arr = det.querySelector(arrSel);
