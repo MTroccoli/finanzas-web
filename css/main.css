@@ -47,7 +47,7 @@ input, select, textarea { font-family: inherit; }
   gap: 10px;
 }
 .tb-logo {
-  height: 28px;
+  height: 33px;
   width: auto;
   display: block;
   flex-shrink: 0;

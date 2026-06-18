@@ -3140,9 +3140,6 @@ window.Mods.gastos = {
                   style="background:none;border:none;cursor:pointer;color:var(--text-sec);
                     font-size:.7rem;padding:2px 5px;border-radius:3px;vertical-align:middle">✏️</button>
               </div>
-              ${headTotParts.length
-                ? `<span style="font-size:.8rem;color:var(--accent);font-weight:600;display:flex;gap:10px;flex-wrap:wrap;align-items:center">${headTotParts.join('<span style="color:var(--text-sec)">·</span>')}</span>`
-                : ''}
             </div>
             <button class="adic-bulk-btn" data-titular="${titEsc}" data-val="${bulkVal}"
               style="font-size:.72rem;padding:4px 12px;border-radius:5px;cursor:pointer;${bulkBtnSt}">

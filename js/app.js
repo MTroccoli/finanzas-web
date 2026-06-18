@@ -68,8 +68,9 @@ async function handleRoute() {
   });
 
   // Topbar page name
+  const SUB_NAMES = { 'gastos/importar': 'Importar EDC' };
   const tbPage = document.getElementById('tb-page');
-  if (tbPage) tbPage.textContent = PAGE_NAMES[activePage] || '';
+  if (tbPage) tbPage.textContent = SUB_NAMES[`${activePage}/${activeSub}`] || PAGE_NAMES[activePage] || '';
 
   const content = document.getElementById('content');
   content.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
