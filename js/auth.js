@@ -46,7 +46,25 @@ window.Auth = {
     el.id = 'auth-screen';
     el.innerHTML = `
       <div class="auth-card">
-        <div class="auth-logo"><img src="img/logo.png" alt="FinPro"></div>
+        <div class="auth-logo">
+          <svg viewBox="0 0 230 64" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <filter id="spec-auth" color-interpolation-filters="sRGB" x="-5%" y="-5%" width="120%" height="120%">
+                <feGaussianBlur in="SourceAlpha" stdDeviation="2" result="blur"/>
+                <feSpecularLighting in="blur" surfaceScale="6" specularConstant="1.2" specularExponent="25" lighting-color="#AADFF5" result="specular">
+                  <fePointLight x="10" y="5" z="80"/>
+                </feSpecularLighting>
+                <feComposite in="specular" in2="SourceAlpha" operator="in" result="lit"/>
+                <feFlood flood-color="#2E8EC8" result="base"/>
+                <feComposite in="base" in2="SourceAlpha" operator="in" result="baseClipped"/>
+                <feBlend in="baseClipped" in2="lit" mode="screen" result="blended"/>
+                <feComposite in="blended" in2="SourceAlpha" operator="in"/>
+              </filter>
+            </defs>
+            <text x="2" y="58" font-family="'Crimson Text',serif" font-size="64" font-weight="600" fill="#2E8EC8" filter="url(#spec-auth)">F</text>
+            <text x="40" y="50" font-family="'DM Sans',sans-serif" font-size="34" font-weight="300" fill="#FFFFFF">inPro</text>
+          </svg>
+        </div>
         <div class="auth-tabs">
           <button class="auth-tab-btn active" data-tab="login">Ingresar</button>
           <button class="auth-tab-btn" data-tab="signup">Registrarse</button>

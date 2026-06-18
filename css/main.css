@@ -49,8 +49,12 @@ input, select, textarea { font-family: inherit; }
 .tb-logo {
   height: 28px;
   width: auto;
-  object-fit: contain;
   display: block;
+  flex-shrink: 0;
+}
+.auth-logo svg {
+  height: 56px;
+  width: auto;
 }
 #tb-page {
   font-size: .72rem;
