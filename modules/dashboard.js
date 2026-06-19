@@ -164,6 +164,13 @@ window.Mods.dashboard = {
 
     const monthTitle = now.toLocaleDateString('es-AR', {month: 'long', year: 'numeric'});
 
+    // In-app reminder: show if early in month and last closed month has few records
+    const lastMonthRecords = gastos.filter(g => g.fecha.slice(0,7) === lastClosedYM).length;
+    const dayOfMonth = now.getDate();
+    const reminderKey = `edcReminder_${lastClosedYM}`;
+    const lastMonthName = new Date(lastClosedYM + '-15').toLocaleDateString('es-AR', {month: 'long', year: 'numeric'});
+    const showReminder = !sessionStorage.getItem(reminderKey) && dayOfMonth <= 12 && lastMonthRecords < 5;
+
     c.innerHTML = `
       <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:1rem">
         <div>
@@ -175,6 +182,23 @@ window.Mods.dashboard = {
           <button id="pan-uyu" class="g-tab${mode==='UYU'?' active':''}" onclick="window.Mods.dashboard._setMode('UYU')">UYU</button>
         </div>
       </div>
+
+      \${showReminder ? `
+        <div id="dash-reminder" style="background:rgba(251,191,36,.07);border:1px solid rgba(251,191,36,.28);border-radius:10px;padding:12px 16px;margin-bottom:16px">
+          <div style="display:flex;align-items:flex-start;gap:10px">
+            <span style="font-size:1rem;flex-shrink:0;margin-top:1px">📋</span>
+            <div style="flex:1;min-width:0">
+              <div style="color:rgba(251,191,36,.95);font-size:.8rem;font-weight:600;margin-bottom:3px">Datos de \${lastMonthName} sin cargar</div>
+              <div style="color:var(--text-sec);font-size:.74rem;line-height:1.45">El análisis usa proyecciones. Cargá los gastos del mes para tener los números reales.</div>
+              <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;align-items:center">
+                <a href="#gastos/importar" style="font-size:.75rem;padding:5px 12px;background:var(--accent);color:#fff;border-radius:6px;text-decoration:none;font-family:'DM Sans',sans-serif">Importar EDC</a>
+                <a href="#gastos/manual" style="font-size:.75rem;padding:5px 12px;border:1px solid var(--border);color:var(--text);border-radius:6px;text-decoration:none;font-family:'DM Sans',sans-serif">Nuevo gasto</a>
+                <button id="dash-reminder-dismiss" style="margin-left:auto;background:none;border:none;color:var(--text-sec);cursor:pointer;font-size:.74rem;padding:4px 6px;font-family:inherit;opacity:.7">Ignorar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      ` : ''}
 
       <div class="metrics-row" style="margin-top:16px">
         <div class="metric-card" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:8px">
@@ -395,6 +419,12 @@ window.Mods.dashboard = {
       xaxis: {fixedrange: true, gridcolor: 'rgba(255,255,255,.05)'},
       yaxis: {fixedrange: true, gridcolor: 'rgba(255,255,255,.05)', tickprefix: tickpfx},
     }, {displayModeBar: false, responsive: true, scrollZoom: false});
+
+    // Reminder dismiss
+    document.getElementById('dash-reminder-dismiss')?.addEventListener('click', () => {
+      sessionStorage.setItem(reminderKey, '1');
+      document.getElementById('dash-reminder')?.remove();
+    });
 
     // Accordion arrow bindings
     [{sel: '.dash-cuotas-det',  key: '_cuotasOpen',  arrSel: '.dash-arr-c'},
