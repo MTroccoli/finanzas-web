@@ -122,6 +122,7 @@ window.Mods.inversiones = {
         const isUp   = chgPct >= 0;
         const color  = isUp ? '#26a69a' : '#ef5350';
         const cur    = _activeInfo?.currency || 'USD';
+        const priceFmt = last < 100 ? ',.2f' : ',.0f';
 
         // Formato de fecha adaptado al período seleccionado
         const xTickFmt = period === '1d'  ? '%H:%M'
@@ -136,7 +137,7 @@ window.Mods.inversiones = {
           fill: 'tozeroy',
           fillcolor: isUp ? 'rgba(38,166,154,0.12)' : 'rgba(239,83,80,0.12)',
           line: { color, width: 2 },
-          hovertemplate: `%{y:,.0f} ${cur}<extra></extra>`,
+          hovertemplate: `%{y:${priceFmt}} ${cur}<extra></extra>`,
           hoverlabel: {
             bgcolor: color, bordercolor: 'rgba(0,0,0,0)',
             font: { color: '#fff', size: 11, family: "'DM Mono', monospace" },
@@ -168,7 +169,7 @@ window.Mods.inversiones = {
             showspikes: false, showline: false, zeroline: false,
             range: [Math.min(...prices) * 0.995, Math.max(...prices) * 1.005],
             fixedrange: true,
-            tickformat: ',.2f',
+            tickformat: priceFmt,
           },
           hovermode: 'x', showlegend: false,
         }, { responsive: true, displayModeBar: false, scrollZoom: false });
