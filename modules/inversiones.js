@@ -122,7 +122,7 @@ window.Mods.inversiones = {
         const isUp   = chgPct >= 0;
         const color  = isUp ? '#26a69a' : '#ef5350';
         const cur    = _activeInfo?.currency || 'USD';
-        const priceFmt = last < 100 ? ',.2f' : ',.0f';
+        const priceFmt = last < 1 ? ',.4f' : last < 100 ? ',.2f' : ',.0f';
 
         // Formato de fecha adaptado al período seleccionado
         const xTickFmt = period === '1d'  ? '%H:%M'
