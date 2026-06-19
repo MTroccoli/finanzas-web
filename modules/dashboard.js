@@ -183,12 +183,12 @@ window.Mods.dashboard = {
         </div>
       </div>
 
-      \${showReminder ? `
+      ${showReminder ? `
         <div id="dash-reminder" style="background:rgba(251,191,36,.07);border:1px solid rgba(251,191,36,.28);border-radius:10px;padding:12px 16px;margin-bottom:16px">
           <div style="display:flex;align-items:flex-start;gap:10px">
             <span style="font-size:1rem;flex-shrink:0;margin-top:1px">📋</span>
             <div style="flex:1;min-width:0">
-              <div style="color:rgba(251,191,36,.95);font-size:.8rem;font-weight:600;margin-bottom:3px">Datos de \${lastMonthName} sin cargar</div>
+              <div style="color:rgba(251,191,36,.95);font-size:.8rem;font-weight:600;margin-bottom:3px">Datos de ${lastMonthName} sin cargar</div>
               <div style="color:var(--text-sec);font-size:.74rem;line-height:1.45">El análisis usa proyecciones. Cargá los gastos del mes para tener los números reales.</div>
               <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;align-items:center">
                 <a href="#gastos/importar" style="font-size:.75rem;padding:5px 12px;background:var(--accent);color:#fff;border-radius:6px;text-decoration:none;font-family:'DM Sans',sans-serif">Importar EDC</a>
