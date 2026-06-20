@@ -62,19 +62,21 @@ window.Mods.gastos = {
   _adicRawCache:  null,   // { adicRows, descRows } de _drawHistorialAdicional
   _resCache:      null,   // { allDataRaw, activeCuotasAll, recurrentesLast } del Resumen
   _resCacheKey:   null,   // `${desde}|${hasta}|${banco}` — solo vistas gastos/beneficios (cat/tipo son client-side)
-  _descCache:     null,   // beneficios.json cacheado (catálogo de descuentos TDC)
-  _descCat:       '',     // filtro de categoría en el tab Descuentos
-  _descSearch:    '',     // búsqueda por comercio en el tab Descuentos
+  _descCache:         null,   // beneficios.json cacheado (catálogo de descuentos TDC)
+  _descCatSpendCache: null,   // gastos por categoria_id últimos 6 meses (para match por categoría)
+  _descCat:           '',     // filtro de categoría en el tab Descuentos
+  _descSearch:        '',     // búsqueda por comercio en el tab Descuentos
 
   // Invalida todos los caches de datos de gastos. Se llama tras cualquier
   // mutación de gastos y al entrar a pestañas que mutan (importar/manual/cuotas).
   _invalidateGastosCaches() {
-    this._histRawCache = null;
-    this._histCacheKey = null;
-    this._comRawCache  = null;
-    this._adicRawCache = null;
-    this._resCache     = null;
-    this._resCacheKey  = null;
+    this._histRawCache      = null;
+    this._histCacheKey      = null;
+    this._comRawCache       = null;
+    this._adicRawCache      = null;
+    this._resCache          = null;
+    this._resCacheKey       = null;
+    this._descCatSpendCache = null;
   },
 
   // Normalizar comercio para matching: lowercase, sin tildes, sin códigos de comercio
@@ -355,6 +357,20 @@ window.Mods.gastos = {
       comRows = d || [];
     }
 
+    const hoy = new Date();
+    const desde6 = new Date(hoy.getFullYear(), hoy.getMonth() - 6, 1).toISOString().slice(0, 10);
+
+    // 2b. Consumo por categoria_id últimos 6 meses (query separada — comRawCache no tiene categoria_id)
+    if (!this._descCatSpendCache) {
+      const { data: cs } = await getDB()
+        .from('gastos').select('categoria_id,monto,moneda')
+        .gte('fecha', desde6)
+        .not('comercio', 'is', null)
+        .or('titular_adicional.is.null,incluido_en_gastos.eq.true');
+      this._descCatSpendCache = cs || [];
+    }
+    const catSpend = this._descCatSpendCache;
+
     // 3. Índice de beneficios por comercio normalizado (se queda con el mayor %)
     const benIndex = {};
     for (const b of benefits) {
@@ -363,9 +379,39 @@ window.Mods.gastos = {
       if (!benIndex[k] || (b.pctMax || 0) > (benIndex[k].pctMax || 0)) benIndex[k] = b;
     }
 
+    // 3b. Índice de beneficios por categoría BBVA
+    const benByCat = {};
+    for (const b of benefits) {
+      if (!b.categoria) continue;
+      if (!benByCat[b.categoria]) benByCat[b.categoria] = { count: 0, maxPct: 0 };
+      benByCat[b.categoria].count++;
+      if ((b.pctMax || 0) > benByCat[b.categoria].maxPct) benByCat[b.categoria].maxPct = b.pctMax || 0;
+    }
+
+    // 3c. Mapeo de categorías de usuario → categorías BBVA
+    const BBVA_MAP = [
+      [['gastronom','restauran','comida','almuerzo','cena','bar ','cafe','cafeter','delivery','pizza','sushi','hambur','panaderia','heladeria'], 'Gastronomía'],
+      [['ropa','moda','vestim','indumen','zapato','calzado','textil','accesori'], 'Moda'],
+      [['nino','bebe','juguete','infant','kids','guardian'], 'Mundo Infantil'],
+      [['deport','gym','fitness','club','pilates','yoga','natac'], 'Vida Activa'],
+      [['hogar','mueble','deco','ferreteri','jardin','electrodom'], 'Hogar y Decoración'],
+      [['belleza','peluquer','estet','cosmet','spa','manicur'], 'Cuidado Personal'],
+      [['optic','lentes'], 'Ópticas'],
+      [['viaje','vuelo','hotel','turismo','hospedaj','aerolinea'], 'Viajes'],
+      [['mascot','veterinari'], 'Mascotas'],
+      [['entret','espectacul','teatro','cine','concierto','ocio'], 'Experiencias'],
+      [['libreria','papeleria','libro'], 'Librerías y papelerías'],
+      [['tecnolog','electron','computac','celular'], 'Tecnología'],
+      [['auto ','vehiculo','combustible','nafta','gasolina','estacionam','taller'], 'Autos'],
+    ];
+    const normStr = s => (s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9 ]/g, ' ');
+    const mapBBVA = catName => {
+      const n = normStr(catName);
+      for (const [kws, bc] of BBVA_MAP) { if (kws.some(k => n.includes(k))) return bc; }
+      return null;
+    };
+
     // 4. Oportunidades: comercios donde gastaste (últimos 6 meses) que tienen beneficio
-    const hoy = new Date();
-    const desde6 = new Date(hoy.getFullYear(), hoy.getMonth() - 6, 1).toISOString().slice(0, 10);
     const spendByNorm = {};
     for (const r of comRows) {
       if (r.fecha < desde6) continue;
@@ -379,6 +425,23 @@ window.Mods.gastos = {
     }
     const oportunidades = Object.values(spendByNorm)
       .map(s => ({ ...s, benefit: benIndex[s.norm] }))
+      .sort((a, b) => b.total - a.total);
+
+    // 4b. Oportunidades por categoría (match de 2° nivel)
+    const catsMap = {};
+    (this._cats || []).forEach(c => { catsMap[c.id] = c.nombre; });
+    const catSpendByBBVA = {};
+    for (const r of catSpend) {
+      const catName = catsMap[r.categoria_id] || '';
+      const bbvaCat = mapBBVA(catName);
+      if (!bbvaCat || !benByCat[bbvaCat]) continue;
+      const monto = parseFloat(r.monto);
+      if (!(monto > 0)) continue;
+      if (!catSpendByBBVA[bbvaCat]) catSpendByBBVA[bbvaCat] = { total: 0, mon: r.moneda === 'USD' ? 'USD' : 'UYU' };
+      catSpendByBBVA[bbvaCat].total += monto;
+    }
+    const catOportunidades = Object.entries(catSpendByBBVA)
+      .map(([bc, s]) => ({ bbvaCat: bc, total: s.total, mon: s.mon, count: benByCat[bc].count, maxPct: benByCat[bc].maxPct }))
       .sort((a, b) => b.total - a.total);
 
     // 5. Catálogo filtrado (categoría + búsqueda)
@@ -424,6 +487,31 @@ window.Mods.gastos = {
                       <span style="color:var(--green);font-weight:600">hasta ${o.benefit.pctMax}%</span>
                     </td>
                     <td style="padding:7px 6px;border-bottom:1px solid rgba(255,255,255,.04);font-size:.74rem;color:var(--text-sec)">${o.benefit.vigencia || '—'}</td>
+                  </tr>`).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      ` : ''}
+
+      ${catOportunidades.length ? `
+        <div class="form-card" style="padding:14px 16px;margin-bottom:18px;border-color:rgba(212,175,55,.3);background:linear-gradient(160deg,var(--surface),rgba(212,175,55,.04))">
+          <div style="font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--gold);font-weight:600;margin-bottom:10px">
+            Por categoría · gastaste en rubros con beneficios BBVA disponibles
+          </div>
+          <div style="overflow-x:auto;-webkit-overflow-scrolling:touch">
+            <table style="width:100%;min-width:380px;border-collapse:collapse">
+              <thead><tr>
+                ${['Rubro BBVA','Tu consumo 6m','Beneficios','Mejor %'].map((h, i) =>
+                  `<th style="text-align:${i === 1 || i === 2 || i === 3 ? 'right' : 'left'};padding:7px 6px;border-bottom:1px solid var(--border);font-size:.68rem;color:var(--text-sec);text-transform:uppercase;font-weight:500;white-space:nowrap">${h}</th>`).join('')}
+              </tr></thead>
+              <tbody>
+                ${catOportunidades.map(co => `
+                  <tr>
+                    <td style="padding:7px 6px;border-bottom:1px solid rgba(255,255,255,.04);font-size:.82rem">${co.bbvaCat}</td>
+                    <td style="padding:7px 6px;border-bottom:1px solid rgba(255,255,255,.04);font-size:.8rem;text-align:right;font-family:'DM Mono',monospace;color:var(--text-sec)">${fmtMon(co.total, co.mon)}</td>
+                    <td style="padding:7px 6px;border-bottom:1px solid rgba(255,255,255,.04);font-size:.8rem;text-align:right;color:var(--text-sec)">${co.count}</td>
+                    <td style="padding:7px 6px;border-bottom:1px solid rgba(255,255,255,.04);font-size:.82rem;text-align:right;font-weight:600;color:var(--gold)">${co.maxPct ? co.maxPct + '%' : '—'}</td>
                   </tr>`).join('')}
               </tbody>
             </table>
