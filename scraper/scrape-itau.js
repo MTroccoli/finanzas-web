@@ -113,6 +113,7 @@ async function parseHub(page, hubUrl, exclusivo) {
           /tarjeta|cr[eé]dito|d[eé]bito|platinum|infinite|black|personal/i.test(l)
           && l.length < 200);
 
+        if (!pctMax) return; // descartar H2s sin descuento (otras secciones de la página)
         out.push({ nombre, pctMax, tarjetas: tarjLine || null, vigencia: null, url: null, exclusivo: excl });
       });
 
