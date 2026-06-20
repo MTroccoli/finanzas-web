@@ -151,13 +151,9 @@ async function discoverCards(page) {
 
   console.log(`Links encontrados en hub: ${cards.length}`);
   if (DIAG_MODE) {
-    const sample = [...cards.slice(0, 5), ...cards.slice(8, 13)];
-    sample.forEach(c => console.log(`  [${cards.indexOf(c)}] ${c.slug}  nombre="${c.nombre}"  pct=${c.pctHub}`));
-    // Dump container HTML for first 2 null cards
+    cards.slice(0, 12).forEach((c, i) => console.log(`  [${i}] ${c.slug}  nombre="${c.nombre}"  pct=${c.pctHub}`));
     const nullCards = cards.filter(c => !c.pctHub).slice(0, 2);
-    nullCards.forEach(c => {
-      console.log(`  [containerHtml:${c.slug}] ${c.containerHtml || '(vacío)'}`);
-    });
+    nullCards.forEach(c => console.log(`  [containerHtml:${c.slug}] ${c.containerHtml || '(vacío)'}`));
   }
 
   return cards;
@@ -294,7 +290,7 @@ async function parseDetail(page, card) {
     return;
   }
 
-  const sample = DIAG_MODE ? cards.slice(8, 13) : cards;
+  const sample = DIAG_MODE ? cards.slice(0, 5) : cards;
   console.log(`\n=== Parseando ${sample.length} páginas de detalle${DIAG_MODE ? ' (muestra)' : ''} ===`);
 
   const beneficios = [];
