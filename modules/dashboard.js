@@ -223,9 +223,9 @@ window.Mods.dashboard = {
             </div>`).join('')}
           </div>` : ''}
         </div>
-        <div class="metric-card">
+        <div class="metric-card" style="border-color:rgba(46,142,200,.35);background:linear-gradient(160deg,var(--surface),rgba(46,142,200,.06))">
           <div class="metric-label">Gastos proyectados</div>
-          <div class="metric-value">${fmtD(curProjGas)}</div>
+          <div class="metric-value" style="color:var(--accent)">${fmtD(curProjGas)}</div>
           <div style="margin-top:6px;display:flex;flex-direction:column;gap:2px">
             <div style="display:flex;justify-content:space-between;font-size:.63rem;font-family:'DM Mono',monospace">
               <span style="color:var(--text-sec)">Casual</span>
