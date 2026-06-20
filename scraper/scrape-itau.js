@@ -1,9 +1,10 @@
-// Scraper de beneficios Itaú Uruguay para FinPro — v1 (diagnóstico).
+// Scraper de beneficios Itaú Uruguay para FinPro — v2.
 //
-// Itaú puede servir 403 a curl/fetch simples; usamos Puppeteer + stealth.
-//
-// Modo --diag: guarda HTMLs y muestra cards descubiertas (sin escribir JSON).
-// Modo producción: escribe data/beneficios-itau.json
+// Diagnóstico confirmó que la estructura es distinta a BBVA/Santander:
+//  - Hub: /inst/beneficios.html → 142 cards directamente, sin páginas de detalle.
+//  - Secundario: /inst/beneficiosexclusivos.html → beneficios exclusivos.
+//  - Los links internos no siguen patrón /inst/beneficios/<slug>.html.
+//  - Estrategia: parsear las cards del hub sin visitar sub-páginas.
 //
 // Salida: data/beneficios-itau.json
 
@@ -14,13 +15,16 @@ puppeteer.use(StealthPlugin());
 const fs   = require('fs');
 const path = require('path');
 
-const HUB    = 'https://www.itau.com.uy/inst/beneficios.html';
+const HUBS = [
+  { url: 'https://www.itau.com.uy/inst/beneficios.html',           exclusivo: false },
+  { url: 'https://www.itau.com.uy/inst/beneficiosexclusivos.html', exclusivo: true  },
+];
 const ORIGIN = 'https://www.itau.com.uy';
 const UA     = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 ' +
                '(KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36';
 
 const DIAG_MODE = process.argv.includes('--diag');
-const DELAY_MS  = 800;
+const DELAY_MS  = 600;
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 // ── Browser helpers ───────────────────────────────────────────────────────────
@@ -52,220 +56,131 @@ function saveHtml(name, html) {
   console.log(`  → ${file} (${(html.length / 1024).toFixed(1)} KB)`);
 }
 
-function slugToName(slug) {
-  return slug.replace(/-+/g, ' ').replace(/\b\w/g, c => c.toUpperCase()).trim();
-}
+// ── Parsear cards directamente del hub ───────────────────────────────────────
+async function parseHub(page, hubUrl, exclusivo) {
+  const status = await goto(page, hubUrl);
+  console.log(`Hub ${hubUrl} → status: ${status}`);
+  if (status !== 200 && status !== 304) return [];
 
-// ── Diagnóstico general: inspecciona el hub y descarga HTML ──────────────────
-async function diagHub(page) {
-  const status = await goto(page, HUB);
-  console.log(`Hub status: ${status}`);
   const html = await page.content();
-  saveHtml('itau-hub', html);
-
-  // Mostrar estructura de links internos que parezcan de beneficios
-  const links = await page.evaluate(origin => {
-    const seen = new Set();
-    const out = [];
-    document.querySelectorAll('a[href]').forEach(a => {
-      const href = a.href || '';
-      if (!href.startsWith(origin)) return;
-      const rel = href.replace(origin, '');
-      if (seen.has(href)) return;
-      seen.add(href);
-      const text = (a.innerText || a.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 80);
-      out.push({ rel, text });
-    });
-    return out;
-  }, ORIGIN);
-
-  console.log(`\nLinks internos encontrados: ${links.length}`);
-  // Filtrar los que parecen relevantes (beneficios, descuentos, promociones)
-  const relevant = links.filter(l =>
-    /beneficio|descuento|promo|tarjeta|ventaja|oferta/i.test(l.rel + l.text)
-  );
-  console.log(`Links relevantes (beneficio/descuento/promo):`);
-  relevant.slice(0, 30).forEach(l => console.log(`  ${l.rel}  "${l.text}"`));
-
-  if (relevant.length === 0) {
-    console.log('\n  (ninguno — mostrando primeros 20 links internos)');
-    links.slice(0, 20).forEach(l => console.log(`  ${l.rel}  "${l.text}"`));
+  if (DIAG_MODE) {
+    const slug = hubUrl.split('/').pop().replace('.html', '');
+    saveHtml(`itau-${slug}`, html);
   }
 
-  // Inspeccionar estructura de cards/artículos en la página
-  const structure = await page.evaluate(() => {
-    const selectors = [
-      'article', '[class*="card"]', '[class*="benefit"]', '[class*="promo"]',
-      '[class*="descuento"]', '[class*="item"]', 'li[class]',
-    ];
-    const found = [];
-    selectors.forEach(sel => {
-      const els = document.querySelectorAll(sel);
-      if (els.length > 0) found.push(`${sel}: ${els.length} elementos`);
-    });
-    return found;
-  });
-  console.log('\nEstructura de la página:');
-  structure.forEach(s => console.log(`  ${s}`));
+  // Esperar a que las cards estén en el DOM
+  try {
+    await page.waitForSelector('[class*="card"], article', { timeout: 5000 });
+  } catch (_) {}
 
-  return links;
-}
-
-// ── Descubrir cards de beneficios ────────────────────────────────────────────
-async function discoverCards(page) {
-  const status = await goto(page, HUB);
-  console.log(`Hub status: ${status}`);
-
-  const html = await page.content();
-  if (DIAG_MODE) saveHtml('itau-hub', html);
-
-  const cards = await page.evaluate(origin => {
+  const cards = await page.evaluate((excl) => {
+    const out = [];
     const seen = new Set();
-    const out  = [];
 
-    // Estrategia A: links /beneficios/<slug>
-    document.querySelectorAll('a[href]').forEach(a => {
-      const href = a.href || '';
-      if (!href.startsWith(origin)) return;
-      const relPath = href.replace(origin, '');
-      // Patrones conocidos de Itaú Uruguay:
-      // /inst/beneficios/<slug>.html  o  /beneficio/<slug>  o variantes
-      if (!/\/(inst\/)?beneficio(s)?\/[^/]+/.test(relPath)) return;
-      if (seen.has(href)) return;
-      seen.add(href);
+    // Selectores candidatos para cards de beneficios — ordenados por especificidad
+    const CARD_SELS = [
+      'article',
+      '[class*="benefit-card"]',
+      '[class*="beneficio-card"]',
+      '[class*="card-benefit"]',
+      '[class*="promo-card"]',
+      '[class*="card"][class*="promo"]',
+    ];
 
-      const slug = relPath.split('/').filter(Boolean).pop();
+    // Intentar encontrar el contenedor correcto inspeccionando cuántos hay
+    let cardEls = [];
+    for (const sel of CARD_SELS) {
+      const els = [...document.querySelectorAll(sel)];
+      if (els.length >= 5) { cardEls = els; break; }
+    }
 
-      let container = a.closest('article, li, [class*="card"], [class*="item"], [class*="benefit"], [class*="promo"]');
-      if (!container) container = a.parentElement?.parentElement || a.parentElement;
+    // Fallback: todos los [class*="card"] que no estén dentro de otro card
+    if (cardEls.length === 0) {
+      const all = [...document.querySelectorAll('[class*="card"]')];
+      cardEls = all.filter(el => !el.closest('[class*="card"]:not(el)') || el.parentElement?.closest('[class*="card"]') === null);
+      // Filtrar por los que tienen texto suficiente (son cards de contenido)
+      cardEls = all.filter(el => (el.innerText || '').trim().length > 20);
+    }
 
-      const containerText = container?.innerText || '';
-      let nombre = containerText.replace(/ver\s+m[aá]s(\s+detalles)?/gi, '').replace(/\s+/g, ' ').trim();
+    cardEls.forEach(el => {
+      const text = (el.innerText || el.textContent || '').replace(/\s+/g, ' ').trim();
+      if (text.length < 10) return;
+
+      // Deduplicar por texto normalizado
+      const key = text.slice(0, 80).toLowerCase();
+      if (seen.has(key)) return;
+      seen.add(key);
+
+      // Nombre: primera línea no vacía, cortar antes del primer NN%
+      const lines = text.split(/[\n|]/).map(l => l.trim()).filter(Boolean);
+      let nombre = lines[0] || '';
       const firstPct = nombre.search(/\d{1,3}\s*%/);
       if (firstPct > 0) nombre = nombre.slice(0, firstPct).trim();
-      nombre = nombre.slice(0, 80) || null;
+      nombre = nombre.slice(0, 80).trim();
+      if (!nombre) return;
 
-      const pctMatches = [...containerText.matchAll(/(\d{1,3})\s*%/g)]
+      // Porcentaje máximo en el texto del card
+      const pctMatches = [...text.matchAll(/(\d{1,3})\s*%/g)]
         .map(m => parseInt(m[1], 10)).filter(n => n > 0 && n <= 70);
       const pctMax = pctMatches.length ? Math.max(...pctMatches) : null;
 
-      // Buscar categoría en el container o en un elemento padre con header/título
+      // Categoría: buscar en elemento padre con clase de categoría/sección
       let categoria = null;
-      const catEl = container?.closest('[class*="category"], [class*="section"]')
-        ?.querySelector('h2,h3,[class*="title"],[class*="heading"]');
+      const catEl = el.closest('[class*="categor"], [class*="section"], [class*="group"]')
+        ?.querySelector('h2,h3,h4,[class*="title"],[class*="heading"]');
       if (catEl) categoria = (catEl.innerText || '').trim().slice(0, 60) || null;
 
-      out.push({ href, slug, nombre, pctHub: pctMax, categoria });
+      // Vigencia
+      const vigLine = lines.find(l => /vigencia|v[aá]lid[ao]|hasta el/i.test(l) && l.length < 100);
+
+      // Tarjetas
+      const tarjLine = lines.find(l => /tarjeta|cr[eé]dito|d[eé]bito|platinum|infinite|black/i.test(l)
+        && l.length < 200 && !/(art\.|ley)/i.test(l));
+
+      // Descripción: segunda línea relevante
+      const desc = lines.find((l, i) => i > 0 && l.length > 20
+        && !/^\d{1,3}\s*%/.test(l)
+        && !/tarjeta|vigencia|hasta/i.test(l)
+      )?.slice(0, 200) || null;
+
+      // Link del card (si existe)
+      const anchor = el.querySelector('a[href]');
+      const url = anchor?.href || null;
+
+      out.push({ nombre, pctMax, categoria, vigencia: vigLine || null, tarjetas: tarjLine || null, desc, url, exclusivo: excl });
     });
 
     return out;
-  }, ORIGIN);
+  }, exclusivo);
 
-  console.log(`Links encontrados en hub: ${cards.length}`);
-  if (DIAG_MODE) {
-    cards.slice(0, 15).forEach(c =>
-      console.log(`  ${c.slug}  nombre="${c.nombre}"  pct=${c.pctHub}  cat="${c.categoria}"`));
+  console.log(`  ${cards.length} cards extraídas`);
+
+  if (DIAG_MODE && cards.length > 0) {
+    console.log('\n  Muestra primeras 5 cards:');
+    cards.slice(0, 5).forEach((c, i) =>
+      console.log(`  [${i+1}] "${c.nombre}"  pct=${c.pctMax}  cat="${c.categoria}"  url=${c.url}`));
   }
+
   return cards;
 }
 
-// ── Parsear página de detalle ─────────────────────────────────────────────────
-async function parseDetail(page, card) {
-  const url = card.href;
-  const status = await goto(page, url);
-  if (status !== 200) return null;
-
-  try {
-    await page.waitForSelector('main, article, [class*="content"], [class*="benefit"]', { timeout: 4000 });
-  } catch (_) {}
-  await sleep(400);
-
-  if (DIAG_MODE) {
-    const html = await page.content();
-    saveHtml(`itau-det-${card.slug}`, html);
-  }
-
-  return page.evaluate((urlStr, hubNombre, hubPct, hubCat) => {
-    const ogTitle = document.querySelector('meta[property="og:title"]')?.content?.trim();
-    const ogDesc  = document.querySelector('meta[property="og:description"]')?.content?.trim();
-
-    // Nombre
-    let nombre = null;
-    if (ogTitle && !/^(ita[uú]|beneficio|principal|navegaci)/i.test(ogTitle)) {
-      nombre = ogTitle.replace(/\s*[\|\-]\s*.*Ita[uú].*/i, '').trim();
-    }
-    if (!nombre) {
-      const allH = [...document.querySelectorAll('h1,h2')];
-      const contentH = allH.find(h => {
-        const text = h.innerText?.trim() || '';
-        return text.length > 2
-          && !/navegaci[oó]n|principal|menú|inicio|contacto/i.test(text)
-          && !h.closest('nav,header,[role="navigation"]');
-      });
-      if (contentH) nombre = contentH.innerText.trim();
-    }
-    nombre = nombre || hubNombre || urlStr.split('/').pop().replace(/-/g, ' ');
-
-    // Porcentaje
-    let pctMax = hubPct;
-    if (!pctMax) {
-      const descPcts = [...(ogDesc || '').matchAll(/(\d{1,3})\s*%/g)]
-        .map(m => parseInt(m[1], 10)).filter(n => n > 0 && n <= 70);
-      if (descPcts.length) pctMax = Math.max(...descPcts);
-    }
-    if (!pctMax) {
-      const allEls = [...document.querySelectorAll('*')].filter(e => e.children.length === 0);
-      for (const el of allEls) {
-        const t = (el.innerText || el.textContent || '').trim();
-        const m = t.match(/^(\d{1,3})\s*%$/) || t.match(/(\d{1,3})\s*%\s*(de\s+)?descuento/i);
-        if (m) {
-          const n = parseInt(m[1], 10);
-          if (n > 0 && n <= 70 && (!pctMax || n > pctMax)) pctMax = n;
-        }
-      }
-    }
-
-    // Descuentos estructurados (líneas "NN% ...")
-    const bodyLines = (document.body.innerText || '')
-      .split('\n').map(l => l.replace(/\s+/g, ' ').trim()).filter(Boolean);
-    const descuentos = [];
-    bodyLines.forEach(l => {
-      const m = l.match(/^(\d{1,3})\s*%\s*(off|de descuento|dscto)[\s\S]*$/i);
-      if (m) {
-        const pct = parseInt(m[1], 10);
-        if (pct > 0 && pct <= 70) descuentos.push({ pct, texto: l.slice(0, 150) });
-      }
+// ── Diagnóstico extra: volcar clases de cards ─────────────────────────────────
+async function diagCardClasses(page) {
+  await goto(page, HUBS[0].url);
+  const info = await page.evaluate(() => {
+    const classGroups = {};
+    document.querySelectorAll('[class*="card"]').forEach(el => {
+      const cls = [...el.classList].join('.');
+      classGroups[cls] = (classGroups[cls] || 0) + 1;
     });
-
-    // Vigencia
-    const vigencia = bodyLines.find(l => /^vigencia/i.test(l) && l.length < 120)
-                  || bodyLines.find(l => /v[aá]lid[ao]?\s+(hasta|al)/i.test(l) && l.length < 120)
-                  || null;
-
-    // Descripción
-    const mainEl = document.querySelector('main, article') || document.body;
-    const mainLines = (mainEl.innerText || '').split('\n').map(l => l.trim()).filter(l =>
-      l.length > 25 && !/menú|navegaci|contacto|cookie|privac|©|\+598/i.test(l)
-    );
-    const desc = mainLines[0]?.slice(0, 200) || ogDesc?.slice(0, 200) || null;
-
-    // Tarjetas
-    const tarjLine = bodyLines.find(l =>
-      /tarjeta|cr[eé]dito|d[eé]bito/i.test(l) && l.length < 200
-      && !/(art\.|ley|banco\s+ita[uú])/i.test(l)
-    );
-
-    return {
-      nombre,
-      url: urlStr,
-      categoria: hubCat,
-      pctMax: pctMax || (descuentos.length ? Math.max(...descuentos.map(d => d.pct)) : null),
-      descuentos,
-      vigencia,
-      tarjetas: tarjLine || null,
-      desc,
-    };
-  }, url, card.nombre, card.pctHub, card.categoria);
+    // Las 10 clases más frecuentes
+    return Object.entries(classGroups)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 10)
+      .map(([cls, n]) => `${n}x  .${cls}`);
+  });
+  console.log('\nClases de elementos [class*="card"] más frecuentes:');
+  info.forEach(l => console.log(`  ${l}`));
 }
 
 // ── Main ──────────────────────────────────────────────────────────────────────
@@ -278,59 +193,41 @@ async function parseDetail(page, card) {
   const page = await newPage(browser);
 
   if (DIAG_MODE) {
-    console.log('=== MODO DIAGNÓSTICO ===\n');
-    console.log('=== Inspeccionando hub de beneficios ===');
-    await diagHub(page);
-    console.log('\n=== Intentando descubrir cards ===');
-    const cards = await discoverCards(page);
-    if (cards.length > 0) {
-      console.log('\n=== Muestra de primeros 3 detalles ===');
-      for (const c of cards.slice(0, 3)) {
-        console.log(`\n--- ${c.slug} ---`);
-        try {
-          const d = await parseDetail(page, c);
-          console.log(JSON.stringify(d, null, 2));
-        } catch (e) {
-          console.log(`ERROR: ${e.message}`);
-        }
-        await sleep(DELAY_MS);
-      }
+    console.log('=== MODO DIAGNÓSTICO v2 ===\n');
+    await diagCardClasses(page);
+    for (const hub of HUBS) {
+      console.log(`\n=== Hub: ${hub.url} ===`);
+      await parseHub(page, hub.url, hub.exclusivo);
+      await sleep(DELAY_MS);
     }
     await browser.close();
     return;
   }
 
   // Modo producción
-  console.log('=== Explorando hub de beneficios Itaú ===');
-  const cards = await discoverCards(page);
-
-  if (cards.length === 0) {
-    console.log('\n⚠️  No se encontraron cards. Ejecutar con --diag para inspeccionar.');
-    await browser.close();
-    return;
-  }
-
-  console.log(`\n=== Parseando ${cards.length} páginas de detalle ===`);
+  console.log('=== Scraping beneficios Itaú Uruguay ===');
+  const seen = new Set();
   const beneficios = [];
-  let ok = 0, fail = 0;
-  for (let i = 0; i < cards.length; i++) {
-    const c = cards[i];
-    process.stdout.write(`  [${i + 1}/${cards.length}] ${c.slug} … `);
-    try {
-      const d = await parseDetail(page, c);
-      if (d) {
-        beneficios.push(d);
-        console.log(`OK — ${d.pctMax ?? '?'}% "${d.nombre}"`);
-        ok++;
-      } else {
-        console.log('skip (status != 200)');
-        fail++;
-      }
-    } catch (e) {
-      console.log(`ERROR: ${e.message}`);
-      fail++;
+
+  for (const hub of HUBS) {
+    console.log(`\nHub: ${hub.url}`);
+    const cards = await parseHub(page, hub.url, hub.exclusivo);
+    for (const c of cards) {
+      const key = c.nombre.toLowerCase().slice(0, 50);
+      if (seen.has(key)) continue;
+      seen.add(key);
+      beneficios.push({
+        nombre:    c.nombre,
+        url:       c.url,
+        categoria: c.categoria,
+        pctMax:    c.pctMax,
+        descuentos: c.pctMax ? [{ pct: c.pctMax, texto: `${c.pctMax}%` }] : [],
+        vigencia:  c.vigencia,
+        tarjetas:  c.tarjetas,
+        desc:      c.desc,
+        exclusivo: c.exclusivo,
+      });
     }
-    if ((i + 1) % 30 === 0) console.log(`  ...${i + 1}/${cards.length}`);
     await sleep(DELAY_MS);
   }
 
@@ -347,7 +244,7 @@ async function parseDetail(page, card) {
   fs.mkdirSync(dataDir, { recursive: true });
   fs.writeFileSync(path.join(dataDir, 'beneficios-itau.json'), JSON.stringify(payload, null, 2));
 
-  console.log(`\n✓ data/beneficios-itau.json — ${beneficios.length} beneficios (ok=${ok}, fail=${fail})`);
+  console.log(`\n✓ data/beneficios-itau.json — ${beneficios.length} beneficios`);
   beneficios.slice(0, 5).forEach(b =>
     console.log(`  • [${b.categoria || '?'}] ${b.nombre} — ${b.pctMax ?? '?'}%`));
 })();
