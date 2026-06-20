@@ -1,0 +1,33 @@
+{
+  "fuente": "bbva.com.uy",
+  "actualizado": "2026-06-20T14:33:24.161Z",
+  "nota": "v1 diagnóstica — rawPctTexts es extracción cruda, no estructurada aún",
+  "paginas": [
+    {
+      "slug": "descuentos",
+      "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos.html",
+      "status": 200,
+      "title": "Descuentos | BBVA Uruguay",
+      "rawPctTexts": [
+        "Miércoles 10%",
+        "Miércoles 25%"
+      ]
+    },
+    {
+      "slug": "gastronomia",
+      "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/gastronomia.html",
+      "status": 200,
+      "title": "Gastronomía | BBVA Uruguay",
+      "rawPctTexts": []
+    },
+    {
+      "slug": "otros",
+      "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/otros.html",
+      "status": 200,
+      "title": "Otros | BBVA Uruguay",
+      "rawPctTexts": [
+        "Ofertata semanal de 20% en artículos seleccionados."
+      ]
+    }
+  ]
+}
