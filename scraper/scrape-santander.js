@@ -68,20 +68,23 @@ async function discoverCards(page) {
   const status = await goto(page, HUB);
   console.log(`Hub status: ${status}`);
 
-  // Scroll gradualmente para disparar lazy-loading de todas las cards
+  // Scroll gradual hasta que la altura deje de crecer (lazy-loading)
   await page.evaluate(async () => {
     await new Promise(resolve => {
-      const distance = 600;
-      const maxScrolls = 300;
-      let scrollCount = 0;
+      let lastHeight = document.body.scrollHeight;
+      let stableCount = 0;
       const timer = setInterval(() => {
-        window.scrollBy(0, distance);
-        scrollCount++;
-        if (scrollCount >= maxScrolls || window.scrollY + window.innerHeight >= document.body.scrollHeight) {
-          clearInterval(timer);
-          resolve();
+        window.scrollBy(0, 600);
+        const newHeight = document.body.scrollHeight;
+        if (newHeight > lastHeight) {
+          lastHeight = newHeight;
+          stableCount = 0;
+        } else {
+          stableCount++;
+          if (stableCount >= 8) { clearInterval(timer); resolve(); }
         }
-      }, 120);
+      }, 300);
+      setTimeout(() => { clearInterval(timer); resolve(); }, 45000);
     });
   });
   await sleep(2000);
@@ -89,7 +92,7 @@ async function discoverCards(page) {
   const html = await page.content();
   if (DIAG_MODE) saveHtml('santander-hub', html);
 
-  const cards = await page.evaluate(origin => {
+  const cards = await page.evaluate((origin, diagMode) => {
     const seen = new Set();
     const out  = [];
 
@@ -116,19 +119,45 @@ async function discoverCards(page) {
 
       // % del texto del container
       const pctMatches = [...containerText.matchAll(/(\d{1,3})\s*%/g)].map(m => parseInt(m[1], 10)).filter(n => n > 0 && n <= 70);
-      const pctMax = pctMatches.length ? Math.max(...pctMatches) : null;
+      let pctMax = pctMatches.length ? Math.max(...pctMatches) : null;
 
-      out.push({ href, slug, nombre, pctHub: pctMax });
+      // También revisar atributos data-* del container o imgs dentro de él
+      if (!pctMax && container) {
+        const allEls = [container, ...container.querySelectorAll('*')];
+        for (const el of allEls) {
+          for (const attr of el.attributes || []) {
+            const val = attr.value;
+            const m = val.match(/^(\d{1,3})$/) || val.match(/(\d{1,3})\s*%/);
+            if (m) {
+              const n = parseInt(m[1], 10);
+              if (n > 0 && n <= 70) { pctMax = pctMax ? Math.max(pctMax, n) : n; }
+            }
+          }
+        }
+      }
+
+      // Nombre también desde alt de imagen
+      if (!nombre && container) {
+        const img = container.querySelector('img');
+        if (img?.alt && img.alt.length > 2 && img.alt.length < 80) nombre = img.alt;
+      }
+
+      const containerHtml = diagMode && !pctMax ? (container?.outerHTML?.slice(0, 600) || '') : '';
+      out.push({ href, slug, nombre, pctHub: pctMax, containerHtml });
     });
 
     return out;
-  }, ORIGIN);
+  }, ORIGIN, DIAG_MODE);
 
   console.log(`Links encontrados en hub: ${cards.length}`);
   if (DIAG_MODE) {
-    // Mostrar primeras 5 y cards 8-12 para verificar que el scroll carga las lazy
     const sample = [...cards.slice(0, 5), ...cards.slice(8, 13)];
     sample.forEach(c => console.log(`  [${cards.indexOf(c)}] ${c.slug}  nombre="${c.nombre}"  pct=${c.pctHub}`));
+    // Dump container HTML for first 2 null cards
+    const nullCards = cards.filter(c => !c.pctHub).slice(0, 2);
+    nullCards.forEach(c => {
+      console.log(`  [containerHtml:${c.slug}] ${c.containerHtml || '(vacío)'}`);
+    });
   }
 
   return cards;
@@ -149,26 +178,40 @@ async function parseDetail(page, card) {
   if (DIAG_MODE) {
     const html = await page.content();
     saveHtml(`santander-det-${card.slug}`, html);
-    // Dump de elementos que contienen "%" para diagnosticar dónde está el descuento
     const pctDump = await page.evaluate(() => {
-      const els = [...document.querySelectorAll('*')]
-        .filter(e => /\d{1,3}\s*%/.test(e.innerText || '') && !e.closest('nav,header,footer'))
-        .slice(0, 10)
+      const ogDesc = document.querySelector('meta[property="og:description"]')?.content || '';
+      const ogTitle = document.querySelector('meta[property="og:title"]')?.content || '';
+      // Buscar % en elementos body (no head/script)
+      const els = [...document.querySelectorAll('body *')]
+        .filter(e => /\d{1,3}\s*%/.test(e.innerText || ''))
+        .slice(0, 5)
         .map(e => ({
           tag: e.tagName, cls: [...e.classList].join('.').slice(0, 60),
           txt: (e.innerText || '').replace(/\s+/g, ' ').trim().slice(0, 150),
           leaf: e.children.length === 0,
         }));
-      const ogDesc = document.querySelector('meta[property="og:description"]')?.content || '';
-      return { els, ogDesc };
+      // Buscar en atributos data-* de todos los elementos
+      const dataAttrs = [];
+      document.querySelectorAll('[data-porcentaje],[data-pct],[data-discount],[data-descuento],[data-percentage]').forEach(el => {
+        for (const attr of el.attributes) {
+          if (/porcentaje|pct|discount|descuento|percentage/i.test(attr.name)) {
+            dataAttrs.push(`${attr.name}="${attr.value}"`);
+          }
+        }
+      });
+      // Buscar en scripts inline (no externos)
+      const scriptPcts = [];
+      document.querySelectorAll('script:not([src])').forEach(s => {
+        const text = s.textContent || '';
+        const m = text.match(/"(?:porcentaje|pct|descuento|discount|percentage)"\s*:\s*"?(\d{1,3})"?/i);
+        if (m) scriptPcts.push(`${m[0].slice(0, 80)}`);
+      });
+      return { ogDesc, ogTitle, els, dataAttrs, scriptPcts };
     });
-    if (pctDump.els.length) {
-      console.log(`  [diag] elementos con % en ${card.slug}:`);
-      pctDump.els.forEach(e => console.log(`    leaf=${e.leaf} <${e.tag}>.${e.cls}: "${e.txt}"`));
-    } else {
-      console.log(`  [diag] NO se encontró % en ${card.slug}`);
-    }
-    if (pctDump.ogDesc) console.log(`  [diag] og:description: "${pctDump.ogDesc.slice(0, 120)}"`);
+    console.log(`  [diag:${card.slug}] og:title="${pctDump.ogTitle.slice(0, 60)}" og:desc="${pctDump.ogDesc.slice(0, 80)}"`);
+    if (pctDump.els.length) pctDump.els.forEach(e => console.log(`    body-elem leaf=${e.leaf} <${e.tag}>.${e.cls}: "${e.txt}"`));
+    if (pctDump.dataAttrs.length) console.log(`    data-attrs: ${pctDump.dataAttrs.join(', ')}`);
+    if (pctDump.scriptPcts.length) console.log(`    script-pcts: ${pctDump.scriptPcts.join(' | ')}`);
   }
 
   return page.evaluate((urlStr, hubNombre, hubPct) => {
