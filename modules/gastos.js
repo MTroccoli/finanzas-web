@@ -492,11 +492,15 @@ window.Mods.gastos = {
       if (b.fuente === 'BBVA' && b.descuentos && b.descuentos.length)
         h += b.descuentos.map(d => '<div style="font-size:.76rem;padding:2px 0">• ' + d.texto + '</div>').join('');
       if (b.tarjetas) h += '<div style="font-size:.73rem;color:var(--text-sec);margin-top:4px">' + b.tarjetas + '</div>';
+      // Itaú non-exclusive = all cards; exclusive already has tarjetas populated
+      if (b.fuente === 'Itaú' && !b.tarjetas)
+        h += '<div style="font-size:.73rem;color:var(--text-sec);margin-top:4px">Tarjetas: Todas las tarjetas Itaú</div>';
       if (b.vigencia) h += '<div style="font-size:.73rem;color:var(--text-sec);margin-top:3px">Vigencia: ' + b.vigencia + '</div>';
       if (b.local)    h += '<div style="font-size:.73rem;color:var(--text-sec);margin-top:3px">Dónde: ' + b.local + '</div>';
       if (b.tope)     h += '<div style="font-size:.73rem;color:var(--text-sec);margin-top:3px">Tope: ' + b.tope + '</div>';
       if ((b.fuente === 'Santander' || b.fuente === 'Itaú') && b.desc) h += '<div style="font-size:.73rem;color:var(--text-sec);margin-top:3px">' + b.desc + '</div>';
-      if (b.url)      h += '<a href="' + b.url + '" target="_blank" rel="noopener" style="font-size:.71rem;color:var(--accent);display:inline-block;margin-top:6px">Ver en sitio →</a>';
+      if (b.url) h += '<a href="' + b.url + '" target="_blank" rel="noopener" style="font-size:.71rem;color:var(--accent);display:inline-block;margin-top:6px">Ver en sitio →</a>';
+      else if (b.fuente === 'Itaú') h += '<a href="https://www.itau.com.uy/inst/' + (b.exclusivo ? 'beneficiosexclusivos' : 'beneficios') + '.html" target="_blank" rel="noopener" style="font-size:.71rem;color:var(--accent);display:inline-block;margin-top:6px">Ver en sitio Itaú →</a>';
       return h || '<div style="font-size:.73rem;color:var(--text-sec)">Sin detalle disponible.</div>';
     };
 
