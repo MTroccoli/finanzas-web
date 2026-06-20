@@ -1,0 +1,310 @@
+{
+  "fuente": "itau.com.uy",
+  "actualizado": "2026-06-20T20:05:30.365Z",
+  "total": 22,
+  "beneficios": [
+    {
+      "nombre": "25% menos con Platinum, Infinite, Black y Personal",
+      "url": null,
+      "pctMax": 25,
+      "descuentos": [
+        {
+          "pct": 25,
+          "texto": "25%"
+        }
+      ],
+      "vigencia": null,
+      "tarjetas": "25% menos con Platinum, Infinite, Black y Personal ver más",
+      "exclusivo": false
+    },
+    {
+      "nombre": "15% menos en moda",
+      "url": null,
+      "pctMax": 15,
+      "descuentos": [
+        {
+          "pct": 15,
+          "texto": "15%"
+        }
+      ],
+      "vigencia": null,
+      "tarjetas": null,
+      "exclusivo": false
+    },
+    {
+      "nombre": "15% menos en restaurantes",
+      "url": null,
+      "pctMax": 15,
+      "descuentos": [
+        {
+          "pct": 15,
+          "texto": "15%"
+        }
+      ],
+      "vigencia": null,
+      "tarjetas": null,
+      "exclusivo": false
+    },
+    {
+      "nombre": "15% menos en Cantegrill Joyas",
+      "url": null,
+      "pctMax": 15,
+      "descuentos": [
+        {
+          "pct": 15,
+          "texto": "15%"
+        }
+      ],
+      "vigencia": null,
+      "tarjetas": null,
+      "exclusivo": false
+    },
+    {
+      "nombre": "15% y 10% menos en Divino",
+      "url": null,
+      "pctMax": 15,
+      "descuentos": [
+        {
+          "pct": 15,
+          "texto": "15%"
+        }
+      ],
+      "vigencia": null,
+      "tarjetas": null,
+      "exclusivo": false
+    },
+    {
+      "nombre": "25% y 15% menos los jueves y sábados",
+      "url": null,
+      "pctMax": 25,
+      "descuentos": [
+        {
+          "pct": 25,
+          "texto": "25%"
+        }
+      ],
+      "vigencia": null,
+      "tarjetas": null,
+      "exclusivo": false
+    },
+    {
+      "nombre": "Millas x 3 en Frog",
+      "url": null,
+      "pctMax": null,
+      "descuentos": [],
+      "vigencia": null,
+      "tarjetas": null,
+      "exclusivo": false
+    },
+    {
+      "nombre": "15% menos en Wikimusculos",
+      "url": null,
+      "pctMax": 15,
+      "descuentos": [
+        {
+          "pct": 15,
+          "texto": "15%"
+        }
+      ],
+      "vigencia": null,
+      "tarjetas": null,
+      "exclusivo": false
+    },
+    {
+      "nombre": "15% menos en iPlace",
+      "url": null,
+      "pctMax": 15,
+      "descuentos": [
+        {
+          "pct": 15,
+          "texto": "15%"
+        }
+      ],
+      "vigencia": null,
+      "tarjetas": null,
+      "exclusivo": false
+    },
+    {
+      "nombre": "25% y 15% menos en Le Blanc",
+      "url": null,
+      "pctMax": 25,
+      "descuentos": [
+        {
+          "pct": 25,
+          "texto": "25%"
+        }
+      ],
+      "vigencia": null,
+      "tarjetas": null,
+      "exclusivo": false
+    },
+    {
+      "nombre": "25% y 15% menos en Soho",
+      "url": null,
+      "pctMax": 25,
+      "descuentos": [
+        {
+          "pct": 25,
+          "texto": "25%"
+        }
+      ],
+      "vigencia": null,
+      "tarjetas": null,
+      "exclusivo": false
+    },
+    {
+      "nombre": "25% y 15% menos en Natuzzi",
+      "url": null,
+      "pctMax": 25,
+      "descuentos": [
+        {
+          "pct": 25,
+          "texto": "25%"
+        }
+      ],
+      "vigencia": null,
+      "tarjetas": null,
+      "exclusivo": false
+    },
+    {
+      "nombre": "15% menos en Starbucks en bebidas",
+      "url": null,
+      "pctMax": 15,
+      "descuentos": [
+        {
+          "pct": 15,
+          "texto": "15%"
+        }
+      ],
+      "vigencia": null,
+      "tarjetas": null,
+      "exclusivo": false
+    },
+    {
+      "nombre": "15% menos en Riviera Joyería",
+      "url": null,
+      "pctMax": 15,
+      "descuentos": [
+        {
+          "pct": 15,
+          "texto": "15%"
+        }
+      ],
+      "vigencia": null,
+      "tarjetas": null,
+      "exclusivo": false
+    },
+    {
+      "nombre": "25% y 15% menos en Farmacia El Túnel",
+      "url": null,
+      "pctMax": 25,
+      "descuentos": [
+        {
+          "pct": 25,
+          "texto": "25%"
+        }
+      ],
+      "vigencia": null,
+      "tarjetas": null,
+      "exclusivo": false
+    },
+    {
+      "nombre": "25% y 15% menos en San Roque",
+      "url": null,
+      "pctMax": 25,
+      "descuentos": [
+        {
+          "pct": 25,
+          "texto": "25%"
+        }
+      ],
+      "vigencia": null,
+      "tarjetas": null,
+      "exclusivo": false
+    },
+    {
+      "nombre": "25% y 15% menos en Espacio Aroma",
+      "url": null,
+      "pctMax": 25,
+      "descuentos": [
+        {
+          "pct": 25,
+          "texto": "25%"
+        }
+      ],
+      "vigencia": null,
+      "tarjetas": null,
+      "exclusivo": false
+    },
+    {
+      "nombre": "15% menos en CIR Acondicionamiento térmico",
+      "url": null,
+      "pctMax": 15,
+      "descuentos": [
+        {
+          "pct": 15,
+          "texto": "15%"
+        }
+      ],
+      "vigencia": null,
+      "tarjetas": null,
+      "exclusivo": false
+    },
+    {
+      "nombre": "15% menos y 12 cuotas en la compra de Iphone",
+      "url": null,
+      "pctMax": 15,
+      "descuentos": [
+        {
+          "pct": 15,
+          "texto": "15%"
+        }
+      ],
+      "vigencia": null,
+      "tarjetas": null,
+      "exclusivo": false
+    },
+    {
+      "nombre": "Restaurantes",
+      "url": null,
+      "pctMax": 25,
+      "descuentos": [
+        {
+          "pct": 25,
+          "texto": "25%"
+        }
+      ],
+      "vigencia": null,
+      "tarjetas": "25% menos Todos los días, pagando con tus tarjetas de crédito Platinum, Infinite, Black y tarjetas de débito y crédito Personal Bank.",
+      "exclusivo": true
+    },
+    {
+      "nombre": "Tiendas Gourmet",
+      "url": null,
+      "pctMax": 25,
+      "descuentos": [
+        {
+          "pct": 25,
+          "texto": "25%"
+        }
+      ],
+      "vigencia": null,
+      "tarjetas": "25% menos Todos los días, pagando con tus tarjetas de crédito Platinum, Infinite, Black y tarjetas de débito y crédito Personal Bank.",
+      "exclusivo": true
+    },
+    {
+      "nombre": "Librerías",
+      "url": null,
+      "pctMax": 25,
+      "descuentos": [
+        {
+          "pct": 25,
+          "texto": "25%"
+        }
+      ],
+      "vigencia": null,
+      "tarjetas": "25% menos Todos los días, pagando con tus tarjetas de crédito Platinum, Infinite, Black y tarjetas de débito y crédito Personal Bank.",
+      "exclusivo": true
+    }
+  ]
+}
