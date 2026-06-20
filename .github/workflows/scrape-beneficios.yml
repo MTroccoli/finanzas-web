@@ -42,5 +42,6 @@ jobs:
             echo "Sin cambios en los datos"
           else
             git commit -m "chore: actualizar beneficios BBVA (scrape automático)"
+            git pull --rebase origin main
             git push
           fi
