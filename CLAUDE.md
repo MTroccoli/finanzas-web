@@ -458,29 +458,43 @@ Plotly.newPlot('id', traces, {
 
 ---
 
-## Estado actual del proyecto — respaldo sesión 2026-06-17
+## Estado actual del proyecto — respaldo sesión 2026-06-20
 
 ### Versiones de archivos clave
 | Archivo | Versión en index.html | Commit |
 |---|---|---|
-| `css/main.css` | `v=20260616c` | — |
+| `css/main.css` | `v=20260618m` | — |
 | `js/config.js` | `v=20260625` | — |
-| `js/db.js` | `v=20260625` | — |
-| `modules/dashboard.js` | `v=20260616g` | — |
-| `modules/inversiones.js` | `v=20260616p` | — |
-| `modules/gastos.js` | `v=20260617i` | `cdc377e` |
+| `js/db.js` | `v=20260618a` | — |
+| `modules/dashboard.js` | `v=20260619d` | — |
+| `modules/inversiones.js` | `v=20260619b` | — |
+| `modules/gastos.js` | `v=20260620d` | `ba71771` |
 | `modules/ingresos.js` | `v=20260616e` | — |
 | `modules/presupuesto.js` | `v=20260625` | — |
 | `modules/config_page.js` | `v=20260625` | — |
-| `js/app.js` | `v=20260616e` | — |
+| `js/app.js` | `v=20260620a` | — |
 
 ### Estado funcional de módulos
 - **dashboard.js**: estable, sin cambios recientes.
-- **inversiones.js**: estable. Diferenciador clave: rentabilidad realizada + ajuste por tipo de cambio UYU/USD.
-- **gastos.js**: estable con caché en memoria para todas las sub-vistas. Ver sección de caché arriba.
+- **inversiones.js**: estable.
+- **gastos.js**: estable con caché. Tab Descuentos muestra beneficios de BBVA + Santander + Itaú.
 - **ingresos.js**: estable. Presets recurrentes con auto-carga funcional.
 - **presupuesto.js**: estable.
 - **config_page.js**: estable.
+
+### Scrapers de beneficios bancarios
+- `scraper/scrape-itau.js`: estable. 22 beneficios en `data/beneficios-itau.json`. Nombres reales desde patrón "menos en [Comercio]", exclusivos como categorías.
+- `scraper/scrape-santander.js`: fixes aplicados 2026-06-20. Bugs resueltos:
+  - **Nombre correcto**: usa `<title>` tag ("Facal | Santander Uruguay" → "Facal") como fallback
+  - **pct correcto**: sube por ancestros hasta encontrar el container con `<img>` (el `<a>` con `align-items-center` matcheaba `[class*="item"]` por falso positivo)
+  - Producción en curso tras estos fixes — `data/beneficios-santander.json` se actualiza al terminar (~20-30 min)
+
+### Integración Descuentos en gastos.js
+- Fetch paralelo de BBVA, Santander e Itaú JSON
+- Normalization: `norm = (b, f) => ({ ...b, fuente: f, comercio: b.comercio || b.nombre })`
+- Badges: BBVA (azul), Santander (rojo), Itaú (naranja)
+- Stats: `N beneficios BBVA · N Santander · N Itaú · actualizado DD/MM/YYYY`
+- `renderDet` muestra `b.desc` para Santander e Itaú (descripción larga debajo del nombre)
 
 ### Próximo trabajo planificado: autenticación multi-usuario
 La app es actualmente single-user (Supabase hardcodeado en `config.js`). El plan para permitir que otros usuarios la usen:
