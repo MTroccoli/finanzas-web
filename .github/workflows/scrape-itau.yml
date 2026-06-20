@@ -1,0 +1,62 @@
+name: Scrape beneficios Itaú
+
+on:
+  schedule:
+    - cron: '0 10 1 * *'   # 1º de cada mes, 10:00 UTC
+  workflow_dispatch:
+    inputs:
+      modo:
+        description: 'Modo de ejecución'
+        required: true
+        default: 'diag'
+        type: choice
+        options:
+          - diag        # guarda HTMLs como artifacts, no escribe JSON
+          - produccion  # escribe data/beneficios-itau.json y commitea
+
+permissions:
+  contents: write
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Instalar dependencias del scraper
+        working-directory: scraper
+        run: npm install
+
+      - name: Ejecutar scraper (modo diagnóstico)
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.modo == 'diag' }}
+        working-directory: scraper
+        run: node scrape-itau.js --diag
+
+      - name: Ejecutar scraper (modo producción)
+        if: ${{ github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.modo == 'produccion') }}
+        working-directory: scraper
+        run: node scrape-itau.js
+
+      - name: Subir HTML diagnóstico
+        uses: actions/upload-artifact@v4
+        with:
+          name: itau-diag-html
+          path: scraper/output/*.html
+          if-no-files-found: ignore
+
+      - name: Commitear datos si cambiaron
+        if: ${{ github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.modo == 'produccion') }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A data/beneficios-itau.json
+          if git diff --staged --quiet; then
+            echo "Sin cambios en los datos"
+          else
+            git commit -m "chore: actualizar beneficios Itaú (scrape automático)"
+            git push
+          fi
