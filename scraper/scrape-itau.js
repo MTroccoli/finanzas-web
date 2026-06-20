@@ -14,7 +14,7 @@ puppeteer.use(StealthPlugin());
 const fs   = require('fs');
 const path = require('path');
 
-const HUB    = 'https://www.itau.com.uy/beneficios';
+const HUB    = 'https://www.itau.com.uy/inst/beneficios.html';
 const ORIGIN = 'https://www.itau.com.uy';
 const UA     = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 ' +
                '(KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36';
@@ -128,8 +128,9 @@ async function discoverCards(page) {
       const href = a.href || '';
       if (!href.startsWith(origin)) return;
       const relPath = href.replace(origin, '');
-      // Ajustar el patrón según lo que encontremos en el hub
-      if (!/^\/beneficio(s)?\/[^/]+/.test(relPath)) return;
+      // Patrones conocidos de Itaú Uruguay:
+      // /inst/beneficios/<slug>.html  o  /beneficio/<slug>  o variantes
+      if (!/\/(inst\/)?beneficio(s)?\/[^/]+/.test(relPath)) return;
       if (seen.has(href)) return;
       seen.add(href);
 
