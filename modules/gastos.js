@@ -64,6 +64,7 @@ window.Mods.gastos = {
   _resCacheKey:   null,   // `${desde}|${hasta}|${banco}` — solo vistas gastos/beneficios (cat/tipo son client-side)
   _descCache:         null,   // beneficios.json cacheado (catálogo de descuentos TDC)
   _descCatSpendCache: null,   // gastos por categoria_id últimos 6 meses (para match por categoría)
+  _descBanco:         '',     // filtro fuente: '' | 'BBVA' | 'Santander'
   _descCat:           '',     // filtro de categoría en el tab Descuentos
   _descSearch:        '',     // búsqueda por comercio en el tab Descuentos
 
@@ -328,25 +329,35 @@ window.Mods.gastos = {
     }
   },
 
-  // ── Tab Descuentos: catálogo de beneficios BBVA + oportunidades ───────────
+  // ── Tab Descuentos: catálogo de beneficios BBVA + Santander ────────────────
   async _drawDescuentos() {
     const gc = document.getElementById('g-content');
     gc.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
 
-    // 1. Cargar catálogo de beneficios (estático, cacheado)
+    // 1. Catálogos BBVA + Santander mergeados (cacheados)
     if (!this._descCache) {
       try {
-        const res = await fetch('data/beneficios.json', { cache: 'no-cache' });
-        this._descCache = await res.json();
+        const [r1, r2] = await Promise.all([
+          fetch('data/beneficios.json', { cache: 'no-cache' }),
+          fetch('data/beneficios-santander.json', { cache: 'no-cache' }).catch(() => null),
+        ]);
+        const bbva = await r1.json();
+        const sant = r2 ? await r2.json().catch(() => ({ beneficios: [] })) : { beneficios: [] };
+        this._descCache = {
+          actualizado: bbva.actualizado,
+          benefits: [
+            ...(bbva.beneficios || []).map(b => ({ ...b, fuente: 'BBVA' })),
+            ...(sant.beneficios || []).map(b => ({ ...b, fuente: 'Santander' })),
+          ],
+        };
       } catch (e) {
         gc.innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-text">No se pudo cargar el catálogo de beneficios.</div></div>';
         return;
       }
     }
-    const data = this._descCache;
-    const benefits = data.beneficios || [];
+    const { benefits, actualizado } = this._descCache;
 
-    // 2. Cargar consumo TDC (reusa cache de Comercios si existe)
+    // 2. Consumo TDC (reusa cache de Comercios si existe)
     let comRows = this._comRawCache;
     if (!comRows) {
       const { data: d } = await getDB()
@@ -360,7 +371,7 @@ window.Mods.gastos = {
     const hoy = new Date();
     const desde6 = new Date(hoy.getFullYear(), hoy.getMonth() - 6, 1).toISOString().slice(0, 10);
 
-    // 2b. Consumo por categoria_id últimos 6 meses (query separada — comRawCache no tiene categoria_id)
+    // 2b. Consumo por categoria_id últimos 6 meses
     if (!this._descCatSpendCache) {
       const { data: cs } = await getDB()
         .from('gastos').select('categoria_id,monto,moneda')
@@ -371,7 +382,7 @@ window.Mods.gastos = {
     }
     const catSpend = this._descCatSpendCache;
 
-    // 3. Índice de beneficios por comercio normalizado (se queda con el mayor %)
+    // 3. Índice por comercio normalizado (mejor % global)
     const benIndex = {};
     for (const b of benefits) {
       const k = this._normMerchant(b.comercio);
@@ -379,7 +390,7 @@ window.Mods.gastos = {
       if (!benIndex[k] || (b.pctMax || 0) > (benIndex[k].pctMax || 0)) benIndex[k] = b;
     }
 
-    // 3b. Índice de beneficios por categoría BBVA
+    // 3b. Índice por categoría BBVA
     const benByCat = {};
     for (const b of benefits) {
       if (!b.categoria) continue;
@@ -388,7 +399,7 @@ window.Mods.gastos = {
       if ((b.pctMax || 0) > benByCat[b.categoria].maxPct) benByCat[b.categoria].maxPct = b.pctMax || 0;
     }
 
-    // 3c. Mapeo de categorías de usuario → categorías BBVA
+    // 3c. Mapeo categorías usuario → categorías BBVA
     const BBVA_MAP = [
       [['gastronom','restauran','comida','almuerzo','cena','bar ','cafe','cafeter','delivery','pizza','sushi','hambur','panaderia','heladeria'], 'Gastronomía'],
       [['ropa','moda','vestim','indumen','zapato','calzado','textil','accesori'], 'Moda'],
@@ -411,7 +422,7 @@ window.Mods.gastos = {
       return null;
     };
 
-    // 4. Oportunidades: comercios donde gastaste (últimos 6 meses) que tienen beneficio
+    // 4. Oportunidades por comercio (últimos 6 meses)
     const spendByNorm = {};
     for (const r of comRows) {
       if (r.fecha < desde6) continue;
@@ -427,7 +438,7 @@ window.Mods.gastos = {
       .map(s => ({ ...s, benefit: benIndex[s.norm] }))
       .sort((a, b) => b.total - a.total);
 
-    // 4b. Oportunidades por categoría (match de 2° nivel)
+    // 4b. Oportunidades por categoría (BBVA)
     const catsMap = {};
     (this._cats || []).forEach(c => { catsMap[c.id] = c.nombre; });
     const catSpendByBBVA = {};
@@ -444,27 +455,50 @@ window.Mods.gastos = {
       .map(([bc, s]) => ({ bbvaCat: bc, total: s.total, mon: s.mon, count: benByCat[bc].count, maxPct: benByCat[bc].maxPct }))
       .sort((a, b) => b.total - a.total);
 
-    // 5. Catálogo filtrado (categoría + búsqueda)
-    const cat = this._descCat;
-    const q = this._normMerchant(this._descSearch);
+    // 5. Catálogo filtrado
+    const banco = this._descBanco;
+    const cat   = this._descCat;
+    const q     = this._normMerchant(this._descSearch);
     const filtered = benefits.filter(b =>
-      (!cat || b.categoria === cat) &&
-      (!q || this._normMerchant(b.comercio).includes(q))
+      (!banco || b.fuente === banco) &&
+      (!cat   || b.categoria === cat) &&
+      (!q     || this._normMerchant(b.comercio).includes(q))
     ).sort((a, b) => (b.pctMax || 0) - (a.pctMax || 0));
 
+    const forCats = banco ? benefits.filter(b => b.fuente === banco) : benefits;
     const catCounts = {};
-    benefits.forEach(b => { catCounts[b.categoria] = (catCounts[b.categoria] || 0) + 1; });
-    const cats = (data.categorias || Object.keys(catCounts));
+    forCats.forEach(b => { if (b.categoria) catCounts[b.categoria] = (catCounts[b.categoria] || 0) + 1; });
+    const catList   = Object.keys(catCounts).sort();
+    const bbvaCount = benefits.filter(b => b.fuente === 'BBVA').length;
+    const santCount = benefits.filter(b => b.fuente === 'Santander').length;
 
-    const fmtMon = (n, mon) => (mon === 'USD' ? 'US$ ' : '$U ') + fmt(n, 0);
-    const actualizado = data.actualizado ? new Date(data.actualizado).toLocaleDateString('es-AR') : '—';
+    const fmtMon  = (n, mon) => (mon === 'USD' ? 'US$ ' : '$U ') + fmt(n, 0);
+    const actFmt  = actualizado ? new Date(actualizado).toLocaleDateString('es-AR') : '—';
+
+    const fuenteBadge = f => f === 'BBVA'
+      ? '<span style="font-size:.58rem;padding:1px 5px;border-radius:3px;background:rgba(46,142,200,.18);color:#5bb3e4;font-weight:700;letter-spacing:.03em;vertical-align:middle;margin-left:5px">BBVA</span>'
+      : '<span style="font-size:.58rem;padding:1px 5px;border-radius:3px;background:rgba(230,57,70,.18);color:#e63946;font-weight:700;letter-spacing:.03em;vertical-align:middle;margin-left:5px">Santander</span>';
+
+    const renderDet = b => {
+      let h = '';
+      if (b.fuente === 'BBVA' && b.descuentos && b.descuentos.length)
+        h += b.descuentos.map(d => '<div style="font-size:.76rem;padding:2px 0">• ' + d.texto + '</div>').join('');
+      if (b.tarjetas) h += '<div style="font-size:.73rem;color:var(--text-sec);margin-top:4px">' + b.tarjetas + '</div>';
+      if (b.vigencia) h += '<div style="font-size:.73rem;color:var(--text-sec);margin-top:3px">Vigencia: ' + b.vigencia + '</div>';
+      if (b.local)    h += '<div style="font-size:.73rem;color:var(--text-sec);margin-top:3px">Dónde: ' + b.local + '</div>';
+      if (b.tope)     h += '<div style="font-size:.73rem;color:var(--text-sec);margin-top:3px">Tope: ' + b.tope + '</div>';
+      if (b.fuente === 'Santander' && b.desc) h += '<div style="font-size:.73rem;color:var(--text-sec);margin-top:3px">' + b.desc + '</div>';
+      if (b.url)      h += '<a href="' + b.url + '" target="_blank" rel="noopener" style="font-size:.71rem;color:var(--accent);display:inline-block;margin-top:6px">Ver en sitio →</a>';
+      return h || '<div style="font-size:.73rem;color:var(--text-sec)">Sin detalle disponible.</div>';
+    };
 
     // ── Render ──
+    const thStyle = 'padding:7px 6px;border-bottom:1px solid var(--border);font-size:.68rem;color:var(--text-sec);text-transform:uppercase;font-weight:500;white-space:nowrap';
+    const tdBorder = 'border-bottom:1px solid rgba(255,255,255,.04)';
+
     gc.innerHTML = `
-      <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;margin-bottom:14px">
-        <div style="font-size:.72rem;color:var(--text-sec)">
-          ${benefits.length} beneficios · fuente BBVA · actualizado ${actualizado}
-        </div>
+      <div style="font-size:.72rem;color:var(--text-sec);margin-bottom:14px">
+        ${bbvaCount} beneficios BBVA${santCount ? ' · ' + santCount + ' Santander' : ''} · actualizado ${actFmt}
       </div>
 
       ${oportunidades.length ? `
@@ -475,18 +509,18 @@ window.Mods.gastos = {
           <div style="overflow-x:auto;-webkit-overflow-scrolling:touch">
             <table style="width:100%;min-width:420px;border-collapse:collapse">
               <thead><tr>
-                ${['Comercio','Tu consumo 6m','Beneficio BBVA','Vigencia'].map((h, i) =>
-                  `<th style="text-align:${i >= 1 && i <= 1 ? 'right' : 'left'};padding:7px 6px;border-bottom:1px solid var(--border);font-size:.68rem;color:var(--text-sec);text-transform:uppercase;font-weight:500;white-space:nowrap">${h}</th>`).join('')}
+                <th style="${thStyle};text-align:left">Comercio</th>
+                <th style="${thStyle};text-align:right">Tu consumo 6m</th>
+                <th style="${thStyle};text-align:left">Beneficio</th>
+                <th style="${thStyle};text-align:left">Vigencia</th>
               </tr></thead>
               <tbody>
                 ${oportunidades.map(o => `
                   <tr>
-                    <td style="padding:7px 6px;border-bottom:1px solid rgba(255,255,255,.04);font-size:.82rem">${o.example}</td>
-                    <td style="padding:7px 6px;border-bottom:1px solid rgba(255,255,255,.04);font-size:.8rem;text-align:right;font-family:'DM Mono',monospace;color:var(--text-sec)">${fmtMon(o.total, o.mon)}</td>
-                    <td style="padding:7px 6px;border-bottom:1px solid rgba(255,255,255,.04);font-size:.82rem">
-                      <span style="color:var(--green);font-weight:600">hasta ${o.benefit.pctMax}%</span>
-                    </td>
-                    <td style="padding:7px 6px;border-bottom:1px solid rgba(255,255,255,.04);font-size:.74rem;color:var(--text-sec)">${o.benefit.vigencia || '—'}</td>
+                    <td style="padding:7px 6px;${tdBorder};font-size:.82rem">${o.example}${fuenteBadge(o.benefit.fuente)}</td>
+                    <td style="padding:7px 6px;${tdBorder};font-size:.8rem;text-align:right;font-family:'DM Mono',monospace;color:var(--text-sec)">${fmtMon(o.total, o.mon)}</td>
+                    <td style="padding:7px 6px;${tdBorder};font-size:.82rem"><span style="color:var(--green);font-weight:600">hasta ${o.benefit.pctMax}%</span></td>
+                    <td style="padding:7px 6px;${tdBorder};font-size:.74rem;color:var(--text-sec)">${o.benefit.vigencia || '—'}</td>
                   </tr>`).join('')}
               </tbody>
             </table>
@@ -502,16 +536,18 @@ window.Mods.gastos = {
           <div style="overflow-x:auto;-webkit-overflow-scrolling:touch">
             <table style="width:100%;min-width:380px;border-collapse:collapse">
               <thead><tr>
-                ${['Rubro BBVA','Tu consumo 6m','Beneficios','Mejor %'].map((h, i) =>
-                  `<th style="text-align:${i === 1 || i === 2 || i === 3 ? 'right' : 'left'};padding:7px 6px;border-bottom:1px solid var(--border);font-size:.68rem;color:var(--text-sec);text-transform:uppercase;font-weight:500;white-space:nowrap">${h}</th>`).join('')}
+                <th style="${thStyle};text-align:left">Rubro BBVA</th>
+                <th style="${thStyle};text-align:right">Tu consumo 6m</th>
+                <th style="${thStyle};text-align:right">Beneficios</th>
+                <th style="${thStyle};text-align:right">Mejor %</th>
               </tr></thead>
               <tbody>
                 ${catOportunidades.map(co => `
                   <tr>
-                    <td style="padding:7px 6px;border-bottom:1px solid rgba(255,255,255,.04);font-size:.82rem">${co.bbvaCat}</td>
-                    <td style="padding:7px 6px;border-bottom:1px solid rgba(255,255,255,.04);font-size:.8rem;text-align:right;font-family:'DM Mono',monospace;color:var(--text-sec)">${fmtMon(co.total, co.mon)}</td>
-                    <td style="padding:7px 6px;border-bottom:1px solid rgba(255,255,255,.04);font-size:.8rem;text-align:right;color:var(--text-sec)">${co.count}</td>
-                    <td style="padding:7px 6px;border-bottom:1px solid rgba(255,255,255,.04);font-size:.82rem;text-align:right;font-weight:600;color:var(--gold)">${co.maxPct ? co.maxPct + '%' : '—'}</td>
+                    <td style="padding:7px 6px;${tdBorder};font-size:.82rem">${co.bbvaCat}</td>
+                    <td style="padding:7px 6px;${tdBorder};font-size:.8rem;text-align:right;font-family:'DM Mono',monospace;color:var(--text-sec)">${fmtMon(co.total, co.mon)}</td>
+                    <td style="padding:7px 6px;${tdBorder};font-size:.8rem;text-align:right;color:var(--text-sec)">${co.count}</td>
+                    <td style="padding:7px 6px;${tdBorder};font-size:.82rem;text-align:right;font-weight:600;color:var(--gold)">${co.maxPct ? co.maxPct + '%' : '—'}</td>
                   </tr>`).join('')}
               </tbody>
             </table>
@@ -521,27 +557,40 @@ window.Mods.gastos = {
 
       <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px">
         <input id="desc-search" type="text" placeholder="Buscar comercio…" value="${(this._descSearch || '').replace(/"/g, '&quot;')}"
-          style="flex:1;min-width:140px;padding:7px 10px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.8rem">
-        <select id="desc-cat" style="padding:7px 10px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.8rem">
-          <option value="">Todas (${benefits.length})</option>
-          ${cats.map(c => `<option value="${c}" ${cat === c ? 'selected' : ''}>${c} (${catCounts[c] || 0})</option>`).join('')}
+          style="flex:1;min-width:120px;padding:7px 10px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.8rem">
+        <select id="desc-banco" style="padding:7px 10px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.8rem">
+          <option value="">Todos (${benefits.length})</option>
+          <option value="BBVA" ${banco === 'BBVA' ? 'selected' : ''}>BBVA (${bbvaCount})</option>
+          ${santCount ? `<option value="Santander" ${banco === 'Santander' ? 'selected' : ''}>Santander (${santCount})</option>` : ''}
         </select>
+        ${catList.length ? `
+          <select id="desc-cat" style="padding:7px 10px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.8rem">
+            <option value="">Categorías (${catList.length})</option>
+            ${catList.map(c => `<option value="${c}" ${cat === c ? 'selected' : ''}>${c} (${catCounts[c]})</option>`).join('')}
+          </select>
+        ` : ''}
       </div>
 
       <div style="overflow-x:auto;-webkit-overflow-scrolling:touch">
-        <table style="width:100%;min-width:520px;border-collapse:collapse">
+        <table style="width:100%;min-width:400px;border-collapse:collapse">
           <thead><tr>
-            ${['Comercio','Categoría','Desc.','Vigencia','Dónde'].map(h =>
-              `<th style="text-align:left;padding:7px 6px;border-bottom:1px solid var(--border);font-size:.68rem;color:var(--text-sec);text-transform:uppercase;font-weight:500;white-space:nowrap">${h}</th>`).join('')}
+            <th style="${thStyle};text-align:left">Comercio</th>
+            <th style="${thStyle};text-align:left">%</th>
+            <th style="${thStyle};text-align:left">Vigencia</th>
           </tr></thead>
           <tbody>
-            ${filtered.map(b => `
+            ${filtered.map((b, idx) => `
               <tr>
-                <td style="padding:7px 6px;border-bottom:1px solid rgba(255,255,255,.04);font-size:.82rem">${b.comercio}</td>
-                <td style="padding:7px 6px;border-bottom:1px solid rgba(255,255,255,.04);font-size:.74rem;color:var(--text-sec)">${b.categoria}</td>
-                <td style="padding:7px 6px;border-bottom:1px solid rgba(255,255,255,.04);font-size:.82rem;font-family:'DM Mono',monospace;color:${b.pctMax ? 'var(--gold)' : 'var(--text-sec)'};white-space:nowrap">${b.pctMax ? b.pctMax + '%' : '—'}</td>
-                <td style="padding:7px 6px;border-bottom:1px solid rgba(255,255,255,.04);font-size:.72rem;color:var(--text-sec);white-space:nowrap">${b.vigencia || '—'}</td>
-                <td style="padding:7px 6px;border-bottom:1px solid rgba(255,255,255,.04);font-size:.72rem;color:var(--text-sec)">${b.local || '—'}</td>
+                <td style="padding:7px 6px;${tdBorder};font-size:.82rem">
+                  <span>${b.comercio}</span>${fuenteBadge(b.fuente)}<button class="di-btn" data-i="${idx}" style="background:none;border:none;color:var(--text-sec);cursor:pointer;padding:0 4px;font-size:.85rem;line-height:1;vertical-align:middle;margin-left:3px" title="Ver detalle">ⓘ</button>
+                </td>
+                <td style="padding:7px 6px;${tdBorder};font-size:.82rem;font-family:'DM Mono',monospace;color:${b.pctMax ? 'var(--gold)' : 'var(--text-sec)'};white-space:nowrap">${b.pctMax ? b.pctMax + '%' : '—'}</td>
+                <td style="padding:7px 6px;${tdBorder};font-size:.72rem;color:var(--text-sec);white-space:nowrap">${b.vigencia || '—'}</td>
+              </tr>
+              <tr id="di-row-${idx}" style="display:none">
+                <td colspan="3" style="padding:6px 8px 12px 20px;background:rgba(255,255,255,.025);${tdBorder}">
+                  ${renderDet(b)}
+                </td>
               </tr>`).join('')}
           </tbody>
         </table>
@@ -551,16 +600,31 @@ window.Mods.gastos = {
 
     // Handlers de filtro
     const searchEl = document.getElementById('desc-search');
-    const catEl = document.getElementById('desc-cat');
+    const bancoEl  = document.getElementById('desc-banco');
+    const catEl    = document.getElementById('desc-cat');
     let t;
     searchEl?.addEventListener('input', () => {
       clearTimeout(t);
       t = setTimeout(() => { this._descSearch = searchEl.value; this._drawDescuentos(); }, 280);
     });
+    bancoEl?.addEventListener('change', () => {
+      this._descBanco = bancoEl.value;
+      this._descCat   = '';
+      this._drawDescuentos();
+    });
     catEl?.addEventListener('change', () => { this._descCat = catEl.value; this._drawDescuentos(); });
+    document.querySelectorAll('.di-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const row = document.getElementById('di-row-' + btn.dataset.i);
+        if (!row) return;
+        const open = row.style.display !== 'none';
+        row.style.display = open ? 'none' : 'table-row';
+        btn.style.color = open ? '' : 'var(--accent)';
+      });
+    });
   },
 
-  // ── Sort helpers ────────────────────────────────────────────────────────
+    // ── Sort helpers ────────────────────────────────────────────────────────
 
   _thSort(col, label, s) {
     const cur = s.col === col;

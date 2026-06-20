@@ -89,36 +89,25 @@ async function discoverCards(page) {
       let container = a.closest('article, li, [class*="card"], [class*="item"], [class*="benefit"], [class*="promo"]');
       if (!container) container = a.parentElement?.parentElement || a.parentElement;
 
-      // Extraer nombre del heading más próximo dentro de la card
-      const headingEl = container?.querySelector('h1,h2,h3,h4,h5,strong,[class*="title"],[class*="name"],[class*="heading"]');
-      let nombre = (headingEl?.innerText || '').replace(/\s+/g, ' ').trim();
-      // Fallback: todo el texto de la card sin el CTA
-      if (!nombre || nombre.toLowerCase() === 'ver más detalles') {
-        nombre = (container?.innerText || '').replace(/ver\s+m[aá]s\s+detalles/gi, '').replace(/\s+/g, ' ').trim().slice(0, 80);
-      }
-
-      // Intentar capturar % del texto del container
+      // Nombre: tomar el texto del container sin el CTA, luego cortar antes del "NN%"
       const containerText = container?.innerText || '';
+      let nombre = containerText.replace(/ver\s+m[aá]s\s+detalles/gi, '').replace(/\s+/g, ' ').trim();
+      const firstPct = nombre.search(/\d{1,3}\s*%/);
+      if (firstPct > 0) nombre = nombre.slice(0, firstPct).trim();
+      nombre = nombre.slice(0, 60) || null;
+
+      // % del texto del container
       const pctMatches = [...containerText.matchAll(/(\d{1,3})\s*%/g)].map(m => parseInt(m[1], 10)).filter(n => n > 0 && n <= 70);
       const pctMax = pctMatches.length ? Math.max(...pctMatches) : null;
 
-      // Categoría: buscar el heading de sección más próximo ANTES de este card en el DOM
-      let catEl = null;
-      let el = container || a;
-      while (el && !catEl) {
-        el = el.previousElementSibling || el.parentElement;
-        if (el) catEl = el.querySelector?.('h1,h2,h3,[class*="section-title"],[class*="category"]');
-      }
-      const categoria = catEl ? catEl.innerText?.replace(/\s+/g, ' ').trim().slice(0, 50) : null;
-
-      out.push({ href, slug, nombre: nombre || null, pctHub: pctMax, categoria });
+      out.push({ href, slug, nombre, pctHub: pctMax });
     });
 
     return out;
   }, ORIGIN);
 
   console.log(`Links encontrados en hub: ${cards.length}`);
-  if (DIAG_MODE) cards.slice(0, 10).forEach(c => console.log(`  ${c.slug}  nombre="${c.nombre}"  pct=${c.pctHub}  cat="${c.categoria}"`));
+  if (DIAG_MODE) cards.slice(0, 10).forEach(c => console.log(`  ${c.slug}  nombre="${c.nombre}"  pct=${c.pctHub}`));
 
   return cards;
 }
@@ -140,7 +129,7 @@ async function parseDetail(page, card) {
     saveHtml(`santander-det-${card.slug}`, html);
   }
 
-  return page.evaluate((urlStr, hubNombre, hubPct, hubCat) => {
+  return page.evaluate((urlStr, hubNombre, hubPct) => {
     // ── Nombre ───────────────────────────────────────────────────────────────
     // Prioridad: og:title > og:description heading > slug derivado desde hub
     const ogTitle = document.querySelector('meta[property="og:title"]')?.content?.trim();
@@ -202,8 +191,8 @@ async function parseDetail(page, card) {
                                           && !/(art\.|ley|banco\s+sant)/i.test(l));
     const tarjetas = tarjLine || null;
 
-    return { nombre, url: urlStr, pctMax, vigencia, tarjetas, desc, categoria: hubCat };
-  }, url, card.nombre, card.pctHub, card.categoria);
+    return { nombre, url: urlStr, pctMax, vigencia, tarjetas, desc };
+  }, url, card.nombre, card.pctHub);
 }
 
 // ── Main ──────────────────────────────────────────────────────────────────────
