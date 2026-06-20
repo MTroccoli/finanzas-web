@@ -1,6 +1,6 @@
 {
   "fuente": "santander.com.uy",
-  "actualizado": "2026-06-20T18:49:41.600Z",
+  "actualizado": "2026-06-20T21:26:57.812Z",
   "total": 340,
   "beneficios": [
     {
@@ -68,23 +68,23 @@
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "facal",
+      "nombre": "Facal",
       "url": "https://www.santander.com.uy/beneficios/facal",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "parador el paso",
+      "nombre": "Parador El Paso",
       "url": "https://www.santander.com.uy/beneficios/parador-el-paso",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "disco",
+      "nombre": "Disco",
       "url": "https://www.santander.com.uy/beneficios/disco",
       "pctMax": null,
       "vigencia": null,
@@ -92,23 +92,23 @@
       "desc": "Descuentos exclusivos para socios Hipermás."
     },
     {
-      "nombre": "suoptica",
+      "nombre": "Suóptica",
       "url": "https://www.santander.com.uy/beneficios/suoptica",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "merrell",
+      "nombre": "Merrell",
       "url": "https://www.santander.com.uy/beneficios/merrell",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "Para apasionados por las actividades outdoor, nos inspiramos en el atleta de aire libre que hay en todos. Calzado, vestimenta y accesorios que brindan calidad, estilo y durabilidad."
     },
     {
-      "nombre": "magnolio sala",
+      "nombre": "Magnolio Sala",
       "url": "https://www.santander.com.uy/beneficios/magnolio-sala",
       "pctMax": null,
       "vigencia": null,
@@ -116,71 +116,71 @@
       "desc": "Financiación y bonificaciones en compra de entradas, variable según espectáculo."
     },
     {
-      "nombre": "nona",
+      "nombre": "Nona",
       "url": "https://www.santander.com.uy/beneficios/nona",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "tienda ezquerra",
+      "nombre": "Tienda Ezquerra",
       "url": "https://www.santander.com.uy/beneficios/tienda-ezquerra",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "Tienda Ezquerra es una tienda multimarca para damas, hombres y adolescentes, tiene prendas para toda ocasión, destacándose en la ciudad por contar con gran variedad de marcas internacionales."
     },
     {
-      "nombre": "kave home",
+      "nombre": "Kave Home",
       "url": "https://www.santander.com.uy/beneficios/kave-home",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "renart libros",
+      "nombre": "Renart Libros",
       "url": "https://www.santander.com.uy/beneficios/renart-libros",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "extreme force",
+      "nombre": "Extreme Force",
       "url": "https://www.santander.com.uy/beneficios/extreme-force",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "Extreme Force es una cadena de tiendas especializadas en la venta de suplementos nutricionales y accesorios para fitness, ofrecemos soluciones a medida para cada cliente."
     },
     {
-      "nombre": "rotunda",
+      "nombre": "Rotunda",
       "url": "https://www.santander.com.uy/beneficios/rotunda",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "Rotunda es una marca para mujeres jóvenes y modernas, tiene una gran variedad de prendas de vestir y calzado para cada momento del día, se caracteriza por la elegancia y diseños audaces."
     },
     {
-      "nombre": "balcony shop",
+      "nombre": "Balcony Shop",
       "url": "https://www.santander.com.uy/beneficios/balcony-shop",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "Balcony Shop vende macetas de cerámica, muebles de exterior y tela Sunbrella especiales para espacios exteriores."
     },
     {
-      "nombre": "la rural",
+      "nombre": "La Rural",
       "url": "https://www.santander.com.uy/beneficios/la-rural",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "geant",
+      "nombre": "Geant",
       "url": "https://www.santander.com.uy/beneficios/geant",
       "pctMax": null,
       "vigencia": null,
@@ -188,111 +188,111 @@
       "desc": "Descuentos exclusivos para socios Hipermás."
     },
     {
-      "nombre": "optica lombardi",
+      "nombre": "Optica Lombardi",
       "url": "https://www.santander.com.uy/beneficios/optica-lombardi",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "smart",
+      "nombre": "Smart",
       "url": "https://www.santander.com.uy/beneficios/smart",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "shoe express",
+      "nombre": "Shoe Express",
       "url": "https://www.santander.com.uy/beneficios/shoe-express",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "crepas montevideo",
+      "nombre": "Crepas (Montevideo)",
       "url": "https://www.santander.com.uy/beneficios/crepas-montevideo",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "Crepas es una crepería que ofrece diversas propuestas para todo momento del día, cuenta con una variada carta de crepes dulces y salados, sándwiches, sopas, ensaladas y jugos naturales."
     },
     {
-      "nombre": "indian",
+      "nombre": "Indian",
       "url": "https://www.santander.com.uy/beneficios/indian",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "Indian es una marca para mujeres que tiene una gran variedad de prendas de vestir y accesorios muy bien definidos por las tendencias globales, lo que hace que la marca se caracterice por brindar una s"
     },
     {
-      "nombre": "fivisa",
+      "nombre": "Fivisa",
       "url": "https://www.santander.com.uy/beneficios/fivisa",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "isidora restaurant",
+      "nombre": "Isidora Restaurant",
       "url": "https://www.santander.com.uy/beneficios/isidora-restaurant",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "restaurante oscar",
+      "nombre": "Restaurante Oscar",
       "url": "https://www.santander.com.uy/beneficios/restaurante-oscar",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "bazar la familia",
+      "nombre": "Bazar La Familia",
       "url": "https://www.santander.com.uy/beneficios/bazar-la-familia",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "savia",
+      "nombre": "Savia",
       "url": "https://www.santander.com.uy/beneficios/savia",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "Savia es una marca para mujeres jóvenes y modernas que tiene una gran variedad de prendas de vestir clásicas y actuales, se caracteriza por sus prendas únicas."
     },
     {
-      "nombre": "de arcos",
+      "nombre": "De Arcos",
       "url": "https://www.santander.com.uy/beneficios/de-arcos",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "Tienda de muebles, accesorios de decoración, iluminación y regalos!"
     },
     {
-      "nombre": "principes del sur",
+      "nombre": "Principes del Sur",
       "url": "https://www.santander.com.uy/beneficios/principes-del-sur",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "oriundo",
+      "nombre": "Oriundo",
       "url": "https://www.santander.com.uy/beneficios/oriundo",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "devoto",
+      "nombre": "Devoto",
       "url": "https://www.santander.com.uy/beneficios/devoto",
       "pctMax": null,
       "vigencia": null,
@@ -300,79 +300,79 @@
       "desc": "Descuentos exclusivos para socios Hipermás."
     },
     {
-      "nombre": "lemon",
+      "nombre": "Lemon",
       "url": "https://www.santander.com.uy/beneficios/lemon",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "Lemon es una marca para mujeres que tiene una gran variedad de prendas prácticas y versátiles con un estilo muy femenino y fresco. Se caracteriza por tener el equilibrio perfecto entre lo clásico y lo"
     },
     {
-      "nombre": "hush puppies",
+      "nombre": "Hush Puppies",
       "url": "https://www.santander.com.uy/beneficios/hush-puppies",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "Hush Puppies, pionera en el estilo casual, nació en el año 1958. Desde ese entonces ha revolucionado el mercado del calzado, innovando continuamente y creando un andar mucho más confortable."
     },
     {
-      "nombre": "ml center",
+      "nombre": "ML Center",
       "url": "https://www.santander.com.uy/beneficios/ml-center",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "Suministro e instalación de seguridad y accesorios para vehículos, casas y comercios."
     },
     {
-      "nombre": "posto 5",
+      "nombre": "Posto 5",
       "url": "https://www.santander.com.uy/beneficios/posto-5",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "cafe del sol",
+      "nombre": "Cafe del Sol",
       "url": "https://www.santander.com.uy/beneficios/cafe-del-sol",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "porto vanila",
+      "nombre": "Porto Vanila",
       "url": "https://www.santander.com.uy/beneficios/porto-vanila",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "Porto Vanila es una cadena de pastelería y cafetería que ofrece una variedad de exquisiteces dulces y saladas como masitas, sándwiches, tortas y postres individuales. Un sitio ideal para darse un gust"
     },
     {
-      "nombre": "los lenos",
+      "nombre": "Los Leños",
       "url": "https://www.santander.com.uy/beneficios/los-lenos",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "la trattoria",
+      "nombre": "La Trattoria",
       "url": "https://www.santander.com.uy/beneficios/la-trattoria",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "pizzorno family states",
+      "nombre": "Pizzorno Family States",
       "url": "https://www.santander.com.uy/beneficios/pizzorno-family-states",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "vivero los suspiros",
+      "nombre": "Vivero los Suspiros",
       "url": "https://www.santander.com.uy/beneficios/vivero-los-suspiros",
       "pctMax": null,
       "vigencia": null,
@@ -380,127 +380,127 @@
       "desc": "En nuestro local podes encontrar todo lo que buscas para tu patio o jardín!"
     },
     {
-      "nombre": "nicolini",
+      "nombre": "Nicolini",
       "url": "https://www.santander.com.uy/beneficios/nicolini",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "viasono",
+      "nombre": "Viasono",
       "url": "https://www.santander.com.uy/beneficios/viasono",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "la cigale",
+      "nombre": "La Cigale",
       "url": "https://www.santander.com.uy/beneficios/la-cigale",
-      "pctMax": null,
+      "pctMax": 50,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución: el mismo se calcula por tipo de tarjeta:",
       "desc": "Con una amplia trayectoria en el sector artesanal, LA CIGALE es hoy en día la cadena más reconocida de Uruguay en fabricación y comercialización de helados puramente artesanales. Todos sus productos s"
     },
     {
-      "nombre": "las nazarenas",
+      "nombre": "Las Nazarenas",
       "url": "https://www.santander.com.uy/beneficios/las-nazarenas",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "mis petates",
+      "nombre": "Mis Petates",
       "url": "https://www.santander.com.uy/beneficios/mis-petates",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "columbia",
+      "nombre": "Columbia",
       "url": "https://www.santander.com.uy/beneficios/columbia",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "Equípate para todo tipo de aventuras con productos Columbia y dedícate a disfrutar sin importar el clima."
     },
     {
-      "nombre": "late",
+      "nombre": "Late",
       "url": "https://www.santander.com.uy/beneficios/late",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "farmashop",
+      "nombre": "Farmashop",
       "url": "https://www.santander.com.uy/beneficios/farmashop",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "Conoce más en https://tienda.farmashop.com.uy/"
     },
     {
-      "nombre": "deco hogar",
+      "nombre": "Deco Hogar",
       "url": "https://www.santander.com.uy/beneficios/deco-hogar",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "provaca",
+      "nombre": "Provaca",
       "url": "https://www.santander.com.uy/beneficios/provaca",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "naru sushi bar",
+      "nombre": "Naru Sushi Bar",
       "url": "https://www.santander.com.uy/beneficios/naru-sushi-bar",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "Naru Sushi Bar es un restaurante que fusiona la gastronomía peruana y japonesa, conocida como cocina nikkei."
     },
     {
-      "nombre": "infantozzi",
+      "nombre": "Infantozzi",
       "url": "https://www.santander.com.uy/beneficios/infantozzi",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "Aplica únicamente en local de Infantozzi ubicado en Avenida Uruguay 1653 (Montevideo). El descuento aplica únicamente para compras a consumidor final. No aplica sobre compras de Colegios y otras insti"
     },
     {
-      "nombre": "tranquera",
+      "nombre": "Tranquera",
       "url": "https://www.santander.com.uy/beneficios/tranquera",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "Tranquera es una marca para hombres y mujeres, sus prendas combinan la comodidad y la funcionalidad con la estética y la moda, se caracteriza por integrar el espíritu campestre con la estética de la c"
     },
     {
-      "nombre": "artico sea food",
+      "nombre": "Artico Sea Food",
       "url": "https://www.santander.com.uy/beneficios/artico-sea-food",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "toledo",
+      "nombre": "Toledo",
       "url": "https://www.santander.com.uy/beneficios/toledo",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "magnum marine",
+      "nombre": "Magnum Marine",
       "url": "https://www.santander.com.uy/beneficios/magnum-marine",
       "pctMax": null,
       "vigencia": null,
@@ -508,55 +508,55 @@
       "desc": "El comercio acepta canje de puntos Soy Santander."
     },
     {
-      "nombre": "sisi",
+      "nombre": "SiSi",
       "url": "https://www.santander.com.uy/beneficios/sisi",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "Si-Si es una tienda multimarca para toda la familia, cuenta con una amplia variedad de ropa interior, lencería, medias, corsetería, indumentaria deportiva, vestimenta para playa y accesorios de moda, "
     },
     {
-      "nombre": "royce",
+      "nombre": "Royce",
       "url": "https://www.santander.com.uy/beneficios/royce",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento no aplica para los casos de servicios, arreglos y composturas."
     },
     {
-      "nombre": "arredo",
+      "nombre": "Arredo",
       "url": "https://www.santander.com.uy/beneficios/arredo",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "cat",
+      "nombre": "Cat",
       "url": "https://www.santander.com.uy/beneficios/cat",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El espíritu Cat representa el progreso, el diseño y la construcción en torno a un legado de éxito e innovación. Tiene un estilo robusto y respaldado por una construcción sólida."
     },
     {
-      "nombre": "bbc burger sushi",
+      "nombre": "BBC Burger & Sushi",
       "url": "https://www.santander.com.uy/beneficios/bbc-burger-sushi",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "bookshop",
+      "nombre": "Bookshop",
       "url": "https://www.santander.com.uy/beneficios/bookshop",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El beneficio aplica únicamente para la compra de libros. Promoción no válida para textos de estudio."
     },
     {
-      "nombre": "vivion haus",
+      "nombre": "Vivion Haus",
       "url": "https://www.santander.com.uy/beneficios/vivion-haus",
       "pctMax": null,
       "vigencia": null,
@@ -564,23 +564,23 @@
       "desc": "El comercio acepta canje de puntos Soy Santander."
     },
     {
-      "nombre": "umami",
+      "nombre": "Umami",
       "url": "https://www.santander.com.uy/beneficios/umami",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "jugeteria avellana",
+      "nombre": "Jugetería Avellana",
       "url": "https://www.santander.com.uy/beneficios/jugeteria-avellana",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "buquebus",
+      "nombre": "Buquebus",
       "url": "https://www.santander.com.uy/beneficios/buquebus",
       "pctMax": 10,
       "vigencia": null,
@@ -588,111 +588,111 @@
       "desc": "Hasta 12 cuotas sin recargo convenio vigente 31/03/2026."
     },
     {
-      "nombre": "dakota steakhouse bar",
+      "nombre": "Dakota Steakhouse & Bar",
       "url": "https://www.santander.com.uy/beneficios/dakota-steakhouse-bar",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "Dakota es el primer restaurante Steakhouse & Bar americano en Montevideo, un lugar ideal para compartir una deliciosa comida, celebrar y degustar una amplia variedad de platos, o simplemente disfrutar"
     },
     {
-      "nombre": "la marea",
+      "nombre": "La Marea",
       "url": "https://www.santander.com.uy/beneficios/la-marea",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "481 gourmet",
+      "nombre": "481 Gourmet",
       "url": "https://www.santander.com.uy/beneficios/481-gourmet",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "panaderia brava",
+      "nombre": "Panadería Brava",
       "url": "https://www.santander.com.uy/beneficios/panaderia-brava",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "limite",
+      "nombre": "Limite",
       "url": "https://www.santander.com.uy/beneficios/limite",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "Límite es una marca para mujeres adultas que cuenta con una gran variedad de prendas de vestir y complementos. Se caracteriza por la nobleza de sus materiales, la comodidad y el calce perfecto de sus "
     },
     {
-      "nombre": "mazzam",
+      "nombre": "Mazzam",
       "url": "https://www.santander.com.uy/beneficios/mazzam",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El beneficio no aplica para composturas."
     },
     {
-      "nombre": "no se lo digas nadie",
+      "nombre": "No se lo Digas a Nadie",
       "url": "https://www.santander.com.uy/beneficios/no-se-lo-digas-nadie",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "No se lo Digas es una tienda para mujeres de todas las edades, que tiene una gran variedad de prendas casuales, formales y accesorios, se caracteriza por estar al tanto de las tendencias de la moda in"
     },
     {
-      "nombre": "rockford",
+      "nombre": "Rockford",
       "url": "https://www.santander.com.uy/beneficios/rockford",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "Rockford crea un estilo de vida, descubrilo en todas sus tiendas."
     },
     {
-      "nombre": "bagno company",
+      "nombre": "Bagno & Company",
       "url": "https://www.santander.com.uy/beneficios/bagno-company",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "La promoción no aplica para la compra de electrodomésticos."
     },
     {
-      "nombre": "baby city",
+      "nombre": "Baby City",
       "url": "https://www.santander.com.uy/beneficios/baby-city",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "Baby City es una tienda infantil multimarca, cuenta con una amplia variedad de productos pensados para facilitarle a padres y madres el cuidado y entretenimiento de sus hijos."
     },
     {
-      "nombre": "mision",
+      "nombre": "Mision",
       "url": "https://www.santander.com.uy/beneficios/mision",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "complejo luis suarez",
+      "nombre": "Complejo Luis Suarez",
       "url": "https://www.santander.com.uy/beneficios/complejo-luis-suarez",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "EL COMPLEJO. Complejo Suárez fue pensado como un espacio ideal para practicar deporte y al mismo tiempo disfrutar en familia y con amigos."
     },
     {
-      "nombre": "duciana cafeteria",
+      "nombre": "Duciana Cafetería",
       "url": "https://www.santander.com.uy/beneficios/duciana-cafeteria",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "guamatur",
+      "nombre": "Guamatur",
       "url": "https://www.santander.com.uy/beneficios/guamatur",
       "pctMax": null,
       "vigencia": null,
@@ -700,47 +700,47 @@
       "desc": "El comercio acepta canje de puntos Soy Santander."
     },
     {
-      "nombre": "montevideo beer company",
+      "nombre": "Montevideo Beer Company",
       "url": "https://www.santander.com.uy/beneficios/montevideo-beer-company",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "Montevideo Beer Company es una cervecería que ofrece una variedad de productos gastronómicos además de sus populares cervezas artesanales. Es un lugar pensado para ser un espacio de encuentro tanto de"
     },
     {
-      "nombre": "gelateria il porto",
+      "nombre": "Gelatería Il Porto",
       "url": "https://www.santander.com.uy/beneficios/gelateria-il-porto",
-      "pctMax": null,
+      "pctMax": 50,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución: el mismo se calcula por tipo de tarjeta: crédito o débito.",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "shark club",
+      "nombre": "Shark Club",
       "url": "https://www.santander.com.uy/beneficios/shark-club",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "sucan",
+      "nombre": "Sucan",
       "url": "https://www.santander.com.uy/beneficios/sucan",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "Comida y accesorios para mascotas."
     },
     {
-      "nombre": "la isla",
+      "nombre": "La Isla",
       "url": "https://www.santander.com.uy/beneficios/la-isla",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "La Isla es una tienda multimarca para los amantes de la playa y el surf, cuenta con una variedad de prendas y productos que buscan fomentar el surf como estilo de vida y se caracteriza por trabajar la"
     },
     {
-      "nombre": "gaudin",
+      "nombre": "Gaudin",
       "url": "https://www.santander.com.uy/beneficios/gaudin",
       "pctMax": null,
       "vigencia": null,
@@ -748,71 +748,71 @@
       "desc": "El comercio acepta canje de puntos Soy Santander."
     },
     {
-      "nombre": "chiarino uniformes",
+      "nombre": "Chiarino Uniformes",
       "url": "https://www.santander.com.uy/beneficios/chiarino-uniformes",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "M. Cecilia Chiarino uniformes es una tienda para niños y adolescentes que cuenta con una variedad de uniformes escolares de distintas instituciones, se caracteriza por su excelente calidad y el servic"
     },
     {
-      "nombre": "sushiapp",
+      "nombre": "SushiAPP",
       "url": "https://www.santander.com.uy/beneficios/sushiapp",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "desigual",
+      "nombre": "Desigual",
       "url": "https://www.santander.com.uy/beneficios/desigual",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "Desigual es una marca para hombres y mujeres de todas las edades, tiene una gran variedad de prendas informales y accesorios, se caracteriza por potenciar la autenticidad de las personas a través de s"
     },
     {
-      "nombre": "peekaboo",
+      "nombre": "Peekaboo",
       "url": "https://www.santander.com.uy/beneficios/peekaboo",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "Peekaboo es una tienda infantil multimarca, cuenta con una amplia variedad de productos pensados para facilitarle a padres y madres el cuidado y entretenimiento de sus hijos."
     },
     {
-      "nombre": "jp uniformes",
+      "nombre": "JP Uniformes",
       "url": "https://www.santander.com.uy/beneficios/jp-uniformes",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "cayetana calzados",
+      "nombre": "Cayetana Calzados",
       "url": "https://www.santander.com.uy/beneficios/cayetana-calzados",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "mundo mac",
+      "nombre": "Mundo Mac",
       "url": "https://www.santander.com.uy/beneficios/mundo-mac",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "ositos cia",
+      "nombre": "Ositos & Cia",
       "url": "https://www.santander.com.uy/beneficios/ositos-cia",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "punto design",
+      "nombre": "Punto Design",
       "url": "https://www.santander.com.uy/beneficios/punto-design",
       "pctMax": null,
       "vigencia": null,
@@ -820,87 +820,87 @@
       "desc": "El comercio acepta canje de puntos Soy Santander."
     },
     {
-      "nombre": "gouda",
+      "nombre": "Gouda",
       "url": "https://www.santander.com.uy/beneficios/gouda",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "uniform co",
+      "nombre": "Uniform & Co",
       "url": "https://www.santander.com.uy/beneficios/uniform-co",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "Uniform & Co es una marca para hombres y mujeres de todas las edades, tiene una amplia variedad de prendas de vestir informales, se caracteriza por seguir las tendencias, ser originales y tener prenda"
     },
     {
-      "nombre": "petit baby",
+      "nombre": "Petit Baby",
       "url": "https://www.santander.com.uy/beneficios/petit-baby",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "restaurante garcia",
+      "nombre": "Restaurante García",
       "url": "https://www.santander.com.uy/beneficios/restaurante-garcia",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "baquiano",
+      "nombre": "Baquiano",
       "url": "https://www.santander.com.uy/beneficios/baquiano",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "pintelux",
+      "nombre": "Pintelux",
       "url": "https://www.santander.com.uy/beneficios/pintelux",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "reina urbana",
+      "nombre": "Reina Urbana",
       "url": "https://www.santander.com.uy/beneficios/reina-urbana",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "Reina Urbana es una marca para mujeres de todas las edades, tiene una gran variedad de prendas de vestir formales e informales al alcance de todos, se caracteriza por estar a la moda, tener estilo y d"
     },
     {
-      "nombre": "lavender",
+      "nombre": "Lavender",
       "url": "https://www.santander.com.uy/beneficios/lavender",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "Instalado en medio de un Vivero, al mejor estilo europeo, este salón de té ofrece una gran variedad de exquisiteces a la hora de tomar el té, que combina con las distintas plantas y el delicioso aroma"
     },
     {
-      "nombre": "calabaza",
+      "nombre": "Calabaza",
       "url": "https://www.santander.com.uy/beneficios/calabaza",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "life distrito m",
+      "nombre": "Life Distrito M",
       "url": "https://www.santander.com.uy/beneficios/life-distrito-m",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "Descuento válido para mensualidades pagas con débito automático de tarjeta de crédito, y para compra de membresías de mínimo 3 meses con tarjeta de débito o crédito.",
       "desc": "Descuento válido para mensualidades pagas con débito automático de tarjeta de crédito, y para compra de membresías de mínimo 3 meses con tarjeta de débito o crédito."
     },
     {
-      "nombre": "telesistemas",
+      "nombre": "Telesistemas",
       "url": "https://www.santander.com.uy/beneficios/telesistemas",
       "pctMax": null,
       "vigencia": null,
@@ -908,159 +908,159 @@
       "desc": "El comercio acepta canje de puntos Soy Santander."
     },
     {
-      "nombre": "soho",
+      "nombre": "Soho",
       "url": "https://www.santander.com.uy/beneficios/soho",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "Soho es un bar que ofrece cócteles y platos elaborados por chefs internacionales. Ubicado en el puerto de Punta del Este, siempre propone buena comida, buenos tragos y música, para sorprender a los pa"
     },
     {
-      "nombre": "meat house",
+      "nombre": "Meat House",
       "url": "https://www.santander.com.uy/beneficios/meat-house",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "asterisco",
+      "nombre": "Asterisco",
       "url": "https://www.santander.com.uy/beneficios/asterisco",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "Asterisco es una tienda multimarca para mujeres jóvenes, que tiene una gran variedad de prendas de vestir casuales y modernas, se caracteriza por reunir marcas que siguen las últimas tendencias de la "
     },
     {
-      "nombre": "cymaco",
+      "nombre": "Cymaco",
       "url": "https://www.santander.com.uy/beneficios/cymaco",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "ramona",
+      "nombre": "Ramona",
       "url": "https://www.santander.com.uy/beneficios/ramona",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "dhouse",
+      "nombre": "Dhouse",
       "url": "https://www.santander.com.uy/beneficios/dhouse",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "centro hogar",
+      "nombre": "Centro Hogar",
       "url": "https://www.santander.com.uy/beneficios/centro-hogar",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "vidrieria bia",
+      "nombre": "Vidriería BIA",
       "url": "https://www.santander.com.uy/beneficios/vidrieria-bia",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "olivia",
+      "nombre": "Olivia",
       "url": "https://www.santander.com.uy/beneficios/olivia",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "fuel oil",
+      "nombre": "Fuel Oil",
       "url": "https://www.santander.com.uy/beneficios/fuel-oil",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "optica meerhoff",
+      "nombre": "Óptica Meerhoff",
       "url": "https://www.santander.com.uy/beneficios/optica-meerhoff",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "imarangatu",
+      "nombre": "I’Marangatú",
       "url": "https://www.santander.com.uy/beneficios/imarangatu",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "finca boutique de carnes",
+      "nombre": "Finca Boutique de Carnes",
       "url": "https://www.santander.com.uy/beneficios/finca-boutique-de-carnes",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "monaco athletic",
+      "nombre": "Mónaco Athletic",
       "url": "https://www.santander.com.uy/beneficios/monaco-athletic",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "Mónaco Athletic es una tienda multimarca para hombres y mujeres de todas las edades, tiene gran diversidad prendas de vestir y calzado deportivo, se caracteriza por llegar mediante envíos a todo el pa"
     },
     {
-      "nombre": "fundacion de cultura universitaria",
+      "nombre": "Fundación de Cultura Universitaria",
       "url": "https://www.santander.com.uy/beneficios/fundacion-de-cultura-universitaria",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "Fundación de Cultura Universitaria"
     },
     {
-      "nombre": "cloe",
+      "nombre": "Cloé",
       "url": "https://www.santander.com.uy/beneficios/cloe",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "Cloé es una marca que busca imaginar, diseñar y crear junto a las mujeres productos que den soluciones y disfruten usarlos. Línea de calidad superior de bolsos, accesorios de viaje"
     },
     {
-      "nombre": "bed home",
+      "nombre": "Bed Home",
       "url": "https://www.santander.com.uy/beneficios/bed-home",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "samsung",
+      "nombre": "Samsung",
       "url": "https://www.santander.com.uy/beneficios/samsung",
-      "pctMax": null,
+      "pctMax": 20,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "Samsung te ayuda a descubrir una amplia gama de dispositivos electrónicos con tecnología de punta, incluyendo smartphones, televisores y más."
     },
     {
-      "nombre": "el bar",
+      "nombre": "El Bar",
       "url": "https://www.santander.com.uy/beneficios/el-bar",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "cheers",
+      "nombre": "Cheers",
       "url": "https://www.santander.com.uy/beneficios/cheers",
       "pctMax": null,
       "vigencia": null,
@@ -1068,7 +1068,7 @@
       "desc": "El comercio acepta canje de puntos Soy Santander."
     },
     {
-      "nombre": "under armour",
+      "nombre": "Under Armour",
       "url": "https://www.santander.com.uy/beneficios/under-armour",
       "pctMax": null,
       "vigencia": null,
@@ -1076,39 +1076,39 @@
       "desc": "El comercio acepta canje de puntos Soy Santander."
     },
     {
-      "nombre": "mango",
+      "nombre": "Mango",
       "url": "https://www.santander.com.uy/beneficios/mango",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "Mango es una empresa multinacional española dedicada al diseño, la fabricación y la comercialización de prendas de vestir y complementos para mujer, niño y hombre."
     },
     {
-      "nombre": "pasqualini",
+      "nombre": "Pasqualini",
       "url": "https://www.santander.com.uy/beneficios/pasqualini",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "Conocé los zapatos y accesorios que buscas, lleva contigo lo mejor y siéntete tú misma con lo que usas #tequedamuybien."
     },
     {
-      "nombre": "nstore",
+      "nombre": "Nstore",
       "url": "https://www.santander.com.uy/beneficios/nstore",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "Nstore.uy es una tienda online que vende tecnología, electrodomésticos, bicicletas y motos eléctricas. También son distribuidores oficiales de Samsung."
     },
     {
-      "nombre": "margo baridon",
+      "nombre": "Margo Baridon",
       "url": "https://www.santander.com.uy/beneficios/margo-baridon",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "Una esencia auténtica, una mirada aguda y un espíritu explorador caracterizan a Margo Baridon, diseñadora de su firma homónima dedicada desde Uruguay."
     },
     {
-      "nombre": "garmin",
+      "nombre": "Garmin",
       "url": "https://www.santander.com.uy/beneficios/garmin",
       "pctMax": null,
       "vigencia": null,
@@ -1116,7 +1116,7 @@
       "desc": "Encontrá todos Los Productos Garmin. Triatlón, Outdoor, Fitness, Montañismo, Etc. Relojes Inteligentes Con GPS, Equipos Multideporte, Las Mejores Ofertas Garmin."
     },
     {
-      "nombre": "garnie",
+      "nombre": "Garnié",
       "url": "https://www.santander.com.uy/beneficios/garnie",
       "pctMax": null,
       "vigencia": null,
@@ -1124,15 +1124,15 @@
       "desc": "Garnié es una empresa referente en Uruguay en la fabricación de artículos en cuero y similares, con más de 30 años de trayectoria."
     },
     {
-      "nombre": "indoor padel",
+      "nombre": "Indoor Padel",
       "url": "https://www.santander.com.uy/beneficios/indoor-padel",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "Indoor Pádel Montevideo es un club de pádel con cuatro canchas panorámicas en Carrasco, Montevideo. El club cuenta con: Vestuario, Club house, Barbacoa, Estacionamiento privado, Torneos mensuales."
     },
     {
-      "nombre": "clinica presage",
+      "nombre": "Clínica Presage",
       "url": "https://www.santander.com.uy/beneficios/clinica-presage",
       "pctMax": null,
       "vigencia": null,
@@ -1140,15 +1140,15 @@
       "desc": "Clínica Présage es un centro médico estético en Montevideo que ofrece tratamientos corporales, faciales y capilares. Los tratamientos se personalizan para adaptarse a los objetivos de cada paciente."
     },
     {
-      "nombre": "brote",
+      "nombre": "Brote",
       "url": "https://www.santander.com.uy/beneficios/brote",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "Brote es una tienda de plantas exóticas en Montevideo que vende orquídeas, plantas carnívoras, cactus y palmeras."
     },
     {
-      "nombre": "gravity",
+      "nombre": "Gravity",
       "url": "https://www.santander.com.uy/beneficios/gravity",
       "pctMax": null,
       "vigencia": null,
@@ -1156,7 +1156,7 @@
       "desc": "Gravity es un parque de Trampolines, ubicado en el Plaza Italia Shopping de Montevideo - Uruguay. Gravity es una experiencia de diversión para grandes y chicos."
     },
     {
-      "nombre": "disegno",
+      "nombre": "Via Disegno",
       "url": "https://www.santander.com.uy/beneficios/disegno",
       "pctMax": null,
       "vigencia": null,
@@ -1164,7 +1164,7 @@
       "desc": "Via Disegno es el primer centro comercial de diseño y decoración de Uruguay. Se inauguró en octubre de 2022 y está ubicado en Carrasco, frente al Aeropuerto Internacional."
     },
     {
-      "nombre": "barraca sanitaria paysandu",
+      "nombre": "Barraca Sanitaria Paysandú",
       "url": "https://www.santander.com.uy/beneficios/barraca-sanitaria-paysandu",
       "pctMax": null,
       "vigencia": null,
@@ -1172,15 +1172,15 @@
       "desc": "Barraca Sanitaria Paysandú"
     },
     {
-      "nombre": "la asturiana",
+      "nombre": "La Asturiana",
       "url": "https://www.santander.com.uy/beneficios/la-asturiana",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "La Asturiana es una tienda en Durazno que vende electrodomésticos, muebles e informática."
     },
     {
-      "nombre": "barraca buen color",
+      "nombre": "Barraca Buen Color",
       "url": "https://www.santander.com.uy/beneficios/barraca-buen-color",
       "pctMax": null,
       "vigencia": null,
@@ -1188,15 +1188,15 @@
       "desc": "Barraca Buen Color es una tienda de materiales para la construcción en Salto, Uruguay."
     },
     {
-      "nombre": "minimon 0",
+      "nombre": "Minimon",
       "url": "https://www.santander.com.uy/beneficios/minimon-0",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "Ropa de bebé y niño hecha por las mejores manos en Uruguay. Ajuar de bebe. Primeras mudas en punto. Body, peleles, remeras de algodón pima."
     },
     {
-      "nombre": "nuevocentro shopping",
+      "nombre": "Nuevocentro Shopping",
       "url": "https://www.santander.com.uy/beneficios/nuevocentro-shopping",
       "pctMax": null,
       "vigencia": null,
@@ -1204,7 +1204,7 @@
       "desc": "Nuevocentro Shopping es un centro comercial que cuenta con 120 locales comerciales, siendo el shopping más moderno del país."
     },
     {
-      "nombre": "palacio de la musica",
+      "nombre": "Palacio de la Música",
       "url": "https://www.santander.com.uy/beneficios/palacio-de-la-musica",
       "pctMax": null,
       "vigencia": null,
@@ -1212,15 +1212,15 @@
       "desc": "Palacio de la Música es una empresa con más de 100 años de experiencia en la música, especializándose en instrumentos, audio profesional, iluminación, equipos DJ, CDs y Vinilos."
     },
     {
-      "nombre": "ecoflex",
+      "nombre": "Ecoflex",
       "url": "https://www.santander.com.uy/beneficios/ecoflex",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "Ecoflex es una marca de colchones y sommiers."
     },
     {
-      "nombre": "casa caulin",
+      "nombre": "Casa Caulin",
       "url": "https://www.santander.com.uy/beneficios/casa-caulin",
       "pctMax": null,
       "vigencia": null,
@@ -1228,15 +1228,15 @@
       "desc": "El comercio acepta canje de puntos Soy Santander."
     },
     {
-      "nombre": "bersal",
+      "nombre": "Bersal",
       "url": "https://www.santander.com.uy/beneficios/bersal",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "axion",
+      "nombre": "Axion",
       "url": "https://www.santander.com.uy/beneficios/axion",
       "pctMax": null,
       "vigencia": null,
@@ -1244,31 +1244,31 @@
       "desc": "AXION energy es una marca del grupo Nexzur S.A., la principal compañía integrada privada de energía de la región. Suministra combustibles con tecnología de vanguardia y la máxima calidad."
     },
     {
-      "nombre": "cafetto prado",
+      "nombre": "Cafetto Prado",
       "url": "https://www.santander.com.uy/beneficios/cafetto-prado",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "boss padel",
+      "nombre": "Boss Padel",
       "url": "https://www.santander.com.uy/beneficios/boss-padel",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "Boss Padel es un lugar de entrenamiento para jugar al pádel para todos los niveles."
     },
     {
-      "nombre": "el colmenar",
+      "nombre": "El Colmenar",
       "url": "https://www.santander.com.uy/beneficios/el-colmenar",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El Colmenar es un reconocido centro de compras con locales en Mercedes, Nueva Palmira, Fray Bentos y Dolores."
     },
     {
-      "nombre": "kiehls",
+      "nombre": "Kiehl´s",
       "url": "https://www.santander.com.uy/beneficios/kiehls",
       "pctMax": null,
       "vigencia": null,
@@ -1276,7 +1276,7 @@
       "desc": "Kiehl's es una marca de cosméticos estadounidense que ofrece productos para el cuidado de la piel, el cuerpo y el cabello."
     },
     {
-      "nombre": "botiga",
+      "nombre": "Botiga",
       "url": "https://www.santander.com.uy/beneficios/botiga",
       "pctMax": null,
       "vigencia": null,
@@ -1284,7 +1284,7 @@
       "desc": "Una Tienda Online donde encontrás todo lo que necesitás y querés para vos y tu familia. Cuenta con más de 10.000 artículos para complementar cada etapa de la vida sin tener que trasladarte a ningún la"
     },
     {
-      "nombre": "indrana home deco",
+      "nombre": "Indrana Home Deco",
       "url": "https://www.santander.com.uy/beneficios/indrana-home-deco",
       "pctMax": null,
       "vigencia": null,
@@ -1292,15 +1292,15 @@
       "desc": "Indrana Home Deco es una tienda de Montevideo, Uruguay que vende artículos de decoración para el hogar. También tiene una ubicación en Punta del Este. Indrana Home Deco ofrece envíos a todo el país."
     },
     {
-      "nombre": "ai haus",
+      "nombre": "Ai Haus",
       "url": "https://www.santander.com.uy/beneficios/ai-haus",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "Ai Haus es una importadora de muebles, amantes del diseño y la decoración de interiores."
     },
     {
-      "nombre": "toc toc viajes",
+      "nombre": "Toc Toc Viajes",
       "url": "https://www.santander.com.uy/beneficios/toc-toc-viajes",
       "pctMax": null,
       "vigencia": null,
@@ -1308,7 +1308,7 @@
       "desc": "TocToc Viajes es una reconocida agencia de viajes online que ofrece servicios turísticos como pasajes aéreos y hoteles."
     },
     {
-      "nombre": "fresh market",
+      "nombre": "Fresh Market",
       "url": "https://www.santander.com.uy/beneficios/fresh-market",
       "pctMax": null,
       "vigencia": null,
@@ -1316,7 +1316,7 @@
       "desc": "Descuentos exclusivos para socios Hipermás."
     },
     {
-      "nombre": "metros cuadrados pilay uruguay",
+      "nombre": "Metros Cuadrados Pilay Uruguay",
       "url": "https://www.santander.com.uy/beneficios/metros-cuadrados-pilay-uruguay",
       "pctMax": null,
       "vigencia": null,
@@ -1324,391 +1324,391 @@
       "desc": "Metros Cuadrados Pilay Uruguay"
     },
     {
-      "nombre": "pellicer parrilla gourmet",
+      "nombre": "Pellicer Parrilla Gourmet",
       "url": "https://www.santander.com.uy/beneficios/pellicer-parrilla-gourmet",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "Los fuegos, las brasas y el ahumado son la base de nuestra cocina."
     },
     {
-      "nombre": "walnut home deco",
+      "nombre": "Walnut - Home & Deco",
       "url": "https://www.santander.com.uy/beneficios/walnut-home-deco",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "Somos una marca uruguaya dedicada a la fabricación, importación, distribución y venta de muebles y accesorios de decoración para el hogar. Nuestro objetivo es proveer al mercado uruguayo de la decorac"
     },
     {
-      "nombre": "otero rotunda",
+      "nombre": "Otero (By Rotunda)",
       "url": "https://www.santander.com.uy/beneficios/otero-rotunda",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "dilema cafe restobar",
+      "nombre": "Dilema Café & Restobar",
       "url": "https://www.santander.com.uy/beneficios/dilema-cafe-restobar",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "charo cocina y cafe",
+      "nombre": "Charo Cocina y Café",
       "url": "https://www.santander.com.uy/beneficios/charo-cocina-y-cafe",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "adore",
+      "nombre": "Adoré",
       "url": "https://www.santander.com.uy/beneficios/adore",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "la pasiva 26 de marzo",
+      "nombre": "La Pasiva 26 de Marzo",
       "url": "https://www.santander.com.uy/beneficios/la-pasiva-26-de-marzo",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "el cabeza ferreteria",
+      "nombre": "El Cabeza Ferretería",
       "url": "https://www.santander.com.uy/beneficios/el-cabeza-ferreteria",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "En ferretería el cabeza encontrara todo lo que pueda necesitar para el trabajo, hogar y construcción."
     },
     {
-      "nombre": "be padel",
+      "nombre": "Be Padel",
       "url": "https://www.santander.com.uy/beneficios/be-padel",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución: el mismo se calcula por tipo de tarjeta: crédito o débito.",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "cienta",
+      "nombre": "Cienta",
       "url": "https://www.santander.com.uy/beneficios/cienta",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "el mingus",
+      "nombre": "El Mingus",
       "url": "https://www.santander.com.uy/beneficios/el-mingus",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "inside",
+      "nombre": "Inside",
       "url": "https://www.santander.com.uy/beneficios/inside",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "mikenpacking",
+      "nombre": "Mikenpacking",
       "url": "https://www.santander.com.uy/beneficios/mikenpacking",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "matilda",
+      "nombre": "Matilda",
       "url": "https://www.santander.com.uy/beneficios/matilda",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "para tus bajitos",
+      "nombre": "Para Tus Bajitos",
       "url": "https://www.santander.com.uy/beneficios/para-tus-bajitos",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "el cabeza muebleria",
+      "nombre": "El Cabeza Mueblería",
       "url": "https://www.santander.com.uy/beneficios/el-cabeza-muebleria",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "venancio",
+      "nombre": "Venancio",
       "url": "https://www.santander.com.uy/beneficios/venancio",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "Prendas de diseño y confección local."
     },
     {
-      "nombre": "las pavas",
+      "nombre": "Las Pavas",
       "url": "https://www.santander.com.uy/beneficios/las-pavas",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "cafe julisa",
+      "nombre": "Cafe Julisa",
       "url": "https://www.santander.com.uy/beneficios/cafe-julisa",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "cafe salvo",
+      "nombre": "Café Salvo",
       "url": "https://www.santander.com.uy/beneficios/cafe-salvo",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "gymtonic",
+      "nombre": "Gymtonic",
       "url": "https://www.santander.com.uy/beneficios/gymtonic",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "pekemundo",
+      "nombre": "Pekemundo",
       "url": "https://www.santander.com.uy/beneficios/pekemundo",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "aire",
+      "nombre": "Aire",
       "url": "https://www.santander.com.uy/beneficios/aire",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "ferreteria la hogarena",
+      "nombre": "Ferretería la Hogareña",
       "url": "https://www.santander.com.uy/beneficios/ferreteria-la-hogarena",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "tato pescador",
+      "nombre": "Tato Pescador",
       "url": "https://www.santander.com.uy/beneficios/tato-pescador",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "las marias",
+      "nombre": "Las Marías",
       "url": "https://www.santander.com.uy/beneficios/las-marias",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "Las Marías es una marca de ropa femenina uruguaya que ofrece prendas de calidad. Fabricamos algunas de nuestras piezas en Uruguay, combinando diseño único con producción local."
     },
     {
-      "nombre": "luxo",
+      "nombre": "Luxo",
       "url": "https://www.santander.com.uy/beneficios/luxo",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "Ropa sin género diseñada para seres humanos."
     },
     {
-      "nombre": "cali cafe",
+      "nombre": "Cali Cafe",
       "url": "https://www.santander.com.uy/beneficios/cali-cafe",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "Café de especialidad, cocina consciente."
     },
     {
-      "nombre": "indian home",
+      "nombre": "Indian Home",
       "url": "https://www.santander.com.uy/beneficios/indian-home",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "Descuento no acumulable con otras promociones."
     },
     {
-      "nombre": "innato",
+      "nombre": "Innato",
       "url": "https://www.santander.com.uy/beneficios/innato",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "oh jacinta kul store",
+      "nombre": "Oh Jacinta! - The Kul Store",
       "url": "https://www.santander.com.uy/beneficios/oh-jacinta-kul-store",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "Oh Jacinta! - The Kul Store"
     },
     {
-      "nombre": "chili accesorios kul store",
+      "nombre": "Chili Accesorios - The Kul Store",
       "url": "https://www.santander.com.uy/beneficios/chili-accesorios-kul-store",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "Chili Accesorios - The Kul Store"
     },
     {
-      "nombre": "baleine kul store",
+      "nombre": "Baleine - The Kul Store",
       "url": "https://www.santander.com.uy/beneficios/baleine-kul-store",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "macushop kul store",
+      "nombre": "Macushop - The Kul Store",
       "url": "https://www.santander.com.uy/beneficios/macushop-kul-store",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta, únicamente en el local de Kul Store."
     },
     {
-      "nombre": "bodega spinoglio",
+      "nombre": "Bodega Spinoglio",
       "url": "https://www.santander.com.uy/beneficios/bodega-spinoglio",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "cafe butia",
+      "nombre": "Café Butiá",
       "url": "https://www.santander.com.uy/beneficios/cafe-butia",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "kul store",
+      "nombre": "The Kul Store",
       "url": "https://www.santander.com.uy/beneficios/kul-store",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "gocco",
+      "nombre": "Gocco",
       "url": "https://www.santander.com.uy/beneficios/gocco",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "libreria difusion",
+      "nombre": "Librería Difusión",
       "url": "https://www.santander.com.uy/beneficios/libreria-difusion",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "sintel",
+      "nombre": "Sintel",
       "url": "https://www.santander.com.uy/beneficios/sintel",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "imprenta la canasta",
+      "nombre": "Imprenta La Canasta",
       "url": "https://www.santander.com.uy/beneficios/imprenta-la-canasta",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "medialunas calentitas 0",
+      "nombre": "Medialunas Calentitas",
       "url": "https://www.santander.com.uy/beneficios/medialunas-calentitas-0",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "popei 0",
+      "nombre": "Popei",
       "url": "https://www.santander.com.uy/beneficios/popei-0",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "ordereat",
+      "nombre": "OrderEat",
       "url": "https://www.santander.com.uy/beneficios/ordereat",
-      "pctMax": null,
+      "pctMax": 10,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución: el mismo se calcula por tipo de tarjeta:",
       "desc": "• Los descuentos aplican a las tarjetas de DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de Ley 19.21"
     },
     {
-      "nombre": "ocho nudos",
+      "nombre": "Ocho Nudos",
       "url": "https://www.santander.com.uy/beneficios/ocho-nudos",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "felix caffe",
+      "nombre": "Felix Caffè",
       "url": "https://www.santander.com.uy/beneficios/felix-caffe",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "fresa y lima",
+      "nombre": "Fresa y Lima",
       "url": "https://www.santander.com.uy/beneficios/fresa-y-lima",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "veterinaria cavia",
+      "nombre": "Veterinaria Cavia",
       "url": "https://www.santander.com.uy/beneficios/veterinaria-cavia",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "jack jones",
+      "nombre": "Jack & Jones",
       "url": "https://www.santander.com.uy/beneficios/jack-jones",
       "pctMax": null,
       "vigencia": null,
@@ -1716,7 +1716,7 @@
       "desc": "El comercio acepta canje de puntos Soy Santander."
     },
     {
-      "nombre": "name it",
+      "nombre": "Name It",
       "url": "https://www.santander.com.uy/beneficios/name-it",
       "pctMax": null,
       "vigencia": null,
@@ -1724,15 +1724,15 @@
       "desc": "El comercio acepta canje de puntos Soy Santander."
     },
     {
-      "nombre": "pencil",
+      "nombre": "Pencil",
       "url": "https://www.santander.com.uy/beneficios/pencil",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "only",
+      "nombre": "Only",
       "url": "https://www.santander.com.uy/beneficios/only",
       "pctMax": null,
       "vigencia": null,
@@ -1740,7 +1740,7 @@
       "desc": "El comercio acepta canje de puntos Soy Santander."
     },
     {
-      "nombre": "vinibel 0",
+      "nombre": "Vinibel",
       "url": "https://www.santander.com.uy/beneficios/vinibel-0",
       "pctMax": null,
       "vigencia": null,
@@ -1748,31 +1748,31 @@
       "desc": "El comercio acepta canje de puntos Soy Santander."
     },
     {
-      "nombre": "city winery",
+      "nombre": "City Winery",
       "url": "https://www.santander.com.uy/beneficios/city-winery",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "coppelia",
+      "nombre": "Coppelia",
       "url": "https://www.santander.com.uy/beneficios/coppelia",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "alma mia boutique",
+      "nombre": "Alma Mía Boutique",
       "url": "https://www.santander.com.uy/beneficios/alma-mia-boutique",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "knuss heladeria y cafe",
+      "nombre": "Knuss heladería y café",
       "url": "https://www.santander.com.uy/beneficios/knuss-heladeria-y-cafe",
       "pctMax": null,
       "vigencia": null,
@@ -1780,31 +1780,31 @@
       "desc": "El comercio acepta canje de puntos Soy Santander."
     },
     {
-      "nombre": "de diez burger",
+      "nombre": "De Diez Burger",
       "url": "https://www.santander.com.uy/beneficios/de-diez-burger",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "will b kul store",
+      "nombre": "Will B - The Kul Store",
       "url": "https://www.santander.com.uy/beneficios/will-b-kul-store",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "flavia donatti",
+      "nombre": "Flavia Donatti",
       "url": "https://www.santander.com.uy/beneficios/flavia-donatti",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "bequelo",
+      "nombre": "Bequelo",
       "url": "https://www.santander.com.uy/beneficios/bequelo",
       "pctMax": null,
       "vigencia": null,
@@ -1812,111 +1812,111 @@
       "desc": "El comercio acepta canje de puntos Soy Santander."
     },
     {
-      "nombre": "empanadas calentitas",
+      "nombre": "Empanadas Calentitas",
       "url": "https://www.santander.com.uy/beneficios/empanadas-calentitas",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "lolo",
+      "nombre": "Lolo",
       "url": "https://www.santander.com.uy/beneficios/lolo",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "cresta cafe",
+      "nombre": "Cresta Cafe",
       "url": "https://www.santander.com.uy/beneficios/cresta-cafe",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "delirio",
+      "nombre": "Delirio",
       "url": "https://www.santander.com.uy/beneficios/delirio",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "laferre",
+      "nombre": "Laferre",
       "url": "https://www.santander.com.uy/beneficios/laferre",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "life bistro",
+      "nombre": "Life Bistro",
       "url": "https://www.santander.com.uy/beneficios/life-bistro",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "papirosen",
+      "nombre": "Papirosen",
       "url": "https://www.santander.com.uy/beneficios/papirosen",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "edusil",
+      "nombre": "Edusil",
       "url": "https://www.santander.com.uy/beneficios/edusil",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "todomoda",
+      "nombre": "Todomoda",
       "url": "https://www.santander.com.uy/beneficios/todomoda",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "isadora",
+      "nombre": "Isadora",
       "url": "https://www.santander.com.uy/beneficios/isadora",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "campera almacen",
+      "nombre": "Campera Almacen",
       "url": "https://www.santander.com.uy/beneficios/campera-almacen",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "la cockteleria",
+      "nombre": "La Cocktelería",
       "url": "https://www.santander.com.uy/beneficios/la-cockteleria",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "manantiales point",
+      "nombre": "Manantiales Point",
       "url": "https://www.santander.com.uy/beneficios/manantiales-point",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "sep importaciones",
+      "nombre": "Sep Importaciones",
       "url": "https://www.santander.com.uy/beneficios/sep-importaciones",
       "pctMax": null,
       "vigencia": null,
@@ -1924,31 +1924,31 @@
       "desc": "El comercio acepta canje de puntos Soy Santander."
     },
     {
-      "nombre": "pour la plage",
+      "nombre": "Pour La Plage",
       "url": "https://www.santander.com.uy/beneficios/pour-la-plage",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "vero melo",
+      "nombre": "By Vero Melo",
       "url": "https://www.santander.com.uy/beneficios/vero-melo",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "jump club",
+      "nombre": "Jump Club",
       "url": "https://www.santander.com.uy/beneficios/jump-club",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "nike",
+      "nombre": "Nike",
       "url": "https://www.santander.com.uy/beneficios/nike",
       "pctMax": null,
       "vigencia": null,
@@ -1956,7 +1956,7 @@
       "desc": "El comercio acepta canje de Puntos Soy Santander."
     },
     {
-      "nombre": "sportline kids",
+      "nombre": "Sportline Kids",
       "url": "https://www.santander.com.uy/beneficios/sportline-kids",
       "pctMax": null,
       "vigencia": null,
@@ -1964,7 +1964,7 @@
       "desc": "El comercio acepta canje de puntos Soy Santander."
     },
     {
-      "nombre": "sportline",
+      "nombre": "Sportline",
       "url": "https://www.santander.com.uy/beneficios/sportline",
       "pctMax": null,
       "vigencia": null,
@@ -1972,7 +1972,7 @@
       "desc": "El comercio acepta canje de puntos Soy Santander."
     },
     {
-      "nombre": "kicks",
+      "nombre": "Kicks",
       "url": "https://www.santander.com.uy/beneficios/kicks",
       "pctMax": null,
       "vigencia": null,
@@ -1980,7 +1980,7 @@
       "desc": "El comercio acepta canje de puntos Soy Santander."
     },
     {
-      "nombre": "la cancha",
+      "nombre": "La Cancha",
       "url": "https://www.santander.com.uy/beneficios/la-cancha",
       "pctMax": null,
       "vigencia": null,
@@ -1988,7 +1988,7 @@
       "desc": "El comercio acepta canje de puntos Soy Santander."
     },
     {
-      "nombre": "las zapas",
+      "nombre": "Las Zapas",
       "url": "https://www.santander.com.uy/beneficios/las-zapas",
       "pctMax": null,
       "vigencia": null,
@@ -1996,47 +1996,47 @@
       "desc": "El comercio acepta canje de puntos Soy Santander."
     },
     {
-      "nombre": "gabbs",
+      "nombre": "Gabbs",
       "url": "https://www.santander.com.uy/beneficios/gabbs",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "mariapasion",
+      "nombre": "Mariapasión",
       "url": "https://www.santander.com.uy/beneficios/mariapasion",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "cafe mallorca",
+      "nombre": "Café Mallorca",
       "url": "https://www.santander.com.uy/beneficios/cafe-mallorca",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "almar",
+      "nombre": "Almar",
       "url": "https://www.santander.com.uy/beneficios/almar",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "top ten",
+      "nombre": "Top Ten",
       "url": "https://www.santander.com.uy/beneficios/top-ten",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "vans",
+      "nombre": "Vans",
       "url": "https://www.santander.com.uy/beneficios/vans",
       "pctMax": null,
       "vigencia": null,
@@ -2044,7 +2044,7 @@
       "desc": "El comercio acepta canje de puntos Soy Santander."
     },
     {
-      "nombre": "kiabi",
+      "nombre": "Kiabi",
       "url": "https://www.santander.com.uy/beneficios/kiabi",
       "pctMax": null,
       "vigencia": null,
@@ -2052,7 +2052,7 @@
       "desc": "El comercio acepta canje de puntos Soy Santander."
     },
     {
-      "nombre": "jysk",
+      "nombre": "Jysk",
       "url": "https://www.santander.com.uy/beneficios/jysk",
       "pctMax": null,
       "vigencia": null,
@@ -2060,7 +2060,7 @@
       "desc": "El comercio acepta canje de puntos Soy Santander."
     },
     {
-      "nombre": "futvolt",
+      "nombre": "Futvolt",
       "url": "https://www.santander.com.uy/beneficios/futvolt",
       "pctMax": null,
       "vigencia": null,
@@ -2068,7 +2068,7 @@
       "desc": "El comercio acepta canje de puntos Soy Santander."
     },
     {
-      "nombre": "naterial",
+      "nombre": "Naterial",
       "url": "https://www.santander.com.uy/beneficios/naterial",
       "pctMax": null,
       "vigencia": null,
@@ -2076,255 +2076,255 @@
       "desc": "El comercio acepta canje de puntos Soy Santander."
     },
     {
-      "nombre": "la vuelta",
+      "nombre": "La Vuelta",
       "url": "https://www.santander.com.uy/beneficios/la-vuelta",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "beer house",
+      "nombre": "The Beer House",
       "url": "https://www.santander.com.uy/beneficios/beer-house",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "incasa",
+      "nombre": "Incasa",
       "url": "https://www.santander.com.uy/beneficios/incasa",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "gryk",
+      "nombre": "Gryk",
       "url": "https://www.santander.com.uy/beneficios/gryk",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "bravo resto",
+      "nombre": "Bravo Restó",
       "url": "https://www.santander.com.uy/beneficios/bravo-resto",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "el fondin",
+      "nombre": "El Fondin",
       "url": "https://www.santander.com.uy/beneficios/el-fondin",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "la perrera",
+      "nombre": "La Perrera",
       "url": "https://www.santander.com.uy/beneficios/la-perrera",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "arrai",
+      "nombre": "Arraí",
       "url": "https://www.santander.com.uy/beneficios/arrai",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "cafeteria ferran",
+      "nombre": "Cafetería Ferran",
       "url": "https://www.santander.com.uy/beneficios/cafeteria-ferran",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "franca",
+      "nombre": "Franca",
       "url": "https://www.santander.com.uy/beneficios/franca",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "genuina",
+      "nombre": "Genuina",
       "url": "https://www.santander.com.uy/beneficios/genuina",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "irisarri",
+      "nombre": "Irisarri",
       "url": "https://www.santander.com.uy/beneficios/irisarri",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "boutique de carnes",
+      "nombre": "Boutique de Carnes",
       "url": "https://www.santander.com.uy/beneficios/boutique-de-carnes",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "la casita cari",
+      "nombre": "La Casita by Cari",
       "url": "https://www.santander.com.uy/beneficios/la-casita-cari",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "la pasiva solanas",
+      "nombre": "La Pasiva Solanas",
       "url": "https://www.santander.com.uy/beneficios/la-pasiva-solanas",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "legua",
+      "nombre": "Legua",
       "url": "https://www.santander.com.uy/beneficios/legua",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "lincanto",
+      "nombre": "Lincanto",
       "url": "https://www.santander.com.uy/beneficios/lincanto",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "manon",
+      "nombre": "Manon",
       "url": "https://www.santander.com.uy/beneficios/manon",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "menos mal",
+      "nombre": "Menos Mal",
       "url": "https://www.santander.com.uy/beneficios/menos-mal",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "parador 8 de la brava",
+      "nombre": "Parador 8 de la Brava",
       "url": "https://www.santander.com.uy/beneficios/parador-8-de-la-brava",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "parador san rafael",
+      "nombre": "Parador San Rafael",
       "url": "https://www.santander.com.uy/beneficios/parador-san-rafael",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "sushi meshi",
+      "nombre": "Sushi Meshi",
       "url": "https://www.santander.com.uy/beneficios/sushi-meshi",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "tommy bistro",
+      "nombre": "Tommy Bistro",
       "url": "https://www.santander.com.uy/beneficios/tommy-bistro",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "las tres marias",
+      "nombre": "Las Tres Marias",
       "url": "https://www.santander.com.uy/beneficios/las-tres-marias",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "da haus",
+      "nombre": "Da Haus",
       "url": "https://www.santander.com.uy/beneficios/da-haus",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "gelato house",
+      "nombre": "Gelato House",
       "url": "https://www.santander.com.uy/beneficios/gelato-house",
-      "pctMax": null,
+      "pctMax": 50,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución: el mismo se calcula por tipo de tarjeta: crédito o débito.",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "nihon sushi",
+      "nombre": "Nihon Sushi",
       "url": "https://www.santander.com.uy/beneficios/nihon-sushi",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "el berretin 0",
+      "nombre": "El Berretin",
       "url": "https://www.santander.com.uy/beneficios/el-berretin-0",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "anushka elliot",
+      "nombre": "Anushka Elliot",
       "url": "https://www.santander.com.uy/beneficios/anushka-elliot",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectuará en el estado de cuenta, pudiendo figurar en el mismo hasta 30 días después de efectuada la compra."
     },
     {
-      "nombre": "sentido",
+      "nombre": "Sentido",
       "url": "https://www.santander.com.uy/beneficios/sentido",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectuará en el estado de cuenta , pudiendo figurar en el mismo hasta 30 días después de efectuada la compra."
     },
     {
-      "nombre": "bardo",
+      "nombre": "Bardo",
       "url": "https://www.santander.com.uy/beneficios/bardo",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "converse",
+      "nombre": "Converse",
       "url": "https://www.santander.com.uy/beneficios/converse",
       "pctMax": null,
       "vigencia": null,
@@ -2332,7 +2332,7 @@
       "desc": "El comercio acepta canje de puntos Soy Santander."
     },
     {
-      "nombre": "haven",
+      "nombre": "Häven",
       "url": "https://www.santander.com.uy/beneficios/haven",
       "pctMax": null,
       "vigencia": null,
@@ -2340,135 +2340,135 @@
       "desc": "El comercio acepta canje de puntos Soy Santander."
     },
     {
-      "nombre": "concepto om",
+      "nombre": "Concepto OM",
       "url": "https://www.santander.com.uy/beneficios/concepto-om",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "Descuentos exclusivos para socios Farmacard."
     },
     {
-      "nombre": "burger point",
+      "nombre": "Burger Point",
       "url": "https://www.santander.com.uy/beneficios/burger-point",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "autoria cafe",
+      "nombre": "Autoría Café",
       "url": "https://www.santander.com.uy/beneficios/autoria-cafe",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "azu",
+      "nombre": "Azu",
       "url": "https://www.santander.com.uy/beneficios/azu",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta únicamente en el local de Kul Store."
     },
     {
-      "nombre": "brownie",
+      "nombre": "Brownie",
       "url": "https://www.santander.com.uy/beneficios/brownie",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "pass padel",
+      "nombre": "By Pass Padel",
       "url": "https://www.santander.com.uy/beneficios/pass-padel",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "cafe la antigua",
+      "nombre": "Café a la Antigua",
       "url": "https://www.santander.com.uy/beneficios/cafe-la-antigua",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "casa ribera",
+      "nombre": "Casa Ribera",
       "url": "https://www.santander.com.uy/beneficios/casa-ribera",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "felix",
+      "nombre": "Felix",
       "url": "https://www.santander.com.uy/beneficios/felix",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "mood house",
+      "nombre": "The Mood House",
       "url": "https://www.santander.com.uy/beneficios/mood-house",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "igual mi",
+      "nombre": "Igual a Mi",
       "url": "https://www.santander.com.uy/beneficios/igual-mi",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "viasono jardin",
+      "nombre": "Viasono Jardín",
       "url": "https://www.santander.com.uy/beneficios/viasono-jardin",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "el refugio de mailhos",
+      "nombre": "El Refugio de Mailhos",
       "url": "https://www.santander.com.uy/beneficios/el-refugio-de-mailhos",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "restaurante vyb",
+      "nombre": "Restaurante VyB",
       "url": "https://www.santander.com.uy/beneficios/restaurante-vyb",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "santo cafe",
+      "nombre": "Santo Café",
       "url": "https://www.santander.com.uy/beneficios/santo-cafe",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "velas de la ballena",
+      "nombre": "Velas de la Ballena",
       "url": "https://www.santander.com.uy/beneficios/velas-de-la-ballena",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "de flores y floreros",
+      "nombre": "De Flores y Floreros",
       "url": "https://www.santander.com.uy/beneficios/de-flores-y-floreros",
       "pctMax": null,
       "vigencia": null,
@@ -2476,111 +2476,111 @@
       "desc": "El comercio acepta canje de puntos Soy Santander."
     },
     {
-      "nombre": "dropz kul store",
+      "nombre": "Dropz - The Kul Store",
       "url": "https://www.santander.com.uy/beneficios/dropz-kul-store",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "especie humana kul store",
+      "nombre": "Especie Humana - The Kul Store",
       "url": "https://www.santander.com.uy/beneficios/especie-humana-kul-store",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "Especie Humana - The Kul Store"
     },
     {
-      "nombre": "heladeria imperial",
+      "nombre": "Heladería Imperial",
       "url": "https://www.santander.com.uy/beneficios/heladeria-imperial",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "manube kul store",
+      "nombre": "Manu.be - The Kul Store",
       "url": "https://www.santander.com.uy/beneficios/manube-kul-store",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "vang kul store",
+      "nombre": "Vang - The Kul Store",
       "url": "https://www.santander.com.uy/beneficios/vang-kul-store",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "la buhardilla",
+      "nombre": "La Buhardilla",
       "url": "https://www.santander.com.uy/beneficios/la-buhardilla",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "la hacienda",
+      "nombre": "La Hacienda",
       "url": "https://www.santander.com.uy/beneficios/la-hacienda",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "maleza beach club",
+      "nombre": "Maleza Beach Club",
       "url": "https://www.santander.com.uy/beneficios/maleza-beach-club",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "marian la que cocina cookies",
+      "nombre": "Marian la que Cocina - Cookies",
       "url": "https://www.santander.com.uy/beneficios/marian-la-que-cocina-cookies",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "adore dolores",
+      "nombre": "Adoré Dolores",
       "url": "https://www.santander.com.uy/beneficios/adore-dolores",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "aimee",
+      "nombre": "Aimée",
       "url": "https://www.santander.com.uy/beneficios/aimee",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "caramora restaurante",
+      "nombre": "Caramora - Restaurante",
       "url": "https://www.santander.com.uy/beneficios/caramora-restaurante",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "dona maruja",
+      "nombre": "Doña Maruja",
       "url": "https://www.santander.com.uy/beneficios/dona-maruja",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "dulce avellana",
+      "nombre": "Dulce Avellana",
       "url": "https://www.santander.com.uy/beneficios/dulce-avellana",
       "pctMax": null,
       "vigencia": null,
@@ -2588,87 +2588,87 @@
       "desc": "El comercio acepta canje de puntos Soy Santander."
     },
     {
-      "nombre": "gozar",
+      "nombre": "Gozar",
       "url": "https://www.santander.com.uy/beneficios/gozar",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "las dos reinas",
+      "nombre": "Las Dos Reinas",
       "url": "https://www.santander.com.uy/beneficios/las-dos-reinas",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "life zonamerica",
+      "nombre": "Life Zonamérica",
       "url": "https://www.santander.com.uy/beneficios/life-zonamerica",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "Descuento válido para mensualidades pagas con débito automático de tarjeta de crédito, y para compra de membresías de mínimo 3 meses con tarjeta de débito o crédito.",
       "desc": "Descuento válido para mensualidades pagas con débito automático de tarjeta de crédito, y para compra de membresías de mínimo 3 meses con tarjeta de débito o crédito."
     },
     {
-      "nombre": "pedidosya 0",
+      "nombre": "PedidosYa",
       "url": "https://www.santander.com.uy/beneficios/pedidosya-0",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "Fecha: Válido días Martes y Sábados desde 11/04/2026 al 31/01/2027."
     },
     {
-      "nombre": "individuo pastas",
+      "nombre": "Individuo Pastas",
       "url": "https://www.santander.com.uy/beneficios/individuo-pastas",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "pando padel club",
+      "nombre": "Pando Pádel Club",
       "url": "https://www.santander.com.uy/beneficios/pando-padel-club",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "periplo",
+      "nombre": "Periplo",
       "url": "https://www.santander.com.uy/beneficios/periplo",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "ronda",
+      "nombre": "Ronda",
       "url": "https://www.santander.com.uy/beneficios/ronda",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "sweetly cafeteria",
+      "nombre": "Sweetly Cafeteria",
       "url": "https://www.santander.com.uy/beneficios/sweetly-cafeteria",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "la esquina 0",
+      "nombre": "La Esquina",
       "url": "https://www.santander.com.uy/beneficios/la-esquina-0",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "donut city 0",
+      "nombre": "Donut City",
       "url": "https://www.santander.com.uy/beneficios/donut-city-0",
       "pctMax": null,
       "vigencia": null,
@@ -2676,49 +2676,49 @@
       "desc": "El comercio acepta canje de puntos Soy Santander."
     },
     {
-      "nombre": "lo de marcos 0",
+      "nombre": "Lo de Marcos",
       "url": "https://www.santander.com.uy/beneficios/lo-de-marcos-0",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "north face",
+      "nombre": "The North Face",
       "url": "https://www.santander.com.uy/beneficios/north-face",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
     },
     {
-      "nombre": "cafeteria paulette",
+      "nombre": "Cafetería Paulette",
       "url": "https://www.santander.com.uy/beneficios/cafeteria-paulette",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "burger time",
+      "nombre": "Burger Time",
       "url": "https://www.santander.com.uy/beneficios/burger-time",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "la esquina cafe",
+      "nombre": "La Esquina Café",
       "url": "https://www.santander.com.uy/beneficios/la-esquina-cafe",
-      "pctMax": null,
+      "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
     },
     {
-      "nombre": "vanitas",
+      "nombre": "Vanitas",
       "url": "https://www.santander.com.uy/beneficios/vanitas",
-      "pctMax": null,
+      "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta."
