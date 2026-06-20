@@ -106,43 +106,41 @@ async function discoverCards(page) {
 
       const slug = relPath.split('/').pop();
 
-      // Subir en el DOM hasta encontrar el contenedor de la card
+      // Subir en el DOM hasta encontrar el contenedor real de la card
+      // (que tenga una imagen hermana/hija — los grid cards son solo <a>)
       let container = a.closest('article, li, [class*="card"], [class*="item"], [class*="benefit"], [class*="promo"]');
-      if (!container) container = a.parentElement?.parentElement || a.parentElement;
+      if (!container) {
+        // Subir por la cadena de padres buscando el que tenga <img> dentro
+        let el = a.parentElement;
+        let depth = 0;
+        while (el && el !== document.body && depth < 8) {
+          if (el.querySelector('img')) { container = el; break; }
+          el = el.parentElement;
+          depth++;
+        }
+        if (!container) container = a.parentElement || a;
+      }
 
       // Nombre: tomar el texto del container sin el CTA, luego cortar antes del "NN%"
-      const containerText = container?.innerText || '';
-      let nombre = containerText.replace(/ver\s+m[aá]s\s+detalles/gi, '').replace(/\s+/g, ' ').trim();
+      const containerText = (container?.innerText || '').replace(/ver\s+m[aá]s\s+detalles/gi, '').replace(/\s+/g, ' ').trim();
+      let nombre = containerText;
       const firstPct = nombre.search(/\d{1,3}\s*%/);
       if (firstPct > 0) nombre = nombre.slice(0, firstPct).trim();
       nombre = nombre.slice(0, 60) || null;
 
-      // % del texto del container
-      const pctMatches = [...containerText.matchAll(/(\d{1,3})\s*%/g)].map(m => parseInt(m[1], 10)).filter(n => n > 0 && n <= 70);
-      let pctMax = pctMatches.length ? Math.max(...pctMatches) : null;
-
-      // También revisar atributos data-* del container o imgs dentro de él
-      if (!pctMax && container) {
-        const allEls = [container, ...container.querySelectorAll('*')];
-        for (const el of allEls) {
-          for (const attr of el.attributes || []) {
-            const val = attr.value;
-            const m = val.match(/^(\d{1,3})$/) || val.match(/(\d{1,3})\s*%/);
-            if (m) {
-              const n = parseInt(m[1], 10);
-              if (n > 0 && n <= 70) { pctMax = pctMax ? Math.max(pctMax, n) : n; }
-            }
-          }
-        }
-      }
-
-      // Nombre también desde alt de imagen
+      // Nombre desde alt de imagen (para cards sin texto)
       if (!nombre && container) {
         const img = container.querySelector('img');
-        if (img?.alt && img.alt.length > 2 && img.alt.length < 80) nombre = img.alt;
+        const alt = img?.alt?.trim();
+        if (alt && alt.length > 2 && alt.length < 80 && !/logo/i.test(alt)) nombre = alt;
       }
 
-      const containerHtml = diagMode && !pctMax ? (container?.outerHTML?.slice(0, 600) || '') : '';
+      // % del texto del container o del innerText de la imagen alt
+      const pctSrc = containerText + ' ' + (container?.querySelector('img')?.alt || '');
+      const pctMatches = [...pctSrc.matchAll(/(\d{1,3})\s*%/g)].map(m => parseInt(m[1], 10)).filter(n => n > 0 && n <= 70);
+      let pctMax = pctMatches.length ? Math.max(...pctMatches) : null;
+
+      const containerHtml = diagMode && !pctMax ? (container?.outerHTML?.slice(0, 800) || '') : '';
       out.push({ href, slug, nombre, pctHub: pctMax, containerHtml });
     });
 
@@ -179,39 +177,26 @@ async function parseDetail(page, card) {
     const html = await page.content();
     saveHtml(`santander-det-${card.slug}`, html);
     const pctDump = await page.evaluate(() => {
-      const ogDesc = document.querySelector('meta[property="og:description"]')?.content || '';
-      const ogTitle = document.querySelector('meta[property="og:title"]')?.content || '';
-      // Buscar % en elementos body (no head/script)
-      const els = [...document.querySelectorAll('body *')]
-        .filter(e => /\d{1,3}\s*%/.test(e.innerText || ''))
-        .slice(0, 5)
-        .map(e => ({
-          tag: e.tagName, cls: [...e.classList].join('.').slice(0, 60),
-          txt: (e.innerText || '').replace(/\s+/g, ' ').trim().slice(0, 150),
-          leaf: e.children.length === 0,
-        }));
-      // Buscar en atributos data-* de todos los elementos
-      const dataAttrs = [];
-      document.querySelectorAll('[data-porcentaje],[data-pct],[data-discount],[data-descuento],[data-percentage]').forEach(el => {
-        for (const attr of el.attributes) {
-          if (/porcentaje|pct|discount|descuento|percentage/i.test(attr.name)) {
-            dataAttrs.push(`${attr.name}="${attr.value}"`);
-          }
-        }
-      });
-      // Buscar en scripts inline (no externos)
-      const scriptPcts = [];
-      document.querySelectorAll('script:not([src])').forEach(s => {
-        const text = s.textContent || '';
-        const m = text.match(/"(?:porcentaje|pct|descuento|discount|percentage)"\s*:\s*"?(\d{1,3})"?/i);
-        if (m) scriptPcts.push(`${m[0].slice(0, 80)}`);
-      });
-      return { ogDesc, ogTitle, els, dataAttrs, scriptPcts };
+      // Buscar % en HTML crudo (incluyendo atributos, data-*, etc.)
+      const bodyHtml = document.body.innerHTML || '';
+      const htmlPcts = [...bodyHtml.matchAll(/(\d{1,3})\s*%/g)]
+        .map(m => { const n = parseInt(m[1], 10); return n > 0 && n <= 70 ? { val: n, ctx: bodyHtml.slice(Math.max(0,m.index-40), m.index+60) } : null; })
+        .filter(Boolean).slice(0, 5);
+      // Texto visible del body (primeros 600 chars)
+      const bodyText = (document.body.innerText || '').replace(/\s+/g, ' ').trim().slice(0, 600);
+      // JSON-LD
+      const jsonLd = document.querySelector('script[type="application/ld+json"]')?.textContent?.slice(0, 300) || '';
+      // h1/h2 visible
+      const headings = [...document.querySelectorAll('h1,h2,h3')]
+        .filter(h => !h.closest('nav,header'))
+        .map(h => h.innerText?.trim()).filter(Boolean).slice(0, 5);
+      return { htmlPcts, bodyText, jsonLd, headings };
     });
-    console.log(`  [diag:${card.slug}] og:title="${pctDump.ogTitle.slice(0, 60)}" og:desc="${pctDump.ogDesc.slice(0, 80)}"`);
-    if (pctDump.els.length) pctDump.els.forEach(e => console.log(`    body-elem leaf=${e.leaf} <${e.tag}>.${e.cls}: "${e.txt}"`));
-    if (pctDump.dataAttrs.length) console.log(`    data-attrs: ${pctDump.dataAttrs.join(', ')}`);
-    if (pctDump.scriptPcts.length) console.log(`    script-pcts: ${pctDump.scriptPcts.join(' | ')}`);
+    console.log(`  [diag:${card.slug}] bodyText="${pctDump.bodyText.slice(0, 200)}"`);
+    console.log(`  [diag:${card.slug}] headings=${JSON.stringify(pctDump.headings)}`);
+    if (pctDump.htmlPcts.length) pctDump.htmlPcts.forEach(p => console.log(`  [diag:${card.slug}] html-pct ${p.val}%: "${p.ctx}"`));
+    else console.log(`  [diag:${card.slug}] NO hay % en body HTML`);
+    if (pctDump.jsonLd) console.log(`  [diag:${card.slug}] jsonLd="${pctDump.jsonLd.slice(0, 150)}"`);
   }
 
   return page.evaluate((urlStr, hubNombre, hubPct) => {
