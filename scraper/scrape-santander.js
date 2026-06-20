@@ -106,14 +106,16 @@ async function discoverCards(page) {
 
       const slug = relPath.split('/').pop();
 
-      // Subir en el DOM hasta encontrar el contenedor real de la card
-      // (que tenga una imagen hermana/hija — los grid cards son solo <a>)
-      let container = a.closest('article, li, [class*="card"], [class*="item"], [class*="benefit"], [class*="promo"]');
-      if (!container) {
-        // Subir por la cadena de padres buscando el que tenga <img> dentro
+      // Encontrar el contenedor real de la card.
+      // NOTA: NO usar [class*="item"] — "align-items-center" matchea el <a> mismo.
+      let container = a.closest('article, li, [class*="card"], [class*="benefit"], [class*="promo"]');
+      // Si closest devolvió el <a> mismo u otro <a>, lo ignoramos y subimos buscando img
+      if (!container || container.tagName === 'A') {
+        container = null;
         let el = a.parentElement;
         let depth = 0;
-        while (el && el !== document.body && depth < 8) {
+        while (el && el !== document.body && depth < 10) {
+          // Elemento con imagen hermana o hija → es el card container
           if (el.querySelector('img')) { container = el; break; }
           el = el.parentElement;
           depth++;
@@ -205,23 +207,30 @@ async function parseDetail(page, card) {
     const ogTitle = document.querySelector('meta[property="og:title"]')?.content?.trim();
     const ogDesc  = document.querySelector('meta[property="og:description"]')?.content?.trim();
 
-    // og:title a veces tiene "NombreComercio | Santander Uruguay"
+    // Prioridad: og:title → <title> → h1 (incluyendo en header) → hub → slug
     let nombre = null;
     if (ogTitle && !/^(santander|beneficio|beneficios|principal|navegaci)/i.test(ogTitle)) {
       nombre = ogTitle.replace(/\s*[\|\-]\s*.*Santander.*/i, '').trim();
     }
-    // Fallback: h1 que NO sea nav (filtrar por posición en el árbol)
+    // <title> tag: "NombreComercio | Santander Uruguay"
     if (!nombre) {
-      const allH = [...document.querySelectorAll('h1,h2')];
+      const titleEl = document.querySelector('title');
+      const titleText = (titleEl?.textContent || '').trim();
+      if (titleText && !/^(santander|beneficio|beneficios)/i.test(titleText)) {
+        nombre = titleText.replace(/\s*[\|\-]\s*Santander.*/i, '').trim();
+      }
+    }
+    // h1/h2 — acepta los que están en header también (Santander los pone ahí)
+    if (!nombre) {
+      const allH = [...document.querySelectorAll('h1,h2,h3')];
       const contentH = allH.find(h => {
         const text = h.innerText?.trim() || '';
         return text.length > 2
-          && !/navegaci[oó]n|principal|menú|inicio|contacto/i.test(text)
-          && !h.closest('nav,header,[role="navigation"]');
+          && !/navegaci[oó]n|principal|menú|inicio|contacto|beneficios$/i.test(text)
+          && !h.closest('nav,[role="navigation"]');
       });
       if (contentH) nombre = contentH.innerText.trim();
     }
-    // Fallback final: nombre del hub
     nombre = nombre || hubNombre || urlStr.split('/').pop().replace(/-/g, ' ');
 
     // ── Porcentaje ───────────────────────────────────────────────────────────
