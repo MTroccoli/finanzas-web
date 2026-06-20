@@ -144,23 +144,36 @@ async function parseHub(page, hubUrl, exclusivo) {
   return cards;
 }
 
-// ── Diagnóstico extra: volcar clases de cards ─────────────────────────────────
-async function diagCardClasses(page) {
-  await goto(page, HUBS[0].url);
+// ── Diagnóstico extra: volcar clases y estructura de cards ───────────────────
+async function diagCardClasses(page, url) {
+  await goto(page, url);
   const info = await page.evaluate(() => {
     const classGroups = {};
-    document.querySelectorAll('[class*="card"]').forEach(el => {
+    document.querySelectorAll('[class*="card"], [class*="benefit"], [class*="promo"], article, li').forEach(el => {
       const cls = [...el.classList].join('.');
+      if (!cls) return;
       classGroups[cls] = (classGroups[cls] || 0) + 1;
     });
-    // Las 10 clases más frecuentes
     return Object.entries(classGroups)
       .sort((a, b) => b[1] - a[1])
-      .slice(0, 10)
+      .slice(0, 20)
       .map(([cls, n]) => `${n}x  .${cls}`);
   });
-  console.log('\nClases de elementos [class*="card"] más frecuentes:');
+  console.log(`\nClases frecuentes en ${url}:`);
   info.forEach(l => console.log(`  ${l}`));
+
+  // Muestra el innerText de los primeros 3 elementos con texto sustancial
+  const samples = await page.evaluate(() => {
+    const candidates = [...document.querySelectorAll('li, article, [class*="item"], [class*="benefit"], [class*="promo"]')]
+      .filter(el => (el.innerText || '').trim().length > 30 && (el.innerText || '').trim().length < 500);
+    return candidates.slice(0, 5).map(el => ({
+      tag: el.tagName,
+      cls: [...el.classList].join('.'),
+      txt: (el.innerText || '').replace(/\s+/g, ' ').trim().slice(0, 200),
+    }));
+  });
+  console.log('\n  Muestra de elementos candidatos:');
+  samples.forEach((s, i) => console.log(`  [${i+1}] <${s.tag}> .${s.cls}\n      "${s.txt}"`));
 }
 
 // ── Main ──────────────────────────────────────────────────────────────────────
@@ -174,7 +187,10 @@ async function diagCardClasses(page) {
 
   if (DIAG_MODE) {
     console.log('=== MODO DIAGNÓSTICO v2 ===\n');
-    await diagCardClasses(page);
+    for (const hub of HUBS) {
+      await diagCardClasses(page, hub.url);
+      await sleep(DELAY_MS);
+    }
     for (const hub of HUBS) {
       console.log(`\n=== Hub: ${hub.url} ===`);
       await parseHub(page, hub.url, hub.exclusivo);
