@@ -1,53 +1,8 @@
 {
   "fuente": "itau.com.uy",
-  "actualizado": "2026-06-20T20:27:57.468Z",
-  "total": 21,
+  "actualizado": "2026-06-20T22:14:14.499Z",
+  "total": 17,
   "beneficios": [
-    {
-      "nombre": "25% menos con Platinum, Infinite, Black y Personal",
-      "url": null,
-      "pctMax": 25,
-      "descuentos": [
-        {
-          "pct": 25,
-          "texto": "25%"
-        }
-      ],
-      "vigencia": null,
-      "tarjetas": "25% menos con Platinum, Infinite, Black y Personal ver más",
-      "desc": "25% menos con Platinum, Infinite, Black y Personal",
-      "exclusivo": false
-    },
-    {
-      "nombre": "moda",
-      "url": null,
-      "pctMax": 15,
-      "descuentos": [
-        {
-          "pct": 15,
-          "texto": "15%"
-        }
-      ],
-      "vigencia": null,
-      "tarjetas": null,
-      "desc": "15% menos en moda",
-      "exclusivo": false
-    },
-    {
-      "nombre": "restaurantes",
-      "url": null,
-      "pctMax": 15,
-      "descuentos": [
-        {
-          "pct": 15,
-          "texto": "15%"
-        }
-      ],
-      "vigencia": null,
-      "tarjetas": null,
-      "desc": "15% menos en restaurantes",
-      "exclusivo": false
-    },
     {
       "nombre": "Cantegrill Joyas",
       "url": null,
@@ -76,21 +31,6 @@
       "vigencia": null,
       "tarjetas": null,
       "desc": "15% y 10% menos en Divino",
-      "exclusivo": false
-    },
-    {
-      "nombre": "25% y 15% menos los jueves y sábados",
-      "url": null,
-      "pctMax": 25,
-      "descuentos": [
-        {
-          "pct": 25,
-          "texto": "25%"
-        }
-      ],
-      "vigencia": null,
-      "tarjetas": null,
-      "desc": "25% y 15% menos los jueves y sábados",
       "exclusivo": false
     },
     {
@@ -269,19 +209,18 @@
       "exclusivo": false
     },
     {
-      "nombre": "15% menos y 12 cuotas en la compra de Iphone",
+      "nombre": "Restaurantes",
       "url": null,
-      "pctMax": 15,
+      "pctMax": 25,
       "descuentos": [
         {
-          "pct": 15,
-          "texto": "15%"
+          "pct": 25,
+          "texto": "25%"
         }
       ],
       "vigencia": null,
-      "tarjetas": null,
-      "desc": "15% menos y 12 cuotas en la compra de Iphone",
-      "exclusivo": false
+      "tarjetas": "25% menos Todos los días, pagando con tus tarjetas de crédito Platinum, Infinite, Black y tarjetas de débito y crédito Personal Bank.",
+      "exclusivo": true
     },
     {
       "nombre": "Tiendas Gourmet",
