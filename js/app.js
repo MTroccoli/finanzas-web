@@ -23,8 +23,8 @@ async function handleRoute() {
 
   document.body.classList.remove('nav-open');
 
-  // TDC sub-nav (Comercios / Adicional tabs fixed below topbar)
-  const isTdc = activePage === 'gastos' && (activeSub === 'comercios' || activeSub === 'adicional');
+  // TDC sub-nav (Comercios / Adicional / Descuentos tabs fixed below topbar)
+  const isTdc = activePage === 'gastos' && (activeSub === 'comercios' || activeSub === 'adicional' || activeSub === 'descuentos');
   const tdcSubnav = document.getElementById('tdc-subnav');
   if (tdcSubnav) {
     tdcSubnav.classList.toggle('visible', isTdc);

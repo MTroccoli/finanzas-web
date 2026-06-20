@@ -62,6 +62,9 @@ window.Mods.gastos = {
   _adicRawCache:  null,   // { adicRows, descRows } de _drawHistorialAdicional
   _resCache:      null,   // { allDataRaw, activeCuotasAll, recurrentesLast } del Resumen
   _resCacheKey:   null,   // `${desde}|${hasta}|${banco}` — solo vistas gastos/beneficios (cat/tipo son client-side)
+  _descCache:     null,   // beneficios.json cacheado (catálogo de descuentos TDC)
+  _descCat:       '',     // filtro de categoría en el tab Descuentos
+  _descSearch:    '',     // búsqueda por comercio en el tab Descuentos
 
   // Invalida todos los caches de datos de gastos. Se llama tras cualquier
   // mutación de gastos y al entrar a pestañas que mutan (importar/manual/cuotas).
@@ -260,6 +263,7 @@ window.Mods.gastos = {
       cuotas:    ['Cuotas Activas',                  'Planes de pago en curso'],
       comercios: ['Tarjetas de Crédito — Comercios', 'Análisis por comercio'],
       adicional: ['Tarjetas de Crédito — Adicional', 'Gastos de tarjetas adicionales'],
+      descuentos:['Tarjetas de Crédito — Descuentos', 'Beneficios BBVA y oportunidades según tu consumo'],
       importar:  ['Importar EDC',                    'Carga de estados de cuenta VISA'],
       manual:    ['Nuevo Gasto',                     'Registro manual de egresos'],
     };
@@ -316,9 +320,156 @@ window.Mods.gastos = {
       case 'cuotas':    return this._drawCuotas();
       case 'comercios': return this._drawHistorialComercios();
       case 'adicional': return this._drawHistorialAdicional();
+      case 'descuentos':return this._drawDescuentos();
       case 'importar':  return this._drawImportar();
       case 'manual':    return this._drawManual();
     }
+  },
+
+  // ── Tab Descuentos: catálogo de beneficios BBVA + oportunidades ───────────
+  async _drawDescuentos() {
+    const gc = document.getElementById('g-content');
+    gc.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+
+    // 1. Cargar catálogo de beneficios (estático, cacheado)
+    if (!this._descCache) {
+      try {
+        const res = await fetch('data/beneficios.json', { cache: 'no-cache' });
+        this._descCache = await res.json();
+      } catch (e) {
+        gc.innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-text">No se pudo cargar el catálogo de beneficios.</div></div>';
+        return;
+      }
+    }
+    const data = this._descCache;
+    const benefits = data.beneficios || [];
+
+    // 2. Cargar consumo TDC (reusa cache de Comercios si existe)
+    let comRows = this._comRawCache;
+    if (!comRows) {
+      const { data: d } = await getDB()
+        .from('gastos').select('comercio, moneda, monto, fecha')
+        .not('comercio', 'is', null)
+        .or('titular_adicional.is.null,incluido_en_gastos.eq.true')
+        .order('fecha', { ascending: false });
+      comRows = d || [];
+    }
+
+    // 3. Índice de beneficios por comercio normalizado (se queda con el mayor %)
+    const benIndex = {};
+    for (const b of benefits) {
+      const k = this._normMerchant(b.comercio);
+      if (!k) continue;
+      if (!benIndex[k] || (b.pctMax || 0) > (benIndex[k].pctMax || 0)) benIndex[k] = b;
+    }
+
+    // 4. Oportunidades: comercios donde gastaste (últimos 6 meses) que tienen beneficio
+    const hoy = new Date();
+    const desde6 = new Date(hoy.getFullYear(), hoy.getMonth() - 6, 1).toISOString().slice(0, 10);
+    const spendByNorm = {};
+    for (const r of comRows) {
+      if (r.fecha < desde6) continue;
+      const monto = parseFloat(r.monto);
+      if (!(monto > 0)) continue;
+      const norm = this._normMerchant(r.comercio);
+      if (!norm || !benIndex[norm]) continue;
+      if (!spendByNorm[norm]) spendByNorm[norm] = { norm, example: r.comercio, total: 0, count: 0, mon: r.moneda === 'USD' ? 'USD' : 'UYU' };
+      spendByNorm[norm].total += monto;
+      spendByNorm[norm].count++;
+    }
+    const oportunidades = Object.values(spendByNorm)
+      .map(s => ({ ...s, benefit: benIndex[s.norm] }))
+      .sort((a, b) => b.total - a.total);
+
+    // 5. Catálogo filtrado (categoría + búsqueda)
+    const cat = this._descCat;
+    const q = this._normMerchant(this._descSearch);
+    const filtered = benefits.filter(b =>
+      (!cat || b.categoria === cat) &&
+      (!q || this._normMerchant(b.comercio).includes(q))
+    ).sort((a, b) => (b.pctMax || 0) - (a.pctMax || 0));
+
+    const catCounts = {};
+    benefits.forEach(b => { catCounts[b.categoria] = (catCounts[b.categoria] || 0) + 1; });
+    const cats = (data.categorias || Object.keys(catCounts));
+
+    const fmtMon = (n, mon) => (mon === 'USD' ? 'US$ ' : '$U ') + fmt(n, 0);
+    const actualizado = data.actualizado ? new Date(data.actualizado).toLocaleDateString('es-AR') : '—';
+
+    // ── Render ──
+    gc.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;margin-bottom:14px">
+        <div style="font-size:.72rem;color:var(--text-sec)">
+          ${benefits.length} beneficios · fuente BBVA · actualizado ${actualizado}
+        </div>
+      </div>
+
+      ${oportunidades.length ? `
+        <div class="form-card" style="padding:14px 16px;margin-bottom:18px;border-color:rgba(41,217,133,.3);background:linear-gradient(160deg,var(--surface),rgba(41,217,133,.05))">
+          <div style="font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--green);font-weight:600;margin-bottom:10px">
+            💡 Oportunidades · comercios donde gastás con beneficio activo
+          </div>
+          <div style="overflow-x:auto;-webkit-overflow-scrolling:touch">
+            <table style="width:100%;min-width:420px;border-collapse:collapse">
+              <thead><tr>
+                ${['Comercio','Tu consumo 6m','Beneficio BBVA','Vigencia'].map((h, i) =>
+                  `<th style="text-align:${i >= 1 && i <= 1 ? 'right' : 'left'};padding:7px 6px;border-bottom:1px solid var(--border);font-size:.68rem;color:var(--text-sec);text-transform:uppercase;font-weight:500;white-space:nowrap">${h}</th>`).join('')}
+              </tr></thead>
+              <tbody>
+                ${oportunidades.map(o => `
+                  <tr>
+                    <td style="padding:7px 6px;border-bottom:1px solid rgba(255,255,255,.04);font-size:.82rem">${o.example}</td>
+                    <td style="padding:7px 6px;border-bottom:1px solid rgba(255,255,255,.04);font-size:.8rem;text-align:right;font-family:'DM Mono',monospace;color:var(--text-sec)">${fmtMon(o.total, o.mon)}</td>
+                    <td style="padding:7px 6px;border-bottom:1px solid rgba(255,255,255,.04);font-size:.82rem">
+                      <span style="color:var(--green);font-weight:600">hasta ${o.benefit.pctMax}%</span>
+                    </td>
+                    <td style="padding:7px 6px;border-bottom:1px solid rgba(255,255,255,.04);font-size:.74rem;color:var(--text-sec)">${o.benefit.vigencia || '—'}</td>
+                  </tr>`).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      ` : ''}
+
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px">
+        <input id="desc-search" type="text" placeholder="Buscar comercio…" value="${(this._descSearch || '').replace(/"/g, '&quot;')}"
+          style="flex:1;min-width:140px;padding:7px 10px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.8rem">
+        <select id="desc-cat" style="padding:7px 10px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.8rem">
+          <option value="">Todas (${benefits.length})</option>
+          ${cats.map(c => `<option value="${c}" ${cat === c ? 'selected' : ''}>${c} (${catCounts[c] || 0})</option>`).join('')}
+        </select>
+      </div>
+
+      <div style="overflow-x:auto;-webkit-overflow-scrolling:touch">
+        <table style="width:100%;min-width:520px;border-collapse:collapse">
+          <thead><tr>
+            ${['Comercio','Categoría','Desc.','Vigencia','Dónde'].map(h =>
+              `<th style="text-align:left;padding:7px 6px;border-bottom:1px solid var(--border);font-size:.68rem;color:var(--text-sec);text-transform:uppercase;font-weight:500;white-space:nowrap">${h}</th>`).join('')}
+          </tr></thead>
+          <tbody>
+            ${filtered.map(b => `
+              <tr>
+                <td style="padding:7px 6px;border-bottom:1px solid rgba(255,255,255,.04);font-size:.82rem">${b.comercio}</td>
+                <td style="padding:7px 6px;border-bottom:1px solid rgba(255,255,255,.04);font-size:.74rem;color:var(--text-sec)">${b.categoria}</td>
+                <td style="padding:7px 6px;border-bottom:1px solid rgba(255,255,255,.04);font-size:.82rem;font-family:'DM Mono',monospace;color:${b.pctMax ? 'var(--gold)' : 'var(--text-sec)'};white-space:nowrap">${b.pctMax ? b.pctMax + '%' : '—'}</td>
+                <td style="padding:7px 6px;border-bottom:1px solid rgba(255,255,255,.04);font-size:.72rem;color:var(--text-sec);white-space:nowrap">${b.vigencia || '—'}</td>
+                <td style="padding:7px 6px;border-bottom:1px solid rgba(255,255,255,.04);font-size:.72rem;color:var(--text-sec)">${b.local || '—'}</td>
+              </tr>`).join('')}
+          </tbody>
+        </table>
+        ${filtered.length === 0 ? '<div style="padding:18px;text-align:center;color:var(--text-sec);font-size:.8rem">Sin resultados</div>' : ''}
+      </div>
+    `;
+
+    // Handlers de filtro
+    const searchEl = document.getElementById('desc-search');
+    const catEl = document.getElementById('desc-cat');
+    let t;
+    searchEl?.addEventListener('input', () => {
+      clearTimeout(t);
+      t = setTimeout(() => { this._descSearch = searchEl.value; this._drawDescuentos(); }, 280);
+    });
+    catEl?.addEventListener('change', () => { this._descCat = catEl.value; this._drawDescuentos(); });
   },
 
   // ── Sort helpers ────────────────────────────────────────────────────────
