@@ -68,6 +68,24 @@ async function discoverCards(page) {
   const status = await goto(page, HUB);
   console.log(`Hub status: ${status}`);
 
+  // Scroll gradualmente para disparar lazy-loading de todas las cards
+  await page.evaluate(async () => {
+    await new Promise(resolve => {
+      const distance = 600;
+      const maxScrolls = 300;
+      let scrollCount = 0;
+      const timer = setInterval(() => {
+        window.scrollBy(0, distance);
+        scrollCount++;
+        if (scrollCount >= maxScrolls || window.scrollY + window.innerHeight >= document.body.scrollHeight) {
+          clearInterval(timer);
+          resolve();
+        }
+      }, 120);
+    });
+  });
+  await sleep(2000);
+
   const html = await page.content();
   if (DIAG_MODE) saveHtml('santander-hub', html);
 
@@ -107,7 +125,11 @@ async function discoverCards(page) {
   }, ORIGIN);
 
   console.log(`Links encontrados en hub: ${cards.length}`);
-  if (DIAG_MODE) cards.slice(0, 10).forEach(c => console.log(`  ${c.slug}  nombre="${c.nombre}"  pct=${c.pctHub}`));
+  if (DIAG_MODE) {
+    // Mostrar primeras 5 y cards 8-12 para verificar que el scroll carga las lazy
+    const sample = [...cards.slice(0, 5), ...cards.slice(8, 13)];
+    sample.forEach(c => console.log(`  [${cards.indexOf(c)}] ${c.slug}  nombre="${c.nombre}"  pct=${c.pctHub}`));
+  }
 
   return cards;
 }
@@ -235,7 +257,7 @@ async function parseDetail(page, card) {
     return;
   }
 
-  const sample = DIAG_MODE ? cards.slice(0, 5) : cards;
+  const sample = DIAG_MODE ? cards.slice(8, 13) : cards;
   console.log(`\n=== Parseando ${sample.length} páginas de detalle${DIAG_MODE ? ' (muestra)' : ''} ===`);
 
   const beneficios = [];
