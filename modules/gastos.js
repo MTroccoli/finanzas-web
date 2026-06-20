@@ -334,20 +334,25 @@ window.Mods.gastos = {
     const gc = document.getElementById('g-content');
     gc.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
 
-    // 1. Catálogos BBVA + Santander mergeados (cacheados)
+    // 1. Catálogos BBVA + Santander + Itaú mergeados (cacheados)
     if (!this._descCache) {
       try {
-        const [r1, r2] = await Promise.all([
+        const [r1, r2, r3] = await Promise.all([
           fetch('data/beneficios.json', { cache: 'no-cache' }),
           fetch('data/beneficios-santander.json', { cache: 'no-cache' }).catch(() => null),
+          fetch('data/beneficios-itau.json', { cache: 'no-cache' }).catch(() => null),
         ]);
         const bbva = await r1.json();
         const sant = r2 ? await r2.json().catch(() => ({ beneficios: [] })) : { beneficios: [] };
+        const itau = r3 ? await r3.json().catch(() => ({ beneficios: [] })) : { beneficios: [] };
+        // normalize: todos usan 'comercio' internamente; Santander e Itaú usan 'nombre'
+        const norm = (b, f) => ({ ...b, fuente: f, comercio: b.comercio || b.nombre });
         this._descCache = {
           actualizado: bbva.actualizado,
           benefits: [
-            ...(bbva.beneficios || []).map(b => ({ ...b, fuente: 'BBVA' })),
-            ...(sant.beneficios || []).map(b => ({ ...b, fuente: 'Santander' })),
+            ...(bbva.beneficios || []).map(b => norm(b, 'BBVA')),
+            ...(sant.beneficios || []).map(b => norm(b, 'Santander')),
+            ...(itau.beneficios || []).map(b => norm(b, 'Itaú')),
           ],
         };
       } catch (e) {
@@ -469,15 +474,18 @@ window.Mods.gastos = {
     const catCounts = {};
     forCats.forEach(b => { if (b.categoria) catCounts[b.categoria] = (catCounts[b.categoria] || 0) + 1; });
     const catList   = Object.keys(catCounts).sort();
-    const bbvaCount = benefits.filter(b => b.fuente === 'BBVA').length;
-    const santCount = benefits.filter(b => b.fuente === 'Santander').length;
+    const bbvaCount  = benefits.filter(b => b.fuente === 'BBVA').length;
+    const santCount  = benefits.filter(b => b.fuente === 'Santander').length;
+    const itauCount  = benefits.filter(b => b.fuente === 'Itaú').length;
 
     const fmtMon  = (n, mon) => (mon === 'USD' ? 'US$ ' : '$U ') + fmt(n, 0);
     const actFmt  = actualizado ? new Date(actualizado).toLocaleDateString('es-AR') : '—';
 
     const fuenteBadge = f => f === 'BBVA'
       ? '<span style="font-size:.58rem;padding:1px 5px;border-radius:3px;background:rgba(46,142,200,.18);color:#5bb3e4;font-weight:700;letter-spacing:.03em;vertical-align:middle;margin-left:5px">BBVA</span>'
-      : '<span style="font-size:.58rem;padding:1px 5px;border-radius:3px;background:rgba(230,57,70,.18);color:#e63946;font-weight:700;letter-spacing:.03em;vertical-align:middle;margin-left:5px">Santander</span>';
+      : f === 'Santander'
+      ? '<span style="font-size:.58rem;padding:1px 5px;border-radius:3px;background:rgba(230,57,70,.18);color:#e63946;font-weight:700;letter-spacing:.03em;vertical-align:middle;margin-left:5px">Santander</span>'
+      : '<span style="font-size:.58rem;padding:1px 5px;border-radius:3px;background:rgba(255,152,0,.18);color:#ffaa33;font-weight:700;letter-spacing:.03em;vertical-align:middle;margin-left:5px">Itaú</span>';
 
     const renderDet = b => {
       let h = '';
@@ -498,7 +506,7 @@ window.Mods.gastos = {
 
     gc.innerHTML = `
       <div style="font-size:.72rem;color:var(--text-sec);margin-bottom:14px">
-        ${bbvaCount} beneficios BBVA${santCount ? ' · ' + santCount + ' Santander' : ''} · actualizado ${actFmt}
+        ${bbvaCount} beneficios BBVA${santCount ? ' · ' + santCount + ' Santander' : ''}${itauCount ? ' · ' + itauCount + ' Itaú' : ''} · actualizado ${actFmt}
       </div>
 
       ${oportunidades.length ? `
@@ -562,6 +570,7 @@ window.Mods.gastos = {
           <option value="">Todos (${benefits.length})</option>
           <option value="BBVA" ${banco === 'BBVA' ? 'selected' : ''}>BBVA (${bbvaCount})</option>
           ${santCount ? `<option value="Santander" ${banco === 'Santander' ? 'selected' : ''}>Santander (${santCount})</option>` : ''}
+          ${itauCount ? `<option value="Itaú" ${banco === 'Itaú' ? 'selected' : ''}>Itaú (${itauCount})</option>` : ''}
         </select>
         ${catList.length ? `
           <select id="desc-cat" style="padding:7px 10px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.8rem">
