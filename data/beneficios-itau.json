@@ -1,7 +1,7 @@
 {
   "fuente": "itau.com.uy",
-  "actualizado": "2026-06-20T20:05:30.365Z",
-  "total": 22,
+  "actualizado": "2026-06-20T20:27:57.468Z",
+  "total": 21,
   "beneficios": [
     {
       "nombre": "25% menos con Platinum, Infinite, Black y Personal",
@@ -15,10 +15,11 @@
       ],
       "vigencia": null,
       "tarjetas": "25% menos con Platinum, Infinite, Black y Personal ver más",
+      "desc": "25% menos con Platinum, Infinite, Black y Personal",
       "exclusivo": false
     },
     {
-      "nombre": "15% menos en moda",
+      "nombre": "moda",
       "url": null,
       "pctMax": 15,
       "descuentos": [
@@ -29,10 +30,11 @@
       ],
       "vigencia": null,
       "tarjetas": null,
+      "desc": "15% menos en moda",
       "exclusivo": false
     },
     {
-      "nombre": "15% menos en restaurantes",
+      "nombre": "restaurantes",
       "url": null,
       "pctMax": 15,
       "descuentos": [
@@ -43,10 +45,11 @@
       ],
       "vigencia": null,
       "tarjetas": null,
+      "desc": "15% menos en restaurantes",
       "exclusivo": false
     },
     {
-      "nombre": "15% menos en Cantegrill Joyas",
+      "nombre": "Cantegrill Joyas",
       "url": null,
       "pctMax": 15,
       "descuentos": [
@@ -57,10 +60,11 @@
       ],
       "vigencia": null,
       "tarjetas": null,
+      "desc": "15% menos en Cantegrill Joyas",
       "exclusivo": false
     },
     {
-      "nombre": "15% y 10% menos en Divino",
+      "nombre": "Divino",
       "url": null,
       "pctMax": 15,
       "descuentos": [
@@ -71,6 +75,7 @@
       ],
       "vigencia": null,
       "tarjetas": null,
+      "desc": "15% y 10% menos en Divino",
       "exclusivo": false
     },
     {
@@ -85,19 +90,21 @@
       ],
       "vigencia": null,
       "tarjetas": null,
+      "desc": "25% y 15% menos los jueves y sábados",
       "exclusivo": false
     },
     {
-      "nombre": "Millas x 3 en Frog",
+      "nombre": "Frog",
       "url": null,
       "pctMax": null,
       "descuentos": [],
       "vigencia": null,
       "tarjetas": null,
+      "desc": "Millas x 3 en Frog",
       "exclusivo": false
     },
     {
-      "nombre": "15% menos en Wikimusculos",
+      "nombre": "Wikimusculos",
       "url": null,
       "pctMax": 15,
       "descuentos": [
@@ -108,10 +115,11 @@
       ],
       "vigencia": null,
       "tarjetas": null,
+      "desc": "15% menos en Wikimusculos",
       "exclusivo": false
     },
     {
-      "nombre": "15% menos en iPlace",
+      "nombre": "iPlace",
       "url": null,
       "pctMax": 15,
       "descuentos": [
@@ -122,10 +130,11 @@
       ],
       "vigencia": null,
       "tarjetas": null,
+      "desc": "15% menos en iPlace",
       "exclusivo": false
     },
     {
-      "nombre": "25% y 15% menos en Le Blanc",
+      "nombre": "Le Blanc",
       "url": null,
       "pctMax": 25,
       "descuentos": [
@@ -136,10 +145,11 @@
       ],
       "vigencia": null,
       "tarjetas": null,
+      "desc": "25% y 15% menos en Le Blanc",
       "exclusivo": false
     },
     {
-      "nombre": "25% y 15% menos en Soho",
+      "nombre": "Soho",
       "url": null,
       "pctMax": 25,
       "descuentos": [
@@ -150,10 +160,11 @@
       ],
       "vigencia": null,
       "tarjetas": null,
+      "desc": "25% y 15% menos en Soho",
       "exclusivo": false
     },
     {
-      "nombre": "25% y 15% menos en Natuzzi",
+      "nombre": "Natuzzi",
       "url": null,
       "pctMax": 25,
       "descuentos": [
@@ -164,10 +175,11 @@
       ],
       "vigencia": null,
       "tarjetas": null,
+      "desc": "25% y 15% menos en Natuzzi",
       "exclusivo": false
     },
     {
-      "nombre": "15% menos en Starbucks en bebidas",
+      "nombre": "Starbucks",
       "url": null,
       "pctMax": 15,
       "descuentos": [
@@ -178,10 +190,11 @@
       ],
       "vigencia": null,
       "tarjetas": null,
+      "desc": "15% menos en Starbucks en bebidas",
       "exclusivo": false
     },
     {
-      "nombre": "15% menos en Riviera Joyería",
+      "nombre": "Riviera Joyería",
       "url": null,
       "pctMax": 15,
       "descuentos": [
@@ -192,10 +205,11 @@
       ],
       "vigencia": null,
       "tarjetas": null,
+      "desc": "15% menos en Riviera Joyería",
       "exclusivo": false
     },
     {
-      "nombre": "25% y 15% menos en Farmacia El Túnel",
+      "nombre": "Farmacia El Túnel",
       "url": null,
       "pctMax": 25,
       "descuentos": [
@@ -206,10 +220,11 @@
       ],
       "vigencia": null,
       "tarjetas": null,
+      "desc": "25% y 15% menos en Farmacia El Túnel",
       "exclusivo": false
     },
     {
-      "nombre": "25% y 15% menos en San Roque",
+      "nombre": "San Roque",
       "url": null,
       "pctMax": 25,
       "descuentos": [
@@ -220,10 +235,11 @@
       ],
       "vigencia": null,
       "tarjetas": null,
+      "desc": "25% y 15% menos en San Roque",
       "exclusivo": false
     },
     {
-      "nombre": "25% y 15% menos en Espacio Aroma",
+      "nombre": "Espacio Aroma",
       "url": null,
       "pctMax": 25,
       "descuentos": [
@@ -234,10 +250,11 @@
       ],
       "vigencia": null,
       "tarjetas": null,
+      "desc": "25% y 15% menos en Espacio Aroma",
       "exclusivo": false
     },
     {
-      "nombre": "15% menos en CIR Acondicionamiento térmico",
+      "nombre": "CIR Acondicionamiento térmico",
       "url": null,
       "pctMax": 15,
       "descuentos": [
@@ -248,6 +265,7 @@
       ],
       "vigencia": null,
       "tarjetas": null,
+      "desc": "15% menos en CIR Acondicionamiento térmico",
       "exclusivo": false
     },
     {
@@ -262,21 +280,8 @@
       ],
       "vigencia": null,
       "tarjetas": null,
+      "desc": "15% menos y 12 cuotas en la compra de Iphone",
       "exclusivo": false
-    },
-    {
-      "nombre": "Restaurantes",
-      "url": null,
-      "pctMax": 25,
-      "descuentos": [
-        {
-          "pct": 25,
-          "texto": "25%"
-        }
-      ],
-      "vigencia": null,
-      "tarjetas": "25% menos Todos los días, pagando con tus tarjetas de crédito Platinum, Infinite, Black y tarjetas de débito y crédito Personal Bank.",
-      "exclusivo": true
     },
     {
       "nombre": "Tiendas Gourmet",
