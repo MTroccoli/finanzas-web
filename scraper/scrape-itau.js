@@ -127,17 +127,26 @@ async function parseHub(page, hubUrl, exclusivo) {
       const fullText = (el.innerText || '').replace(/\s+/g, ' ').trim();
       if (fullText.length < 10) return;
 
-      // Título desde .card-title
+      // Título desde .card-title (guardado completo como desc)
       const titleEl = el.querySelector('.card-title, [class*="card-title"]');
-      let nombre = (titleEl?.innerText || fullText).replace(/\s+/g, ' ').trim();
-      nombre = nombre.replace(/\s+ver\s+m[aá]s\s*$/i, '').trim();
-      // Cortar después del porcentaje si hay descripción pegada
-      const pctIdx = nombre.search(/\d{1,3}\s*%/);
-      const afterPct = nombre.slice(pctIdx).match(/^(\d{1,3}\s*%[^|.\n]*)/);
-      if (pctIdx > 0 && afterPct) nombre = (nombre.slice(0, pctIdx) + afterPct[1]).trim();
+      let titulo = (titleEl?.innerText || fullText).replace(/\s+/g, ' ').trim();
+      titulo = titulo.replace(/\s+ver\s+m[aá]s\s*$/i, '').trim().slice(0, 120);
+      if (!titulo || titulo.length < 5) return;
 
-      nombre = nombre.slice(0, 100).trim();
-      if (!nombre || nombre.length < 5) return;
+      // Extraer nombre real del comercio del patrón "menos en [Comercio]"
+      // El título completo queda como desc para mostrar en el detalle
+      let nombre = titulo;
+      const menosEnM = titulo.match(/menos\s+en\s+(.+)/i);
+      const milasM   = !menosEnM && titulo.match(/^(?:Millas?)[^e]+\ben\s+(.+)$/i);
+      if (menosEnM) {
+        let c = menosEnM[1]
+          .replace(/\s+en\s+(?:bebidas?|todas?|los\s|las\s|el\s|la\s).*$/i, '')
+          .replace(/\s+y\s+\d+\s+cuotas.*/i, '')
+          .trim();
+        if (c.length >= 3 && c.length <= 60) nombre = c;
+      } else if (milasM) {
+        nombre = milasM[1].trim().slice(0, 60);
+      }
 
       const key = nombre.toLowerCase().slice(0, 60);
       if (seen.has(key)) return;
@@ -162,7 +171,7 @@ async function parseHub(page, hubUrl, exclusivo) {
       // Vigencia
       const vigLine = lines.find(l => /vigencia|v[aá]lid[ao]|hasta el/i.test(l) && l.length < 100);
 
-      out.push({ nombre, pctMax, tarjetas: tarjLine || null, vigencia: vigLine || null, url, exclusivo: excl });
+      out.push({ nombre, desc: titulo, pctMax, tarjetas: tarjLine || null, vigencia: vigLine || null, url, exclusivo: excl });
     });
 
     return out;

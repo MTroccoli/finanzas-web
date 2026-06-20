@@ -127,6 +127,26 @@ async function parseDetail(page, card) {
   if (DIAG_MODE) {
     const html = await page.content();
     saveHtml(`santander-det-${card.slug}`, html);
+    // Dump de elementos que contienen "%" para diagnosticar dónde está el descuento
+    const pctDump = await page.evaluate(() => {
+      const els = [...document.querySelectorAll('*')]
+        .filter(e => /\d{1,3}\s*%/.test(e.innerText || '') && !e.closest('nav,header,footer'))
+        .slice(0, 10)
+        .map(e => ({
+          tag: e.tagName, cls: [...e.classList].join('.').slice(0, 60),
+          txt: (e.innerText || '').replace(/\s+/g, ' ').trim().slice(0, 150),
+          leaf: e.children.length === 0,
+        }));
+      const ogDesc = document.querySelector('meta[property="og:description"]')?.content || '';
+      return { els, ogDesc };
+    });
+    if (pctDump.els.length) {
+      console.log(`  [diag] elementos con % en ${card.slug}:`);
+      pctDump.els.forEach(e => console.log(`    leaf=${e.leaf} <${e.tag}>.${e.cls}: "${e.txt}"`));
+    } else {
+      console.log(`  [diag] NO se encontró % en ${card.slug}`);
+    }
+    if (pctDump.ogDesc) console.log(`  [diag] og:description: "${pctDump.ogDesc.slice(0, 120)}"`);
   }
 
   return page.evaluate((urlStr, hubNombre, hubPct) => {

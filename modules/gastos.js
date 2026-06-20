@@ -495,7 +495,7 @@ window.Mods.gastos = {
       if (b.vigencia) h += '<div style="font-size:.73rem;color:var(--text-sec);margin-top:3px">Vigencia: ' + b.vigencia + '</div>';
       if (b.local)    h += '<div style="font-size:.73rem;color:var(--text-sec);margin-top:3px">Dónde: ' + b.local + '</div>';
       if (b.tope)     h += '<div style="font-size:.73rem;color:var(--text-sec);margin-top:3px">Tope: ' + b.tope + '</div>';
-      if (b.fuente === 'Santander' && b.desc) h += '<div style="font-size:.73rem;color:var(--text-sec);margin-top:3px">' + b.desc + '</div>';
+      if ((b.fuente === 'Santander' || b.fuente === 'Itaú') && b.desc) h += '<div style="font-size:.73rem;color:var(--text-sec);margin-top:3px">' + b.desc + '</div>';
       if (b.url)      h += '<a href="' + b.url + '" target="_blank" rel="noopener" style="font-size:.71rem;color:var(--accent);display:inline-block;margin-top:6px">Ver en sitio →</a>';
       return h || '<div style="font-size:.73rem;color:var(--text-sec)">Sin detalle disponible.</div>';
     };
