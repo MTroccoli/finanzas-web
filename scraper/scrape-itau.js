@@ -162,18 +162,20 @@ async function diagCardClasses(page, url) {
   console.log(`\nClases frecuentes en ${url}:`);
   info.forEach(l => console.log(`  ${l}`));
 
-  // Muestra el innerText de los primeros 3 elementos con texto sustancial
+  // Muestra el innerText de los primeros elementos con texto sustancial
   const samples = await page.evaluate(() => {
-    const candidates = [...document.querySelectorAll('li, article, [class*="item"], [class*="benefit"], [class*="promo"]')]
-      .filter(el => (el.innerText || '').trim().length > 30 && (el.innerText || '').trim().length < 500);
-    return candidates.slice(0, 5).map(el => ({
+    const candidates = [...document.querySelectorAll('li, article, [class*="item"], [class*="benefit"], [class*="promo"], p, h1, h2, h3, h4, [class*="text-muted"], [class*="title"], [class*="desc"]')]
+      .filter(el => (el.innerText || '').trim().length > 20 && (el.innerText || '').trim().length < 400
+        && !el.closest('nav, header, footer'));
+    return candidates.slice(0, 8).map(el => ({
       tag: el.tagName,
       cls: [...el.classList].join('.'),
-      txt: (el.innerText || '').replace(/\s+/g, ' ').trim().slice(0, 200),
+      parent: [...(el.parentElement?.classList || [])].join('.'),
+      txt: (el.innerText || '').replace(/\s+/g, ' ').trim().slice(0, 250),
     }));
   });
-  console.log('\n  Muestra de elementos candidatos:');
-  samples.forEach((s, i) => console.log(`  [${i+1}] <${s.tag}> .${s.cls}\n      "${s.txt}"`));
+  console.log('\n  Muestra elementos de contenido (excluyendo nav/header/footer):');
+  samples.forEach((s, i) => console.log(`  [${i+1}] <${s.tag}>.${s.cls} (padre:.${s.parent})\n      "${s.txt}"`));
 }
 
 // ── Main ──────────────────────────────────────────────────────────────────────
