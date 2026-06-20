@@ -17,20 +17,22 @@ window.Mods.dashboard = {
     const start6  = new Date(curY, curM - 6, 1);
     const desde6  = `${start6.getFullYear()}-${String(start6.getMonth()+1).padStart(2,'0')}-01`;
 
-    const [gastosRes, ingresosRes, cuotasRes, tcCfg] = await Promise.all([
+    const [gastosRes, ingresosRes, cuotasRes, tcCfg, tiposIngRes] = await Promise.all([
       getDB().from('gastos').select('fecha,monto,moneda,tipo_gasto,incluido_en_gastos,cuotas_totales,cuota_actual,comercio,banco_tarjeta')
         .gte('fecha', desde12).order('fecha', {ascending: true}),
-      getDB().from('ingresos').select('fecha,monto,moneda')
+      getDB().from('ingresos').select('fecha,monto,moneda,tipo_id,descripcion')
         .gte('fecha', desde6).order('fecha', {ascending: true}),
       getDB().from('gastos').select('comercio,monto,moneda,cuota_actual,cuotas_totales,fecha')
         .not('cuotas_totales', 'is', null).order('fecha', {ascending: false}),
       getConfig('tipo_cambio'),
+      getDB().from('tipos_ingreso').select('id,nombre'),
     ]);
 
     this._cache = {
-      gastos:    gastosRes.data  || [],
+      gastos:    gastosRes.data   || [],
       ingresos:  ingresosRes.data || [],
-      allCuotas: cuotasRes.data  || [],
+      allCuotas: cuotasRes.data   || [],
+      tiposIng:  tiposIngRes.data || [],
     };
     if (this._tc === null) this._tc = parseFloat(tcCfg) || 42;
     this._redraw();
@@ -39,7 +41,7 @@ window.Mods.dashboard = {
   _redraw() {
     const c = document.getElementById('content');
     if (!this._cache) return;
-    const { gastos, ingresos, allCuotas } = this._cache;
+    const { gastos, ingresos, allCuotas, tiposIng } = this._cache;
     const mode = this._mode;
     const tc   = this._tc;
     const now  = new Date();
@@ -164,6 +166,16 @@ window.Mods.dashboard = {
 
     const monthTitle = now.toLocaleDateString('es-AR', {month: 'long', year: 'numeric'});
 
+    // Current month ingresos breakdown by tipo
+    const tiposMap = Object.fromEntries((tiposIng || []).map(t => [t.id, t.nombre]));
+    const curIngRows = ingresos.filter(i => i.fecha.slice(0,7) === curYM);
+    const ingByTipo = {};
+    curIngRows.forEach(i => {
+      const key = tiposMap[i.tipo_id] || i.descripcion || 'Otros';
+      ingByTipo[key] = (ingByTipo[key] || 0) + toDisp(i.monto, i.moneda || 'UYU');
+    });
+    const ingEntries = Object.entries(ingByTipo).sort((a, b) => b[1] - a[1]);
+
     // In-app reminder: show if early in month and last closed month has few records
     const lastMonthRecords = gastos.filter(g => g.fecha.slice(0,7) === lastClosedYM).length;
     const dayOfMonth = now.getDate();
@@ -201,9 +213,15 @@ window.Mods.dashboard = {
       ` : ''}
 
       <div class="metrics-row" style="margin-top:16px">
-        <div class="metric-card" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:8px">
+        <div class="metric-card">
           <div class="metric-label">Ingresos · ${now.toLocaleDateString('es-AR',{month:'short'})}</div>
-          <div class="metric-value pos">${fmtD(cur.ing)}</div>
+          <div class="metric-value pos" style="margin:4px 0 6px">${fmtD(cur.ing)}</div>
+          ${ingEntries.length > 0 ? `<div style="display:flex;flex-direction:column;gap:2px;border-top:1px solid var(--border);padding-top:6px">
+            ${ingEntries.map(([tipo, monto]) => `<div style="display:flex;justify-content:space-between;font-size:.63rem;font-family:'DM Mono',monospace">
+              <span style="color:var(--text-sec)">${tipo}</span>
+              <span style="color:var(--green)">${fmtD(monto)}</span>
+            </div>`).join('')}
+          </div>` : ''}
         </div>
         <div class="metric-card">
           <div class="metric-label">Gastos proyectados</div>
