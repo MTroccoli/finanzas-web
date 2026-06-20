@@ -77,77 +77,57 @@ async function parseHub(page, hubUrl, exclusivo) {
     const out = [];
     const seen = new Set();
 
-    // Selectores candidatos para cards de beneficios — ordenados por especificidad
-    const CARD_SELS = [
-      'article',
-      '[class*="benefit-card"]',
-      '[class*="beneficio-card"]',
-      '[class*="card-benefit"]',
-      '[class*="promo-card"]',
-      '[class*="card"][class*="promo"]',
-    ];
-
-    // Intentar encontrar el contenedor correcto inspeccionando cuántos hay
-    let cardEls = [];
-    for (const sel of CARD_SELS) {
-      const els = [...document.querySelectorAll(sel)];
-      if (els.length >= 5) { cardEls = els; break; }
-    }
-
-    // Fallback: todos los [class*="card"] que no estén dentro de otro card
+    // Selector confirmado por diagnóstico: .card.-item (19 cards en el hub principal)
+    // Fallback: cualquier elemento con clase "card" que tenga un .card-title hijo
+    let cardEls = [...document.querySelectorAll('.card.-item')];
     if (cardEls.length === 0) {
-      const all = [...document.querySelectorAll('[class*="card"]')];
-      cardEls = all.filter(el => !el.closest('[class*="card"]:not(el)') || el.parentElement?.closest('[class*="card"]') === null);
-      // Filtrar por los que tienen texto suficiente (son cards de contenido)
-      cardEls = all.filter(el => (el.innerText || '').trim().length > 20);
+      // Fallback para beneficiosexclusivos u otras páginas con estructura diferente
+      cardEls = [...document.querySelectorAll('[class*="card"]')]
+        .filter(el => el.querySelector('[class*="card-title"], [class*="card-body"]'));
     }
 
     cardEls.forEach(el => {
-      const text = (el.innerText || el.textContent || '').replace(/\s+/g, ' ').trim();
-      if (text.length < 10) return;
+      // Título desde .card-title; si no, primera línea del innerText
+      const titleEl = el.querySelector('.card-title, [class*="card-title"]');
+      let nombre = (titleEl?.innerText || el.innerText || '').replace(/\s+/g, ' ').trim();
 
-      // Deduplicar por texto normalizado
-      const key = text.slice(0, 80).toLowerCase();
+      // Limpiar "ver más" al final
+      nombre = nombre.replace(/\s+ver\s+m[aá]s\s*$/i, '').trim();
+      // Limpiar el sufijo después del porcentaje si quedó texto de descripción
+      const pctIdx = nombre.search(/\d{1,3}\s*%/);
+      // Obtener la parte significativa: desde el inicio hasta el fin de la frase con el pct
+      const afterPct = nombre.slice(pctIdx).match(/^(\d{1,3}\s*%[^|.\n]*)/);
+      if (pctIdx > 0 && afterPct) nombre = (nombre.slice(0, pctIdx) + afterPct[1]).trim();
+      nombre = nombre.slice(0, 100).trim();
+      if (!nombre || nombre.length < 5) return;
+
+      // Deduplicar
+      const key = nombre.toLowerCase().slice(0, 60);
       if (seen.has(key)) return;
       seen.add(key);
 
-      // Nombre: primera línea no vacía, cortar antes del primer NN%
-      const lines = text.split(/[\n|]/).map(l => l.trim()).filter(Boolean);
-      let nombre = lines[0] || '';
-      const firstPct = nombre.search(/\d{1,3}\s*%/);
-      if (firstPct > 0) nombre = nombre.slice(0, firstPct).trim();
-      nombre = nombre.slice(0, 80).trim();
-      if (!nombre) return;
+      const fullText = (el.innerText || '').replace(/\s+/g, ' ').trim();
 
-      // Porcentaje máximo en el texto del card
-      const pctMatches = [...text.matchAll(/(\d{1,3})\s*%/g)]
+      // Porcentaje
+      const pctMatches = [...fullText.matchAll(/(\d{1,3})\s*%/g)]
         .map(m => parseInt(m[1], 10)).filter(n => n > 0 && n <= 70);
       const pctMax = pctMatches.length ? Math.max(...pctMatches) : null;
 
-      // Categoría: buscar en elemento padre con clase de categoría/sección
-      let categoria = null;
-      const catEl = el.closest('[class*="categor"], [class*="section"], [class*="group"]')
-        ?.querySelector('h2,h3,h4,[class*="title"],[class*="heading"]');
-      if (catEl) categoria = (catEl.innerText || '').trim().slice(0, 60) || null;
+      // Link del card (puede estar en .card-link o en cualquier <a>)
+      const anchor = el.querySelector('.card-link, a[href]');
+      const url = anchor?.href || null;
+
+      // Tarjetas mencionadas en el texto
+      const lines = fullText.split(/[\n|]/).map(l => l.trim()).filter(Boolean);
+      const tarjLine = lines.find(l =>
+        /tarjeta|cr[eé]dito|d[eé]bito|platinum|infinite|black|personal/i.test(l)
+        && l.length < 200 && !/(art\.|ley)/i.test(l)
+      );
 
       // Vigencia
       const vigLine = lines.find(l => /vigencia|v[aá]lid[ao]|hasta el/i.test(l) && l.length < 100);
 
-      // Tarjetas
-      const tarjLine = lines.find(l => /tarjeta|cr[eé]dito|d[eé]bito|platinum|infinite|black/i.test(l)
-        && l.length < 200 && !/(art\.|ley)/i.test(l));
-
-      // Descripción: segunda línea relevante
-      const desc = lines.find((l, i) => i > 0 && l.length > 20
-        && !/^\d{1,3}\s*%/.test(l)
-        && !/tarjeta|vigencia|hasta/i.test(l)
-      )?.slice(0, 200) || null;
-
-      // Link del card (si existe)
-      const anchor = el.querySelector('a[href]');
-      const url = anchor?.href || null;
-
-      out.push({ nombre, pctMax, categoria, vigencia: vigLine || null, tarjetas: tarjLine || null, desc, url, exclusivo: excl });
+      out.push({ nombre, pctMax, tarjetas: tarjLine || null, vigencia: vigLine || null, url, exclusivo: excl });
     });
 
     return out;
