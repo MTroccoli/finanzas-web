@@ -192,6 +192,27 @@ async function diagCardClasses(page, url) {
   });
   console.log('\n  Muestra elementos de contenido (excluyendo nav/header/footer):');
   samples.forEach((s, i) => console.log(`  [${i+1}] <${s.tag}>.${s.cls} (padre:.${s.parent})\n      "${s.txt}"`));
+
+  // Dump crudo de cards .font-display.mb-8 (para exclusivos)
+  if (url.includes('exclusivos')) {
+    const rawCards = await page.evaluate(() => {
+      const cards = [...document.querySelectorAll('.font-display.mb-8')];
+      return cards.slice(0, 4).map((el, i) => {
+        const children = [...el.children].map(c => ({
+          tag: c.tagName,
+          cls: [...c.classList].join('.'),
+          txt: (c.innerText || '').trim().slice(0, 120),
+        }));
+        return { i, raw: (el.innerText || '').slice(0, 300), children };
+      });
+    });
+    console.log('\n  === Dump crudo .font-display.mb-8 (exclusivos) ===');
+    rawCards.forEach(c => {
+      console.log(`\n  Card [${c.i}] innerText raw:\n    ${JSON.stringify(c.raw)}`);
+      c.children.forEach((ch, j) =>
+        console.log(`    hijo[${j}] <${ch.tag}>.${ch.cls} → "${ch.txt}"`));
+    });
+  }
 }
 
 // ── Main ──────────────────────────────────────────────────────────────────────
