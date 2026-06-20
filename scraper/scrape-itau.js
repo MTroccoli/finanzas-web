@@ -72,7 +72,7 @@ async function parseHub(page, hubUrl, exclusivo) {
 
   // Esperar al selector correcto según la página
   try {
-    const sel = isExclusivos ? '.font-display.mb-8, [class*="mb-8"]' : '[class*="card"], article';
+    const sel = isExclusivos ? 'h2.font-bold.font-display' : '[class*="card"], article';
     await page.waitForSelector(sel, { timeout: 5000 });
   } catch (_) {}
 
@@ -80,42 +80,60 @@ async function parseHub(page, hubUrl, exclusivo) {
     const out = [];
     const seen = new Set();
 
-    let cardEls;
     if (isExcl) {
-      // beneficiosexclusivos.html usa Tailwind: contenedor .flex.flex-col.font-display.mb-8
-      // Diagnostico confirmó: los cards tienen clase font-display y mb-8 juntas
-      cardEls = [...document.querySelectorAll('.font-display.mb-8')];
-      if (cardEls.length === 0) {
-        // Fallback: cualquier mb-8 con texto sustancial
-        cardEls = [...document.querySelectorAll('[class*="mb-8"]')]
-          .filter(el => (el.innerText || '').trim().length > 20
-            && !el.closest('nav, header, footer'));
-      }
-    } else {
-      // beneficios.html: selector confirmado .card.-item (19 cards)
-      cardEls = [...document.querySelectorAll('.card.-item')];
+      // beneficiosexclusivos.html: estructura confirmada por diagnóstico
+      // Hay 3 secciones: H2 (categoría) → DIV.font-display.mb-8 (descuento) → DIV.grid (logos-imagen)
+      // Hay 2 layouts (desktop visible + mobile .hidden) — excluimos el .hidden
+      const h2Els = [...document.querySelectorAll('h2.font-bold.font-display')]
+        .filter(el => !el.closest('.hidden') && !el.closest('nav, header, footer'));
+
+      h2Els.forEach(h2 => {
+        const nombre = (h2.innerText || '').replace(/\s+/g, ' ').trim();
+        if (!nombre || nombre.length < 3) return;
+
+        const key = nombre.toLowerCase().slice(0, 60);
+        if (seen.has(key)) return;
+        seen.add(key);
+
+        // Buscar el siguiente hermano .font-display.mb-8 para info del descuento
+        let discText = '';
+        let sib = h2.nextElementSibling;
+        while (sib && !discText) {
+          if ([...sib.classList].includes('font-display') && [...sib.classList].includes('mb-8')) {
+            discText = (sib.innerText || '').replace(/\s+/g, ' ').trim();
+          }
+          sib = sib.nextElementSibling;
+        }
+
+        const pctMatches = [...(discText || nombre).matchAll(/(\d{1,3})\s*%/g)]
+          .map(m => parseInt(m[1], 10)).filter(n => n > 0 && n <= 70);
+        const pctMax = pctMatches.length ? Math.max(...pctMatches) : null;
+
+        const tarjLine = discText.split(/[\n|]/).map(l => l.trim()).find(l =>
+          /tarjeta|cr[eé]dito|d[eé]bito|platinum|infinite|black|personal/i.test(l)
+          && l.length < 200);
+
+        out.push({ nombre, pctMax, tarjetas: tarjLine || null, vigencia: null, url: null, exclusivo: excl });
+      });
+
+      return out;
     }
+
+    // beneficios.html: selector confirmado .card.-item (19 cards)
+    const cardEls = [...document.querySelectorAll('.card.-item')];
 
     cardEls.forEach(el => {
       const fullText = (el.innerText || '').replace(/\s+/g, ' ').trim();
       if (fullText.length < 10) return;
 
-      let nombre;
-      if (isExcl) {
-        // En exclusivos: título es el primer heading del card, o primera línea
-        const headingEl = el.querySelector('h1,h2,h3,h4,h5,[class*="title"],[class*="font-bold"]');
-        nombre = (headingEl?.innerText || fullText.split('\n')[0] || '').replace(/\s+/g, ' ').trim();
-      } else {
-        // En beneficios: título desde .card-title
-        const titleEl = el.querySelector('.card-title, [class*="card-title"]');
-        nombre = (titleEl?.innerText || fullText).replace(/\s+/g, ' ').trim();
-        // Limpiar "ver más" al final
-        nombre = nombre.replace(/\s+ver\s+m[aá]s\s*$/i, '').trim();
-        // Cortar después del porcentaje si hay descripción pegada
-        const pctIdx = nombre.search(/\d{1,3}\s*%/);
-        const afterPct = nombre.slice(pctIdx).match(/^(\d{1,3}\s*%[^|.\n]*)/);
-        if (pctIdx > 0 && afterPct) nombre = (nombre.slice(0, pctIdx) + afterPct[1]).trim();
-      }
+      // Título desde .card-title
+      const titleEl = el.querySelector('.card-title, [class*="card-title"]');
+      let nombre = (titleEl?.innerText || fullText).replace(/\s+/g, ' ').trim();
+      nombre = nombre.replace(/\s+ver\s+m[aá]s\s*$/i, '').trim();
+      // Cortar después del porcentaje si hay descripción pegada
+      const pctIdx = nombre.search(/\d{1,3}\s*%/);
+      const afterPct = nombre.slice(pctIdx).match(/^(\d{1,3}\s*%[^|.\n]*)/);
+      if (pctIdx > 0 && afterPct) nombre = (nombre.slice(0, pctIdx) + afterPct[1]).trim();
 
       nombre = nombre.slice(0, 100).trim();
       if (!nombre || nombre.length < 5) return;
