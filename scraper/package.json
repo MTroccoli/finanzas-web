@@ -1,0 +1,15 @@
+{
+  "name": "finpro-scraper",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Scraper de beneficios de tarjetas (BBVA Uruguay) para FinPro",
+  "main": "scrape-bbva.js",
+  "scripts": {
+    "scrape": "node scrape-bbva.js"
+  },
+  "dependencies": {
+    "puppeteer": "^22.15.0",
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2"
+  }
+}

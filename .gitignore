@@ -7,3 +7,8 @@ venv/
 # OS
 .DS_Store
 Thumbs.db
+
+# Scraper
+scraper/node_modules/
+scraper/output/
+scraper/package-lock.json
