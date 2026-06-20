@@ -91,6 +91,9 @@ async function parseHub(page, hubUrl, exclusivo) {
         const nombre = (h2.innerText || '').replace(/\s+/g, ' ').trim();
         if (!nombre || nombre.length < 3) return;
 
+        // Skip deal descriptions mistakenly captured as H2 (not a commerce name)
+        if (/^\d+%/i.test(nombre.trim())) return;
+
         const key = nombre.toLowerCase().slice(0, 60);
         if (seen.has(key)) return;
         seen.add(key);
@@ -136,17 +139,27 @@ async function parseHub(page, hubUrl, exclusivo) {
       // Extraer nombre real del comercio del patrón "menos en [Comercio]"
       // El título completo queda como desc para mostrar en el detalle
       let nombre = titulo;
-      const menosEnM = titulo.match(/menos\s+en\s+(.+)/i);
+      // Handles both "menos en X" and "menos y N cuotas en X"
+      const menosEnM = titulo.match(/menos(?:\s+y\s+\d+\s+cuotas?)?\s+en\s+(.+)/i);
       const milasM   = !menosEnM && titulo.match(/^(?:Millas?)[^e]+\ben\s+(.+)$/i);
       if (menosEnM) {
         let c = menosEnM[1]
           .replace(/\s+en\s+(?:bebidas?|todas?|los\s|las\s|el\s|la\s).*$/i, '')
           .replace(/\s+y\s+\d+\s+cuotas.*/i, '')
           .trim();
+        // "la compra de X" → product deal, not a store name (iPlace already covered separately)
+        if (/^la\s+(compra|adquisici[oó]n)\s+de\s+/i.test(c)) return;
         if (c.length >= 3 && c.length <= 60) nombre = c;
       } else if (milasM) {
         nombre = milasM[1].trim().slice(0, 60);
       }
+
+      // Skip when nombre is still the full title and looks like a deal description
+      if (nombre === titulo && /^\d+%/i.test(titulo.trim())) return;
+
+      // Skip generic category names — not actionable without a specific commerce
+      const GENERIC_CATS = ['moda', 'restaurantes', 'gastronomia', 'gastronomía', 'turismo', 'salud', 'deporte'];
+      if (GENERIC_CATS.some(g => nombre.toLowerCase() === g)) return;
 
       const key = nombre.toLowerCase().slice(0, 60);
       if (seen.has(key)) return;
