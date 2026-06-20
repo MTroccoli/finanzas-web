@@ -193,25 +193,46 @@ async function diagCardClasses(page, url) {
   console.log('\n  Muestra elementos de contenido (excluyendo nav/header/footer):');
   samples.forEach((s, i) => console.log(`  [${i+1}] <${s.tag}>.${s.cls} (padre:.${s.parent})\n      "${s.txt}"`));
 
-  // Dump crudo de cards .font-display.mb-8 (para exclusivos)
+  // Dump crudo de cards .font-display.mb-8 y sus padres (para exclusivos)
   if (url.includes('exclusivos')) {
     const rawCards = await page.evaluate(() => {
       const cards = [...document.querySelectorAll('.font-display.mb-8')];
       return cards.slice(0, 4).map((el, i) => {
-        const children = [...el.children].map(c => ({
+        const parent = el.parentElement;
+        const grandParent = parent?.parentElement;
+        const parentChildren = [...(parent?.children || [])].map(c => ({
           tag: c.tagName,
           cls: [...c.classList].join('.'),
-          txt: (c.innerText || '').trim().slice(0, 120),
+          txt: (c.innerText || '').trim().slice(0, 150),
         }));
-        return { i, raw: (el.innerText || '').slice(0, 300), children };
+        return {
+          i,
+          cls: [...el.classList].join('.'),
+          parentCls: [...(parent?.classList || [])].join('.'),
+          parentTxt: (parent?.innerText || '').slice(0, 400),
+          grandParentCls: [...(grandParent?.classList || [])].join('.'),
+          parentChildren,
+        };
       });
     });
-    console.log('\n  === Dump crudo .font-display.mb-8 (exclusivos) ===');
+    console.log('\n  === Dump padre de .font-display.mb-8 ===');
     rawCards.forEach(c => {
-      console.log(`\n  Card [${c.i}] innerText raw:\n    ${JSON.stringify(c.raw)}`);
-      c.children.forEach((ch, j) =>
-        console.log(`    hijo[${j}] <${ch.tag}>.${ch.cls} → "${ch.txt}"`));
+      console.log(`\n  [${c.i}] .${c.cls} → padre:.${c.parentCls} (abuelo:.${c.grandParentCls})`);
+      console.log(`    parentText: ${JSON.stringify(c.parentTxt.slice(0, 300))}`);
+      c.parentChildren.forEach((ch, j) =>
+        console.log(`    hermano[${j}] <${ch.tag}>.${ch.cls} → "${ch.txt}"`));
     });
+
+    // Dump .text-muted.text-center
+    const mutedEls = await page.evaluate(() =>
+      [...document.querySelectorAll('.text-muted.text-center')].map(el => ({
+        cls: [...el.classList].join('.'),
+        parentCls: [...(el.parentElement?.classList || [])].join('.'),
+        txt: (el.innerText || '').trim().slice(0, 200),
+      }))
+    );
+    console.log('\n  === .text-muted.text-center (6 elementos) ===');
+    mutedEls.forEach((e, i) => console.log(`  [${i}] padre:.${e.parentCls}\n      "${e.txt}"`));
   }
 }
 
