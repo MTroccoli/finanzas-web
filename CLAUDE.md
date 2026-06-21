@@ -468,7 +468,7 @@ Plotly.newPlot('id', traces, {
 | `js/db.js` | `v=20260618a` | — |
 | `modules/dashboard.js` | `v=20260619d` | — |
 | `modules/inversiones.js` | `v=20260619b` | — |
-| `modules/gastos.js` | `v=20260621c` | `0948a7d` |
+| `modules/gastos.js` | `v=20260621m` | `58ae8d2` |
 | `modules/ingresos.js` | `v=20260616e` | — |
 | `modules/presupuesto.js` | `v=20260625` | — |
 | `modules/config_page.js` | `v=20260625` | — |
@@ -477,7 +477,7 @@ Plotly.newPlot('id', traces, {
 ### Estado funcional de módulos
 - **dashboard.js**: estable, sin cambios recientes.
 - **inversiones.js**: estable.
-- **gastos.js**: estable con caché. Tab Descuentos muestra beneficios de BBVA + Santander + Itaú + Scotiabank + BROU.
+- **gastos.js**: estable con caché. Tab Descuentos muestra beneficios de BBVA + Santander + Itaú + Scotiabank + BROU + **OCA**.
 - **ingresos.js**: estable. Presets recurrentes con auto-carga funcional.
 - **presupuesto.js**: estable.
 - **config_page.js**: estable.
@@ -494,14 +494,22 @@ Plotly.newPlot('id', traces, {
   - `pickBestTarjLine()` prefiere líneas con VISA/MC/BROU Recompensa sobre texto genérico
   - vigencia extraída por líneas con días/fechas; ya filtra "Vigencia: " prefix en renderDet
   - Workflow: `.github/workflows/scrape-brou.yml` — diag/produccion; schedule 1º de cada mes 12:00 UTC
+- `scraper/scrape-oca.js`: estable v4. **22 beneficios** en `data/beneficios-oca.json`.
+  - Bypasea Imperva WAF de oca.com.uy con Chrome no-headless + Xvfb (DISPLAY=:99)
+  - Hub en `ocablue.uy/beneficios.html`, selector `#listadoBeneficios a[href*="id="]`
+  - `parseName()` convierte CamelCase del URL param al nombre legible
+  - `enrichBenefit()` navega cada página de detalle (`#nombreBeneficio`, `#descripBeneficio`)
+  - `categoria` no disponible (OCA no la expone en el modal)
+  - `desc` puede contener bloques de CSS inline de páginas con widgets externos (cosmético)
+  - Workflow: `.github/workflows/scrape-oca.yml` — diag/produccion; schedule 1º de cada mes 13:00 UTC
 
 ### Integración Descuentos en gastos.js
-- Fetch paralelo de BBVA, Santander, Itaú, Scotiabank y **BROU** JSON
+- Fetch paralelo de BBVA, Santander, Itaú, Scotiabank, BROU y **OCA** JSON (graceful: no falla si falta)
 - Normalization: `norm = (b, f) => ({ ...b, fuente: f, comercio: b.comercio || b.nombre })`
-- Badges: BBVA (azul), Santander (rojo), Itaú (naranja), Scotiabank (rojo oscuro), **BROU (teal #29b08c)**
-- Stats: `N beneficios BBVA · N Santander · N Itaú · N Scotiabank · N BROU · actualizado DD/MM/YYYY`
-- `renderDet`: desc + categoria para BROU y Scotiabank; fix vigencia prefix duplicado ("Vigencia: Vigencia:")
-- `_descBanco` acepta `'BROU'` como valor de filtro
+- Badges: BBVA (azul), Santander (rojo), Itaú (naranja), Scotiabank (rojo oscuro), BROU (teal #29b08c), **OCA (naranja #e86b1e)**
+- Stats: `N BBVA · N Santander · N Itaú · N Scotiabank · N BROU · N OCA · actualizado DD/MM/YYYY`
+- `renderDet`: desc + link "Ver en OCA Blue →" para OCA; fallback a `ocablue.uy/beneficios.html` si no hay url específica
+- `_descBanco` acepta `'BROU'` y `'OCA'` como valores de filtro
 
 ### Próximo trabajo planificado: autenticación multi-usuario
 La app es actualmente single-user (Supabase hardcodeado en `config.js`). El plan para permitir que otros usuarios la usen:
