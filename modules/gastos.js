@@ -634,7 +634,7 @@ window.Mods.gastos = {
       </div>
 
       <div style="overflow-x:auto;-webkit-overflow-scrolling:touch">
-        <table style="width:100%;min-width:400px;border-collapse:collapse">
+        <table style="width:100%;min-width:400px;border-collapse:collapse;font-size:initial">
           <thead><tr>
             <th style="${thStyle};text-align:left">Comercio</th>
             <th style="${thStyle};text-align:left">%</th>
@@ -650,7 +650,7 @@ window.Mods.gastos = {
                 <td style="padding:7px 6px;${tdBorder};font-size:.72rem;color:var(--text-sec);white-space:nowrap">${b.vigencia || '—'}</td>
               </tr>
               <tr id="di-row-${idx}" style="display:none">
-                <td colspan="3" style="padding:3px 8px 8px 16px;background:rgba(255,255,255,.025);${tdBorder}">
+                <td colspan="3" style="padding:3px 8px 8px 16px;font-size:.63rem;background:rgba(255,255,255,.025);${tdBorder}">
                   ${renderDet(b)}
                 </td>
               </tr>`).join('')}
