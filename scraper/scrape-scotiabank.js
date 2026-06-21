@@ -1,12 +1,15 @@
-// Scraper de beneficios Scotiabank Uruguay para FinPro — v3.
+// Scraper de beneficios Scotiabank Uruguay para FinPro — v4.
 //
-// Hallazgos del diagnóstico v2:
+// Hallazgos del diagnóstico v3:
 //  - Hub carga 6 featured cards (.benefit-card) con .card-comercio + .pct confirmados.
 //  - Hay 3 <select class="category-select">: Categorías / Departamentos / Ordenar.
 //  - El catálogo completo se muestra al seleccionar cada categoría programáticamente.
-//  - save-the-week: no tiene .benefit-card; tiene layout propio de sub-página.
-//  - Estrategia: cargar hub, extraer opciones del select Categorías, iterar seleccionando
-//    cada categoría y recolectar .benefit-card que aparecen.
+//  - 20 categorías × ~6 cards = ~72 beneficios únicos.
+//  - El tipo de tarjeta (ej: AMEX en Telepeaje) no está en el texto de las hub cards;
+//    está en las sub-páginas (imágenes de logos, texto de condiciones).
+//
+// v4: agrega enrichFromSubPage() — visita la sub-página de cada card que tiene URL
+//     y extrae tipo de tarjeta desde alt-text de imágenes y texto de condiciones.
 //
 // Salida: data/beneficios-scotiabank.json
 
@@ -26,6 +29,13 @@ const DIAG_MODE = process.argv.includes('--diag');
 const DELAY_MS  = 800;
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
+// URLs de sub-páginas conocidas con información extra
+const KNOWN_SUBPAGES = [
+  `${ORIGIN}/Personas/Tarjetas/Beneficios/Automovil/Telepeaje`,
+  `${ORIGIN}/Personas/Tarjetas/Beneficios/Especiales/parking-exclusivo`,
+  `${ORIGIN}/Personas/Tarjetas/Beneficios/Supermercados/tienda-inglesa-junio`,
+];
+
 // ── Browser helpers ───────────────────────────────────────────────────────────
 async function newPage(browser) {
   const page = await browser.newPage();
@@ -35,7 +45,8 @@ async function newPage(browser) {
   await page.setRequestInterception(true);
   page.on('request', req => {
     const t = req.resourceType();
-    if (t === 'image' || t === 'font' || t === 'media') req.abort();
+    // Permitir imágenes para capturar alt-text de logos de tarjetas en sub-páginas
+    if (t === 'font' || t === 'media') req.abort();
     else req.continue();
   });
   return page;
@@ -75,7 +86,6 @@ async function scrollToEnd(page) {
 
 // ── Seleccionar categoría y recolectar cards ──────────────────────────────────
 async function selectCategoryAndCollect(page, optionValue, optionLabel) {
-  // Cambiar el select de categorías (primer .category-select)
   await page.evaluate((val) => {
     const selects = document.querySelectorAll('.category-select select, select.category-select, .category-select');
     const sel = [...selects].find(el => el.tagName === 'SELECT') || selects[0];
@@ -85,7 +95,7 @@ async function selectCategoryAndCollect(page, optionValue, optionLabel) {
     sel.dispatchEvent(new Event('input',  { bubbles: true }));
   }, optionValue);
 
-  await sleep(1200); // esperar re-render
+  await sleep(1200);
   await scrollToEnd(page);
 
   const cards = await page.evaluate((cat) => {
@@ -93,7 +103,6 @@ async function selectCategoryAndCollect(page, optionValue, optionLabel) {
     const seen = new Set();
 
     document.querySelectorAll('.benefit-card').forEach(card => {
-      // Skip cards ocultas por CSS
       const style = window.getComputedStyle(card);
       if (style.display === 'none' || style.visibility === 'hidden') return;
 
@@ -109,30 +118,25 @@ async function selectCategoryAndCollect(page, optionValue, optionLabel) {
       if (seen.has(key)) return;
       seen.add(key);
 
-      // Porcentajes desde .pct
       const allText = (card.innerText || '').replace(/\s+/g, ' ');
       const pctNums = [...allText.matchAll(/(\d{1,3})\s*%/g)]
         .map(m => parseInt(m[1])).filter(n => n > 0 && n <= 70);
-      const pctMax    = pctNums.length ? Math.max(...pctNums) : null;
+      const pctMax     = pctNums.length ? Math.max(...pctNums) : null;
       const descuentos = [...new Set(pctNums)].map(p => ({ pct: p, texto: `${p}% de ahorro` }));
 
-      // Días / vigencia
       const diasEl   = card.querySelector('.card-badge-dias, [class*="dias"], [class*="badge"]');
       const vigencia = diasEl ? (diasEl.innerText || '').replace(/\s+/g, ' ').trim() : null;
 
-      // Tarjetas — buscar en .card-descuento-item
       const descItems = [...card.querySelectorAll('.card-descuento-item')]
         .map(li => (li.innerText || '').replace(/\s+/g, ' ').trim())
         .filter(t => t.length > 3);
       const tarjLine  = descItems.find(t =>
-        /tarjeta|cr[eé]dito|d[eé]bito|visa|mastercard|gold|platinum|infinite|premium/i.test(t)
+        /tarjeta|cr[eé]dito|d[eé]bito|visa|mastercard|gold|platinum|infinite|premium|amex|american/i.test(t)
       ) || null;
 
-      // Link a sub-página
       const anchor = card.querySelector('a[href*="/Beneficios/"]');
       const url_   = anchor?.href || null;
 
-      // Desc = primer descItem que no sea tarjetas
       const desc = descItems[0] || null;
 
       out.push({ nombre, pctMax, descuentos, vigencia, tarjetas: tarjLine, url: url_, desc, categoria: cat });
@@ -144,16 +148,59 @@ async function selectCategoryAndCollect(page, optionValue, optionLabel) {
   return cards;
 }
 
+// ── Enriquecer card desde su sub-página ──────────────────────────────────────
+async function enrichFromSubPage(page, url) {
+  try {
+    const status = await goto(page, url);
+    if (status !== 200 && status !== 304) return null;
+    await scrollToEnd(page);
+
+    return await page.evaluate(() => {
+      const allText = document.body.innerText.replace(/\s+/g, ' ');
+
+      // Frases del texto que mencionan tarjetas
+      const sentences = allText.split(/[.!\n]/).map(s => s.trim()).filter(s => s.length > 5);
+      const tarjLines = sentences.filter(s =>
+        /amex|american\s+express|visa|mastercard|d[eé]bito|cr[eé]dito|platinum|infinite|gold|premium|club\s+card|tarjeta/i.test(s)
+      ).map(s => s.slice(0, 160));
+
+      // Alt-text de imágenes de logos de tarjetas (el DOM conserva alt aunque la imagen no cargue)
+      const imgAlts = [...document.querySelectorAll('img[alt]')]
+        .map(i => i.alt.trim())
+        .filter(a => /amex|american express|visa|mastercard|platinum|infinite|gold|premium|d[eé]bito|cr[eé]dito|club card/i.test(a) && a.length > 2);
+
+      // Texto del elemento de condiciones/vigencia si existe
+      const termEl = document.querySelector(
+        '[class*="condition"], [class*="termino"], [class*="vigencia"], [class*="term"], [class*="bases"], [class*="tyc"]'
+      );
+      const termText = termEl ? termEl.innerText.replace(/\s+/g, ' ').trim().slice(0, 400) : null;
+
+      // Porcentajes en sub-página (pueden ser más precisos que en hub card)
+      const pctNums = [...allText.matchAll(/(\d{1,3})\s*%/g)]
+        .map(m => parseInt(m[1])).filter(n => n > 0 && n <= 70);
+      const pctMax = pctNums.length ? Math.max(...pctNums) : null;
+
+      return {
+        tarjLines:  tarjLines.slice(0, 5),
+        imgAlts:    [...new Set(imgAlts)],
+        termText,
+        pctMax,
+      };
+    });
+  } catch (_) {
+    return null;
+  }
+}
+
 // ── Diagnóstico ───────────────────────────────────────────────────────────────
 async function diag(page) {
-  console.log('=== MODO DIAGNÓSTICO v3 — Scotiabank Uruguay ===\n');
+  console.log('=== MODO DIAGNÓSTICO v4 — Scotiabank Uruguay ===\n');
 
   const status = await goto(page, HUB);
   console.log(`Hub status: ${status}`);
   await scrollToEnd(page);
   saveHtml('scotiabank-hub', await page.content());
 
-  // Leer opciones del select de categorías
   const selectInfo = await page.evaluate(() => {
     const selects = [...document.querySelectorAll('.category-select')];
     return selects.map((el, i) => {
@@ -172,9 +219,8 @@ async function diag(page) {
     s.options.forEach(o => console.log(`    value="${o.value}"  label="${o.label}"`));
   });
 
-  // Contar total de .benefit-card incluyendo ocultos
   const totalCards = await page.evaluate(() => {
-    const all    = document.querySelectorAll('.benefit-card');
+    const all     = document.querySelectorAll('.benefit-card');
     const visible = [...all].filter(el => {
       const st = window.getComputedStyle(el);
       return st.display !== 'none' && st.visibility !== 'hidden';
@@ -183,20 +229,34 @@ async function diag(page) {
   });
   console.log(`\nTotal .benefit-card en DOM: ${totalCards.total} (visibles: ${totalCards.visible})`);
 
-  // Probar con la primera opción real del categorías select
   if (selectInfo[0]?.options?.length > 1) {
-    const firstOpt = selectInfo[0].options[1]; // skip placeholder
+    const firstOpt = selectInfo[0].options[1];
     console.log(`\nProbando seleccionar "${firstOpt.label}" (value="${firstOpt.value}")...`);
     const cards = await selectCategoryAndCollect(page, firstOpt.value, firstOpt.label);
     console.log(`  → ${cards.length} cards visibles tras seleccionar categoría`);
-    if (DIAG_MODE) saveHtml(`scotiabank-cat-${firstOpt.value}`, await page.content());
+    saveHtml(`scotiabank-cat-${firstOpt.value}`, await page.content());
     cards.slice(0, 5).forEach((c, i) =>
-      console.log(`  [${i+1}] "${c.nombre}"  pct=${c.pctMax}  tarj="${c.tarjetas?.slice(0,60)}"`)
+      console.log(`  [${i+1}] "${c.nombre}"  pct=${c.pctMax}  tarj="${c.tarjetas?.slice(0, 60)}"`)
     );
+  }
+
+  // Diagnóstico de sub-páginas conocidas
+  console.log('\n=== Sub-páginas conocidas ===');
+  for (const url of KNOWN_SUBPAGES) {
+    console.log(`\n--- ${url} ---`);
+    const extra = await enrichFromSubPage(page, url);
+    if (!extra) { console.log('  ERROR: no se pudo cargar'); continue; }
+    saveHtml('scotiabank-sub-' + url.split('/').pop(), await page.content());
+    console.log(`  pctMax: ${extra.pctMax}`);
+    console.log(`  tarjLines (${extra.tarjLines.length}):`);
+    extra.tarjLines.forEach(l => console.log(`    • "${l}"`));
+    console.log(`  imgAlts (${extra.imgAlts.length}):`);
+    extra.imgAlts.forEach(a => console.log(`    • "${a}"`));
+    if (extra.termText) console.log(`  termText: "${extra.termText.slice(0, 120)}"`);
   }
 }
 
-// ── Producción: iterar categorías ─────────────────────────────────────────────
+// ── Producción: iterar categorías + enriquecer sub-páginas ───────────────────
 async function scrapeAllCategories(page) {
   const status = await goto(page, HUB);
   console.log(`Hub: ${status}`);
@@ -204,7 +264,6 @@ async function scrapeAllCategories(page) {
 
   await scrollToEnd(page);
 
-  // Obtener opciones del primer select (categorías)
   const options = await page.evaluate(() => {
     const sel = document.querySelector('.category-select select') ||
                 [...document.querySelectorAll('select')].find(s =>
@@ -216,12 +275,11 @@ async function scrapeAllCategories(page) {
   });
 
   console.log(`  Categorías encontradas: ${options.length}`);
-  options.forEach(o => console.log(`    "${o.label}" (${o.value})`));
 
   const seen  = new Set();
   const cards = [];
 
-  // 1. Cards destacadas del hub (ya visibles sin seleccionar categoría)
+  // 1. Cards destacadas del hub
   const featuredCards = await selectCategoryAndCollect(page, '', 'Destacados');
   for (const c of featuredCards) {
     const key = c.nombre.toLowerCase().slice(0, 50);
@@ -247,7 +305,41 @@ async function scrapeAllCategories(page) {
     console.log(`  "${opt.label}": ${catCards.length} cards (${nuevas} nuevas)`);
   }
 
-  return cards;
+  // 3. Enriquecer con sub-páginas
+  // Agregar sub-páginas conocidas que no están cubiertas por cards del hub
+  const cardUrls = new Set(cards.filter(c => c.url).map(c => c.url));
+  for (const knownUrl of KNOWN_SUBPAGES) {
+    if (!cardUrls.has(knownUrl)) {
+      // Crear card fantasma si la sub-página no está en ninguna hub card
+      cards.push({ nombre: null, url: knownUrl, _phantomSub: true });
+    }
+  }
+
+  const withUrl = cards.filter(c => c.url);
+  console.log(`\n  Enriqueciendo ${withUrl.length} cards desde sub-páginas...`);
+  for (const c of withUrl) {
+    await sleep(DELAY_MS);
+    const extra = await enrichFromSubPage(page, c.url);
+    if (!extra) {
+      console.log(`    ${c.nombre || c.url}: skip (error)`);
+      continue;
+    }
+
+    // Rellenar tarjetas si la hub card no tenía info
+    if (!c.tarjetas) {
+      if (extra.tarjLines.length) c.tarjetas = extra.tarjLines[0];
+      else if (extra.imgAlts.length) c.tarjetas = extra.imgAlts.join(' · ').slice(0, 200);
+    }
+    // Actualizar pctMax si sub-página tiene uno mayor (más específico)
+    if (extra.pctMax && (!c.pctMax || extra.pctMax > c.pctMax)) c.pctMax = extra.pctMax;
+
+    const tarjShort = (c.tarjetas || '—').slice(0, 70);
+    const imgsShort = extra.imgAlts.join(', ').slice(0, 60);
+    console.log(`    ${c.nombre || '(phantom)'}: tarj="${tarjShort}"  imgs=[${imgsShort}]`);
+  }
+
+  // Eliminar cards fantasma que no se pudieron resolver como card real
+  return cards.filter(c => c.nombre);
 }
 
 // ── Main ──────────────────────────────────────────────────────────────────────
@@ -265,25 +357,24 @@ async function scrapeAllCategories(page) {
     return;
   }
 
-  // Modo producción
   console.log('=== Scraping beneficios Scotiabank Uruguay ===');
   const allCards = await scrapeAllCategories(page);
   await browser.close();
 
   const beneficios = allCards.map(c => ({
-    nombre:    c.nombre,
-    url:       c.url || null,
-    categoria: c.categoria || null,
-    pctMax:    c.pctMax,
+    nombre:     c.nombre,
+    url:        c.url || null,
+    categoria:  c.categoria || null,
+    pctMax:     c.pctMax,
     descuentos: c.descuentos || [],
-    vigencia:  c.vigencia || null,
-    tarjetas:  c.tarjetas || null,
-    desc:      c.desc || null,
-    exclusivo: false,
+    vigencia:   c.vigencia || null,
+    tarjetas:   c.tarjetas || null,
+    desc:       c.desc || null,
+    exclusivo:  false,
   }));
 
   beneficios.forEach((b, i) =>
-    console.log(`  [${i+1}] ${b.nombre} — ${b.pctMax ?? '?'}%  cat:${b.categoria}`));
+    console.log(`  [${i+1}] ${b.nombre} — ${b.pctMax ?? '?'}%  tarj="${(b.tarjetas || '—').slice(0, 60)}"`));
 
   const payload = {
     fuente:      'scotiabank.com.uy',
