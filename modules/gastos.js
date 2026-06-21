@@ -64,7 +64,7 @@ window.Mods.gastos = {
   _resCacheKey:   null,   // `${desde}|${hasta}|${banco}` — solo vistas gastos/beneficios (cat/tipo son client-side)
   _descCache:         null,   // beneficios.json cacheado (catálogo de descuentos TDC)
   _descCatSpendCache: null,   // gastos por categoria_id últimos 6 meses (para match por categoría)
-  _descBanco:         '',     // filtro fuente: '' | 'BBVA' | 'Santander' | 'Itaú' | 'Scotiabank'
+  _descBanco:         '',     // filtro fuente: '' | 'BBVA' | 'Santander' | 'Itaú' | 'Scotiabank' | 'BROU' | 'OCA'
   _descCat:           '',     // filtro de categoría en el tab Descuentos
   _descSearch:        '',     // búsqueda por comercio en el tab Descuentos
 
@@ -337,19 +337,21 @@ window.Mods.gastos = {
     // 1. Catálogos BBVA + Santander + Itaú + Scotiabank mergeados (cacheados)
     if (!this._descCache) {
       try {
-        const [r1, r2, r3, r4, r5] = await Promise.all([
+        const [r1, r2, r3, r4, r5, r6] = await Promise.all([
           fetch('data/beneficios.json', { cache: 'no-cache' }),
           fetch('data/beneficios-santander.json', { cache: 'no-cache' }).catch(() => null),
           fetch('data/beneficios-itau.json', { cache: 'no-cache' }).catch(() => null),
           fetch('data/beneficios-scotiabank.json', { cache: 'no-cache' }).catch(() => null),
           fetch('data/beneficios-brou.json', { cache: 'no-cache' }).catch(() => null),
+          fetch('data/beneficios-oca.json', { cache: 'no-cache' }).catch(() => null),
         ]);
         const bbva  = await r1.json();
         const sant  = r2 ? await r2.json().catch(() => ({ beneficios: [] })) : { beneficios: [] };
         const itau  = r3 ? await r3.json().catch(() => ({ beneficios: [] })) : { beneficios: [] };
         const scot  = r4 ? await r4.json().catch(() => ({ beneficios: [] })) : { beneficios: [] };
         const brou  = r5 ? await r5.json().catch(() => ({ beneficios: [] })) : { beneficios: [] };
-        // normalize: todos usan 'comercio' internamente; Santander/Itaú/Scotiabank/BROU usan 'nombre'
+        const oca   = r6 ? await r6.json().catch(() => ({ beneficios: [] })) : { beneficios: [] };
+        // normalize: todos usan 'comercio' internamente; Santander/Itaú/Scotiabank/BROU/OCA usan 'nombre'
         const norm = (b, f) => ({ ...b, fuente: f, comercio: b.comercio || b.nombre });
         this._descCache = {
           actualizado: bbva.actualizado,
@@ -359,6 +361,7 @@ window.Mods.gastos = {
             ...(itau.beneficios  || []).map(b => norm(b, 'Itaú')),
             ...(scot.beneficios  || []).map(b => norm(b, 'Scotiabank')),
             ...(brou.beneficios  || []).map(b => norm(b, 'BROU')),
+            ...(oca.beneficios   || []).map(b => norm(b, 'OCA')),
           ],
         };
       } catch (e) {
@@ -516,6 +519,7 @@ window.Mods.gastos = {
     const itauCount  = benefits.filter(b => b.fuente === 'Itaú').length;
     const scotCount  = benefits.filter(b => b.fuente === 'Scotiabank').length;
     const brouCount  = benefits.filter(b => b.fuente === 'BROU').length;
+    const ocaCount   = benefits.filter(b => b.fuente === 'OCA').length;
 
     const fmtMon  = (n, mon) => (mon === 'USD' ? 'US$ ' : '$U ') + fmt(n, 0);
     const actFmt  = actualizado ? new Date(actualizado).toLocaleDateString('es-AR') : '—';
@@ -528,6 +532,8 @@ window.Mods.gastos = {
       ? '<span style="font-size:.58rem;padding:1px 5px;border-radius:3px;background:rgba(255,152,0,.18);color:#ffaa33;font-weight:700;letter-spacing:.03em;vertical-align:middle;margin-left:5px">Itaú</span>'
       : f === 'BROU'
       ? '<span style="font-size:.58rem;padding:1px 5px;border-radius:3px;background:rgba(41,176,140,.18);color:#29b08c;font-weight:700;letter-spacing:.03em;vertical-align:middle;margin-left:5px">BROU</span>'
+      : f === 'OCA'
+      ? '<span style="font-size:.58rem;padding:1px 5px;border-radius:3px;background:rgba(232,107,30,.18);color:#e86b1e;font-weight:700;letter-spacing:.03em;vertical-align:middle;margin-left:5px">OCA</span>'
       : '<span style="font-size:.58rem;padding:1px 5px;border-radius:3px;background:rgba(204,0,0,.18);color:#e84040;font-weight:700;letter-spacing:.03em;vertical-align:middle;margin-left:5px">Scotia</span>';
 
     const _di = 'font-size:11px;color:var(--text-sec);margin-top:2px';
@@ -544,10 +550,12 @@ window.Mods.gastos = {
       if (b.tope)     h += '<div style="' + _di + '">Tope: ' + b.tope + '</div>';
       if ((b.fuente === 'Santander' || b.fuente === 'Itaú') && b.desc) h += '<div style="' + _di + '">' + b.desc + '</div>';
       if (b.fuente === 'Scotiabank' && b.desc && b.desc !== b.tarjetas) h += '<div style="' + _di + '">' + b.desc + '</div>';
-      if ((b.fuente === 'Scotiabank' || b.fuente === 'BROU') && b.categoria && canonCat(b.categoria)) h += '<div style="' + _di + '">Categoría: ' + canonCat(b.categoria) + '</div>';
+      if (b.fuente === 'OCA' && b.desc) h += '<div style="' + _di + '">' + b.desc + '</div>';
+      if ((b.fuente === 'Scotiabank' || b.fuente === 'BROU' || b.fuente === 'OCA') && b.categoria && canonCat(b.categoria)) h += '<div style="' + _di + '">Categoría: ' + canonCat(b.categoria) + '</div>';
       if (b.url) h += '<a href="' + b.url + '" target="_blank" rel="noopener" style="font-size:11px;color:var(--accent);display:inline-block;margin-top:6px">Ver en sitio →</a>';
       else if (b.fuente === 'Itaú') h += '<a href="https://www.itau.com.uy/inst/' + (b.exclusivo ? 'beneficiosexclusivos' : 'beneficios') + '.html" target="_blank" rel="noopener" style="font-size:11px;color:var(--accent);display:inline-block;margin-top:6px">Ver en sitio Itaú →</a>';
       else if (b.fuente === 'Scotiabank') h += '<a href="https://www.scotiabank.com.uy/Personas/Tarjetas/Beneficios/default" target="_blank" rel="noopener" style="font-size:11px;color:var(--accent);display:inline-block;margin-top:6px">Ver en sitio Scotiabank →</a>';
+      else if (b.fuente === 'OCA') h += '<a href="https://ocablue.uy/beneficios.html" target="_blank" rel="noopener" style="font-size:11px;color:var(--accent);display:inline-block;margin-top:6px">Ver en OCA Blue →</a>';
       return h || '<div style="font-size:11px;color:var(--text-sec)">Sin detalle disponible.</div>';
     };
 
@@ -557,7 +565,7 @@ window.Mods.gastos = {
 
     gc.innerHTML = `
       <div style="font-size:.72rem;color:var(--text-sec);margin-bottom:14px">
-        ${bbvaCount} beneficios BBVA${santCount ? ' · ' + santCount + ' Santander' : ''}${itauCount ? ' · ' + itauCount + ' Itaú' : ''}${scotCount ? ' · ' + scotCount + ' Scotiabank' : ''}${brouCount ? ' · ' + brouCount + ' BROU' : ''} · actualizado ${actFmt}
+        ${bbvaCount} beneficios BBVA${santCount ? ' · ' + santCount + ' Santander' : ''}${itauCount ? ' · ' + itauCount + ' Itaú' : ''}${scotCount ? ' · ' + scotCount + ' Scotiabank' : ''}${brouCount ? ' · ' + brouCount + ' BROU' : ''}${ocaCount ? ' · ' + ocaCount + ' OCA' : ''} · actualizado ${actFmt}
       </div>
 
       ${oportunidades.length ? `
@@ -624,6 +632,7 @@ window.Mods.gastos = {
           ${itauCount ? `<option value="Itaú" ${banco === 'Itaú' ? 'selected' : ''}>Itaú (${itauCount})</option>` : ''}
           ${scotCount ? `<option value="Scotiabank" ${banco === 'Scotiabank' ? 'selected' : ''}>Scotiabank (${scotCount})</option>` : ''}
           ${brouCount ? `<option value="BROU" ${banco === 'BROU' ? 'selected' : ''}>BROU (${brouCount})</option>` : ''}
+          ${ocaCount  ? `<option value="OCA"  ${banco === 'OCA'  ? 'selected' : ''}>OCA (${ocaCount})</option>`   : ''}
         </select>
         ${catList.length ? `
           <select id="desc-cat" style="padding:7px 10px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.8rem">
