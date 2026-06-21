@@ -488,7 +488,7 @@ window.Mods.gastos = {
       'Interior':                    'Hogar',
       'Vestimenta':                  'Moda',
       'Viajes':                      'Viajes',
-      'Librerías':                   'Educación',
+
       'The Platinum Card Amex':      null,   // no es categoría real
     };
     const canonCat = c => c ? (CAT_MAP.hasOwnProperty(c) ? CAT_MAP[c] : c) : null;
