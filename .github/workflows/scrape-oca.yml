@@ -2,7 +2,7 @@ name: Scrape beneficios OCA
 
 on:
   schedule:
-    - cron: '0 14 * * 1'   # todos los lunes, 14:00 UTC
+    - cron: '0 14 * * 1,5'   # lunes y viernes, 14:00 UTC
   workflow_dispatch:
     inputs:
       modo:
