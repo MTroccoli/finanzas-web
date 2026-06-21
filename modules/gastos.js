@@ -349,7 +349,7 @@ window.Mods.gastos = {
         const itau  = r3 ? await r3.json().catch(() => ({ beneficios: [] })) : { beneficios: [] };
         const scot  = r4 ? await r4.json().catch(() => ({ beneficios: [] })) : { beneficios: [] };
         const brou  = r5 ? await r5.json().catch(() => ({ beneficios: [] })) : { beneficios: [] };
-        // normalize: todos usan 'comercio' internamente; Santander/Itaú/Scotiabank/BROu usan 'nombre'
+        // normalize: todos usan 'comercio' internamente; Santander/Itaú/Scotiabank/BROU usan 'nombre'
         const norm = (b, f) => ({ ...b, fuente: f, comercio: b.comercio || b.nombre });
         this._descCache = {
           actualizado: bbva.actualizado,
@@ -358,7 +358,7 @@ window.Mods.gastos = {
             ...(sant.beneficios  || []).map(b => norm(b, 'Santander')),
             ...(itau.beneficios  || []).map(b => norm(b, 'Itaú')),
             ...(scot.beneficios  || []).map(b => norm(b, 'Scotiabank')),
-            ...(brou.beneficios  || []).map(b => norm(b, 'BROu')),
+            ...(brou.beneficios  || []).map(b => norm(b, 'BROU')),
           ],
         };
       } catch (e) {
@@ -484,7 +484,7 @@ window.Mods.gastos = {
     const santCount  = benefits.filter(b => b.fuente === 'Santander').length;
     const itauCount  = benefits.filter(b => b.fuente === 'Itaú').length;
     const scotCount  = benefits.filter(b => b.fuente === 'Scotiabank').length;
-    const brouCount  = benefits.filter(b => b.fuente === 'BROu').length;
+    const brouCount  = benefits.filter(b => b.fuente === 'BROU').length;
 
     const fmtMon  = (n, mon) => (mon === 'USD' ? 'US$ ' : '$U ') + fmt(n, 0);
     const actFmt  = actualizado ? new Date(actualizado).toLocaleDateString('es-AR') : '—';
@@ -495,8 +495,8 @@ window.Mods.gastos = {
       ? '<span style="font-size:.58rem;padding:1px 5px;border-radius:3px;background:rgba(230,57,70,.18);color:#e63946;font-weight:700;letter-spacing:.03em;vertical-align:middle;margin-left:5px">Santander</span>'
       : f === 'Itaú'
       ? '<span style="font-size:.58rem;padding:1px 5px;border-radius:3px;background:rgba(255,152,0,.18);color:#ffaa33;font-weight:700;letter-spacing:.03em;vertical-align:middle;margin-left:5px">Itaú</span>'
-      : f === 'BROu'
-      ? '<span style="font-size:.58rem;padding:1px 5px;border-radius:3px;background:rgba(41,176,140,.18);color:#29b08c;font-weight:700;letter-spacing:.03em;vertical-align:middle;margin-left:5px">BROu</span>'
+      : f === 'BROU'
+      ? '<span style="font-size:.58rem;padding:1px 5px;border-radius:3px;background:rgba(41,176,140,.18);color:#29b08c;font-weight:700;letter-spacing:.03em;vertical-align:middle;margin-left:5px">BROU</span>'
       : '<span style="font-size:.58rem;padding:1px 5px;border-radius:3px;background:rgba(204,0,0,.18);color:#e84040;font-weight:700;letter-spacing:.03em;vertical-align:middle;margin-left:5px">Scotia</span>';
 
     const renderDet = b => {
@@ -513,8 +513,7 @@ window.Mods.gastos = {
       if ((b.fuente === 'Santander' || b.fuente === 'Itaú') && b.desc) h += '<div style="font-size:.73rem;color:var(--text-sec);margin-top:3px">' + b.desc + '</div>';
       if (b.fuente === 'Scotiabank' && b.desc && b.desc !== b.tarjetas) h += '<div style="font-size:.73rem;color:var(--text-sec);margin-top:3px">' + b.desc + '</div>';
       if (b.fuente === 'Scotiabank' && b.categoria) h += '<div style="font-size:.71rem;color:var(--text-sec);margin-top:3px;opacity:.7">Categoría: ' + b.categoria + '</div>';
-      if (b.fuente === 'BROu' && b.desc && b.desc !== b.comercio) h += '<div style="font-size:.73rem;color:var(--text-sec);margin-top:3px">' + b.desc + '</div>';
-      if (b.fuente === 'BROu' && b.categoria) h += '<div style="font-size:.71rem;color:var(--text-sec);margin-top:3px;opacity:.7">Categoría: ' + b.categoria + '</div>';
+      if (b.fuente === 'BROU' && b.categoria) h += '<div style="font-size:.71rem;color:var(--text-sec);margin-top:3px;opacity:.7">Categoría: ' + b.categoria + '</div>';
       if (b.url) h += '<a href="' + b.url + '" target="_blank" rel="noopener" style="font-size:.71rem;color:var(--accent);display:inline-block;margin-top:6px">Ver en sitio →</a>';
       else if (b.fuente === 'Itaú') h += '<a href="https://www.itau.com.uy/inst/' + (b.exclusivo ? 'beneficiosexclusivos' : 'beneficios') + '.html" target="_blank" rel="noopener" style="font-size:.71rem;color:var(--accent);display:inline-block;margin-top:6px">Ver en sitio Itaú →</a>';
       else if (b.fuente === 'Scotiabank') h += '<a href="https://www.scotiabank.com.uy/Personas/Tarjetas/Beneficios/default" target="_blank" rel="noopener" style="font-size:.71rem;color:var(--accent);display:inline-block;margin-top:6px">Ver en sitio Scotiabank →</a>';
@@ -527,7 +526,7 @@ window.Mods.gastos = {
 
     gc.innerHTML = `
       <div style="font-size:.72rem;color:var(--text-sec);margin-bottom:14px">
-        ${bbvaCount} beneficios BBVA${santCount ? ' · ' + santCount + ' Santander' : ''}${itauCount ? ' · ' + itauCount + ' Itaú' : ''}${scotCount ? ' · ' + scotCount + ' Scotiabank' : ''}${brouCount ? ' · ' + brouCount + ' BROu' : ''} · actualizado ${actFmt}
+        ${bbvaCount} beneficios BBVA${santCount ? ' · ' + santCount + ' Santander' : ''}${itauCount ? ' · ' + itauCount + ' Itaú' : ''}${scotCount ? ' · ' + scotCount + ' Scotiabank' : ''}${brouCount ? ' · ' + brouCount + ' BROU' : ''} · actualizado ${actFmt}
       </div>
 
       ${oportunidades.length ? `
@@ -593,7 +592,7 @@ window.Mods.gastos = {
           ${santCount ? `<option value="Santander" ${banco === 'Santander' ? 'selected' : ''}>Santander (${santCount})</option>` : ''}
           ${itauCount ? `<option value="Itaú" ${banco === 'Itaú' ? 'selected' : ''}>Itaú (${itauCount})</option>` : ''}
           ${scotCount ? `<option value="Scotiabank" ${banco === 'Scotiabank' ? 'selected' : ''}>Scotiabank (${scotCount})</option>` : ''}
-          ${brouCount ? `<option value="BROu" ${banco === 'BROu' ? 'selected' : ''}>BROu (${brouCount})</option>` : ''}
+          ${brouCount ? `<option value="BROU" ${banco === 'BROU' ? 'selected' : ''}>BROU (${brouCount})</option>` : ''}
         </select>
         ${catList.length ? `
           <select id="desc-cat" style="padding:7px 10px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.8rem">

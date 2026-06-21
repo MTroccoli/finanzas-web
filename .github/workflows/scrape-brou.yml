@@ -1,4 +1,4 @@
-name: Scrape beneficios BROu
+name: Scrape beneficios BROU
 
 on:
   schedule:
@@ -58,7 +58,7 @@ jobs:
           if git diff --staged --quiet; then
             echo "Sin cambios en los datos"
           else
-            git commit -m "chore: actualizar beneficios BROu (scrape automático)"
+            git commit -m "chore: actualizar beneficios BROU (scrape automático)"
             git pull --rebase origin main
             git push
           fi

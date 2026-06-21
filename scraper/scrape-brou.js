@@ -1,8 +1,8 @@
-// Scraper de beneficios BROu para FinPro — v4.
+// Scraper de beneficios BROU para FinPro — v4.
 //
 // Hallazgos del diagnóstico v3:
 //  - 70 cards extraídas correctamente con content-visibility fix.
-//  - enrichFromSubPage: los selectores CSS (.tarjeta, etc.) no existen en BROu.
+//  - enrichFromSubPage: los selectores CSS (.tarjeta, etc.) no existen en BROU.
 //    La info útil está en innerText.split('\n') — hay que cortar en "También te
 //    puede interesar" para no capturar el sidebar de beneficios relacionados.
 //  - tarjLines con allText comprimido pegaba bloques enteros de nav; usando
@@ -188,7 +188,7 @@ function pickBestTarjLine(tarjLines) {
 
 // ── Diagnóstico ───────────────────────────────────────────────────────────────
 async function diag(page) {
-  console.log('=== MODO DIAGNÓSTICO v4 — BROu Beneficios ===\n');
+  console.log('=== MODO DIAGNÓSTICO v4 — BROU Beneficios ===\n');
 
   const status = await goto(page, HUB);
   console.log(`Hub status: ${status}`);
@@ -301,7 +301,7 @@ async function scrapeAll(page) {
       if (!beneficios.length) { console.log('Sin datos.'); return; }
 
       const out = {
-        fuente: 'BROu',
+        fuente: 'BROU',
         url: HUB,
         fecha: new Date().toISOString().slice(0, 10),
         total: beneficios.length,

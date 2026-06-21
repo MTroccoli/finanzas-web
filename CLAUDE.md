@@ -477,7 +477,7 @@ Plotly.newPlot('id', traces, {
 ### Estado funcional de módulos
 - **dashboard.js**: estable, sin cambios recientes.
 - **inversiones.js**: estable.
-- **gastos.js**: estable con caché. Tab Descuentos muestra beneficios de BBVA + Santander + Itaú + Scotiabank + BROu.
+- **gastos.js**: estable con caché. Tab Descuentos muestra beneficios de BBVA + Santander + Itaú + Scotiabank + BROU.
 - **ingresos.js**: estable. Presets recurrentes con auto-carga funcional.
 - **presupuesto.js**: estable.
 - **config_page.js**: estable.
@@ -496,12 +496,12 @@ Plotly.newPlot('id', traces, {
   - Workflow: `.github/workflows/scrape-brou.yml` — diag/produccion; schedule 1º de cada mes 12:00 UTC
 
 ### Integración Descuentos en gastos.js
-- Fetch paralelo de BBVA, Santander, Itaú, Scotiabank y **BROu** JSON
+- Fetch paralelo de BBVA, Santander, Itaú, Scotiabank y **BROU** JSON
 - Normalization: `norm = (b, f) => ({ ...b, fuente: f, comercio: b.comercio || b.nombre })`
-- Badges: BBVA (azul), Santander (rojo), Itaú (naranja), Scotiabank (rojo oscuro), **BROu (teal #29b08c)**
-- Stats: `N beneficios BBVA · N Santander · N Itaú · N Scotiabank · N BROu · actualizado DD/MM/YYYY`
-- `renderDet`: desc + categoria para BROu y Scotiabank; fix vigencia prefix duplicado ("Vigencia: Vigencia:")
-- `_descBanco` acepta `'BROu'` como valor de filtro
+- Badges: BBVA (azul), Santander (rojo), Itaú (naranja), Scotiabank (rojo oscuro), **BROU (teal #29b08c)**
+- Stats: `N beneficios BBVA · N Santander · N Itaú · N Scotiabank · N BROU · actualizado DD/MM/YYYY`
+- `renderDet`: desc + categoria para BROU y Scotiabank; fix vigencia prefix duplicado ("Vigencia: Vigencia:")
+- `_descBanco` acepta `'BROU'` como valor de filtro
 
 ### Próximo trabajo planificado: autenticación multi-usuario
 La app es actualmente single-user (Supabase hardcodeado en `config.js`). El plan para permitir que otros usuarios la usen:
