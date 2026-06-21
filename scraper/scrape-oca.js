@@ -364,6 +364,7 @@ async function prodMode(browser) {
 
     benefits.push({
       nombre,
+      corto: parseName(raw.nameParam),
       pctMax,
       url: raw.href,
       categoria,

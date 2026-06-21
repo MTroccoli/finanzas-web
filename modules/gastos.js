@@ -643,23 +643,21 @@ window.Mods.gastos = {
       </div>
 
       <div style="overflow-x:auto;-webkit-overflow-scrolling:touch">
-        <table style="width:100%;min-width:400px;border-collapse:collapse">
+        <table style="width:100%;min-width:340px;border-collapse:collapse">
           <thead><tr>
             <th style="${thStyle};text-align:left">Comercio</th>
             <th style="${thStyle};text-align:left">%</th>
-            <th style="${thStyle};text-align:left">Vigencia</th>
           </tr></thead>
           <tbody>
             ${filtered.map((b, idx) => `
               <tr>
                 <td style="padding:7px 6px;${tdBorder};font-size:.82rem">
-                  <span>${b.comercio}</span>${fuenteBadge(b.fuente)}<button class="di-btn" data-i="${idx}" style="background:none;border:none;color:var(--text-sec);cursor:pointer;padding:0 4px;font-size:.85rem;line-height:1;vertical-align:middle;margin-left:3px" title="Ver detalle">ⓘ</button>
+                  <span>${b.corto || b.comercio}</span>${fuenteBadge(b.fuente)}<button class="di-btn" data-i="${idx}" style="background:none;border:none;color:var(--text-sec);cursor:pointer;padding:0 4px;font-size:.85rem;line-height:1;vertical-align:middle;margin-left:3px" title="Ver detalle">ⓘ</button>
                 </td>
                 <td style="padding:7px 6px;${tdBorder};font-size:${b.pctMax ? '.82rem' : '.72rem'};font-family:'DM Mono',monospace;color:${b.pctMax ? 'var(--gold)' : 'var(--text-sec)'};white-space:nowrap">${b.pctMax ? b.pctMax + '%' : 'Otros'}</td>
-                <td style="padding:7px 6px;${tdBorder};font-size:.72rem;color:var(--text-sec);white-space:nowrap">${b.vigencia || '—'}</td>
               </tr>
               <tr id="di-row-${idx}" style="display:none">
-                <td colspan="3" style="padding:3px 8px 8px 16px;font-size:11px;background:rgba(255,255,255,.025);${tdBorder}">
+                <td colspan="2" style="padding:3px 8px 8px 16px;font-size:11px;background:rgba(255,255,255,.025);${tdBorder}">
                   ${renderDet(b)}
                 </td>
               </tr>`).join('')}
