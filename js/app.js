@@ -25,7 +25,7 @@ async function handleRoute() {
   document.body.classList.remove('nav-open');
 
   // TDC sub-nav (Comercios / Adicional / Descuentos tabs fixed below topbar)
-  const isTdc = activePage === 'tarjetas' && (activeSub === 'descuentos' || activeSub === 'comercios' || activeSub === 'adicional');
+  const isTdc = activePage === 'tarjetas' && ['descuentos', 'comercios', 'adicional', 'mis-tarjetas'].includes(activeSub);
   const tdcSubnav = document.getElementById('tdc-subnav');
   if (tdcSubnav) {
     tdcSubnav.classList.toggle('visible', isTdc);

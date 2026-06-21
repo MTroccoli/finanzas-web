@@ -21,6 +21,9 @@ window.Mods.tarjetas = {
   _adicTitularFiltro: '',
   _adicCards:       [],
 
+  _misEditId:       null,
+  _misCards:        null,
+
   // State needed by helpers
   _cats:            [],
   _learned:         {},
@@ -127,9 +130,10 @@ window.Mods.tarjetas = {
       <div id="g-content"></div>
     `;
     switch (sub || 'descuentos') {
-      case 'descuentos': return this._drawDescuentos();
-      case 'comercios':  return this._drawHistorialComercios();
-      case 'adicional':  return this._drawHistorialAdicional();
+      case 'descuentos':   return this._drawDescuentos();
+      case 'comercios':    return this._drawHistorialComercios();
+      case 'adicional':    return this._drawHistorialAdicional();
+      case 'mis-tarjetas': return this._drawMisTarjetas();
     }
   },
 
@@ -1635,5 +1639,182 @@ window.Mods.tarjetas = {
       }
     };
     gc.addEventListener('click', this._adicClickHandler);
+  },
+
+  async _drawMisTarjetas() {
+    const gc = document.getElementById('g-content');
+    gc.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+
+    const rows = await dbFetch('mis_tarjetas', { order: { col: 'created_at', asc: true } });
+    this._misCards = rows || [];
+
+    const BANCOS  = ['BBVA', 'Santander', 'Itaú', 'Scotiabank', 'BROU', 'OCA'];
+    const REDES   = ['Visa', 'Mastercard', 'Amex', 'OCA'];
+    const NIVELES = ['Clásica', 'Oro', 'Platinum', 'Black', 'Signature', 'Infinite'];
+    const BANCO_CLR = {
+      'BBVA': '#004481', 'Santander': '#EC0000', 'Itaú': '#EC7000',
+      'Scotiabank': '#D4002A', 'BROU': '#29b08c', 'OCA': '#e86b1e',
+    };
+
+    const formFields = (r = {}) => `
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px">
+        <div class="form-group">
+          <label style="font-size:.8rem">Banco</label>
+          <select class="mt-f-banco form-control">
+            <option value="">— Banco —</option>
+            ${BANCOS.map(b => `<option${r.banco === b ? ' selected' : ''}>${b}</option>`).join('')}
+          </select>
+        </div>
+        <div class="form-group">
+          <label style="font-size:.8rem">Red</label>
+          <select class="mt-f-red form-control">
+            <option value="">— Red —</option>
+            ${REDES.map(n => `<option${r.red === n ? ' selected' : ''}>${n}</option>`).join('')}
+          </select>
+        </div>
+        <div class="form-group">
+          <label style="font-size:.8rem">Nivel</label>
+          <select class="mt-f-nivel form-control">
+            <option value="">— Nivel —</option>
+            ${NIVELES.map(n => `<option${r.nivel === n ? ' selected' : ''}>${n}</option>`).join('')}
+          </select>
+        </div>
+        <div class="form-group">
+          <label style="font-size:.8rem">Apodo <span style="opacity:.55">(opcional)</span></label>
+          <input type="text" class="mt-f-apodo form-control" value="${r.apodo || ''}" placeholder="Mi Visa Oro">
+        </div>
+      </div>
+      <label style="display:flex;align-items:center;gap:7px;margin-top:10px;cursor:pointer;font-size:.83rem">
+        <input type="checkbox" class="mt-f-principal"${r.principal !== false ? ' checked' : ''} style="accent-color:var(--accent)">
+        Titular <span style="color:var(--text-sec)">(desmarcar si es adicional)</span>
+      </label>
+    `;
+
+    const readForm = wrap => ({
+      banco:     wrap.querySelector('.mt-f-banco').value,
+      red:       wrap.querySelector('.mt-f-red').value   || null,
+      nivel:     wrap.querySelector('.mt-f-nivel').value || null,
+      apodo:     wrap.querySelector('.mt-f-apodo').value.trim() || null,
+      principal: wrap.querySelector('.mt-f-principal').checked,
+    });
+
+    const cardHTML = r => {
+      const clr   = BANCO_CLR[r.banco] || 'var(--accent)';
+      const label = [r.red, r.nivel].filter(Boolean).join(' ');
+      if (this._misEditId === r.id) {
+        return `
+          <div class="mt-card" data-id="${r.id}" style="border:1px solid ${clr}60;border-radius:12px;padding:16px;background:linear-gradient(135deg,${clr}14,${clr}06)">
+            ${formFields(r)}
+            <div style="display:flex;gap:8px;margin-top:12px">
+              <button class="mt-save-btn btn btn-primary" data-id="${r.id}" style="flex:1;font-size:.82rem">Guardar</button>
+              <button class="mt-cancel-btn btn btn-ghost" style="flex:1;font-size:.82rem">Cancelar</button>
+            </div>
+          </div>`;
+      }
+      return `
+        <div class="mt-card" data-id="${r.id}" style="border:1px solid ${clr}40;border-radius:12px;padding:16px 14px 12px;background:linear-gradient(135deg,${clr}14,${clr}06);display:flex;flex-direction:column;gap:4px;min-height:110px;position:relative">
+          <div style="font-weight:600;font-size:.95rem;color:${clr}">${r.banco}</div>
+          <div style="font-size:.85rem;color:var(--text)">${label || '<span style="color:var(--text-sec)">—</span>'}</div>
+          ${r.apodo ? `<div style="font-size:.75rem;color:var(--text-sec);font-style:italic">${r.apodo}</div>` : ''}
+          <div style="font-size:.72rem;margin-top:auto;padding-top:8px;color:${r.principal ? 'var(--accent)' : 'var(--text-sec)'}">
+            ${r.principal ? '● Titular' : '○ Adicional'}
+          </div>
+          <div style="position:absolute;top:9px;right:9px;display:flex;gap:3px">
+            <button class="mt-edit-btn btn btn-ghost" data-id="${r.id}" style="padding:2px 7px;font-size:.75rem">✏️</button>
+            <button class="mt-del-btn btn btn-danger" data-id="${r.id}" style="padding:2px 7px;font-size:.75rem">✕</button>
+          </div>
+        </div>`;
+    };
+
+    gc.innerHTML = `
+      <div class="form-card" style="margin-bottom:20px">
+        <div class="table-header"><span class="table-title">Agregar tarjeta</span></div>
+        <div id="mt-add-form" style="margin-top:14px">
+          ${formFields()}
+          <div style="display:flex;justify-content:flex-end;margin-top:12px">
+            <button id="mt-add-btn" class="btn btn-primary">Agregar</button>
+          </div>
+        </div>
+      </div>
+      <div class="table-header" style="margin-bottom:12px">
+        <span class="table-title">Mis tarjetas <span style="font-weight:400;color:var(--text-sec);font-size:.85em">(${this._misCards.length})</span></span>
+      </div>
+      <div id="mt-cards-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px">
+        ${this._misCards.length
+          ? this._misCards.map(cardHTML).join('')
+          : '<p style="color:var(--text-sec)">No tenés tarjetas cargadas todavía.</p>'}
+      </div>
+    `;
+
+    // Auto-select red OCA cuando banco = OCA
+    gc.querySelectorAll('.mt-f-banco').forEach(sel => {
+      sel.addEventListener('change', () => {
+        const container = sel.closest('.mt-card, #mt-add-form');
+        const redSel = container?.querySelector('.mt-f-red');
+        if (redSel && sel.value === 'OCA') redSel.value = 'OCA';
+      });
+    });
+
+    document.getElementById('mt-add-btn').addEventListener('click', async () => {
+      const data = readForm(document.getElementById('mt-add-form'));
+      if (!data.banco) { toast('Elegí un banco', 'err'); return; }
+      const btn = document.getElementById('mt-add-btn');
+      btn.disabled = true; btn.textContent = '…';
+      try {
+        await dbInsert('mis_tarjetas', data);
+        this._misCards = null;
+        this._drawMisTarjetas();
+      } catch(e) {
+        toast('❌ ' + e.message, 'err');
+        btn.disabled = false; btn.textContent = 'Agregar';
+      }
+    });
+
+    gc.querySelectorAll('.mt-edit-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        this._misEditId = +btn.dataset.id;
+        this._drawMisTarjetas();
+      });
+    });
+
+    gc.querySelectorAll('.mt-cancel-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        this._misEditId = null;
+        this._drawMisTarjetas();
+      });
+    });
+
+    gc.querySelectorAll('.mt-save-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const id   = +btn.dataset.id;
+        const data = readForm(btn.closest('.mt-card'));
+        if (!data.banco) { toast('Elegí un banco', 'err'); return; }
+        btn.disabled = true; btn.textContent = '…';
+        try {
+          await dbUpdate('mis_tarjetas', data, { id });
+          this._misEditId = null;
+          this._misCards  = null;
+          this._drawMisTarjetas();
+        } catch(e) {
+          toast('❌ ' + e.message, 'err');
+          btn.disabled = false; btn.textContent = 'Guardar';
+        }
+      });
+    });
+
+    gc.querySelectorAll('.mt-del-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        if (!confirm('¿Eliminar esta tarjeta?')) return;
+        btn.disabled = true;
+        try {
+          await dbDelete('mis_tarjetas', { id: +btn.dataset.id });
+          this._misCards = null;
+          this._drawMisTarjetas();
+        } catch(e) {
+          toast('❌ ' + e.message, 'err');
+          btn.disabled = false;
+        }
+      });
+    });
   },
 };
