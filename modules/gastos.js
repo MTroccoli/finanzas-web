@@ -332,7 +332,7 @@ window.Mods.gastos = {
   // ── Tab Descuentos: catálogo de beneficios BBVA + Santander + Itaú + Scotiabank ─
   async _drawDescuentos() {
     const gc = document.getElementById('g-content');
-    gc.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+    if (!this._descCache) gc.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
 
     // 1. Catálogos BBVA + Santander + Itaú + Scotiabank mergeados (cacheados)
     if (!this._descCache) {
@@ -625,6 +625,14 @@ window.Mods.gastos = {
     const searchEl = document.getElementById('desc-search');
     const bancoEl  = document.getElementById('desc-banco');
     const catEl    = document.getElementById('desc-cat');
+
+    // Restaurar foco si el usuario estaba buscando (el innerHTML recrea el input)
+    if (this._descSearch && searchEl) {
+      searchEl.focus();
+      const l = searchEl.value.length;
+      searchEl.setSelectionRange(l, l);
+    }
+
     let t;
     searchEl?.addEventListener('input', () => {
       clearTimeout(t);
