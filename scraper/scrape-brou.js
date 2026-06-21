@@ -64,85 +64,92 @@ async function scrollToEnd(page) {
 }
 
 async function diag(page) {
-  console.log('=== MODO DIAGNÓSTICO v1 — BROu Beneficios ===\n');
+  console.log('=== MODO DIAGNÓSTICO v2 — BROu Beneficios ===\n');
 
   const status = await goto(page, HUB);
   console.log(`Hub status: ${status}`);
+
+  // Esperar a que el primer beneficio-item tenga contenido visible (SPA load)
+  console.log('Esperando que los cards carguen contenido...');
+  try {
+    await page.waitForFunction(
+      () => {
+        const items = document.querySelectorAll('.beneficio-item, [class*="beneficio-item"]');
+        return items.length > 0 && (items[0].innerText || '').trim().length > 5;
+      },
+      { timeout: 20000 }
+    );
+    console.log('Cards con contenido detectados.');
+  } catch (_) {
+    console.log('Timeout esperando cards — volcando estado actual.');
+  }
+
   await scrollToEnd(page);
   saveHtml('brou-hub', await page.content());
 
-  // Estructura general de la página
   const info = await page.evaluate(() => {
-    // Contar elementos candidatos a cards
-    const candidates = [
-      '.beneficio', '.benefit', '.card', '.item',
-      '[class*="beneficio"]', '[class*="benefit"]', '[class*="card"]',
-      'article', '.offer', '[class*="offer"]', '[class*="descuento"]',
-    ];
-    const counts = {};
-    for (const sel of candidates) {
-      try { counts[sel] = document.querySelectorAll(sel).length; } catch (_) {}
-    }
+    // Contar elementos
+    const benItems   = document.querySelectorAll('.beneficio-item');
+    const benAny     = document.querySelectorAll('[class*="beneficio"]');
+    const withText   = [...benItems].filter(el => (el.innerText || '').trim().length > 2);
 
-    // Buscar selects/filtros
+    // HTML de los primeros 3 cards con contenido
+    const samples = [...benItems].filter(el => (el.innerText || '').trim().length > 2)
+      .slice(0, 5).map(el => ({
+        text: (el.innerText || '').replace(/\s+/g, ' ').trim().slice(0, 300),
+        html: el.innerHTML.slice(0, 600),
+        classes: el.className,
+      }));
+
+    // Selects
     const selects = [...document.querySelectorAll('select')].map(s => ({
-      id: s.id, name: s.name, cls: s.className,
-      options: [...s.options].slice(0, 10).map(o => ({ value: o.value, label: o.text.trim() })),
+      id: s.id, cls: s.className,
+      options: [...s.options].map(o => ({ value: o.value, label: o.text.trim() })),
     }));
 
-    // Buscar botones/tabs de filtro
-    const filterBtns = [...document.querySelectorAll(
-      'button, [class*="filter"], [class*="tab"], [class*="categoria"], [class*="category"]'
-    )].slice(0, 20).map(el => ({
-      tag: el.tagName, cls: el.className.slice(0, 60), text: (el.innerText || '').trim().slice(0, 40),
+    // Checkboxes en filtros (Categoría, Medios de Pago)
+    const checkboxes = [...document.querySelectorAll('input[type=checkbox]')].map(cb => ({
+      name: cb.name, value: cb.value, id: cb.id,
+      label: document.querySelector(`label[for="${cb.id}"]`)?.innerText?.trim() || '',
     }));
 
-    // Muestra de texto de las primeras 3 "cards" del selector más prometedor
-    const allCards = [...document.querySelectorAll('article, [class*="beneficio"], [class*="card-ben"], [class*="ben-item"]')];
-    const cardSamples = allCards.slice(0, 3).map(el => el.innerText?.replace(/\s+/g, ' ').trim().slice(0, 200));
+    // Clases relevantes
+    const allCls = new Set();
+    document.querySelectorAll('*').forEach(el =>
+      el.classList.forEach(c => { if (c.length > 3 && c.length < 50) allCls.add(c); })
+    );
+    const relevant = [...allCls].filter(c =>
+      /ben|tarj|desc|pct|porc|logo|comer|categ|icon|medio|pago|nombre/i.test(c)
+    );
 
-    // Estructura del DOM: primeros 2 niveles bajo body
-    const bodyChildren = [...document.body.children].map(el => ({
-      tag: el.tagName, id: el.id, cls: el.className.slice(0, 60),
-    }));
-
-    return { counts, selects, filterBtns, cardSamples, bodyChildren };
+    return { benItems: benItems.length, benAny: benAny.length, withText: withText.length, samples, selects, checkboxes, relevant };
   });
 
-  console.log('\n--- Conteo de candidatos a cards ---');
-  for (const [sel, count] of Object.entries(info.counts)) {
-    if (count > 0) console.log(`  ${sel}: ${count}`);
-  }
+  console.log(`\n--- Cards encontrados ---`);
+  console.log(`  .beneficio-item total: ${info.benItems}`);
+  console.log(`  [class*="beneficio"] total: ${info.benAny}`);
+  console.log(`  Con contenido (innerText > 2): ${info.withText}`);
 
-  console.log('\n--- Selects encontrados ---');
-  if (info.selects.length === 0) console.log('  (ninguno)');
+  console.log(`\n--- Primeros 5 cards con contenido ---`);
+  info.samples.forEach((s, i) => {
+    console.log(`\n  [${i}] cls="${s.classes}"`);
+    console.log(`       text: "${s.text}"`);
+    console.log(`       html: ${s.html}`);
+  });
+
+  console.log(`\n--- Selects ---`);
   info.selects.forEach(s => {
-    console.log(`  id="${s.id}" class="${s.cls.slice(0, 40)}" — ${s.options.length} opciones`);
+    console.log(`  id="${s.id}" — ${s.options.length} opciones:`);
     s.options.forEach(o => console.log(`    "${o.value}" → "${o.label}"`));
   });
 
-  console.log('\n--- Botones/tabs de filtro (primeros 20) ---');
-  info.filterBtns.forEach(b => console.log(`  <${b.tag}> cls="${b.cls}" text="${b.text}"`));
-
-  console.log('\n--- Muestras de cards ---');
-  info.cardSamples.forEach((s, i) => console.log(`  [${i}] "${s}"`));
-
-  console.log('\n--- Hijos directos de <body> ---');
-  info.bodyChildren.forEach(c => console.log(`  <${c.tag}> id="${c.id}" cls="${c.cls}"`));
-
-  // Dump de clases CSS únicas en el DOM (para detectar nombres de cards)
-  const classes = await page.evaluate(() => {
-    const all = new Set();
-    document.querySelectorAll('*').forEach(el => {
-      el.classList.forEach(c => { if (c.length > 3 && c.length < 40) all.add(c); });
-    });
-    return [...all].sort();
-  });
-  console.log(`\n--- Clases CSS únicas (${classes.length} total) ---`);
-  const relevant = classes.filter(c =>
-    /ben|card|offer|desc|cat|tarj|comer|item|promo|list|grid|produc/i.test(c)
+  console.log(`\n--- Checkboxes de filtros (primeros 30) ---`);
+  info.checkboxes.slice(0, 30).forEach(cb =>
+    console.log(`  name="${cb.name}" value="${cb.value}" label="${cb.label}"`)
   );
-  console.log('  Relevantes:', relevant.join(', '));
+
+  console.log(`\n--- Clases CSS relevantes ---`);
+  console.log('  ' + info.relevant.join(', '));
 }
 
 // ── Main ──────────────────────────────────────────────────────────────────────
