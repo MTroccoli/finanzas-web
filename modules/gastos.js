@@ -499,22 +499,21 @@ window.Mods.gastos = {
       ? '<span style="font-size:.58rem;padding:1px 5px;border-radius:3px;background:rgba(41,176,140,.18);color:#29b08c;font-weight:700;letter-spacing:.03em;vertical-align:middle;margin-left:5px">BROU</span>'
       : '<span style="font-size:.58rem;padding:1px 5px;border-radius:3px;background:rgba(204,0,0,.18);color:#e84040;font-weight:700;letter-spacing:.03em;vertical-align:middle;margin-left:5px">Scotia</span>';
 
+    const _di = 'font-size:.73rem;color:var(--text-sec);margin-top:3px';
     const renderDet = b => {
       let h = '';
       if (b.fuente === 'BBVA' && b.descuentos && b.descuentos.length)
-        h += b.descuentos.map(d => '<div style="font-size:.76rem;padding:2px 0">• ' + d.texto + '</div>').join('');
-      if (b.tarjetas && b.fuente !== 'BROU') h += '<div style="font-size:.73rem;color:var(--text-sec);margin-top:4px">' + b.tarjetas + '</div>';
-      if (b.tarjetas && b.fuente === 'BROU') h += '<div style="font-size:.71rem;color:var(--text-sec);margin-top:4px">Tarjetas: ' + b.tarjetas + '</div>';
-      // Itaú non-exclusive = all cards; exclusive already has tarjetas populated
+        h += b.descuentos.map(d => '<div style="' + _di + ';padding:2px 0">• ' + d.texto + '</div>').join('');
+      if (b.tarjetas)
+        h += '<div style="' + _di + '">' + b.tarjetas + '</div>';
       if (b.fuente === 'Itaú' && !b.tarjetas)
-        h += '<div style="font-size:.73rem;color:var(--text-sec);margin-top:4px">Tarjetas: Todas las tarjetas Itaú</div>';
-      if (b.vigencia) h += '<div style="font-size:.73rem;color:var(--text-sec);margin-top:3px">Vigencia: ' + b.vigencia.replace(/^vigencia:\s*/i, '') + '</div>';
-      if (b.local)    h += '<div style="font-size:.73rem;color:var(--text-sec);margin-top:3px">Dónde: ' + b.local + '</div>';
-      if (b.tope)     h += '<div style="font-size:.73rem;color:var(--text-sec);margin-top:3px">Tope: ' + b.tope + '</div>';
-      if ((b.fuente === 'Santander' || b.fuente === 'Itaú') && b.desc) h += '<div style="font-size:.73rem;color:var(--text-sec);margin-top:3px">' + b.desc + '</div>';
-      if (b.fuente === 'Scotiabank' && b.desc && b.desc !== b.tarjetas) h += '<div style="font-size:.73rem;color:var(--text-sec);margin-top:3px">' + b.desc + '</div>';
-      if (b.fuente === 'Scotiabank' && b.categoria) h += '<div style="font-size:.71rem;color:var(--text-sec);margin-top:3px;opacity:.7">Categoría: ' + b.categoria + '</div>';
-      if (b.fuente === 'BROU' && b.categoria) h += '<div style="font-size:.71rem;color:var(--text-sec);margin-top:3px;opacity:.7">Categoría: ' + b.categoria + '</div>';
+        h += '<div style="' + _di + '">Todas las tarjetas Itaú</div>';
+      if (b.vigencia) h += '<div style="' + _di + '">Vigencia: ' + b.vigencia.replace(/^vigencia:\s*/i, '') + '</div>';
+      if (b.local)    h += '<div style="' + _di + '">Dónde: ' + b.local + '</div>';
+      if (b.tope)     h += '<div style="' + _di + '">Tope: ' + b.tope + '</div>';
+      if ((b.fuente === 'Santander' || b.fuente === 'Itaú') && b.desc) h += '<div style="' + _di + '">' + b.desc + '</div>';
+      if (b.fuente === 'Scotiabank' && b.desc && b.desc !== b.tarjetas) h += '<div style="' + _di + '">' + b.desc + '</div>';
+      if ((b.fuente === 'Scotiabank' || b.fuente === 'BROU') && b.categoria) h += '<div style="' + _di + '">Categoría: ' + b.categoria + '</div>';
       if (b.url) h += '<a href="' + b.url + '" target="_blank" rel="noopener" style="font-size:.71rem;color:var(--accent);display:inline-block;margin-top:6px">Ver en sitio →</a>';
       else if (b.fuente === 'Itaú') h += '<a href="https://www.itau.com.uy/inst/' + (b.exclusivo ? 'beneficiosexclusivos' : 'beneficios') + '.html" target="_blank" rel="noopener" style="font-size:.71rem;color:var(--accent);display:inline-block;margin-top:6px">Ver en sitio Itaú →</a>';
       else if (b.fuente === 'Scotiabank') h += '<a href="https://www.scotiabank.com.uy/Personas/Tarjetas/Beneficios/default" target="_blank" rel="noopener" style="font-size:.71rem;color:var(--accent);display:inline-block;margin-top:6px">Ver en sitio Scotiabank →</a>';
@@ -597,7 +596,7 @@ window.Mods.gastos = {
         </select>
         ${catList.length ? `
           <select id="desc-cat" style="padding:7px 10px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.8rem">
-            <option value="">Categorías (${catList.length})</option>
+            <option value="">Todos</option>
             ${catList.map(c => `<option value="${c}" ${cat === c ? 'selected' : ''}>${c} (${catCounts[c]})</option>`).join('')}
           </select>
         ` : ''}
