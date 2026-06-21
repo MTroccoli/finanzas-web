@@ -503,7 +503,8 @@ window.Mods.gastos = {
       let h = '';
       if (b.fuente === 'BBVA' && b.descuentos && b.descuentos.length)
         h += b.descuentos.map(d => '<div style="font-size:.76rem;padding:2px 0">• ' + d.texto + '</div>').join('');
-      if (b.tarjetas) h += '<div style="font-size:.73rem;color:var(--text-sec);margin-top:4px">' + b.tarjetas + '</div>';
+      if (b.tarjetas && b.fuente !== 'BROU') h += '<div style="font-size:.73rem;color:var(--text-sec);margin-top:4px">' + b.tarjetas + '</div>';
+      if (b.tarjetas && b.fuente === 'BROU') h += '<div style="font-size:.71rem;color:var(--text-sec);margin-top:4px">Tarjetas: ' + b.tarjetas + '</div>';
       // Itaú non-exclusive = all cards; exclusive already has tarjetas populated
       if (b.fuente === 'Itaú' && !b.tarjetas)
         h += '<div style="font-size:.73rem;color:var(--text-sec);margin-top:4px">Tarjetas: Todas las tarjetas Itaú</div>';
@@ -615,7 +616,7 @@ window.Mods.gastos = {
                 <td style="padding:7px 6px;${tdBorder};font-size:.82rem">
                   <span>${b.comercio}</span>${fuenteBadge(b.fuente)}<button class="di-btn" data-i="${idx}" style="background:none;border:none;color:var(--text-sec);cursor:pointer;padding:0 4px;font-size:.85rem;line-height:1;vertical-align:middle;margin-left:3px" title="Ver detalle">ⓘ</button>
                 </td>
-                <td style="padding:7px 6px;${tdBorder};font-size:.82rem;font-family:'DM Mono',monospace;color:${b.pctMax ? 'var(--gold)' : 'var(--text-sec)'};white-space:nowrap">${b.pctMax ? b.pctMax + '%' : '—'}</td>
+                <td style="padding:7px 6px;${tdBorder};font-size:${b.pctMax ? '.82rem' : '.72rem'};font-family:'DM Mono',monospace;color:${b.pctMax ? 'var(--gold)' : 'var(--text-sec)'};white-space:nowrap">${b.pctMax ? b.pctMax + '%' : 'Otros'}</td>
                 <td style="padding:7px 6px;${tdBorder};font-size:.72rem;color:var(--text-sec);white-space:nowrap">${b.vigencia || '—'}</td>
               </tr>
               <tr id="di-row-${idx}" style="display:none">
