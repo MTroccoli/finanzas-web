@@ -152,16 +152,26 @@ window.Mods.tarjetas = {
         const scot  = r4 ? await r4.json().catch(() => ({ beneficios: [] })) : { beneficios: [] };
         const brou  = r5 ? await r5.json().catch(() => ({ beneficios: [] })) : { beneficios: [] };
         const oca   = r6 ? await r6.json().catch(() => ({ beneficios: [] })) : { beneficios: [] };
+        const OCA_SKIP = ['2puntosIvaCompras', '9puntosIvaRestaurantes'];
         const parseNameParam = url => {
           if (!url) return null;
           try {
             const m = (url + '').match(/[?&]name=([^&]+)/);
             if (!m) return null;
-            const raw = decodeURIComponent(m[1]);
-            const split = raw.includes('-')
+            // Quitar "OCABlue" y "OCA" del string crudo ANTES de splitear CamelCase
+            // para evitar que la regex parta "OCAy" → "OC Ay" dejando residuos
+            const raw = decodeURIComponent(m[1])
+              .replace(/OCABlue/gi, '').replace(/OCA/gi, '');
+            let s = raw.includes('-')
               ? raw.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ')
-              : raw.replace(/([a-záéíóúüñ])([A-ZÁÉÍÓÚÜÑ])/g, '$1 $2').replace(/([A-ZÁÉÍÓÚÜÑ]{2,})([A-ZÁÉÍÓÚÜÑ][a-záéíóúüñ])/g, '$1 $2').trim();
-            return split || null;
+              : raw.replace(/(\d)([A-Za-záéíóúüñ])/g, '$1 $2')
+                   .replace(/([a-záéíóúüñ])([A-ZÁÉÍÓÚÜÑ])/g, '$1 $2')
+                   .replace(/([A-ZÁÉÍÓÚÜÑ]{2,})([A-ZÁÉÍÓÚÜÑ][a-záéíóúüñ])/g, '$1 $2').trim();
+            // Quitar prefijos descriptivos: "Viaja con"/"Viajacon", "Descuento", "Dto."
+            s = s.replace(/^\s*(Viajacon|Viaja\s+con|Descuento|Dto\.?)\s*/i, '');
+            // Limpiar conectores sobrantes al inicio/fin ("y ...", "... y", "con ...")
+            s = s.replace(/^\s*(y|con)\s+/i, '').replace(/\s+(y|con)\s*$/i, '').replace(/\s+/g, ' ').trim();
+            return s || null;
           } catch(e) { return null; }
         };
         const norm = (b, f) => ({ ...b, fuente: f, comercio: b.comercio || b.nombre, corto: b.corto || (f === 'OCA' ? parseNameParam(b.url) : null) });
@@ -173,7 +183,7 @@ window.Mods.tarjetas = {
             ...(itau.beneficios  || []).map(b => norm(b, 'Itaú')),
             ...(scot.beneficios  || []).map(b => norm(b, 'Scotiabank')),
             ...(brou.beneficios  || []).map(b => norm(b, 'BROU')),
-            ...(oca.beneficios   || []).map(b => norm(b, 'OCA')),
+            ...(oca.beneficios   || []).filter(b => !OCA_SKIP.some(s => b.url?.includes(s))).map(b => norm(b, 'OCA')),
           ],
         };
       } catch (e) {
