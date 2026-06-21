@@ -217,6 +217,18 @@ window.Mods.tarjetas = {
     }
     const catSpend = this._descCatSpendCache;
 
+    const parseEndDate = vig => {
+      if (!vig) return null;
+      const m = vig.match(/\bal\s+(\d{1,2})\/(\d{1,2})\/(\d{2,4})\b/i)
+             || vig.match(/\bhasta\s+el\s+(\d{1,2})\/(\d{1,2})\/(\d{2,4})\b/i);
+      if (!m) return null;
+      let y = +m[3]; if (y < 100) y += 2000;
+      return new Date(y, +m[2] - 1, +m[1], 23, 59, 59);
+    };
+    const today = new Date();
+    const isExpired = b => { const e = parseEndDate(b.vigencia); return e ? e < today : false; };
+    const activeBenefits = benefits.filter(b => !isExpired(b));
+
     const benIndex = {};
     for (const b of activeBenefits) {
       const k = this._normMerchant(b.comercio);
@@ -310,19 +322,6 @@ window.Mods.tarjetas = {
       'The Platinum Card Amex':      null,
     };
     const canonCat = c => c ? (CAT_MAP.hasOwnProperty(c) ? CAT_MAP[c] : c) : null;
-
-    // Parsea la fecha de vencimiento de una vigencia (retorna Date o null)
-    const parseEndDate = vig => {
-      if (!vig) return null;
-      const m = vig.match(/\bal\s+(\d{1,2})\/(\d{1,2})\/(\d{2,4})\b/i)
-             || vig.match(/\bhasta\s+el\s+(\d{1,2})\/(\d{1,2})\/(\d{2,4})\b/i);
-      if (!m) return null;
-      let y = +m[3]; if (y < 100) y += 2000;
-      return new Date(y, +m[2] - 1, +m[1], 23, 59, 59);
-    };
-    const today = new Date();
-    const isExpired = b => { const e = parseEndDate(b.vigencia); return e ? e < today : false; };
-    const activeBenefits = benefits.filter(b => !isExpired(b));
 
     const banco   = this._descBanco;
     const cat     = this._descCat;
