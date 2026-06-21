@@ -31,14 +31,27 @@ jobs:
         working-directory: scraper
         run: npm install
 
+      - name: Iniciar Xvfb (display virtual para Chrome no-headless)
+        run: |
+          sudo apt-get install -y xvfb
+          Xvfb :99 -screen 0 1280x1024x24 -ac +extension GLX +render -noreset &
+          sleep 2
+          echo "Xvfb started on :99"
+
       - name: Ejecutar scraper (modo diagnóstico)
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.modo == 'diag' }}
         working-directory: scraper
+        env:
+          DISPLAY: ':99'
+          CHROME_PATH: /usr/bin/google-chrome
         run: node scrape-oca.js --diag
 
       - name: Ejecutar scraper (modo producción)
         if: ${{ github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.modo == 'produccion') }}
         working-directory: scraper
+        env:
+          DISPLAY: ':99'
+          CHROME_PATH: /usr/bin/google-chrome
         run: node scrape-oca.js
 
       - name: Subir artifacts de diagnóstico
