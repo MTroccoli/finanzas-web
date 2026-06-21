@@ -2,7 +2,7 @@ name: Scrape beneficios BBVA
 
 on:
   schedule:
-    - cron: '0 9 1 * *'   # 1º de cada mes, 09:00 UTC
+    - cron: '0 9 * * 1'   # todos los lunes, 09:00 UTC
   workflow_dispatch:        # permite dispararlo manualmente
 
 permissions:
