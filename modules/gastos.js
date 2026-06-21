@@ -352,7 +352,19 @@ window.Mods.gastos = {
         const brou  = r5 ? await r5.json().catch(() => ({ beneficios: [] })) : { beneficios: [] };
         const oca   = r6 ? await r6.json().catch(() => ({ beneficios: [] })) : { beneficios: [] };
         // normalize: todos usan 'comercio' internamente; Santander/Itaú/Scotiabank/BROU/OCA usan 'nombre'
-        const norm = (b, f) => ({ ...b, fuente: f, comercio: b.comercio || b.nombre });
+        const parseNameParam = url => {
+          if (!url) return null;
+          try {
+            const m = (url + '').match(/[?&]name=([^&]+)/);
+            if (!m) return null;
+            const raw = decodeURIComponent(m[1]);
+            const split = raw.includes('-')
+              ? raw.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ')
+              : raw.replace(/([a-záéíóúüñ])([A-ZÁÉÍÓÚÜÑ])/g, '$1 $2').replace(/([A-ZÁÉÍÓÚÜÑ]{2,})([A-ZÁÉÍÓÚÜÑ][a-záéíóúüñ])/g, '$1 $2').trim();
+            return split || null;
+          } catch(e) { return null; }
+        };
+        const norm = (b, f) => ({ ...b, fuente: f, comercio: b.comercio || b.nombre, corto: b.corto || (f === 'OCA' ? parseNameParam(b.url) : null) });
         this._descCache = {
           actualizado: bbva.actualizado,
           benefits: [
