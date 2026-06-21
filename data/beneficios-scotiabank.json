@@ -57,8 +57,8 @@
         }
       ],
       "vigencia": "Todos los días",
-      "tarjetas": "Contratando el servicio de TELEPEAJE a través de Tarjeta de Crédito VISA, AMERICAN EXPRESS y MASTERCARD emitidas por Scotiabank Uruguay S",
-      "desc": "50% de ahorro Todos los días en Telepeajes.",
+      "tarjetas": "The Platinum Card American Express (excl. ConnectMiles)",
+      "desc": "50% en telepeajes todos los días · 10% en combustible jueves y domingos. Tope $1.200/mes.",
       "exclusivo": false
     },
     {
@@ -431,8 +431,8 @@
       "pctMax": null,
       "descuentos": [],
       "vigencia": "Todos los días",
-      "tarjetas": "Contratando el servicio de TELEPEAJE a través de Tarjeta de Crédito VISA, AMERICAN EXPRESS y MASTERCARD emitidas por Scotiabank Uruguay S",
-      "desc": "Solicitá tu TAG de forma gratuita",
+      "tarjetas": "The Platinum Card American Express (excl. ConnectMiles)",
+      "desc": "50% de ahorro todos los días en telepeajes. Tope $1.200/mes.",
       "exclusivo": false
     },
     {

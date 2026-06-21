@@ -360,6 +360,24 @@ async function scrapeAllCategories(page) {
     }
   }
 
+  // Overrides manuales para cards donde el descuento es más restrictivo que el texto
+  // genérico de la sub-página (el hub dice "VISA/AMEX/MC" para contratar el tag,
+  // pero el descuento en sí es exclusivo de The Platinum Card AMEX según T&C legales).
+  const MANUAL_OVERRIDES = {
+    'COMBUSTIBLE Y TELEPEAJE': {
+      tarjetas: 'The Platinum Card American Express (excl. ConnectMiles)',
+      desc: '50% en telepeajes todos los días · 10% en combustible jueves y domingos. Tope $1.200/mes.',
+    },
+    'TELEPEAJE': {
+      tarjetas: 'The Platinum Card American Express (excl. ConnectMiles)',
+      desc: '50% de ahorro todos los días en telepeajes. Tope $1.200/mes.',
+    },
+  };
+  for (const c of cards.filter(c => c.nombre)) {
+    const ov = MANUAL_OVERRIDES[c.nombre];
+    if (ov) { Object.assign(c, ov); console.log(`    override manual: "${c.nombre}"`); }
+  }
+
   // Eliminar cards fantasma que no se pudieron resolver como card real
   return cards.filter(c => c.nombre);
 }
