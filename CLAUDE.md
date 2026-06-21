@@ -41,6 +41,7 @@ modules/
   dashboard.js          # Vista resumen general del patrimonio
   inversiones.js        # Mercado, Portafolio, Operaciones, Rentabilidad
   gastos.js             # Registro, importación y resumen de egresos  ← más complejo
+  tarjetas.js           # Descuentos TDC, Comercios, Adicional (extraído de gastos.js)
   ingresos.js           # Registro y listado de ingresos
   presupuesto.js        # Límites mensuales por categoría
   config_page.js        # Configuración de la app (TC, moneda base, etc.)
@@ -468,16 +469,23 @@ Plotly.newPlot('id', traces, {
 | `js/db.js` | `v=20260618a` | — |
 | `modules/dashboard.js` | `v=20260619d` | — |
 | `modules/inversiones.js` | `v=20260619b` | — |
-| `modules/gastos.js` | `v=20260621m` | `58ae8d2` |
+| `modules/gastos.js` | `v=20260621o` | `b8504dd` |
+| `modules/tarjetas.js` | `v=20260621a` | `b8504dd` |
 | `modules/ingresos.js` | `v=20260616e` | — |
 | `modules/presupuesto.js` | `v=20260625` | — |
-| `modules/config_page.js` | `v=20260625` | — |
-| `js/app.js` | `v=20260620a` | — |
+| `modules/config_page.js` | `v=20260618d` | — |
+| `js/app.js` | `v=20260621a` | `b8504dd` |
 
 ### Estado funcional de módulos
 - **dashboard.js**: estable, sin cambios recientes.
 - **inversiones.js**: estable.
-- **gastos.js**: estable con caché. Tab Descuentos muestra beneficios de BBVA + Santander + Itaú + Scotiabank + BROU + **OCA**.
+- **gastos.js**: estable (~3300 líneas). TDC extraído. Rutas: resumen, detalle, cuotas, importar, manual.
+- **tarjetas.js**: NUEVO módulo. Ruta `#tarjetas/...`. 3 sub-tabs: Descuentos, Comercios, Adicional.
+  - Caché propio: `_comRawCache`, `_adicRawCache`, `_descCache`, `_descCatSpendCache`
+  - Cross-invalidación: gastos.js llama `window.Mods.tarjetas?._invalidateCache?.()` tras mutaciones
+  - `_drawDescuentos`: beneficios de BBVA + Santander + Itaú + Scotiabank + BROU + OCA
+  - OCA: `parseNameParam()` extrae nombre corto del URL `?name=` param (client-side)
+  - TDC subnav visible cuando `activePage === 'tarjetas'`
 - **ingresos.js**: estable. Presets recurrentes con auto-carga funcional.
 - **presupuesto.js**: estable.
 - **config_page.js**: estable.
@@ -503,13 +511,15 @@ Plotly.newPlot('id', traces, {
   - `desc` puede contener bloques de CSS inline de páginas con widgets externos (cosmético)
   - Workflow: `.github/workflows/scrape-oca.yml` — diag/produccion; schedule 1º de cada mes 13:00 UTC
 
-### Integración Descuentos en gastos.js
+### Integración Descuentos en tarjetas.js
 - Fetch paralelo de BBVA, Santander, Itaú, Scotiabank, BROU y **OCA** JSON (graceful: no falla si falta)
-- Normalization: `norm = (b, f) => ({ ...b, fuente: f, comercio: b.comercio || b.nombre })`
+- Normalization: `norm = (b, f) => ({ ...b, fuente: f, comercio: b.comercio || b.nombre, corto: ... })`
+- `corto`: para OCA se extrae del `?name=CamelCase` en la URL via `parseNameParam()` client-side
 - Badges: BBVA (azul), Santander (rojo), Itaú (naranja), Scotiabank (rojo oscuro), BROU (teal #29b08c), **OCA (naranja #e86b1e)**
 - Stats: `N BBVA · N Santander · N Itaú · N Scotiabank · N BROU · N OCA · actualizado DD/MM/YYYY`
 - `renderDet`: desc + link "Ver en OCA Blue →" para OCA; fallback a `ocablue.uy/beneficios.html` si no hay url específica
 - `_descBanco` acepta `'BROU'` y `'OCA'` como valores de filtro
+- Tabla Descuentos: 2 columnas (Comercio con `b.corto || b.comercio` | %) — sin columna Vigencia
 
 ### Próximo trabajo planificado: autenticación multi-usuario
 La app es actualmente single-user (Supabase hardcodeado en `config.js`). El plan para permitir que otros usuarios la usen:
