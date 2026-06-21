@@ -1,8 +1,9 @@
-// Scraper de beneficios OCA Uruguay para FinPro — v2 (non-headless + Xvfb).
+// Scraper de beneficios OCA Uruguay para FinPro — v4 (producción con ocablue.uy).
 //
 // Modo diag  (--diag): guarda HTML de hub + sub-páginas como artifacts, no escribe JSON.
 // Modo prod  (default): extrae beneficios y escribe data/beneficios-oca.json
 //
+// Hub real: https://ocablue.uy/beneficios.html
 // Requiere: DISPLAY=:99 (Xvfb) + CHROME_PATH=/usr/bin/google-chrome en CI.
 // Salida: data/beneficios-oca.json
 // { fuente:"OCA", actualizado:"YYYY-MM-DD", beneficios:[...] }
@@ -14,21 +15,14 @@ puppeteer.use(StealthPlugin());
 const fs   = require('fs');
 const path = require('path');
 
-// Candidatos de URL: se prueban en orden, se usa el primero con contenido real.
-// OCA tiene los beneficios en ocablue.uy (subdominio/dominio de beneficios).
-// La homepage oca.com.uy pasa el WAF y tiene links a ocablue.uy.
-const HUB_CANDIDATES = [
-  'https://ocablue.uy/beneficios.html',
-  'https://ocablue.uy/',
-  'https://www.oca.com.uy/',   // fallback: escanear homepage para links a ocablue
-];
-const ORIGIN = 'https://www.oca.com.uy';
-const BLUE_ORIGIN = 'https://ocablue.uy';
-const UA     = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 ' +
-               '(KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36';
+const HUB_URL     = 'https://ocablue.uy/beneficios.html';
+const HUB_ORIGIN  = 'https://ocablue.uy';
+const OCA_HOME    = 'https://www.oca.com.uy/';   // fallback para descubrir URL actual
+const UA          = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 ' +
+                    '(KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36';
 
 const DIAG_MODE   = process.argv.includes('--diag');
-const DELAY_MS    = 800;
+const DELAY_MS    = 600;
 const CHROME_PATH = process.env.CHROME_PATH || '/usr/bin/google-chrome';
 const HAS_DISPLAY = !!process.env.DISPLAY;
 const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -53,12 +47,10 @@ async function newPage(browser) {
 
 async function goto(page, url) {
   const resp = await page.goto(url, { waitUntil: 'networkidle2', timeout: 60000 });
-  // Wait extra for JS WAF challenges to complete
   await sleep(3000);
   return resp ? resp.status() : null;
 }
 
-// Returns true if the page is a WAF rejection (Imperva "Request Rejected")
 async function isWafBlocked(page) {
   const title   = await page.title().catch(() => '');
   const bodyLen = await page.evaluate(() => document.body?.innerText?.length || 0).catch(() => 0);
@@ -90,95 +82,85 @@ async function scrollToEnd(page) {
   await sleep(800);
 }
 
-// Scan a loaded page for links that look like beneficios pages (including ocablue.uy)
-async function findBenefLinks(page) {
-  return page.evaluate((origin) => {
-    const results = [];
-    const seen = new Set();
-    document.querySelectorAll('a[href]').forEach(a => {
-      const href = a.getAttribute('href') || '';
-      const full = href.startsWith('/') ? origin + href : (href.startsWith('http') ? href : null);
-      if (!full || seen.has(full)) return;
-      if (/benefic|descuent|promo|oferta/i.test(href) || /ocablue\.uy/i.test(href)) {
-        seen.add(full);
-        const txt = (a.textContent || '').trim().replace(/\s+/g, ' ');
-        results.push({ url: full, txt });
+// Resolve the correct hub URL (ocablue.uy; fallback: discover from oca.com.uy homepage)
+async function resolveHubUrl(page) {
+  // Try direct
+  const st = await goto(page, HUB_URL);
+  if (st && st < 400 && !await isWafBlocked(page)) return HUB_URL;
+
+  // Try root of ocablue.uy
+  const st2 = await goto(page, HUB_ORIGIN + '/');
+  if (st2 && st2 < 400 && !await isWafBlocked(page)) {
+    // Look for benefit links on their homepage
+    const benefLink = await page.evaluate(() => {
+      for (const a of document.querySelectorAll('a[href]')) {
+        if (/beneficio/i.test(a.href)) return a.href;
       }
+      return null;
     });
-    return results;
-  }, ORIGIN);
+    if (benefLink) return benefLink;
+  }
+
+  // Fallback: load OCA homepage and find ocablue.uy links
+  const st3 = await goto(page, OCA_HOME);
+  if (st3 && st3 < 400 && !await isWafBlocked(page)) {
+    const blueLink = await page.evaluate(() => {
+      for (const a of document.querySelectorAll('a[href]')) {
+        if (/ocablue\.uy.*beneficio/i.test(a.href)) return a.href;
+      }
+      // Also try the first ocablue.uy link and append /beneficios.html
+      for (const a of document.querySelectorAll('a[href]')) {
+        if (/ocablue\.uy/i.test(a.href)) {
+          return new URL('/beneficios.html', a.href).href;
+        }
+      }
+      return null;
+    });
+    if (blueLink) {
+      const st4 = await goto(page, blueLink);
+      if (st4 && st4 < 400 && !await isWafBlocked(page)) return blueLink;
+    }
+  }
+
+  return null;
 }
 
 // ── Diagnóstico ───────────────────────────────────────────────────────────────
 async function diagMode(browser) {
   const page = await newPage(browser);
-  let hubUrl = null;
 
-  console.log('\n[DIAG] Probando URLs candidatas…');
-  for (const url of HUB_CANDIDATES) {
-    console.log(`  GET ${url}`);
-    try {
-      const status = await goto(page, url);
-      const title  = await page.title().catch(() => '');
-      const blocked = await isWafBlocked(page);
-      console.log(`  → status ${status} | title: "${title}" | waf-blocked: ${blocked}`);
-      if (status && status < 400 && !blocked) { hubUrl = url; break; }
-    } catch (e) {
-      console.log(`  → ERROR: ${e.message}`);
-    }
-  }
+  console.log('\n[DIAG] Resolviendo URL del hub…');
+  const hubUrl = await resolveHubUrl(page);
 
   if (!hubUrl) {
-    console.log('[DIAG] Todas las URLs bloqueadas o con error.');
-    console.log('[DIAG] Guardando HTML del último intento…');
-    const html = await page.content().catch(() => '');
-    saveHtml('hub', html);
-    const texto = await page.evaluate(() => document.body?.innerText?.slice(0, 5000) || '').catch(() => '');
-    const txtFile = path.join(__dirname, 'output', 'oca-hub-text.txt');
-    fs.writeFileSync(txtFile, texto);
-    console.log(`[DIAG] Texto visible → ${txtFile}`);
+    console.log('[DIAG] No se pudo cargar ninguna URL. Guardando HTML del último estado…');
+    saveHtml('hub', await page.content().catch(() => ''));
     await page.close();
     return;
   }
 
-  console.log(`\n[DIAG] URL activa: ${hubUrl}`);
-
-  // If it's the oca.com.uy homepage, look for links to beneficios / ocablue.uy
-  if (hubUrl.includes('oca.com.uy')) {
-    const links = await findBenefLinks(page);
-    console.log('\n[DIAG] Links de beneficios / ocablue encontrados en homepage:');
-    links.forEach(l => console.log(`  "${l.txt}" → ${l.url}`));
-
-    // Try the first ocablue link as the real hub
-    const blueLink = links.find(l => /ocablue\.uy/i.test(l.url));
-    if (blueLink) {
-      console.log(`\n[DIAG] Navegando a ocablue.uy: ${blueLink.url}`);
-      const st = await goto(page, blueLink.url);
-      const blocked = await isWafBlocked(page);
-      console.log(`  → status ${st} | title: "${await page.title()}" | waf-blocked: ${blocked}`);
-    }
-  }
-
+  console.log(`[DIAG] Hub: ${hubUrl}`);
   await scrollToEnd(page);
 
   const html = await page.content();
   saveHtml('hub', html);
 
-  const estructura = await page.evaluate(() => {
+  const info = await page.evaluate(() => {
+    // Fix SVGAnimatedString
+    const getClass = el => typeof el.className === 'string' ? el.className : (el.className.baseVal || '');
+
     const clases = new Set();
     document.querySelectorAll('[class]').forEach(el => {
-      // SVGAnimatedString has .baseVal; plain elements have string className
-      const cn = typeof el.className === 'string' ? el.className : (el.className.baseVal || '');
-      cn.split(/\s+/).forEach(c => {
+      getClass(el).split(/\s+/).forEach(c => {
         if (c && /benefic|descuent|promo|card|item|oferta|tarjeta|categ/i.test(c))
           clases.add(c);
       });
     });
 
     const candidatos = [
-      'article', '.card', '.benefit', '.beneficio', '.promo',
-      '[class*="card"]', '[class*="beneficio"]', '[class*="item"]',
-      '[class*="promo"]', '[class*="oferta"]',
+      '#listadoBeneficios a[href*="id="]',
+      '#listadoBeneficios [class*="item"]',
+      '[class*="item"]', 'article', '.card',
     ];
     const counts = {};
     candidatos.forEach(sel => {
@@ -188,161 +170,145 @@ async function diagMode(browser) {
     const links = [];
     document.querySelectorAll('a[href]').forEach(a => {
       const txt = (a.textContent || '').trim().replace(/\s+/g, ' ');
-      if (txt.length > 3 && txt.length < 80 && links.length < 25)
-        links.push({ href: a.getAttribute('href'), txt });
+      if (txt.length > 3 && txt.length < 120 && links.length < 25)
+        links.push({ href: a.getAttribute('href'), txt: txt.slice(0, 100) });
     });
 
     const ids = [];
     document.querySelectorAll('[id]').forEach(el => {
-      if (/benefic|descuent|promo|categ|card|oferta/i.test(el.id)) ids.push(el.id);
+      if (/benefic|descuent|promo|categ|card|oferta|nombre|descrip|listado/i.test(el.id))
+        ids.push(el.id);
     });
 
     return { clases: [...clases].sort(), counts, links, ids };
   });
 
-  console.log('\n[DIAG] Clases CSS relevantes encontradas:');
-  console.log(' ', estructura.clases.join(', ') || '(ninguna)');
+  console.log('\n[DIAG] Clases CSS relevantes:');
+  console.log(' ', info.clases.join(', ') || '(ninguna)');
 
   console.log('\n[DIAG] Conteo de elementos candidatos:');
-  Object.entries(estructura.counts).forEach(([sel, n]) => n > 0 && console.log(`  ${sel}: ${n}`));
+  Object.entries(info.counts).forEach(([sel, n]) => n > 0 && console.log(`  ${sel}: ${n}`));
 
-  console.log('\n[DIAG] IDs relevantes:', estructura.ids.join(', ') || '(ninguno)');
+  console.log('\n[DIAG] IDs relevantes:', info.ids.join(', ') || '(ninguno)');
 
   console.log('\n[DIAG] Primeros links:');
-  estructura.links.forEach(l => console.log(`  "${l.txt}" → ${l.href}`));
+  info.links.forEach(l => console.log(`  "${l.txt}" → ${l.href}`));
 
   const texto = await page.evaluate(() => document.body?.innerText?.slice(0, 5000) || '');
   const txtFile = path.join(__dirname, 'output', 'oca-hub-text.txt');
   fs.mkdirSync(path.join(__dirname, 'output'), { recursive: true });
   fs.writeFileSync(txtFile, texto);
-  console.log(`\n[DIAG] Texto visible (primeros 5000 chars) → ${txtFile}`);
+  console.log(`\n[DIAG] Texto visible → ${txtFile}`);
 
   await page.close();
 }
 
-// ── Extracción de cards del hub ───────────────────────────────────────────────
-async function extractCards(page) {
-  await page.evaluate(() => {
-    ['[content-visibility]', '[class*="card"]', '[class*="item"]', '[class*="beneficio"]']
-      .forEach(sel => {
-        try {
-          document.querySelectorAll(sel).forEach(el => {
-            el.style.contentVisibility = 'visible';
-          });
-        } catch(e) {}
-      });
-  });
-  await sleep(500);
+// ── Parsing helpers ───────────────────────────────────────────────────────────
 
-  // Detect which origin we're on (oca.com.uy or ocablue.uy)
-  const pageOrigin = await page.evaluate(() => location.origin);
+// "TipodeCambioOCABlue" → "Tipo de Cambio OCA Blue"
+// "BurguerKing" → "Burguer King"
+// "tienda-en-tu-ciudad" → "Tienda en tu ciudad"
+function parseName(raw) {
+  if (!raw) return '';
+  // Handle kebab-case
+  if (raw.includes('-')) {
+    const words = raw.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase());
+    return words.join(' ');
+  }
+  // CamelCase split: insert space before each uppercase letter that follows a lowercase letter or a letter followed by lowercase
+  return raw
+    .replace(/([a-záéíóúüñ])([A-ZÁÉÍÓÚÜÑ])/g, '$1 $2')
+    .replace(/([A-ZÁÉÍÓÚÜÑ]{2,})([A-ZÁÉÍÓÚÜÑ][a-záéíóúüñ])/g, '$1 $2')
+    .trim();
+}
 
-  return await page.evaluate((origin) => {
+// Extract pct, vigencia, desc from raw anchor text (text of "Ver condiciones" link card)
+// Text is typically: "[desc][vigencia]Ver condiciones"
+function parseCardText(raw) {
+  const text = raw.replace(/Ver condiciones\.?/gi, '').trim();
+
+  const pctMatch = text.match(/(\d{1,3})\s*%/);
+  const pctMax = pctMatch ? parseInt(pctMatch[1]) : null;
+
+  // Vigencia patterns: "Del X/XX/XX al X/XX/XX", "Hasta el X/XX/XX", "Todos los días...", "Los días..."
+  const vigPat  = /(del\s+\d[\d/]+\s+al\s+\d[\d/]+|hasta\s+el\s+[\d/]+|todos\s+los\s+días[^.]*|los\s+días\s+que[^.]*)/i;
+  const vigMatch = text.match(vigPat);
+  const vigencia = vigMatch ? vigMatch[1].trim() : null;
+
+  // Remove vigencia from text to get the promo description
+  const desc = (vigencia ? text.replace(vigMatch[1], '') : text)
+    .replace(/\s{2,}/g, ' ')
+    .trim() || null;
+
+  return { pctMax, vigencia, desc };
+}
+
+// ── Extracción de benefits desde el hub ─────────────────────────────────────
+async function extractBenefits(page) {
+  await scrollToEnd(page);
+
+  return page.evaluate((hubOrigin) => {
     const results = [];
     const seen = new Set();
 
-    const CARD_SELS = [
-      '.beneficio-item', '.benefit-card', '.card-beneficio', '.promo-card',
-      '[class*="beneficio"]', '[class*="benefit"]', '[class*="promo-item"]',
-      'article.card', '.oferta-item', '[class*="oferta"]', '[class*="descuento"]',
-      '.item', '.card', 'article',
-    ];
+    // Primary: anchors with id= in href inside the benefit list
+    const anchors = [...document.querySelectorAll('#listadoBeneficios a[href*="id="]')];
+    // Fallback: any anchor with id= param on the page
+    const allAnchors = anchors.length > 0 ? anchors
+      : [...document.querySelectorAll('a[href*="id="]')];
 
-    let cards = [];
-    for (const sel of CARD_SELS) {
-      const found = [...document.querySelectorAll(sel)];
-      if (found.length > 2 && found.length > cards.length) cards = found;
-    }
+    allAnchors.forEach(a => {
+      const href = a.getAttribute('href') || '';
+      const txt  = (a.textContent || '').trim().replace(/\s+/g, ' ');
+      if (!href || seen.has(href)) return;
+      seen.add(href);
 
-    if (cards.length === 0) {
-      document.querySelectorAll('a[href]').forEach(a => {
-        const href = a.getAttribute('href') || '';
-        if (/beneficio|descuento|promo|oferta|id=/i.test(href)) {
-          const nombre = (a.textContent || a.querySelector('img')?.alt || '').trim().replace(/\s+/g, ' ');
-          if (!nombre || nombre.length < 2 || seen.has(nombre)) return;
-          seen.add(nombre);
-          let url = href;
-          if (url.startsWith('/')) url = origin + url;
-          if (url.startsWith('//')) url = 'https:' + url;
-          const pctMatch = nombre.match(/(\d{1,3})\s*%/);
-          results.push({ nombre, pctMax: pctMatch ? parseInt(pctMatch[1]) : null, url, categoria: null, tarjetas: null, vigencia: null, desc: null });
-        }
-      });
-      return results;
-    }
+      let url = href;
+      if (url.startsWith('/')) url = hubOrigin + url;
+      if (!url.startsWith('http'))  url = hubOrigin + '/' + url;
 
-    cards.forEach(card => {
-      const anchor = card.querySelector('a[href]');
-      const imgEl  = card.querySelector('img');
-      const nombre = (imgEl?.alt || card.querySelector('h2,h3,h4,.title,.nombre,.comercio')?.textContent || '').trim().replace(/\s+/g, ' ');
-      if (!nombre || nombre.length < 2 || seen.has(nombre)) return;
-      seen.add(nombre);
+      // Extract id and name from URL params
+      let id = null, nameParam = null;
+      try {
+        const params = new URL(url).searchParams;
+        id = params.get('id');
+        nameParam = params.get('name');
+      } catch(e) {}
 
-      let url = anchor ? anchor.getAttribute('href') : null;
-      if (url && url.startsWith('/')) url = origin + url;
-      if (url && url.startsWith('//')) url = 'https:' + url;
-
-      const texto = (card.textContent || '').replace(/\s+/g, ' ').trim();
-      const pctMatch = texto.match(/(\d{1,3})\s*%/);
-
-      let categoria = null;
-      if (url) {
-        try {
-          const params = new URL(url).searchParams;
-          categoria = params.get('categoria') || params.get('cat') || null;
-          if (!categoria) {
-            const parts = new URL(url).pathname.split('/').filter(Boolean);
-            if (parts.length >= 2) categoria = parts[parts.length - 2];
-          }
-        } catch(e) {}
-      }
-
-      results.push({ nombre, pctMax: pctMatch ? parseInt(pctMatch[1]) : null, url: url || null, categoria, tarjetas: null, vigencia: null, desc: null });
+      results.push({ id, nameParam, href: url, rawText: txt });
     });
 
     return results;
-  }, pageOrigin);
+  }, HUB_ORIGIN);
 }
 
-// ── Enriquecimiento desde sub-página ─────────────────────────────────────────
-async function enrichFromSubPage(page, url) {
+// Load a benefit detail page and extract nombre + description from the modal
+async function enrichBenefit(page, url) {
   try {
-    const status = await goto(page, url);
-    if (!status || status >= 400 || await isWafBlocked(page)) return {};
-    await scrollToEnd(page);
+    const st = await goto(page, url);
+    if (!st || st >= 400 || await isWafBlocked(page)) return {};
 
-    return await page.evaluate(() => {
-      const lines = document.body.innerText.split('\n').map(l => l.trim()).filter(Boolean);
+    // Wait for modal / nombre element to appear
+    try {
+      await page.waitForSelector('#nombreBeneficio', { timeout: 8000 });
+    } catch(e) {}
 
-      const stopPats = /también te puede interesar|otros beneficios|ver más beneficios/i;
-      const stopIdx = lines.findIndex(l => stopPats.test(l));
-      const relevant = stopIdx > 0 ? lines.slice(0, stopIdx) : lines;
+    return page.evaluate(() => {
+      const nombre = (document.getElementById('nombreBeneficio')?.textContent || '').trim() || null;
+      const desc   = (document.getElementById('descripBeneficio')?.textContent || '').trim() || null;
+      const img    = document.getElementById('imgBeneficio')?.src || null;
 
-      const vigPat  = /todos los d[ií]as|lunes|martes|mi[eé]rcoles|jueves|viernes|s[aá]bado|domingo|vigencia|hasta el|válido/i;
-      const vigLines = relevant.filter(l => vigPat.test(l));
-      const vigencia = vigLines[0] || null;
+      // Try to get category from any visible category element
+      const catEl  = document.querySelector('[class*="categ"], [class*="categoria"]');
+      const categoria = catEl ? (catEl.textContent || '').trim() : null;
 
-      const tarjPat  = /visa|mastercard|american express|amex|oca\s|tarjeta|crédito|débito|gold|platinum|black|infinite|classic/i;
-      const tarjLines = relevant.filter(l => tarjPat.test(l) && l.length < 200);
-      const tarjeta  = tarjLines[0] || null;
+      // Tarjetas text
+      const tarjEl = document.querySelector('[class*="tarjeta"], [class*="card"]');
+      const tarjetas = tarjEl ? (tarjEl.textContent || '').trim() : null;
 
-      const skipPat  = /menú|inicio|home|beneficios|descuentos|buscar|carrito/i;
-      const descLine = relevant.find(l =>
-        l.length > 15 && l.length < 300 &&
-        !vigPat.test(l) && !tarjPat.test(l) && !skipPat.test(l)
-      );
-
-      const pctMatch = relevant.join(' ').match(/(\d{1,3})\s*%/);
-
-      return {
-        tarjetas: tarjeta,
-        vigencia: vigencia ? vigencia.replace(/^vigencia:\s*/i, '') : null,
-        desc:     descLine || null,
-        pctFromSub: pctMatch ? parseInt(pctMatch[1]) : null,
-      };
+      return { nombre, desc, img, categoria, tarjetas };
     });
   } catch(e) {
-    console.log(`  ⚠ sub-page error: ${e.message}`);
     return {};
   }
 }
@@ -350,73 +316,65 @@ async function enrichFromSubPage(page, url) {
 // ── Producción ────────────────────────────────────────────────────────────────
 async function prodMode(browser) {
   const page = await newPage(browser);
-  let hubUrl = null;
 
-  for (const url of HUB_CANDIDATES) {
-    try {
-      const status = await goto(page, url);
-      const blocked = await isWafBlocked(page);
-      if (status && status < 400 && !blocked) { hubUrl = url; break; }
-      if (status && status < 400 && !blocked && url.includes(ORIGIN)) { hubUrl = url; break; }
-    } catch(e) {}
-  }
+  console.log('[OCA] Cargando hub de beneficios…');
+  const hubUrl = await resolveHubUrl(page);
 
   if (!hubUrl) {
-    console.error('[ERROR] No se pudo cargar ninguna URL de OCA (WAF bloqueó todo). Abortando.');
+    console.error('[ERROR] No se pudo acceder al hub de OCA. Abortando.');
     await page.close();
     return;
   }
-
   console.log(`[OCA] Hub: ${hubUrl}`);
 
-  // If we landed on oca.com.uy homepage, navigate to ocablue.uy beneficios
-  if (hubUrl.includes('oca.com.uy')) {
-    const links = await findBenefLinks(page);
-    const blueLink = links.find(l => /ocablue\.uy/i.test(l.url));
-    const blueBase = blueLink
-      ? new URL(blueLink.url).origin + '/beneficios.html'
-      : 'https://ocablue.uy/beneficios.html';
-    console.log(`[OCA] Navegando a ocablue: ${blueBase}`);
-    const status = await goto(page, blueBase);
-    const blocked = await isWafBlocked(page);
-    if (status < 400 && !blocked) hubUrl = blueBase;
-  }
+  const rawCards = await extractBenefits(page);
+  console.log(`[OCA] Cards encontradas: ${rawCards.length}`);
 
-  await scrollToEnd(page);
-
-  // Click category tabs to expand all
-  await page.evaluate(async () => {
-    const tabs = document.querySelectorAll('[class*="categ"] a, [class*="tab"] a, .categoria, .filtro');
-    for (const tab of tabs) {
-      tab.click();
-      await new Promise(r => setTimeout(r, 400));
-    }
-  });
-  await sleep(1000);
-  await scrollToEnd(page);
-
-  let cards = await extractCards(page);
-  console.log(`[OCA] Cards extraídas del hub: ${cards.length}`);
-
-  if (cards.length === 0) {
+  if (rawCards.length === 0) {
     console.log('[OCA] Sin cards. Guardando HTML de diagnóstico…');
     saveHtml('hub-prod', await page.content());
     await page.close();
     return;
   }
 
+  // Enrich each benefit with detail page data
   const subPage = await newPage(browser);
-  for (let i = 0; i < cards.length; i++) {
-    const c = cards[i];
-    if (!c.url) continue;
-    console.log(`  [${i + 1}/${cards.length}] ${c.nombre}`);
-    const extra = await enrichFromSubPage(subPage, c.url);
-    if (extra.tarjetas)   c.tarjetas = extra.tarjetas;
-    if (extra.vigencia)   c.vigencia = extra.vigencia;
-    if (extra.desc)       c.desc = extra.desc;
-    if (extra.pctFromSub && !c.pctMax) c.pctMax = extra.pctFromSub;
+  const benefits = [];
+
+  for (let i = 0; i < rawCards.length; i++) {
+    const raw = rawCards[i];
+    const { pctMax, vigencia, desc: descHint } = parseCardText(raw.rawText);
+    const nameFromParam = parseName(raw.nameParam);
+
+    console.log(`  [${i + 1}/${rawCards.length}] ${nameFromParam || raw.nameParam}`);
+
+    let nombre = nameFromParam;
+    let desc = descHint;
+    let categoria = null;
+    let tarjetas = null;
+
+    // Try to enrich from detail page
+    const extra = await enrichBenefit(subPage, raw.href);
+    if (extra.nombre) nombre = extra.nombre;
+    if (extra.desc && (!desc || extra.desc.length > desc.length)) desc = extra.desc;
+    if (extra.categoria) categoria = extra.categoria;
+    if (extra.tarjetas) tarjetas = extra.tarjetas;
+
+    if (!nombre) nombre = nameFromParam;
+
+    benefits.push({
+      nombre,
+      pctMax,
+      url: raw.href,
+      categoria,
+      tarjetas,
+      vigencia,
+      desc,
+    });
+
     await sleep(DELAY_MS);
   }
+
   await subPage.close();
   await page.close();
 
@@ -434,28 +392,26 @@ async function prodMode(browser) {
     joyeria: 'Joyerías', optica: 'Salud',
   };
 
-  cards = cards.map(c => {
-    const raw = (c.categoria || '').toLowerCase()
+  const mapped = benefits.map(b => {
+    const raw = (b.categoria || '').toLowerCase()
       .normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z]/g, '');
-    const catLabel = Object.entries(CAT_LABELS).find(([k]) => raw.includes(k))?.[1] || c.categoria || null;
-    return { ...c, categoria: catLabel };
+    const catLabel = Object.entries(CAT_LABELS).find(([k]) => raw.includes(k))?.[1] || b.categoria || null;
+    return { ...b, categoria: catLabel };
   });
 
   const out = {
     fuente: 'OCA',
     actualizado: new Date().toISOString().slice(0, 10),
-    beneficios: cards,
+    beneficios: mapped,
   };
 
   const outPath = path.join(__dirname, '..', 'data', 'beneficios-oca.json');
   fs.writeFileSync(outPath, JSON.stringify(out, null, 2));
-  console.log(`\n[OCA] ✓ ${cards.length} beneficios escritos en ${outPath}`);
+  console.log(`\n[OCA] ✓ ${mapped.length} beneficios escritos en ${outPath}`);
 }
 
 // ── Main ──────────────────────────────────────────────────────────────────────
 (async () => {
-  // Use non-headless + real Chrome when DISPLAY is set (CI with Xvfb)
-  // Fall back to headless:new for local development without DISPLAY
   const useHeadless = !HAS_DISPLAY;
   console.log(`[OCA] Chrome: ${CHROME_PATH} | headless: ${useHeadless} | DISPLAY: ${process.env.DISPLAY || 'none'}`);
 
