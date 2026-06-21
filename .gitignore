@@ -12,3 +12,4 @@ Thumbs.db
 scraper/node_modules/
 scraper/output/
 scraper/package-lock.json
+.claude/
