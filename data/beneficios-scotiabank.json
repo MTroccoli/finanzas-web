@@ -1,6 +1,6 @@
 {
   "fuente": "scotiabank.com.uy",
-  "actualizado": "2026-06-21T01:01:28.712Z",
+  "actualizado": "2026-06-21T01:28:04.002Z",
   "total": 72,
   "beneficios": [
     {
@@ -57,7 +57,7 @@
         }
       ],
       "vigencia": "Todos los días",
-      "tarjetas": null,
+      "tarjetas": "Términos y Condiciones Contratando el servicio de TELEPEAJE a través de Tarjeta de Crédito VISA, AMERICAN EXPRESS y MASTERCARD emitidas por Scotiabank Uruguay S",
       "desc": "50% de ahorro Todos los días en Telepeajes.",
       "exclusivo": false
     },
@@ -431,7 +431,7 @@
       "pctMax": null,
       "descuentos": [],
       "vigencia": "Todos los días",
-      "tarjetas": null,
+      "tarjetas": "Términos y Condiciones Contratando el servicio de TELEPEAJE a través de Tarjeta de Crédito VISA, AMERICAN EXPRESS y MASTERCARD emitidas por Scotiabank Uruguay S",
       "desc": "Solicitá tu TAG de forma gratuita",
       "exclusivo": false
     },
