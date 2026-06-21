@@ -530,7 +530,7 @@ window.Mods.gastos = {
       ? '<span style="font-size:.58rem;padding:1px 5px;border-radius:3px;background:rgba(41,176,140,.18);color:#29b08c;font-weight:700;letter-spacing:.03em;vertical-align:middle;margin-left:5px">BROU</span>'
       : '<span style="font-size:.58rem;padding:1px 5px;border-radius:3px;background:rgba(204,0,0,.18);color:#e84040;font-weight:700;letter-spacing:.03em;vertical-align:middle;margin-left:5px">Scotia</span>';
 
-    const _di = 'font-size:.63rem;color:var(--text-sec);margin-top:2px';
+    const _di = 'font-size:11px;color:var(--text-sec);margin-top:2px';
     const renderDet = b => {
       let h = '';
       if (b.fuente === 'BBVA' && b.descuentos && b.descuentos.length)
@@ -545,10 +545,10 @@ window.Mods.gastos = {
       if ((b.fuente === 'Santander' || b.fuente === 'Itaú') && b.desc) h += '<div style="' + _di + '">' + b.desc + '</div>';
       if (b.fuente === 'Scotiabank' && b.desc && b.desc !== b.tarjetas) h += '<div style="' + _di + '">' + b.desc + '</div>';
       if ((b.fuente === 'Scotiabank' || b.fuente === 'BROU') && b.categoria && canonCat(b.categoria)) h += '<div style="' + _di + '">Categoría: ' + canonCat(b.categoria) + '</div>';
-      if (b.url) h += '<a href="' + b.url + '" target="_blank" rel="noopener" style="font-size:.63rem;color:var(--accent);display:inline-block;margin-top:6px">Ver en sitio →</a>';
-      else if (b.fuente === 'Itaú') h += '<a href="https://www.itau.com.uy/inst/' + (b.exclusivo ? 'beneficiosexclusivos' : 'beneficios') + '.html" target="_blank" rel="noopener" style="font-size:.63rem;color:var(--accent);display:inline-block;margin-top:6px">Ver en sitio Itaú →</a>';
-      else if (b.fuente === 'Scotiabank') h += '<a href="https://www.scotiabank.com.uy/Personas/Tarjetas/Beneficios/default" target="_blank" rel="noopener" style="font-size:.63rem;color:var(--accent);display:inline-block;margin-top:6px">Ver en sitio Scotiabank →</a>';
-      return h || '<div style="font-size:.73rem;color:var(--text-sec)">Sin detalle disponible.</div>';
+      if (b.url) h += '<a href="' + b.url + '" target="_blank" rel="noopener" style="font-size:11px;color:var(--accent);display:inline-block;margin-top:6px">Ver en sitio →</a>';
+      else if (b.fuente === 'Itaú') h += '<a href="https://www.itau.com.uy/inst/' + (b.exclusivo ? 'beneficiosexclusivos' : 'beneficios') + '.html" target="_blank" rel="noopener" style="font-size:11px;color:var(--accent);display:inline-block;margin-top:6px">Ver en sitio Itaú →</a>';
+      else if (b.fuente === 'Scotiabank') h += '<a href="https://www.scotiabank.com.uy/Personas/Tarjetas/Beneficios/default" target="_blank" rel="noopener" style="font-size:11px;color:var(--accent);display:inline-block;margin-top:6px">Ver en sitio Scotiabank →</a>';
+      return h || '<div style="font-size:11px;color:var(--text-sec)">Sin detalle disponible.</div>';
     };
 
     // ── Render ──
@@ -634,7 +634,7 @@ window.Mods.gastos = {
       </div>
 
       <div style="overflow-x:auto;-webkit-overflow-scrolling:touch">
-        <table style="width:100%;min-width:400px;border-collapse:collapse;font-size:initial">
+        <table style="width:100%;min-width:400px;border-collapse:collapse">
           <thead><tr>
             <th style="${thStyle};text-align:left">Comercio</th>
             <th style="${thStyle};text-align:left">%</th>
@@ -650,7 +650,7 @@ window.Mods.gastos = {
                 <td style="padding:7px 6px;${tdBorder};font-size:.72rem;color:var(--text-sec);white-space:nowrap">${b.vigencia || '—'}</td>
               </tr>
               <tr id="di-row-${idx}" style="display:none">
-                <td colspan="3" style="padding:3px 8px 8px 16px;font-size:.63rem;background:rgba(255,255,255,.025);${tdBorder}">
+                <td colspan="3" style="padding:3px 8px 8px 16px;font-size:11px;background:rgba(255,255,255,.025);${tdBorder}">
                   ${renderDet(b)}
                 </td>
               </tr>`).join('')}
