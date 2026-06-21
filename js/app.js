@@ -2,13 +2,14 @@ const PAGES = {
   dashboard:     ()    => window.Mods.dashboard.render(),
   inversiones:   (sub) => window.Mods.inversiones.render(sub || 'portafolio'),
   gastos:        (sub) => { if (sub) window.Mods.gastos._tab = sub; return window.Mods.gastos.render(); },
+  tarjetas:      (sub) => window.Mods.tarjetas.render(sub || 'descuentos'),
   ingresos:      ()    => window.Mods.ingresos.render(),
   configuracion: ()    => window.Mods.configuracion.render(),
 };
 
 const PAGE_NAMES = {
   dashboard: 'Análisis', inversiones: 'Inversiones',
-  gastos: 'Gastos', ingresos: 'Ingresos', configuracion: 'Configuración',
+  gastos: 'Gastos', tarjetas: 'Tarjetas', ingresos: 'Ingresos', configuracion: 'Configuración',
 };
 
 async function handleRoute() {
@@ -24,7 +25,7 @@ async function handleRoute() {
   document.body.classList.remove('nav-open');
 
   // TDC sub-nav (Comercios / Adicional / Descuentos tabs fixed below topbar)
-  const isTdc = activePage === 'gastos' && (activeSub === 'comercios' || activeSub === 'adicional' || activeSub === 'descuentos');
+  const isTdc = activePage === 'tarjetas' && (activeSub === 'descuentos' || activeSub === 'comercios' || activeSub === 'adicional');
   const tdcSubnav = document.getElementById('tdc-subnav');
   if (tdcSubnav) {
     tdcSubnav.classList.toggle('visible', isTdc);
