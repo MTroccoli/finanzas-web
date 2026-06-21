@@ -14,16 +14,16 @@ puppeteer.use(StealthPlugin());
 const fs   = require('fs');
 const path = require('path');
 
-// Candidatos de URL: se prueban en orden, se usa el primero con contenido real
+// Candidatos de URL: se prueban en orden, se usa el primero con contenido real.
+// OCA tiene los beneficios en ocablue.uy (subdominio/dominio de beneficios).
+// La homepage oca.com.uy pasa el WAF y tiene links a ocablue.uy.
 const HUB_CANDIDATES = [
-  'https://www.oca.com.uy/beneficios',
-  'https://www.oca.com.uy/promociones',
-  'https://www.oca.com.uy/descuentos-y-beneficios',
-  'https://www.oca.com.uy/personas/beneficios',
-  'https://www.oca.com.uy/personas/promociones',
-  'https://www.oca.com.uy/',
+  'https://ocablue.uy/beneficios.html',
+  'https://ocablue.uy/',
+  'https://www.oca.com.uy/',   // fallback: escanear homepage para links a ocablue
 ];
 const ORIGIN = 'https://www.oca.com.uy';
+const BLUE_ORIGIN = 'https://ocablue.uy';
 const UA     = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 ' +
                '(KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36';
 
@@ -90,7 +90,7 @@ async function scrollToEnd(page) {
   await sleep(800);
 }
 
-// Scan a loaded page for links that look like beneficios/descuentos pages
+// Scan a loaded page for links that look like beneficios pages (including ocablue.uy)
 async function findBenefLinks(page) {
   return page.evaluate((origin) => {
     const results = [];
@@ -99,7 +99,7 @@ async function findBenefLinks(page) {
       const href = a.getAttribute('href') || '';
       const full = href.startsWith('/') ? origin + href : (href.startsWith('http') ? href : null);
       if (!full || seen.has(full)) return;
-      if (/benefic|descuent|promo|oferta/i.test(href)) {
+      if (/benefic|descuent|promo|oferta/i.test(href) || /ocablue\.uy/i.test(href)) {
         seen.add(full);
         const txt = (a.textContent || '').trim().replace(/\s+/g, ' ');
         results.push({ url: full, txt });
@@ -143,11 +143,20 @@ async function diagMode(browser) {
 
   console.log(`\n[DIAG] URL activa: ${hubUrl}`);
 
-  // If it's the homepage, look for links to beneficios pages
-  if (hubUrl === ORIGIN + '/' || hubUrl === ORIGIN) {
+  // If it's the oca.com.uy homepage, look for links to beneficios / ocablue.uy
+  if (hubUrl.includes('oca.com.uy')) {
     const links = await findBenefLinks(page);
-    console.log('\n[DIAG] Links de beneficios encontrados en homepage:');
+    console.log('\n[DIAG] Links de beneficios / ocablue encontrados en homepage:');
     links.forEach(l => console.log(`  "${l.txt}" → ${l.url}`));
+
+    // Try the first ocablue link as the real hub
+    const blueLink = links.find(l => /ocablue\.uy/i.test(l.url));
+    if (blueLink) {
+      console.log(`\n[DIAG] Navegando a ocablue.uy: ${blueLink.url}`);
+      const st = await goto(page, blueLink.url);
+      const blocked = await isWafBlocked(page);
+      console.log(`  → status ${st} | title: "${await page.title()}" | waf-blocked: ${blocked}`);
+    }
   }
 
   await scrollToEnd(page);
@@ -158,7 +167,9 @@ async function diagMode(browser) {
   const estructura = await page.evaluate(() => {
     const clases = new Set();
     document.querySelectorAll('[class]').forEach(el => {
-      (el.className || '').split(/\s+/).forEach(c => {
+      // SVGAnimatedString has .baseVal; plain elements have string className
+      const cn = typeof el.className === 'string' ? el.className : (el.className.baseVal || '');
+      cn.split(/\s+/).forEach(c => {
         if (c && /benefic|descuent|promo|card|item|oferta|tarjeta|categ/i.test(c))
           clases.add(c);
       });
@@ -223,6 +234,9 @@ async function extractCards(page) {
   });
   await sleep(500);
 
+  // Detect which origin we're on (oca.com.uy or ocablue.uy)
+  const pageOrigin = await page.evaluate(() => location.origin);
+
   return await page.evaluate((origin) => {
     const results = [];
     const seen = new Set();
@@ -231,20 +245,21 @@ async function extractCards(page) {
       '.beneficio-item', '.benefit-card', '.card-beneficio', '.promo-card',
       '[class*="beneficio"]', '[class*="benefit"]', '[class*="promo-item"]',
       'article.card', '.oferta-item', '[class*="oferta"]', '[class*="descuento"]',
+      '.item', '.card', 'article',
     ];
 
     let cards = [];
     for (const sel of CARD_SELS) {
       const found = [...document.querySelectorAll(sel)];
-      if (found.length > cards.length) cards = found;
+      if (found.length > 2 && found.length > cards.length) cards = found;
     }
 
     if (cards.length === 0) {
       document.querySelectorAll('a[href]').forEach(a => {
         const href = a.getAttribute('href') || '';
-        if (/beneficio|descuento|promo|oferta/i.test(href)) {
+        if (/beneficio|descuento|promo|oferta|id=/i.test(href)) {
           const nombre = (a.textContent || a.querySelector('img')?.alt || '').trim().replace(/\s+/g, ' ');
-          if (!nombre || seen.has(nombre)) return;
+          if (!nombre || nombre.length < 2 || seen.has(nombre)) return;
           seen.add(nombre);
           let url = href;
           if (url.startsWith('/')) url = origin + url;
@@ -273,8 +288,12 @@ async function extractCards(page) {
       let categoria = null;
       if (url) {
         try {
-          const parts = new URL(url).pathname.split('/').filter(Boolean);
-          if (parts.length >= 2) categoria = parts[parts.length - 2];
+          const params = new URL(url).searchParams;
+          categoria = params.get('categoria') || params.get('cat') || null;
+          if (!categoria) {
+            const parts = new URL(url).pathname.split('/').filter(Boolean);
+            if (parts.length >= 2) categoria = parts[parts.length - 2];
+          }
         } catch(e) {}
       }
 
@@ -282,7 +301,7 @@ async function extractCards(page) {
     });
 
     return results;
-  }, ORIGIN);
+  }, pageOrigin);
 }
 
 // ── Enriquecimiento desde sub-página ─────────────────────────────────────────
@@ -350,15 +369,17 @@ async function prodMode(browser) {
 
   console.log(`[OCA] Hub: ${hubUrl}`);
 
-  // If we landed on homepage, try to navigate to beneficios from there
-  if (hubUrl === ORIGIN + '/' || hubUrl === ORIGIN) {
+  // If we landed on oca.com.uy homepage, navigate to ocablue.uy beneficios
+  if (hubUrl.includes('oca.com.uy')) {
     const links = await findBenefLinks(page);
-    if (links.length > 0) {
-      console.log(`[OCA] Navegando a beneficios desde homepage: ${links[0].url}`);
-      const status = await goto(page, links[0].url);
-      const blocked = await isWafBlocked(page);
-      if (status < 400 && !blocked) hubUrl = links[0].url;
-    }
+    const blueLink = links.find(l => /ocablue\.uy/i.test(l.url));
+    const blueBase = blueLink
+      ? new URL(blueLink.url).origin + '/beneficios.html'
+      : 'https://ocablue.uy/beneficios.html';
+    console.log(`[OCA] Navegando a ocablue: ${blueBase}`);
+    const status = await goto(page, blueBase);
+    const blocked = await isWafBlocked(page);
+    if (status < 400 && !blocked) hubUrl = blueBase;
   }
 
   await scrollToEnd(page);
