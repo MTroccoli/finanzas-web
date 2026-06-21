@@ -488,6 +488,8 @@ window.Mods.gastos = {
       'Interior':                    'Hogar',
       'Vestimenta':                  'Moda',
       'Viajes':                      'Viajes',
+      'Papelería':                   'Librerías',
+      'papelería':                   'Librerías',
 
       'The Platinum Card Amex':      null,   // no es categoría real
     };
@@ -528,7 +530,7 @@ window.Mods.gastos = {
       ? '<span style="font-size:.58rem;padding:1px 5px;border-radius:3px;background:rgba(41,176,140,.18);color:#29b08c;font-weight:700;letter-spacing:.03em;vertical-align:middle;margin-left:5px">BROU</span>'
       : '<span style="font-size:.58rem;padding:1px 5px;border-radius:3px;background:rgba(204,0,0,.18);color:#e84040;font-weight:700;letter-spacing:.03em;vertical-align:middle;margin-left:5px">Scotia</span>';
 
-    const _di = 'font-size:.73rem;color:var(--text-sec);margin-top:3px';
+    const _di = 'font-size:.69rem;color:var(--text-sec);margin-top:2px';
     const renderDet = b => {
       let h = '';
       if (b.fuente === 'BBVA' && b.descuentos && b.descuentos.length)
@@ -648,7 +650,7 @@ window.Mods.gastos = {
                 <td style="padding:7px 6px;${tdBorder};font-size:.72rem;color:var(--text-sec);white-space:nowrap">${b.vigencia || '—'}</td>
               </tr>
               <tr id="di-row-${idx}" style="display:none">
-                <td colspan="3" style="padding:6px 8px 12px 20px;background:rgba(255,255,255,.025);${tdBorder}">
+                <td colspan="3" style="padding:3px 8px 8px 16px;background:rgba(255,255,255,.025);${tdBorder}">
                   ${renderDet(b)}
                 </td>
               </tr>`).join('')}
