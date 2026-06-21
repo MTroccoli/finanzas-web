@@ -1,0 +1,81 @@
+name: Scrape catálogo de tarjetas
+
+on:
+  schedule:
+    - cron: '0 14 1 * *'   # 1º de cada mes, 14:00 UTC
+  workflow_dispatch:
+    inputs:
+      modo:
+        description: 'Modo de ejecución'
+        required: true
+        default: 'diag'
+        type: choice
+        options:
+          - diag        # guarda HTMLs como artifacts, imprime encabezados
+          - produccion  # escribe data/catalogo-tarjetas.json y commitea
+
+permissions:
+  contents: write
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Instalar Chrome y Xvfb (para OCA y sitios anti-bot)
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq google-chrome-stable xvfb
+
+      - name: Instalar dependencias del scraper
+        working-directory: scraper
+        run: npm install
+
+      - name: Ejecutar scraper (modo diagnóstico)
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.modo == 'diag' }}
+        working-directory: scraper
+        env:
+          DISPLAY: ':99'
+          CHROME_PATH: '/usr/bin/google-chrome'
+        run: |
+          Xvfb :99 -screen 0 1366x900x24 &
+          sleep 2
+          node scrape-catalogo-tarjetas.js --diag
+
+      - name: Ejecutar scraper (modo producción)
+        if: ${{ github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.modo == 'produccion') }}
+        working-directory: scraper
+        env:
+          DISPLAY: ':99'
+          CHROME_PATH: '/usr/bin/google-chrome'
+        run: |
+          Xvfb :99 -screen 0 1366x900x24 &
+          sleep 2
+          node scrape-catalogo-tarjetas.js
+
+      - name: Subir HTML diagnóstico
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.modo == 'diag' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: catalogo-diag-html
+          path: scraper/output/catalogo-*.html
+          if-no-files-found: ignore
+
+      - name: Commitear datos si cambiaron
+        if: ${{ github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.modo == 'produccion') }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A data/catalogo-tarjetas.json
+          if git diff --staged --quiet; then
+            echo "Sin cambios en el catálogo"
+          else
+            git commit -m "chore: actualizar catálogo de tarjetas (scrape automático)"
+            git pull --rebase origin main
+            git push
+          fi
