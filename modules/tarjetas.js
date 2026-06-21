@@ -182,7 +182,8 @@ window.Mods.tarjetas = {
         };
         const norm = (b, f) => ({ ...b, fuente: f, comercio: b.comercio || b.nombre, corto: b.corto || (f === 'OCA' ? parseNameParam(b.url) : null) });
         this._descCache = {
-          actualizado: bbva.actualizado,
+          actualizado: [bbva.actualizado, sant.actualizado, itau.actualizado, scot.actualizado, brou.actualizado, oca.actualizado]
+            .filter(Boolean).sort().pop(),
           benefits: [
             ...(bbva.beneficios  || []).map(b => norm(b, 'BBVA')),
             ...(sant.beneficios  || []).map(b => norm(b, 'Santander')),
@@ -358,7 +359,12 @@ window.Mods.tarjetas = {
     }).sort((a, b) => (b.pctMax || 0) - (a.pctMax || 0));
 
     const fmtMon  = (n, mon) => (mon === 'USD' ? 'US$ ' : '$U ') + fmt(n, 0);
-    const actFmt  = actualizado ? new Date(actualizado).toLocaleDateString('es-AR') : '—';
+    const diffDays = actualizado ? Math.floor((Date.now() - new Date(actualizado)) / 86400000) : null;
+    const freshLabel = diffDays === null ? 'sin fecha'
+      : diffDays === 0 ? 'hoy'
+      : diffDays === 1 ? 'ayer'
+      : `hace ${diffDays} días`;
+    const freshClr = diffDays === null || diffDays > 7 ? '#fbbf24' : diffDays <= 3 ? '#4ade80' : 'var(--text-sec)';
 
     const fuenteBadge = f => f === 'BBVA'
       ? '<span style="font-size:.58rem;padding:1px 5px;border-radius:3px;background:rgba(46,142,200,.18);color:#5bb3e4;font-weight:700;letter-spacing:.03em;vertical-align:middle;margin-left:5px">BBVA</span>'
@@ -399,8 +405,10 @@ window.Mods.tarjetas = {
     const tdBorder = 'border-bottom:1px solid rgba(255,255,255,.04)';
 
     gc.innerHTML = `
-      <div style="font-size:.72rem;color:var(--text-sec);margin-bottom:14px">
-        ${bbvaCount} beneficios BBVA${santCount ? ' · ' + santCount + ' Santander' : ''}${itauCount ? ' · ' + itauCount + ' Itaú' : ''}${scotCount ? ' · ' + scotCount + ' Scotiabank' : ''}${brouCount ? ' · ' + brouCount + ' BROU' : ''}${ocaCount ? ' · ' + ocaCount + ' OCA' : ''} · actualizado ${actFmt}
+      <div style="font-size:.72rem;color:var(--text-sec);margin-bottom:14px;display:flex;flex-wrap:wrap;align-items:center;gap:6px">
+        <span>${bbvaCount} BBVA${santCount ? ' · ' + santCount + ' Santander' : ''}${itauCount ? ' · ' + itauCount + ' Itaú' : ''}${scotCount ? ' · ' + scotCount + ' Scotiabank' : ''}${brouCount ? ' · ' + brouCount + ' BROU' : ''}${ocaCount ? ' · ' + ocaCount + ' OCA' : ''}</span>
+        <span style="opacity:.35">·</span>
+        <span style="color:${freshClr}">● Datos actualizados ${freshLabel}</span>
       </div>
 
       ${oportunidades.length ? `
