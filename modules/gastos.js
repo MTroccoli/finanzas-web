@@ -467,18 +467,47 @@ window.Mods.gastos = {
       .sort((a, b) => b.total - a.total);
 
     // 5. Catálogo filtrado
+    const CAT_MAP = {
+      // BROU slugs
+      'destacados':                  'Destacados',
+      'ensenanza':                   'Educación',
+      'espectaculos':                'Entretenimiento',
+      'hogar':                       'Hogar',
+      'moda':                        'Moda',
+      'salud-estetica':              'Salud',
+      'tecnologia':                  'Tecnología',
+      'transporte':                  'Transporte',
+      'turismo':                     'Viajes',
+      // Scotiabank → canonicales
+      'Cafeterías y Salones de té':  'Gastronomía',
+      'Restaurantes':                'Gastronomía',
+      'Electrónica':                 'Tecnología',
+      'Estética':                    'Salud',
+      'Farmacias':                   'Salud',
+      'Ópticas':                     'Salud',
+      'Interior':                    'Hogar',
+      'Vestimenta':                  'Moda',
+      'Viajes':                      'Viajes',
+      'Librerías':                   'Educación',
+      'The Platinum Card Amex':      null,   // no es categoría real
+    };
+    const canonCat = c => c ? (CAT_MAP.hasOwnProperty(c) ? CAT_MAP[c] : c) : null;
+
     const banco = this._descBanco;
     const cat   = this._descCat;
     const q     = this._normMerchant(this._descSearch);
     const filtered = benefits.filter(b =>
       (!banco || b.fuente === banco) &&
-      (!cat   || b.categoria === cat) &&
+      (!cat   || canonCat(b.categoria) === cat) &&
       (!q     || this._normMerchant(b.comercio).includes(q))
     ).sort((a, b) => (b.pctMax || 0) - (a.pctMax || 0));
 
     const forCats = banco ? benefits.filter(b => b.fuente === banco) : benefits;
     const catCounts = {};
-    forCats.forEach(b => { if (b.categoria) catCounts[b.categoria] = (catCounts[b.categoria] || 0) + 1; });
+    forCats.forEach(b => {
+      const c = canonCat(b.categoria);
+      if (c) catCounts[c] = (catCounts[c] || 0) + 1;
+    });
     const catList   = Object.keys(catCounts).sort();
     const bbvaCount  = benefits.filter(b => b.fuente === 'BBVA').length;
     const santCount  = benefits.filter(b => b.fuente === 'Santander').length;
@@ -513,7 +542,7 @@ window.Mods.gastos = {
       if (b.tope)     h += '<div style="' + _di + '">Tope: ' + b.tope + '</div>';
       if ((b.fuente === 'Santander' || b.fuente === 'Itaú') && b.desc) h += '<div style="' + _di + '">' + b.desc + '</div>';
       if (b.fuente === 'Scotiabank' && b.desc && b.desc !== b.tarjetas) h += '<div style="' + _di + '">' + b.desc + '</div>';
-      if ((b.fuente === 'Scotiabank' || b.fuente === 'BROU') && b.categoria) h += '<div style="' + _di + '">Categoría: ' + b.categoria + '</div>';
+      if ((b.fuente === 'Scotiabank' || b.fuente === 'BROU') && b.categoria && canonCat(b.categoria)) h += '<div style="' + _di + '">Categoría: ' + canonCat(b.categoria) + '</div>';
       if (b.url) h += '<a href="' + b.url + '" target="_blank" rel="noopener" style="font-size:.71rem;color:var(--accent);display:inline-block;margin-top:6px">Ver en sitio →</a>';
       else if (b.fuente === 'Itaú') h += '<a href="https://www.itau.com.uy/inst/' + (b.exclusivo ? 'beneficiosexclusivos' : 'beneficios') + '.html" target="_blank" rel="noopener" style="font-size:.71rem;color:var(--accent);display:inline-block;margin-top:6px">Ver en sitio Itaú →</a>';
       else if (b.fuente === 'Scotiabank') h += '<a href="https://www.scotiabank.com.uy/Personas/Tarjetas/Beneficios/default" target="_blank" rel="noopener" style="font-size:.71rem;color:var(--accent);display:inline-block;margin-top:6px">Ver en sitio Scotiabank →</a>';
