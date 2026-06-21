@@ -7,6 +7,7 @@ window.Mods.tarjetas = {
   _descBanco:       '',
   _descCat:         '',
   _descSearch:      '',
+  _descGozado:      '',  // '' | 'gozado' | 'no-gozado'
   _comSort:         { col: 'count', dir: 'desc' },
   _comSelected:     new Set(),
   _comSuggestOpen:  false,
@@ -217,14 +218,14 @@ window.Mods.tarjetas = {
     const catSpend = this._descCatSpendCache;
 
     const benIndex = {};
-    for (const b of benefits) {
+    for (const b of activeBenefits) {
       const k = this._normMerchant(b.comercio);
       if (!k) continue;
       if (!benIndex[k] || (b.pctMax || 0) > (benIndex[k].pctMax || 0)) benIndex[k] = b;
     }
 
     const benByCat = {};
-    for (const b of benefits) {
+    for (const b of activeBenefits) {
       if (!b.categoria) continue;
       if (!benByCat[b.categoria]) benByCat[b.categoria] = { count: 0, maxPct: 0 };
       benByCat[b.categoria].count++;
@@ -310,28 +311,47 @@ window.Mods.tarjetas = {
     };
     const canonCat = c => c ? (CAT_MAP.hasOwnProperty(c) ? CAT_MAP[c] : c) : null;
 
-    const banco = this._descBanco;
-    const cat   = this._descCat;
-    const q     = this._normMerchant(this._descSearch);
-    const filtered = benefits.filter(b =>
-      (!banco || b.fuente === banco) &&
-      (!cat   || canonCat(b.categoria) === cat) &&
-      (!q     || this._normMerchant(b.comercio).includes(q))
-    ).sort((a, b) => (b.pctMax || 0) - (a.pctMax || 0));
+    // Parsea la fecha de vencimiento de una vigencia (retorna Date o null)
+    const parseEndDate = vig => {
+      if (!vig) return null;
+      const m = vig.match(/\bal\s+(\d{1,2})\/(\d{1,2})\/(\d{2,4})\b/i)
+             || vig.match(/\bhasta\s+el\s+(\d{1,2})\/(\d{1,2})\/(\d{2,4})\b/i);
+      if (!m) return null;
+      let y = +m[3]; if (y < 100) y += 2000;
+      return new Date(y, +m[2] - 1, +m[1], 23, 59, 59);
+    };
+    const today = new Date();
+    const isExpired = b => { const e = parseEndDate(b.vigencia); return e ? e < today : false; };
+    const activeBenefits = benefits.filter(b => !isExpired(b));
 
-    const forCats = banco ? benefits.filter(b => b.fuente === banco) : benefits;
+    const banco   = this._descBanco;
+    const cat     = this._descCat;
+    const gozado  = this._descGozado;
+    const q       = this._normMerchant(this._descSearch);
+
+    const forCats = banco ? activeBenefits.filter(b => b.fuente === banco) : activeBenefits;
     const catCounts = {};
     forCats.forEach(b => {
       const c = canonCat(b.categoria);
       if (c) catCounts[c] = (catCounts[c] || 0) + 1;
     });
     const catList   = Object.keys(catCounts).sort();
-    const bbvaCount  = benefits.filter(b => b.fuente === 'BBVA').length;
-    const santCount  = benefits.filter(b => b.fuente === 'Santander').length;
-    const itauCount  = benefits.filter(b => b.fuente === 'Itaú').length;
-    const scotCount  = benefits.filter(b => b.fuente === 'Scotiabank').length;
-    const brouCount  = benefits.filter(b => b.fuente === 'BROU').length;
-    const ocaCount   = benefits.filter(b => b.fuente === 'OCA').length;
+    const bbvaCount  = activeBenefits.filter(b => b.fuente === 'BBVA').length;
+    const santCount  = activeBenefits.filter(b => b.fuente === 'Santander').length;
+    const itauCount  = activeBenefits.filter(b => b.fuente === 'Itaú').length;
+    const scotCount  = activeBenefits.filter(b => b.fuente === 'Scotiabank').length;
+    const brouCount  = activeBenefits.filter(b => b.fuente === 'BROU').length;
+    const ocaCount   = activeBenefits.filter(b => b.fuente === 'OCA').length;
+
+    const normBen = b => this._normMerchant(b.comercio);
+    const filtered = activeBenefits.filter(b => {
+      if (banco  && b.fuente !== banco) return false;
+      if (cat    && canonCat(b.categoria) !== cat) return false;
+      if (q      && !normBen(b).includes(q)) return false;
+      if (gozado === 'gozado'    && !spendByNorm[normBen(b)]) return false;
+      if (gozado === 'no-gozado' &&  spendByNorm[normBen(b)]) return false;
+      return true;
+    }).sort((a, b) => (b.pctMax || 0) - (a.pctMax || 0));
 
     const fmtMon  = (n, mon) => (mon === 'USD' ? 'US$ ' : '$U ') + fmt(n, 0);
     const actFmt  = actualizado ? new Date(actualizado).toLocaleDateString('es-AR') : '—';
@@ -385,20 +405,23 @@ window.Mods.tarjetas = {
             💡 Oportunidades · comercios donde gastás con beneficio activo
           </div>
           <div style="overflow-x:auto;-webkit-overflow-scrolling:touch">
-            <table style="width:100%;min-width:420px;border-collapse:collapse">
+            <table style="width:100%;min-width:340px;border-collapse:collapse">
               <thead><tr>
                 <th style="${thStyle};text-align:left">Comercio</th>
                 <th style="${thStyle};text-align:right">Tu consumo 6m</th>
-                <th style="${thStyle};text-align:left">Beneficio</th>
-                <th style="${thStyle};text-align:left">Vigencia</th>
+                <th style="${thStyle};text-align:left">%</th>
               </tr></thead>
               <tbody>
-                ${oportunidades.map(o => `
+                ${oportunidades.map((o, idx) => `
                   <tr>
-                    <td style="padding:7px 6px;${tdBorder};font-size:.82rem">${o.example}${fuenteBadge(o.benefit.fuente)}</td>
+                    <td style="padding:7px 6px;${tdBorder};font-size:.82rem">${o.example}${fuenteBadge(o.benefit.fuente)}<button class="di-btn" data-i="op${idx}" style="background:none;border:none;color:var(--text-sec);cursor:pointer;padding:0 4px;font-size:.85rem;line-height:1;vertical-align:middle;margin-left:3px" title="Ver detalle">ⓘ</button></td>
                     <td style="padding:7px 6px;${tdBorder};font-size:.8rem;text-align:right;font-family:'DM Mono',monospace;color:var(--text-sec)">${fmtMon(o.total, o.mon)}</td>
-                    <td style="padding:7px 6px;${tdBorder};font-size:.82rem"><span style="color:var(--green);font-weight:600">hasta ${o.benefit.pctMax}%</span></td>
-                    <td style="padding:7px 6px;${tdBorder};font-size:.74rem;color:var(--text-sec)">${o.benefit.vigencia || '—'}</td>
+                    <td style="padding:7px 6px;${tdBorder};font-size:.82rem;color:var(--green);font-weight:600">${o.benefit.pctMax ? 'hasta ' + o.benefit.pctMax + '%' : 'Otros'}</td>
+                  </tr>
+                  <tr id="di-row-op${idx}" style="display:none">
+                    <td colspan="3" style="padding:3px 8px 8px 16px;font-size:11px;background:rgba(255,255,255,.025);${tdBorder}">
+                      ${renderDet(o.benefit)}
+                    </td>
                   </tr>`).join('')}
               </tbody>
             </table>
@@ -433,11 +456,11 @@ window.Mods.tarjetas = {
         </div>
       ` : ''}
 
-      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:8px">
         <input id="desc-search" type="text" placeholder="Buscar comercio…" value="${(this._descSearch || '').replace(/"/g, '&quot;')}"
           style="flex:1;min-width:120px;padding:7px 10px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.8rem">
         <select id="desc-banco" style="padding:7px 10px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.8rem">
-          <option value="">Todos (${benefits.length})</option>
+          <option value="">Todos (${activeBenefits.length})</option>
           <option value="BBVA" ${banco === 'BBVA' ? 'selected' : ''}>BBVA (${bbvaCount})</option>
           ${santCount ? `<option value="Santander" ${banco === 'Santander' ? 'selected' : ''}>Santander (${santCount})</option>` : ''}
           ${itauCount ? `<option value="Itaú" ${banco === 'Itaú' ? 'selected' : ''}>Itaú (${itauCount})</option>` : ''}
@@ -451,6 +474,14 @@ window.Mods.tarjetas = {
             ${catList.map(c => `<option value="${c}" ${cat === c ? 'selected' : ''}>${c} (${catCounts[c]})</option>`).join('')}
           </select>
         ` : ''}
+      </div>
+      <div style="display:flex;gap:6px;margin-bottom:12px">
+        ${[['', 'Todos'], ['gozado', '✓ Gozados'], ['no-gozado', '○ Sin gozar']].map(([val, lbl]) => `
+          <button class="desc-goz-btn" data-goz="${val}" style="font-size:.74rem;padding:4px 11px;border-radius:6px;cursor:pointer;
+            border:1px solid ${gozado === val ? 'var(--accent)' : 'var(--border)'};
+            background:${gozado === val ? 'rgba(46,142,200,.15)' : 'transparent'};
+            color:${gozado === val ? 'var(--accent)' : 'var(--text-sec)'}">${lbl}</button>
+        `).join('')}
       </div>
 
       <div style="overflow-x:auto;-webkit-overflow-scrolling:touch">
@@ -499,6 +530,12 @@ window.Mods.tarjetas = {
       this._drawDescuentos();
     });
     catEl?.addEventListener('change', () => { this._descCat = catEl.value; this._drawDescuentos(); });
+    document.querySelectorAll('.desc-goz-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        this._descGozado = btn.dataset.goz;
+        this._drawDescuentos();
+      });
+    });
     document.querySelectorAll('.di-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         const row = document.getElementById('di-row-' + btn.dataset.i);
