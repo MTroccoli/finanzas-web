@@ -458,7 +458,7 @@ Plotly.newPlot('id', traces, {
 
 ---
 
-## Estado actual del proyecto — respaldo sesión 2026-06-20
+## Estado actual del proyecto — respaldo sesión 2026-06-21
 
 ### Versiones de archivos clave
 | Archivo | Versión en index.html | Commit |
@@ -468,7 +468,7 @@ Plotly.newPlot('id', traces, {
 | `js/db.js` | `v=20260618a` | — |
 | `modules/dashboard.js` | `v=20260619d` | — |
 | `modules/inversiones.js` | `v=20260619b` | — |
-| `modules/gastos.js` | `v=20260620d` | `ba71771` |
+| `modules/gastos.js` | `v=20260621c` | `0948a7d` |
 | `modules/ingresos.js` | `v=20260616e` | — |
 | `modules/presupuesto.js` | `v=20260625` | — |
 | `modules/config_page.js` | `v=20260625` | — |
@@ -477,24 +477,31 @@ Plotly.newPlot('id', traces, {
 ### Estado funcional de módulos
 - **dashboard.js**: estable, sin cambios recientes.
 - **inversiones.js**: estable.
-- **gastos.js**: estable con caché. Tab Descuentos muestra beneficios de BBVA + Santander + Itaú.
+- **gastos.js**: estable con caché. Tab Descuentos muestra beneficios de BBVA + Santander + Itaú + Scotiabank + BROu.
 - **ingresos.js**: estable. Presets recurrentes con auto-carga funcional.
 - **presupuesto.js**: estable.
 - **config_page.js**: estable.
 
 ### Scrapers de beneficios bancarios
-- `scraper/scrape-itau.js`: estable. 22 beneficios en `data/beneficios-itau.json`. Nombres reales desde patrón "menos en [Comercio]", exclusivos como categorías.
-- `scraper/scrape-santander.js`: fixes aplicados 2026-06-20. Bugs resueltos:
-  - **Nombre correcto**: usa `<title>` tag ("Facal | Santander Uruguay" → "Facal") como fallback
-  - **pct correcto**: sube por ancestros hasta encontrar el container con `<img>` (el `<a>` con `align-items-center` matcheaba `[class*="item"]` por falso positivo)
-  - Producción en curso tras estos fixes — `data/beneficios-santander.json` se actualiza al terminar (~20-30 min)
+- `scraper/scrape-itau.js`: estable. 22 beneficios en `data/beneficios-itau.json`.
+- `scraper/scrape-santander.js`: estable. Bugs de nombre/pct resueltos en 2026-06-20.
+- `scraper/scrape-scotiabank.js`: estable v4d. 72 beneficios en `data/beneficios-scotiabank.json`.
+  - MANUAL_OVERRIDES: COMBUSTIBLE Y TELEPEAJE y TELEPEAJE → "The Platinum Card American Express (excl. ConnectMiles)"
+  - phantom data map para tarjetas de sub-páginas sin URL en el hub
+- `scraper/scrape-brou.js`: estable v4. 70 beneficios en `data/beneficios-brou.json`.
+  - Fix `content-visibility:auto` → `el.style.contentVisibility = 'visible'` antes de extraer
+  - enrichFromSubPage usa `innerText.split('\n')` y corta en "También te puede interesar"
+  - `pickBestTarjLine()` prefiere líneas con VISA/MC/BROU Recompensa sobre texto genérico
+  - vigencia extraída por líneas con días/fechas; ya filtra "Vigencia: " prefix en renderDet
+  - Workflow: `.github/workflows/scrape-brou.yml` — diag/produccion; schedule 1º de cada mes 12:00 UTC
 
 ### Integración Descuentos en gastos.js
-- Fetch paralelo de BBVA, Santander e Itaú JSON
+- Fetch paralelo de BBVA, Santander, Itaú, Scotiabank y **BROu** JSON
 - Normalization: `norm = (b, f) => ({ ...b, fuente: f, comercio: b.comercio || b.nombre })`
-- Badges: BBVA (azul), Santander (rojo), Itaú (naranja)
-- Stats: `N beneficios BBVA · N Santander · N Itaú · actualizado DD/MM/YYYY`
-- `renderDet` muestra `b.desc` para Santander e Itaú (descripción larga debajo del nombre)
+- Badges: BBVA (azul), Santander (rojo), Itaú (naranja), Scotiabank (rojo oscuro), **BROu (teal #29b08c)**
+- Stats: `N beneficios BBVA · N Santander · N Itaú · N Scotiabank · N BROu · actualizado DD/MM/YYYY`
+- `renderDet`: desc + categoria para BROu y Scotiabank; fix vigencia prefix duplicado ("Vigencia: Vigencia:")
+- `_descBanco` acepta `'BROu'` como valor de filtro
 
 ### Próximo trabajo planificado: autenticación multi-usuario
 La app es actualmente single-user (Supabase hardcodeado en `config.js`). El plan para permitir que otros usuarios la usen:
