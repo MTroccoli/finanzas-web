@@ -325,9 +325,13 @@ async function scrapeAllCategories(page) {
       continue;
     }
 
-    // Rellenar tarjetas si la hub card no tenía info
+    // Rellenar tarjetas si la hub card no tenía info.
+    // Preferir línea que mencione marca específica (AMEX, Platinum, etc.)
+    // antes que línea genérica de "tarjeta de crédito" (que aparece en el navbar).
     if (!c.tarjetas) {
-      if (extra.tarjLines.length) c.tarjetas = extra.tarjLines[0];
+      const specificBrand = /amex|american\s*express|platinum|infinite|mastercard|visa\s+(?:platinum|infinite|gold|premium)/i;
+      const bestLine = extra.tarjLines.find(s => specificBrand.test(s)) || extra.tarjLines[0];
+      if (bestLine) c.tarjetas = bestLine;
       else if (extra.imgAlts.length) c.tarjetas = extra.imgAlts.join(' · ').slice(0, 200);
     }
     // Actualizar pctMax si sub-página tiene uno mayor (más específico)
