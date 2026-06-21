@@ -158,11 +158,12 @@ async function enrichFromSubPage(page, url) {
     return await page.evaluate(() => {
       const allText = document.body.innerText.replace(/\s+/g, ' ');
 
-      // Frases del texto que mencionan tarjetas
+      // Frases del texto que mencionan tarjetas (excluye basura del navbar)
       const sentences = allText.split(/[.!\n]/).map(s => s.trim()).filter(s => s.length > 5);
       const tarjLines = sentences.filter(s =>
-        /amex|american\s+express|visa|mastercard|d[eé]bito|cr[eé]dito|platinum|infinite|gold|premium|club\s+card|tarjeta/i.test(s)
-      ).map(s => s.slice(0, 160));
+        /amex|american\s+express|visa|mastercard|d[eé]bito|cr[eé]dito|platinum|infinite|gold|premium|club\s+card|tarjeta/i.test(s) &&
+        !/^personas\s+banca\s+premium/i.test(s)   // filtrar línea del navbar
+      ).map(s => s.replace(/^t[eé]rminos\s+y\s+condiciones\s+/i, '').trim().slice(0, 160));
 
       // Alt-text de imágenes de logos de tarjetas (el DOM conserva alt aunque la imagen no cargue)
       const imgAlts = [...document.querySelectorAll('img[alt]')]
