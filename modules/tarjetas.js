@@ -23,6 +23,7 @@ window.Mods.tarjetas = {
 
   _misEditId:       null,
   _misCards:        null,
+  _misCatCache:     null,
 
   // State needed by helpers
   _cats:            [],
@@ -1645,19 +1646,74 @@ window.Mods.tarjetas = {
     const gc = document.getElementById('g-content');
     gc.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
 
-    const rows = await dbFetch('mis_tarjetas', { order: { col: 'created_at', asc: true } });
-    this._misCards = rows || [];
+    const [rows, catRes] = await Promise.all([
+      dbFetch('mis_tarjetas', { order: { col: 'created_at', asc: true } }),
+      this._misCatCache
+        ? Promise.resolve(this._misCatCache)
+        : fetch('data/catalogo-tarjetas.json', { cache: 'no-cache' })
+            .then(r => r.json()).catch(() => ({ tarjetas: [] })),
+    ]);
+    this._misCards    = rows || [];
+    this._misCatCache = catRes;
+    const catalog = catRes.tarjetas || [];
 
     const BANCOS  = ['BBVA', 'Santander', 'Itaú', 'Scotiabank', 'BROU', 'OCA'];
     const REDES   = ['Visa', 'Mastercard', 'Amex', 'OCA'];
-    const NIVELES = ['Clásica', 'Oro', 'Platinum', 'Black', 'Signature', 'Infinite'];
+    const NIVELES = ['Clásica', 'Oro', 'Gold', 'Platinum', 'Black', 'Red', 'Blue', 'Signature', 'Infinite'];
     const BANCO_CLR = {
       'BBVA': '#004481', 'Santander': '#EC0000', 'Itaú': '#EC7000',
       'Scotiabank': '#D4002A', 'BROU': '#29b08c', 'OCA': '#e86b1e',
     };
 
+    const getCobrandings = (banco, red, nivel) =>
+      [...new Set(
+        catalog
+          .filter(c => c.banco === banco && (!red || c.red === red) && (!nivel || c.nivel === nivel) && c.cobranding)
+          .map(c => c.cobranding)
+      )].sort();
+
+    const cobrandingField = (banco, red, nivel, cur = '') => {
+      const opts = getCobrandings(banco, red, nivel);
+      if (!opts.length) return '';
+      return `
+        <div class="form-group mt-f-cobranding-wrap">
+          <label style="font-size:.8rem">Co-branding</label>
+          <select class="mt-f-cobranding form-control">
+            <option value="">Sin co-branding</option>
+            ${opts.map(o => `<option${cur === o ? ' selected' : ''}>${o}</option>`).join('')}
+          </select>
+        </div>`;
+    };
+
+    const updateCobWrap = container => {
+      const banco = container.querySelector('.mt-f-banco')?.value || '';
+      const red   = container.querySelector('.mt-f-red')?.value   || '';
+      const nivel = container.querySelector('.mt-f-nivel')?.value  || '';
+      const opts  = getCobrandings(banco, red, nivel);
+      let wrap = container.querySelector('.mt-f-cobranding-wrap');
+      const apodoWrap = container.querySelector('.mt-f-apodo')?.closest('.form-group');
+      if (!opts.length) {
+        wrap?.remove();
+        return;
+      }
+      const cur = wrap?.querySelector('.mt-f-cobranding')?.value || '';
+      const html = `
+        <div class="form-group mt-f-cobranding-wrap">
+          <label style="font-size:.8rem">Co-branding</label>
+          <select class="mt-f-cobranding form-control">
+            <option value="">Sin co-branding</option>
+            ${opts.map(o => `<option${cur === o ? ' selected' : ''}>${o}</option>`).join('')}
+          </select>
+        </div>`;
+      if (wrap) {
+        wrap.outerHTML = html;
+      } else if (apodoWrap) {
+        apodoWrap.insertAdjacentHTML('beforebegin', html);
+      }
+    };
+
     const formFields = (r = {}) => `
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr ${getCobrandings(r.banco, r.red, r.nivel).length ? '1fr ' : ''}1fr;gap:10px">
         <div class="form-group">
           <label style="font-size:.8rem">Banco</label>
           <select class="mt-f-banco form-control">
@@ -1679,6 +1735,7 @@ window.Mods.tarjetas = {
             ${NIVELES.map(n => `<option${r.nivel === n ? ' selected' : ''}>${n}</option>`).join('')}
           </select>
         </div>
+        ${cobrandingField(r.banco, r.red, r.nivel, r.cobranding)}
         <div class="form-group">
           <label style="font-size:.8rem">Apodo <span style="opacity:.55">(opcional)</span></label>
           <input type="text" class="mt-f-apodo form-control" value="${r.apodo || ''}" placeholder="Mi Visa Oro">
@@ -1691,16 +1748,20 @@ window.Mods.tarjetas = {
     `;
 
     const readForm = wrap => ({
-      banco:     wrap.querySelector('.mt-f-banco').value,
-      red:       wrap.querySelector('.mt-f-red').value   || null,
-      nivel:     wrap.querySelector('.mt-f-nivel').value || null,
-      apodo:     wrap.querySelector('.mt-f-apodo').value.trim() || null,
-      principal: wrap.querySelector('.mt-f-principal').checked,
+      banco:      wrap.querySelector('.mt-f-banco').value,
+      red:        wrap.querySelector('.mt-f-red').value        || null,
+      nivel:      wrap.querySelector('.mt-f-nivel').value      || null,
+      cobranding: wrap.querySelector('.mt-f-cobranding')?.value || null,
+      apodo:      wrap.querySelector('.mt-f-apodo').value.trim() || null,
+      principal:  wrap.querySelector('.mt-f-principal').checked,
     });
 
     const cardHTML = r => {
       const clr   = BANCO_CLR[r.banco] || 'var(--accent)';
       const label = [r.red, r.nivel].filter(Boolean).join(' ');
+      const cobBadge = r.cobranding
+        ? `<span style="font-size:.68rem;padding:1px 7px;border-radius:4px;background:${clr}22;color:${clr};border:1px solid ${clr}40">${r.cobranding}</span>`
+        : '';
       if (this._misEditId === r.id) {
         return `
           <div class="mt-card" data-id="${r.id}" style="border:1px solid ${clr}60;border-radius:12px;padding:16px;background:linear-gradient(135deg,${clr}14,${clr}06)">
@@ -1712,11 +1773,12 @@ window.Mods.tarjetas = {
           </div>`;
       }
       return `
-        <div class="mt-card" data-id="${r.id}" style="border:1px solid ${clr}40;border-radius:12px;padding:16px 14px 12px;background:linear-gradient(135deg,${clr}14,${clr}06);display:flex;flex-direction:column;gap:4px;min-height:110px;position:relative">
+        <div class="mt-card" data-id="${r.id}" style="border:1px solid ${clr}40;border-radius:12px;padding:16px 14px 12px;background:linear-gradient(135deg,${clr}14,${clr}06);display:flex;flex-direction:column;gap:5px;min-height:115px;position:relative">
           <div style="font-weight:600;font-size:.95rem;color:${clr}">${r.banco}</div>
           <div style="font-size:.85rem;color:var(--text)">${label || '<span style="color:var(--text-sec)">—</span>'}</div>
-          ${r.apodo ? `<div style="font-size:.75rem;color:var(--text-sec);font-style:italic">${r.apodo}</div>` : ''}
-          <div style="font-size:.72rem;margin-top:auto;padding-top:8px;color:${r.principal ? 'var(--accent)' : 'var(--text-sec)'}">
+          ${cobBadge}
+          ${r.apodo ? `<div style="font-size:.74rem;color:var(--text-sec);font-style:italic">${r.apodo}</div>` : ''}
+          <div style="font-size:.72rem;margin-top:auto;padding-top:6px;color:${r.principal ? 'var(--accent)' : 'var(--text-sec)'}">
             ${r.principal ? '● Titular' : '○ Adicional'}
           </div>
           <div style="position:absolute;top:9px;right:9px;display:flex;gap:3px">
@@ -1746,12 +1808,17 @@ window.Mods.tarjetas = {
       </div>
     `;
 
-    // Auto-select red OCA cuando banco = OCA
-    gc.querySelectorAll('.mt-f-banco').forEach(sel => {
+    // Reactivo: actualizar cobranding al cambiar banco/red/nivel
+    gc.querySelectorAll('.mt-f-banco, .mt-f-red, .mt-f-nivel').forEach(sel => {
       sel.addEventListener('change', () => {
         const container = sel.closest('.mt-card, #mt-add-form');
-        const redSel = container?.querySelector('.mt-f-red');
-        if (redSel && sel.value === 'OCA') redSel.value = 'OCA';
+        if (!container) return;
+        // Auto-red para OCA
+        if (sel.classList.contains('mt-f-banco') && sel.value === 'OCA') {
+          const redSel = container.querySelector('.mt-f-red');
+          if (redSel) redSel.value = 'OCA';
+        }
+        updateCobWrap(container);
       });
     });
 
