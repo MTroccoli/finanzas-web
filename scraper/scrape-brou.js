@@ -1,12 +1,13 @@
-// Scraper de beneficios BROu para FinPro — v3.
+// Scraper de beneficios BROu para FinPro — v4.
 //
-// Hallazgos del diagnóstico v2:
-//  - 70 .beneficio-item en el DOM. content-visibility:auto hace que 34 fuera del
-//    viewport tengan innerText vacío. Fix: forzar contentVisibility='visible'.
-//  - Estructura: .beneficio-item > a[href] > img[alt=nombre] + texto con %
-//  - URL pattern: //beneficios.brou.com.uy/{categoria}/{slug}
-//  - Clase .tarjeta existe en el DOM (dentro de cada card)
-//  - Sub-páginas contienen detalle completo (tarjeta, vigencia, condiciones)
+// Hallazgos del diagnóstico v3:
+//  - 70 cards extraídas correctamente con content-visibility fix.
+//  - enrichFromSubPage: los selectores CSS (.tarjeta, etc.) no existen en BROu.
+//    La info útil está en innerText.split('\n') — hay que cortar en "También te
+//    puede interesar" para no capturar el sidebar de beneficios relacionados.
+//  - tarjLines con allText comprimido pegaba bloques enteros de nav; usando
+//    split('\n') cada línea es independiente y filtra mucho mejor.
+//  - vigencia: aparece como línea propia ("Todos los días", "Lunes a viernes", etc.)
 //
 // Salida: data/beneficios-brou.json
 
@@ -74,7 +75,7 @@ async function scrollToEnd(page) {
 
 // ── Extraer todas las cards del hub ──────────────────────────────────────────
 async function extractHubCards(page) {
-  // Forzar renderizado de todos los items (content-visibility:auto los omite fuera del viewport)
+  // Forzar renderizado (content-visibility:auto omite items fuera del viewport)
   await page.evaluate(() => {
     document.querySelectorAll('.beneficio-item').forEach(el => {
       el.style.contentVisibility = 'visible';
@@ -90,18 +91,18 @@ async function extractHubCards(page) {
       const nombre  = (imgEl?.alt || '').trim();
       if (!nombre || nombre.length < 2) return;
 
-      const url = anchor ? ('https:' + anchor.getAttribute('href').replace(/^https?:/, '')).replace('https://https:', 'https:') : null;
+      let rawUrl = anchor ? anchor.getAttribute('href') : null;
+      if (rawUrl && rawUrl.startsWith('//')) rawUrl = 'https:' + rawUrl;
+      else if (rawUrl && !rawUrl.startsWith('http')) rawUrl = 'https://beneficios.brou.com.uy' + rawUrl;
+      const url = rawUrl;
+
       const texto = (el.textContent || '').replace(/\s+/g, ' ').trim();
 
       // Porcentaje: primer número seguido de %
       const pctMatch = texto.match(/(\d{1,3})\s*%/);
       const pctMax = pctMatch ? parseInt(pctMatch[1]) : null;
 
-      // Tipo tarjeta si hay elemento .tarjeta
-      const tarjEl = el.querySelector('.tarjeta, [class*="tarjeta"]');
-      const tarjetas = tarjEl ? tarjEl.textContent.replace(/\s+/g, ' ').trim() : null;
-
-      // Categoría desde la URL (primer segmento del path)
+      // Categoría desde la URL
       let categoria = null;
       if (url) {
         try {
@@ -110,14 +111,14 @@ async function extractHubCards(page) {
         } catch (_) {}
       }
 
-      // Descripción: texto excluyendo el porcentaje y el nombre
-      const desc = texto
-        .replace(/^\d{1,3}\s*%\s*/, '')
-        .replace(nombre, '')
-        .trim()
-        .slice(0, 200) || null;
+      // Slug: último segmento de la URL
+      let slug = null;
+      if (url) {
+        try { slug = new URL(url).pathname.split('/').filter(Boolean).pop() || null; }
+        catch (_) {}
+      }
 
-      cards.push({ nombre, pctMax, url, tarjetas, categoria, desc });
+      cards.push({ nombre, pctMax, url, slug, tarjetas: null, vigencia: null, desc: null, categoria });
     });
     return cards;
   }, ORIGIN);
@@ -131,44 +132,63 @@ async function enrichFromSubPage(page, url) {
     await scrollToEnd(page);
 
     return await page.evaluate(() => {
-      // Descripción larga
-      const descEl = document.querySelector(
-        '[class*="descripcion"], [class*="description"], [class*="detalle"], [class*="detail"], [class*="beneficio-text"], [class*="ben-desc"], .card-body p, main p'
+      // Usar innerText split por líneas para no mezclar bloques de nav
+      const rawLines = (document.body.innerText || '').split('\n')
+        .map(s => s.trim()).filter(s => s.length > 2);
+
+      // Cortar en "También te puede interesar" — lo que sigue es sidebar/relacionados
+      const stopIdx = rawLines.findIndex(l => /también te puede interesar/i.test(l));
+      const lines = stopIdx > 0 ? rawLines.slice(0, stopIdx) : rawLines;
+
+      // Líneas con info de tarjetas (excluir nav)
+      const tarjLines = lines.filter(s =>
+        /visa|mastercard|d[eé]bito|cr[eé]dito|prepago|maestro|cabal|tarjeta|amex|american\s*express|brou\s+recompensa|mi\s+brou/i.test(s) &&
+        !/solicit[áa]\s+tu\s+tarjeta/i.test(s) &&
+        s.length > 8
+      ).map(s => s.slice(0, 200));
+
+      // Vigencia: líneas que mencionen días u horario
+      const vigLines = lines.filter(s =>
+        /todos los d[ií]as|lunes|martes|mi[eé]rcoles|jueves|viernes|s[áa]bado|domingo|diario|semana|vigencia/i.test(s) &&
+        s.length < 120
       );
-      const descLarga = descEl ? descEl.innerText.replace(/\s+/g, ' ').trim().slice(0, 400) : null;
+      const vigencia = vigLines.length ? vigLines[0].slice(0, 100) : null;
 
-      // Tarjeta(s) — buscar elemento con class tarjeta o texto que mencione tipo
-      const tarjEls = [...document.querySelectorAll('.tarjeta, [class*="tarjeta"], [class*="medio-pago"], [class*="mediopago"]')];
-      const tarjetasArr = tarjEls.map(el => el.innerText.replace(/\s+/g, ' ').trim()).filter(t => t.length > 1);
-      const tarjetas = tarjetasArr.length ? [...new Set(tarjetasArr)].join(' · ').slice(0, 200) : null;
+      // descLarga: primera línea de contenido significativo (no nav, no breadcrumb, no solo %)
+      const NAV_PATS = /^(solicitá|sorteos|contacto|rueda\s+celeste|inicio|beneficios|espectáculos|moda|gastronom|hogar|transporte|ense[nñ]anza|salud|turismo|tecnolog)/i;
+      const descLines = lines.filter(s =>
+        s.length > 20 &&
+        !NAV_PATS.test(s) &&
+        !/^(\d{1,3}\s*%|2x1|\d{4}\s+\d{4}|uy\/)/.test(s)
+      );
+      const descLarga = descLines.length ? descLines[0].slice(0, 400) : null;
 
-      // Vigencia / días
-      const vigEl = document.querySelector('[class*="vigencia"], [class*="vigenc"], [class*="dias"], [class*="dia-semana"], [class*="schedule"]');
-      const vigencia = vigEl ? vigEl.innerText.replace(/\s+/g, ' ').trim().slice(0, 100) : null;
-
-      // Porcentaje en la sub-página (puede ser más específico)
-      const allText = document.body.innerText.replace(/\s+/g, ' ');
-      const pctNums = [...allText.matchAll(/(\d{1,3})\s*%/g)]
+      // Porcentaje máximo en el contenido (excluyendo sidebar)
+      const allContent = lines.join(' ');
+      const pctNums = [...allContent.matchAll(/(\d{1,3})\s*%/g)]
         .map(m => parseInt(m[1])).filter(n => n > 0 && n <= 80);
       const pctMax = pctNums.length ? Math.max(...pctNums) : null;
 
-      // Texto completo de la página para tarjeta info si los selectores no encontraron nada
-      const tarjLines = allText.split(/[.\n!]/).map(s => s.trim()).filter(s =>
-        s.length > 5 &&
-        /visa|mastercard|d[eé]bito|cr[eé]dito|prepago|maestro|cabal|tarjeta/i.test(s) &&
-        !/^personas\s+banca/i.test(s)
-      ).map(s => s.slice(0, 160));
-
-      return { descLarga, tarjetas, tarjetasArr, vigencia, pctMax, tarjLines: tarjLines.slice(0, 5) };
+      return { descLarga, tarjetas: null, tarjetasArr: [], vigencia, pctMax, tarjLines: tarjLines.slice(0, 6) };
     });
   } catch (_) {
     return null;
   }
 }
 
+// Seleccionar la mejor línea de tarjetas (evitar nav junk)
+function pickBestTarjLine(tarjLines) {
+  if (!tarjLines || !tarjLines.length) return null;
+  // Preferir líneas que mencionen VISA, Mastercard, débito, crédito — no solo "tarjeta"
+  const specific = tarjLines.find(s =>
+    /visa|mastercard|d[eé]bito|cr[eé]dito|amex|american|brou\s+recompensa|mi\s+brou/i.test(s)
+  );
+  return (specific || tarjLines[0]).trim();
+}
+
 // ── Diagnóstico ───────────────────────────────────────────────────────────────
 async function diag(page) {
-  console.log('=== MODO DIAGNÓSTICO v3 — BROu Beneficios ===\n');
+  console.log('=== MODO DIAGNÓSTICO v4 — BROu Beneficios ===\n');
 
   const status = await goto(page, HUB);
   console.log(`Hub status: ${status}`);
@@ -192,22 +212,23 @@ async function diag(page) {
   console.log(`\nCards extraídas: ${cards.length}`);
   console.log('\n--- Primeras 8 cards ---');
   cards.slice(0, 8).forEach((c, i) =>
-    console.log(`  [${i}] "${c.nombre}"  pct=${c.pctMax}  cat=${c.categoria}  tarj="${c.tarjetas?.slice(0,50)}"  url=${c.url?.split('/').pop()}`)
+    console.log(`  [${i}] "${c.nombre}"  pct=${c.pctMax}  cat=${c.categoria}  url=${c.slug}`)
   );
 
-  // Enriquecer las primeras 3 cards con sub-página
-  console.log('\n--- Sub-páginas de las primeras 3 cards ---');
-  for (const c of cards.slice(0, 3).filter(c => c.url)) {
+  // Enriquecer las primeras 5 cards con sub-página
+  console.log('\n--- Sub-páginas de las primeras 5 cards ---');
+  for (const c of cards.slice(0, 5).filter(c => c.url)) {
     console.log(`\n  ${c.nombre} → ${c.url}`);
     const extra = await enrichFromSubPage(page, c.url);
     if (!extra) { console.log('    ERROR'); continue; }
+    const bestTarj = pickBestTarjLine(extra.tarjLines);
     console.log(`    pctMax: ${extra.pctMax}`);
-    console.log(`    tarjetas: "${extra.tarjetas}"`);
-    console.log(`    tarjetasArr: ${JSON.stringify(extra.tarjetasArr)}`);
     console.log(`    vigencia: "${extra.vigencia}"`);
-    console.log(`    descLarga: "${extra.descLarga?.slice(0, 100)}"`);
-    console.log(`    tarjLines: ${JSON.stringify(extra.tarjLines)}`);
-    saveHtml('brou-sub-' + c.url.split('/').pop(), await page.content());
+    console.log(`    descLarga: "${extra.descLarga?.slice(0, 120) ?? 'null'}"`);
+    console.log(`    tarjLines (${extra.tarjLines.length}):`);
+    extra.tarjLines.forEach((l, i) => console.log(`      [${i}] "${l}"`));
+    console.log(`    → bestTarjLine: "${bestTarj}"`);
+    saveHtml('brou-sub-' + c.slug, await page.content());
   }
 }
 
@@ -248,16 +269,18 @@ async function scrapeAll(page) {
     const extra = await enrichFromSubPage(page, c.url);
     if (!extra) { console.log(`    ${c.nombre}: skip`); continue; }
 
-    if (!c.tarjetas && extra.tarjetas) c.tarjetas = extra.tarjetas;
-    if (!c.tarjetas && extra.tarjLines.length) c.tarjetas = extra.tarjLines[0];
+    const bestTarj = pickBestTarjLine(extra.tarjLines);
+    if (!c.tarjetas && bestTarj) c.tarjetas = bestTarj;
     if (!c.desc && extra.descLarga) c.desc = extra.descLarga;
     if (extra.vigencia) c.vigencia = extra.vigencia;
-    if (extra.pctMax && (!c.pctMax || extra.pctMax < c.pctMax)) c.pctMax = extra.pctMax; // sub-page más específico
+    // Preferir pctMax de sub-página si el hub lo tenía null o si es más específico (menor)
+    if (extra.pctMax && (!c.pctMax || extra.pctMax < c.pctMax)) c.pctMax = extra.pctMax;
 
-    console.log(`    ${c.nombre}: tarj="${(c.tarjetas||'—').slice(0,60)}"  vig="${c.vigencia||'—'}"`);
+    console.log(`    ${c.nombre}: pct=${c.pctMax}  tarj="${(c.tarjetas || '—').slice(0, 70)}"  vig="${c.vigencia || '—'}"`);
   }
 
-  return unique;
+  // Eliminar campo interno slug del output final
+  return unique.map(({ slug: _slug, ...rest }) => rest);
 }
 
 // ── Main ──────────────────────────────────────────────────────────────────────
