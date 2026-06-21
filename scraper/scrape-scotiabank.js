@@ -317,6 +317,10 @@ async function scrapeAllCategories(page) {
 
   const withUrl = cards.filter(c => c.url);
   console.log(`\n  Enriqueciendo ${withUrl.length} cards desde sub-páginas...`);
+
+  // Datos de phantoms para aplicar a cards del hub que matcheen por nombre
+  const phantomData = {};  // urlSlug → { tarjetas, pctMax }
+
   for (const c of withUrl) {
     await sleep(DELAY_MS);
     const extra = await enrichFromSubPage(page, c.url);
@@ -325,21 +329,34 @@ async function scrapeAllCategories(page) {
       continue;
     }
 
-    // Rellenar tarjetas si la hub card no tenía info.
-    // Preferir línea que mencione marca específica (AMEX, Platinum, etc.)
-    // antes que línea genérica de "tarjeta de crédito" (que aparece en el navbar).
-    if (!c.tarjetas) {
-      const specificBrand = /amex|american\s*express|platinum|infinite|mastercard|visa\s+(?:platinum|infinite|gold|premium)/i;
-      const bestLine = extra.tarjLines.find(s => specificBrand.test(s)) || extra.tarjLines[0];
-      if (bestLine) c.tarjetas = bestLine;
-      else if (extra.imgAlts.length) c.tarjetas = extra.imgAlts.join(' · ').slice(0, 200);
-    }
-    // Actualizar pctMax si sub-página tiene uno mayor (más específico)
-    if (extra.pctMax && (!c.pctMax || extra.pctMax > c.pctMax)) c.pctMax = extra.pctMax;
+    const specificBrand = /amex|american\s*express|platinum|infinite|mastercard|visa\s+(?:platinum|infinite|gold|premium)/i;
+    const bestLine = extra.tarjLines.find(s => specificBrand.test(s)) || extra.tarjLines[0];
+    const tarjResult = bestLine || (extra.imgAlts.length ? extra.imgAlts.join(' · ').slice(0, 200) : null);
 
-    const tarjShort = (c.tarjetas || '—').slice(0, 70);
+    if (c._phantomSub) {
+      // Card fantasma: guardar datos para aplicar a cards reales por nombre
+      const slug = c.url.split('/').pop().toLowerCase();
+      phantomData[slug] = { tarjetas: tarjResult, pctMax: extra.pctMax };
+    } else {
+      // Card real: aplicar directamente
+      if (!c.tarjetas && tarjResult) c.tarjetas = tarjResult;
+      if (extra.pctMax && (!c.pctMax || extra.pctMax > c.pctMax)) c.pctMax = extra.pctMax;
+    }
+
+    const tarjShort = (tarjResult || '—').slice(0, 70);
     const imgsShort = extra.imgAlts.join(', ').slice(0, 60);
-    console.log(`    ${c.nombre || '(phantom)'}: tarj="${tarjShort}"  imgs=[${imgsShort}]`);
+    console.log(`    ${c.nombre || '(phantom ' + c.url.split('/').pop() + ')'}: tarj="${tarjShort}"  imgs=[${imgsShort}]`);
+  }
+
+  // Aplicar datos de phantoms a cards reales que matcheen por slug en el nombre
+  for (const [slug, data] of Object.entries(phantomData)) {
+    const keyword = slug.replace(/-/g, ' ');
+    const matching = cards.filter(c => !c._phantomSub && c.nombre &&
+      c.nombre.toLowerCase().replace(/-/g, ' ').includes(keyword.split(' ')[0]));
+    for (const m of matching) {
+      if (!m.tarjetas && data.tarjetas) { m.tarjetas = data.tarjetas; console.log(`    → aplicado "${slug}" → "${m.nombre}"`); }
+      if (data.pctMax && (!m.pctMax || data.pctMax > m.pctMax)) m.pctMax = data.pctMax;
+    }
   }
 
   // Eliminar cards fantasma que no se pudieron resolver como card real
