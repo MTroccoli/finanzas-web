@@ -5,6 +5,7 @@
     { "banco": "BBVA",       "red": "Visa",       "nivel": "Clásica",  "cobranding": null },
     { "banco": "BBVA",       "red": "Visa",       "nivel": "Oro",      "cobranding": null },
     { "banco": "BBVA",       "red": "Visa",       "nivel": "Platinum", "cobranding": null },
+    { "banco": "BBVA",       "red": "Visa",       "nivel": "Black",    "cobranding": null },
     { "banco": "BBVA",       "red": "Visa",       "nivel": "Infinite", "cobranding": null },
     { "banco": "BBVA",       "red": "Mastercard", "nivel": "Clásica",  "cobranding": null },
     { "banco": "BBVA",       "red": "Mastercard", "nivel": "Oro",      "cobranding": null },

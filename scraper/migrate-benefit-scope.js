@@ -4,11 +4,12 @@
 
 const fs   = require('fs');
 const path = require('path');
-const { parseCardScope } = require('./lib/parse-card-scope');
+const { parseCardScope, parseBBVADescuento } = require('./lib/parse-card-scope');
 
 const DATA_DIR = path.join(__dirname, '..', 'data');
 
 const FILES = {
+  'BBVA':       'beneficios.json',
   'Scotiabank': 'beneficios-scotiabank.json',
   'BROU':       'beneficios-brou.json',
   'Santander':  'beneficios-santander.json',
@@ -26,6 +27,14 @@ for (const [banco, file] of Object.entries(FILES)) {
 
   let changed = 0;
   for (const b of arr) {
+    // BBVA: enriquecer también cada entrada de descuentos[] con niveles
+    if (banco === 'BBVA' && Array.isArray(b.descuentos)) {
+      for (const d of b.descuentos) {
+        const { isDebit, niveles } = parseBBVADescuento(d.tarjetas);
+        d.isDebit = isDebit;
+        d.niveles = niveles;
+      }
+    }
     const scope = parseCardScope(banco, b);
     if (
       b.red       !== scope.red       ||

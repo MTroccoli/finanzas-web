@@ -122,17 +122,58 @@ function parseOCA(tarjetas, nombre) {
   return { red: 'OCA', niveles, cobranding: null };
 }
 
+// ── BBVA ──────────────────────────────────────────────────────────────────────
+// BBVA tiene info de nivel dentro de cada entrada de `descuentos[]`, no en un
+// campo `tarjetas` global.  Parsea el texto de cada descuento individualmente.
+//
+// Patrones observados:
+//  "Tarjetas de Crédito Internacional, Oro, Pymes y Corporativas" → Clásica + Oro
+//  "Tarjetas de Crédito Platinum, Black e Infinite"               → Platinum + Black + Infinite
+//  "Tarjetas de Débito"                                            → solo débito, ignorar
+//  "Tarjetas de Crédito y Débito"                                  → todos los niveles
+function parseBBVADescuento(tarjetasText) {
+  const t = tarjetasText || '';
+
+  const isDebit  = /\bd[eé]bito\b/i.test(t) && !/cr[eé]dito/i.test(t);
+  const isAllCred = /cr[eé]dito\s+y\s+d[eé]bito|todos?\s+los?\s+cr[eé]dito/i.test(t) ||
+                    (!/internacional|oro|platinum|black|infinite/i.test(t) && /cr[eé]dito/i.test(t) && !isDebit);
+
+  const niveles = [];
+  if (!isAllCred) {
+    if (/\binfinite\b/i.test(t))      niveles.push('Infinite');
+    if (/\bplatinum\b/i.test(t))      niveles.push('Platinum');
+    if (/\bblack\b/i.test(t))         niveles.push('Black');
+    if (/\boro\b/i.test(t))           niveles.push('Oro');
+    if (/\binternacional\b/i.test(t)) niveles.push('Clásica');
+  }
+
+  return { isDebit, niveles }; // niveles vacío = aplica a todos los créditos
+}
+
+// Scope a nivel de beneficio BBVA: unión de todos los niveles crédito del beneficio.
+function parseBBVABenefit(descuentos = []) {
+  const all = new Set();
+  let hasCredit = false;
+  for (const d of descuentos) {
+    const { isDebit, niveles } = parseBBVADescuento(d.tarjetas);
+    if (isDebit) continue;
+    hasCredit = true;
+    niveles.forEach(n => all.add(n));
+  }
+  return { red: null, niveles: hasCredit ? [...all] : [], cobranding: null };
+}
+
 // ── Entry point ───────────────────────────────────────────────────────────────
-function parseCardScope(banco, { tarjetas, nombre, desc } = {}) {
+function parseCardScope(banco, { tarjetas, nombre, desc, descuentos } = {}) {
   switch (banco) {
     case 'Scotiabank': return parseScotia(tarjetas, nombre);
     case 'BROU':       return parseBROU(tarjetas);
     case 'Santander':  return parseSantander(tarjetas, nombre, desc);
     case 'Itaú':       return parseItau(tarjetas, nombre, desc);
     case 'OCA':        return parseOCA(tarjetas, nombre);
-    case 'BBVA':
+    case 'BBVA':       return parseBBVABenefit(descuentos);
     default:           return { red: null, niveles: [], cobranding: null };
   }
 }
 
-module.exports = { parseCardScope };
+module.exports = { parseCardScope, parseBBVADescuento };

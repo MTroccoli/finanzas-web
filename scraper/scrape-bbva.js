@@ -18,6 +18,7 @@ puppeteer.use(StealthPlugin());
 
 const fs = require('fs');
 const path = require('path');
+const { parseCardScope, parseBBVADescuento } = require('./lib/parse-card-scope');
 
 const HUB = 'https://www.bbva.com.uy/personas/productos/tarjetas/descuentos.html';
 const ORIGIN = 'https://www.bbva.com.uy';
@@ -186,15 +187,24 @@ async function parseDetail(page, url) {
     try {
       const d = await parseDetail(page, m.href);
       if (d) {
+        // Enriquecer cada descuento con isDebit + niveles
+        const descuentos = (d.descuentos || []).map(desc => {
+          const { isDebit, niveles } = parseBBVADescuento(desc.tarjetas);
+          return { ...desc, isDebit, niveles };
+        });
+        const scope = parseCardScope('BBVA', { descuentos });
         beneficios.push({
           comercio: d.nombre || m.listingText,
           categoria: m.categoria,
           url: m.href,
           vigencia: d.vigencia,
           local: d.local,
-          descuentos: d.descuentos,
+          descuentos,
           pctMax: d.pctMax,
           tope: d.tope,
+          red:        scope.red,
+          niveles:    scope.niveles,
+          cobranding: scope.cobranding,
         });
         ok++;
       } else { fail++; }
