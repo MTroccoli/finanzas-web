@@ -9,7 +9,12 @@
       "categoria": null,
       "tarjetas": "Abrir cuenta gratis",
       "vigencia": "Del 15/06/25 al 15/07/26",
-      "desc": "El tipo de cambio preferencial es válido del 15 de junio al 15 de julio del 2026, para pagos de estados de cuenta de tarjetas de crédito OCA desde cuentas OCA Blue.  Además para realizar transferencias entre cuentas propias o a terceros en OCA Blue u otra institución financiera, en moneda cruzada y desde Mi Cuenta o la App de OCA exclusivamente. \n                \n                \n                No aplica para transacciones en las cajas de las sucursales de OCA S.A., en RedPagos y tampoco para operaciones de pago de facturas, ni consumos con la tarjeta OCA Blue. \n                 \n                 \n                OCA Dinero Electrónico S.A. podrá a su sola discreción modificar el tipo de cambio anunciado en cualquier momento.\n                \n                \n                    #mercadopagolegal {\n                        display: none;\n                    }\n                \n             \n                                      No aplica para compras a través de Mercado Pago. \n                                      Promoción no acumulable con otros descuentos."
+      "desc": "El tipo de cambio preferencial es válido del 15 de junio al 15 de julio del 2026, para pagos de estados de cuenta de tarjetas de crédito OCA desde cuentas OCA Blue.  Además para realizar transferencias entre cuentas propias o a terceros en OCA Blue u otra institución financiera, en moneda cruzada y desde Mi Cuenta o la App de OCA exclusivamente. \n                \n                \n                No aplica para transacciones en las cajas de las sucursales de OCA S.A., en RedPagos y tampoco para operaciones de pago de facturas, ni consumos con la tarjeta OCA Blue. \n                 \n                 \n                OCA Dinero Electrónico S.A. podrá a su sola discreción modificar el tipo de cambio anunciado en cualquier momento.\n                \n                \n                    #mercadopagolegal {\n                        display: none;\n                    }\n                \n             \n                                      No aplica para compras a través de Mercado Pago. \n                                      Promoción no acumulable con otros descuentos.",
+      "red": "OCA",
+      "niveles": [
+        "Blue"
+      ],
+      "cobranding": null
     },
     {
       "nombre": "30% de dto. en restaurantes y Fast Food en EE.UU, México y Canadá, pagando con el celular. Además 0% de comisión en todo el mundo.",
@@ -18,7 +23,10 @@
       "categoria": null,
       "tarjetas": "Abrir cuenta gratis",
       "vigencia": "Del 8/6/26 al 20/7/26",
-      "desc": "Promoción válida en Estados Unidos, México y Canadá:\n                \n            30% de descuento todos los días, en compras presenciales en restaurantes y Fast Food, que se realicen del 8 de junio al 20 de julio del 2026, pagando con el celular*.   \n            \n            US$ 150 de tope de descuento, por cuenta, compartido entre las tarjetas de crédito OCA (MasterCard y Visa). US$ 150 de tope de descuento, por cuenta, para OCA Blue. Tope válido durante todo el período de la promoción.\n            \n            *Apple Pay: Aplica solo a tarjeta de crédito Mastercard.\n                        \n            *Google Pay: Aplica para OCA Blue y tarjetas de crédito Mastercard y Visa.\n                        \n            *App OCA: Aplica mediante NFC, solo en Android, para OCA Blue y tarjetas de crédito Mastercard y Visa.            \n            \n                        \n            ¿Dónde se verá reflejado el descuento?:\n            \n            \n            \n                \n                    Compras con OCA Blue: el descuento se verá reflejado en los movimientos de la cuenta hasta 10 días hábiles luego de realizada la compra.\n                \n                \n                    Compras con tarjetas de crédito OCA: el descuento se verá reflejado en el estado de cuenta.\n                \n            \n            \n            Además, 0% de comisión en  todo el mundo. \n            Condiciones completas ingresando acá.\n            \n            \n            **Monedas participantes: USD, pesos mexicanos y dólar canadiense.\n\n            \n            \n            \n             Con tus tarjetas de crédito OCA\n            \n            \n            30% de dto. en restaurantes y Fast Food en EE.UU, México y Canadá.\n            \n            Ver más\n            \n                #mercadopagolegal{\n                    display:none\n                }\n                    #noacumulablelegal{\n                    display:none\n                }\n            \n            \n             \n                                      No aplica para compras a través de Mercado Pago. \n                                      Promoción no acumulable con otros descuentos."
+      "desc": "Promoción válida en Estados Unidos, México y Canadá:\n                \n            30% de descuento todos los días, en compras presenciales en restaurantes y Fast Food, que se realicen del 8 de junio al 20 de julio del 2026, pagando con el celular*.   \n            \n            US$ 150 de tope de descuento, por cuenta, compartido entre las tarjetas de crédito OCA (MasterCard y Visa). US$ 150 de tope de descuento, por cuenta, para OCA Blue. Tope válido durante todo el período de la promoción.\n            \n            *Apple Pay: Aplica solo a tarjeta de crédito Mastercard.\n                        \n            *Google Pay: Aplica para OCA Blue y tarjetas de crédito Mastercard y Visa.\n                        \n            *App OCA: Aplica mediante NFC, solo en Android, para OCA Blue y tarjetas de crédito Mastercard y Visa.            \n            \n                        \n            ¿Dónde se verá reflejado el descuento?:\n            \n            \n            \n                \n                    Compras con OCA Blue: el descuento se verá reflejado en los movimientos de la cuenta hasta 10 días hábiles luego de realizada la compra.\n                \n                \n                    Compras con tarjetas de crédito OCA: el descuento se verá reflejado en el estado de cuenta.\n                \n            \n            \n            Además, 0% de comisión en  todo el mundo. \n            Condiciones completas ingresando acá.\n            \n            \n            **Monedas participantes: USD, pesos mexicanos y dólar canadiense.\n\n            \n            \n            \n             Con tus tarjetas de crédito OCA\n            \n            \n            30% de dto. en restaurantes y Fast Food en EE.UU, México y Canadá.\n            \n            Ver más\n            \n                #mercadopagolegal{\n                    display:none\n                }\n                    #noacumulablelegal{\n                    display:none\n                }\n            \n            \n             \n                                      No aplica para compras a través de Mercado Pago. \n                                      Promoción no acumulable con otros descuentos.",
+      "red": "OCA",
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "30% de dto. en cualquier supermercado los días de partido de Uruguay, pagando con el celular.",
@@ -27,7 +35,10 @@
       "categoria": null,
       "tarjetas": "Abrir cuenta gratis",
       "vigencia": "Los días que juega Uruguay15, 21 y 26 de junio del 2026",
-      "desc": "Promoción válida en Uruguay.\n                \n            30% de descuento los días de partido de Uruguay, en compras presenciales en cualquier supermercado, pagando con el celular (App OCA*, Google Pay y Apple Pay).\n            \n            Tope de $300 por compra, $1.500 por cuenta. Tope compartido entre las tarjetas de crédito (MasterCard y Visa). Tope de $1.500 por cuenta para OCA Blue. Tope válido durante todo el período de la promoción.\n            \n            *Apple Pay: Aplica solo a tarjeta de crédito Mastercard.\n            \n            *Google Pay: Aplica para OCA Blue y tarjetas de crédito Mastercard y Visa.\n            \n            *App OCA: Aplica mediante NFC, solo en Android, para OCA Blue y tarjetas de crédito Mastercard y Visa.\n            \n            \n            ¿Dónde se verá reflejado el descuento?:\n            \n            \n                \n                    Compras con OCA Blue: el descuento se verá reflejado en los movimientos de la cuenta hasta 10 días hábiles luego de realizada la compra.\n                \n                \n                    Compras con tarjetas de crédito OCA: el descuento se verá reflejado en el estado de cuenta.     \n                \n            \n            \n            *Fechas de partidos:\n            \n            \n                Lunes 15/6/2026\n                Domingo 21/6/2026\n                Viernes 26/6/2026\n                        \n\n            \n                #mercadopagolegal{\n                    display:none\n                }\n                    #noacumulablelegal{\n                    display:none\n                }\n            \n             \n                                      No aplica para compras a través de Mercado Pago. \n                                      Promoción no acumulable con otros descuentos."
+      "desc": "Promoción válida en Uruguay.\n                \n            30% de descuento los días de partido de Uruguay, en compras presenciales en cualquier supermercado, pagando con el celular (App OCA*, Google Pay y Apple Pay).\n            \n            Tope de $300 por compra, $1.500 por cuenta. Tope compartido entre las tarjetas de crédito (MasterCard y Visa). Tope de $1.500 por cuenta para OCA Blue. Tope válido durante todo el período de la promoción.\n            \n            *Apple Pay: Aplica solo a tarjeta de crédito Mastercard.\n            \n            *Google Pay: Aplica para OCA Blue y tarjetas de crédito Mastercard y Visa.\n            \n            *App OCA: Aplica mediante NFC, solo en Android, para OCA Blue y tarjetas de crédito Mastercard y Visa.\n            \n            \n            ¿Dónde se verá reflejado el descuento?:\n            \n            \n                \n                    Compras con OCA Blue: el descuento se verá reflejado en los movimientos de la cuenta hasta 10 días hábiles luego de realizada la compra.\n                \n                \n                    Compras con tarjetas de crédito OCA: el descuento se verá reflejado en el estado de cuenta.     \n                \n            \n            \n            *Fechas de partidos:\n            \n            \n                Lunes 15/6/2026\n                Domingo 21/6/2026\n                Viernes 26/6/2026\n                        \n\n            \n                #mercadopagolegal{\n                    display:none\n                }\n                    #noacumulablelegal{\n                    display:none\n                }\n            \n             \n                                      No aplica para compras a través de Mercado Pago. \n                                      Promoción no acumulable con otros descuentos.",
+      "red": "OCA",
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Hasta 20% de dto. + 5% de dto extra pagando con el celular con OCA Blue y tarjetas de crédito, en comercios identificados de Handy.",
@@ -36,7 +47,12 @@
       "categoria": null,
       "tarjetas": "Abrir cuenta gratis",
       "vigencia": null,
-      "desc": "Pagá en comercios adheridos con POS Handy y accedé a un 10%, 15% o 20% según el comercio y la campaña vigente, con tarjetas de crédito y OCA Blue.\n            \n            Además, si pagás con la App OCA, Apple Pay o Google Pay, tenés +5% extra.\n                      \n                      \n            *Apple Pay: Aplica solo a tarjeta de crédito Mastercard.\n            *Google Pay: Aplica para OCA Blue y tarjetas de crédito Mastercard y Visa.\n            *App OCA: Aplica mediante NFC, solo en Android, para OCA Blue y tarjetas de crédito Mastercard y Visa.\n            \n            \n            Promoción válida en Uruguay para compras realizadas en comercios participantes y procesadas por POS Handy. Aplican topes, vigencia, exclusiones y condiciones de cada campaña. El descuento del comercio se verá aplicado en el punto de venta.\n            \n            El descuento del +5% extra será aplicado en el estado de cuenta. Tope de +5% extra de $500 por cuenta, por mes. Válido para tarjetas de crédito y OCA Blue.\n               \n               \n            Conocé los comercios adheridos aquí       \n            \n                #mercadopagolegal{\n                    display:none\n                }\n                    #noacumulablelegal{\n                    display:none\n                }\n            \n            \n             \n                                      No aplica para compras a través de Mercado Pago. \n                                      Promoción no acumulable con otros descuentos."
+      "desc": "Pagá en comercios adheridos con POS Handy y accedé a un 10%, 15% o 20% según el comercio y la campaña vigente, con tarjetas de crédito y OCA Blue.\n            \n            Además, si pagás con la App OCA, Apple Pay o Google Pay, tenés +5% extra.\n                      \n                      \n            *Apple Pay: Aplica solo a tarjeta de crédito Mastercard.\n            *Google Pay: Aplica para OCA Blue y tarjetas de crédito Mastercard y Visa.\n            *App OCA: Aplica mediante NFC, solo en Android, para OCA Blue y tarjetas de crédito Mastercard y Visa.\n            \n            \n            Promoción válida en Uruguay para compras realizadas en comercios participantes y procesadas por POS Handy. Aplican topes, vigencia, exclusiones y condiciones de cada campaña. El descuento del comercio se verá aplicado en el punto de venta.\n            \n            El descuento del +5% extra será aplicado en el estado de cuenta. Tope de +5% extra de $500 por cuenta, por mes. Válido para tarjetas de crédito y OCA Blue.\n               \n               \n            Conocé los comercios adheridos aquí       \n            \n                #mercadopagolegal{\n                    display:none\n                }\n                    #noacumulablelegal{\n                    display:none\n                }\n            \n            \n             \n                                      No aplica para compras a través de Mercado Pago. \n                                      Promoción no acumulable con otros descuentos.",
+      "red": "OCA",
+      "niveles": [
+        "Blue"
+      ],
+      "cobranding": null
     },
     {
       "nombre": "Cupón de 30% de dto. en tus viajes de Cabify con tu OCA Blue",
@@ -45,7 +61,12 @@
       "categoria": null,
       "tarjetas": "Abrir cuenta gratis",
       "vigencia": "Del 1/05/26 al 31/05/26",
-      "desc": "30% de descuento en 3 viajes al mes en Cabify pagando con OCA Blue usando el código \"OCAJUN30\". Promoción válida del 1 al 30 de junio del 2026. Es necesario ingresar el cupón en la App de Cabify previo a realizar el viaje. Una vez ingresado el cupón, ya queda activo para usar en los 3 viajes del mes (al seleccionar tu viaje ya verás reflejado el descuento sobre el total). Tope de descuento: $150 por cada viaje.\n                \n                \n                Paso a paso\n                \n                \n                \n                \n                #mercadopagolegal{\n                    display:none;\n                }\n                \n             \n                                      No aplica para compras a través de Mercado Pago. \n                                      Promoción no acumulable con otros descuentos."
+      "desc": "30% de descuento en 3 viajes al mes en Cabify pagando con OCA Blue usando el código \"OCAJUN30\". Promoción válida del 1 al 30 de junio del 2026. Es necesario ingresar el cupón en la App de Cabify previo a realizar el viaje. Una vez ingresado el cupón, ya queda activo para usar en los 3 viajes del mes (al seleccionar tu viaje ya verás reflejado el descuento sobre el total). Tope de descuento: $150 por cada viaje.\n                \n                \n                Paso a paso\n                \n                \n                \n                \n                #mercadopagolegal{\n                    display:none;\n                }\n                \n             \n                                      No aplica para compras a través de Mercado Pago. \n                                      Promoción no acumulable con otros descuentos.",
+      "red": "OCA",
+      "niveles": [
+        "Blue"
+      ],
+      "cobranding": null
     },
     {
       "nombre": "10% de dto. en productos seleccionados con OCA Blue en Megal",
@@ -54,7 +75,12 @@
       "categoria": null,
       "tarjetas": "Abrir cuenta gratis",
       "vigencia": "Del 1/06/26 al 31/12/26",
-      "desc": "10% de descuento en productos seleccionados de Megal, pagando con OCA Blue. Promoción válida desde el 1 de mayo al 31 de \n            diciembre del 2026. El descuento se verá reflejado al momento de la compra. Beneficio no acumulable con otras promociones o \n            descuentos vigentes de Megal. El comercio se reserva el derecho de modificar los productos seleccionados en cualquier momento \n            sin previo aviso.    \n            \n            \n            Los productos participantes se encuentran identificados en:\n            \n            \n                WEB \n                MEGALOCKERS:\n                    \n                    \n                        (Estacionamiento Macro Mercado Maldonado)\n                    \n                        (Estacionamiento Macro Mercado Las Piedras)\n                    \n                        (Estacionamiento Punta Shopping)\n                    \n                \n                WHATSAPP 096119220 \n            \n            \n             \n                                      No aplica para compras a través de Mercado Pago. \n                                      Promoción no acumulable con otros descuentos."
+      "desc": "10% de descuento en productos seleccionados de Megal, pagando con OCA Blue. Promoción válida desde el 1 de mayo al 31 de \n            diciembre del 2026. El descuento se verá reflejado al momento de la compra. Beneficio no acumulable con otras promociones o \n            descuentos vigentes de Megal. El comercio se reserva el derecho de modificar los productos seleccionados en cualquier momento \n            sin previo aviso.    \n            \n            \n            Los productos participantes se encuentran identificados en:\n            \n            \n                WEB \n                MEGALOCKERS:\n                    \n                    \n                        (Estacionamiento Macro Mercado Maldonado)\n                    \n                        (Estacionamiento Macro Mercado Las Piedras)\n                    \n                        (Estacionamiento Punta Shopping)\n                    \n                \n                WHATSAPP 096119220 \n            \n            \n             \n                                      No aplica para compras a través de Mercado Pago. \n                                      Promoción no acumulable con otros descuentos.",
+      "red": "OCA",
+      "niveles": [
+        "Blue"
+      ],
+      "cobranding": null
     },
     {
       "nombre": "Compras sin recargos con tu OCA Blue",
@@ -63,7 +89,12 @@
       "categoria": null,
       "tarjetas": "Abrir cuenta gratis",
       "vigencia": null,
-      "desc": "Bonificación de la comisión por compras en el exterior en todo el mundo, con OCA Blue.\n            \n            Para usar tu tarjeta en el exterior deberás darnos aviso previo a tu viaje, y confirmarnos el límite de compras en pesos y en dólares, para que podamos \n            activarte este servicio. Las tarjetas OCA Blue tienen un límite diario de compra U$S500 ($20.000 pesos uruguayos). En caso de querer aumentar el límite, \n            podés hacerlo de forma presencial en las sucursales de OCA. Danos aviso de tu viaje a través de micuenta.oca.com.uy con tu usuario y contraseña ingresando \n            en la sección OCA Blue -> Tarjeta OCA Blue -> Otros servicios -> Aviso por viaje y completá los datos solicitados.\n            \n            \n            Para habilitar las compras por internet con tu tarjeta OCA Blue, ingresá a micuenta.oca.com.uy con tu usuario y contraseña y en la sección OCA Blue -> Tarjeta OCA Blue y podrás realizar una habilitación que será temporaria para realizar la compra que quieras.\n            \n            \n            Las compras en el exterior se debitarán siempre de tu cuenta dólares OCA Blue. Si no hubiera saldo suficiente, se debitará el importe equivalente en pesos de tu cuenta pesos OCA Blue, al tipo de cambio determinado por el sello internacional.\n            \n            #mercadopagolegal{\n                display:none;\n            }\n            \n\n         \n                                      No aplica para compras a través de Mercado Pago. \n                                      Promoción no acumulable con otros descuentos."
+      "desc": "Bonificación de la comisión por compras en el exterior en todo el mundo, con OCA Blue.\n            \n            Para usar tu tarjeta en el exterior deberás darnos aviso previo a tu viaje, y confirmarnos el límite de compras en pesos y en dólares, para que podamos \n            activarte este servicio. Las tarjetas OCA Blue tienen un límite diario de compra U$S500 ($20.000 pesos uruguayos). En caso de querer aumentar el límite, \n            podés hacerlo de forma presencial en las sucursales de OCA. Danos aviso de tu viaje a través de micuenta.oca.com.uy con tu usuario y contraseña ingresando \n            en la sección OCA Blue -> Tarjeta OCA Blue -> Otros servicios -> Aviso por viaje y completá los datos solicitados.\n            \n            \n            Para habilitar las compras por internet con tu tarjeta OCA Blue, ingresá a micuenta.oca.com.uy con tu usuario y contraseña y en la sección OCA Blue -> Tarjeta OCA Blue y podrás realizar una habilitación que será temporaria para realizar la compra que quieras.\n            \n            \n            Las compras en el exterior se debitarán siempre de tu cuenta dólares OCA Blue. Si no hubiera saldo suficiente, se debitará el importe equivalente en pesos de tu cuenta pesos OCA Blue, al tipo de cambio determinado por el sello internacional.\n            \n            #mercadopagolegal{\n                display:none;\n            }\n            \n\n         \n                                      No aplica para compras a través de Mercado Pago. \n                                      Promoción no acumulable con otros descuentos.",
+      "red": "OCA",
+      "niveles": [
+        "Blue"
+      ],
+      "cobranding": null
     },
     {
       "nombre": "Tienda En Tu Ciudad",
@@ -72,7 +103,10 @@
       "categoria": null,
       "tarjetas": "Abrir cuenta gratis",
       "vigencia": "todos los días",
-      "desc": "10% de dto."
+      "desc": "10% de dto.",
+      "red": "OCA",
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "10% de dto. todo los viernes + el mejor precio con OCA Blue.",
@@ -81,7 +115,12 @@
       "categoria": null,
       "tarjetas": "Abrir cuenta gratis",
       "vigencia": "Hasta el 30/06/26",
-      "desc": "10% de descuento en tus compras todos los viernes pagando con OCA Blue. Promoción válida hasta el 30 de junio del 2026 inclusive. Tope de devolución $1.000 por cuenta, por mes. El descuento se verá reflejado en los movimientos de la cuenta del cliente, dentro de los 10 días hábiles luego de realizada la compra. Compras realizadas en dólares, tendrán su devolución en pesos uruguayos, con la conversión realizada al tipo de cambio del día.\n            \n            No aplica para compras a través de Mercado Pago. \n             \n             Promoción no acumulable con otros descuentos.\n             \n            \n            Ver lista de sucursales             \n            \n            \n            \n            \n            \n             Con tus tarjetas de crédito OCA\n            \n            \n            \n            Todos los días disfrutá del mejor precio del Macro + cuotas*\n            \n            Ver más\n            \n            \n            #mercadopagolegal{\n                display:none;\n            }\n            #noacumulablelegal{\n                display:none;\n            }\n            \n\n         \n                                      No aplica para compras a través de Mercado Pago. \n                                      Promoción no acumulable con otros descuentos."
+      "desc": "10% de descuento en tus compras todos los viernes pagando con OCA Blue. Promoción válida hasta el 30 de junio del 2026 inclusive. Tope de devolución $1.000 por cuenta, por mes. El descuento se verá reflejado en los movimientos de la cuenta del cliente, dentro de los 10 días hábiles luego de realizada la compra. Compras realizadas en dólares, tendrán su devolución en pesos uruguayos, con la conversión realizada al tipo de cambio del día.\n            \n            No aplica para compras a través de Mercado Pago. \n             \n             Promoción no acumulable con otros descuentos.\n             \n            \n            Ver lista de sucursales             \n            \n            \n            \n            \n            \n             Con tus tarjetas de crédito OCA\n            \n            \n            \n            Todos los días disfrutá del mejor precio del Macro + cuotas*\n            \n            Ver más\n            \n            \n            #mercadopagolegal{\n                display:none;\n            }\n            #noacumulablelegal{\n                display:none;\n            }\n            \n\n         \n                                      No aplica para compras a través de Mercado Pago. \n                                      Promoción no acumulable con otros descuentos.",
+      "red": "OCA",
+      "niveles": [
+        "Blue"
+      ],
+      "cobranding": null
     },
     {
       "nombre": "10% de dto. todos los días con OCA Blue en Bela",
@@ -90,7 +129,12 @@
       "categoria": null,
       "tarjetas": "Abrir cuenta gratis",
       "vigencia": "Hasta el 30/7/26",
-      "desc": "10% de dto. todos los días en Bela, hasta el 31/7/2026 inclusive, pagando con OCA Blue. \n                    Válido para compras realizadas en pesos. El descuento se realizará en el punto venta al momento de realizar la compra.\n                    \n                    \n                    No aplica para compras a través de Mercado Pago.\n                    \n                    Promoción no acumulable con otros descuentos.\n                    \n                    \n                    Encontrá más info en el sitio web de Bela: bela.com.uy\n                    \n                    \n                    \n                     Con tus tarjetas de crédito OCA\n                    \n                    \n                    Todos los viernes disfrutá del 20% de dto.\n                    \n                    Ver más\n                    \n                        #mercadopagolegal{\n                            display:none;\n                        }\n                        #noacumulablelegal{\n                            display:none;\n                        }\n                    \n                     \n                                      No aplica para compras a través de Mercado Pago. \n                                      Promoción no acumulable con otros descuentos."
+      "desc": "10% de dto. todos los días en Bela, hasta el 31/7/2026 inclusive, pagando con OCA Blue. \n                    Válido para compras realizadas en pesos. El descuento se realizará en el punto venta al momento de realizar la compra.\n                    \n                    \n                    No aplica para compras a través de Mercado Pago.\n                    \n                    Promoción no acumulable con otros descuentos.\n                    \n                    \n                    Encontrá más info en el sitio web de Bela: bela.com.uy\n                    \n                    \n                    \n                     Con tus tarjetas de crédito OCA\n                    \n                    \n                    Todos los viernes disfrutá del 20% de dto.\n                    \n                    Ver más\n                    \n                        #mercadopagolegal{\n                            display:none;\n                        }\n                        #noacumulablelegal{\n                            display:none;\n                        }\n                    \n                     \n                                      No aplica para compras a través de Mercado Pago. \n                                      Promoción no acumulable con otros descuentos.",
+      "red": "OCA",
+      "niveles": [
+        "Blue"
+      ],
+      "cobranding": null
     },
     {
       "nombre": "10% de descuento todos los días en Burger King.",
@@ -99,7 +143,10 @@
       "categoria": null,
       "tarjetas": "Abrir cuenta gratis",
       "vigencia": "Todos los días en locales Burger King",
-      "desc": "Promoción válida todos los días, del 1 de enero al 30 de junio del 2026, para todas las compras realizadas en locales físicos de Burger King con tarjetas OCA Blue. El descuento se realizará en el momento de la compra.\n                \n                \n                No aplica para compras a través de Mercado Pago, Pedidos Ya y/o Rappi.\n                \n                Promoción no acumulable con otros descuentos.\n                \n                \n                Ver lista de comercios participantes.\n                \n                Con tus tarjetas de crédito OCA.De lunes a jueves disfrutá de un 20% de descuento                \n                Ver beneficio\n                \n                    #mercadopagolegal{\n                        display: none;\n                    }\n                    #noacumulablelegal{\n                        display: none;\n                    }\n                \n                 \n                                      No aplica para compras a través de Mercado Pago. \n                                      Promoción no acumulable con otros descuentos."
+      "desc": "Promoción válida todos los días, del 1 de enero al 30 de junio del 2026, para todas las compras realizadas en locales físicos de Burger King con tarjetas OCA Blue. El descuento se realizará en el momento de la compra.\n                \n                \n                No aplica para compras a través de Mercado Pago, Pedidos Ya y/o Rappi.\n                \n                Promoción no acumulable con otros descuentos.\n                \n                \n                Ver lista de comercios participantes.\n                \n                Con tus tarjetas de crédito OCA.De lunes a jueves disfrutá de un 20% de descuento                \n                Ver beneficio\n                \n                    #mercadopagolegal{\n                        display: none;\n                    }\n                    #noacumulablelegal{\n                        display: none;\n                    }\n                \n                 \n                                      No aplica para compras a través de Mercado Pago. \n                                      Promoción no acumulable con otros descuentos.",
+      "red": "OCA",
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "10% de dto. de lunes a jueves en Gelatería del Club con OCA Blue",
@@ -108,7 +155,12 @@
       "categoria": null,
       "tarjetas": "Abrir cuenta gratis",
       "vigencia": "Todos los díasHasta el 30/04/27",
-      "desc": "Promoción válida todos los días, del 7 de mayo del 2026 al 30 de abril del 2027, para todas las compras realizadas en locales físicos de Gelatería del Club con OCA Blue. El descuento se realizará en el momento de la compra\n            \n            \n            No aplica para compras a través de Mercado Pago, Pedidos Ya y/o Rappi.\n            \n            Promoción no acumulable con otros descuentos.\n            \n            \n            Sucursales:\n            \n            \n                18 de Julio 1261\n                8 de octubre 2702 esq Garibaldi\n                Bv. Artigas 3654 esq. San Martin\n                Rivera 2403 esq. 20 de Setiembre (casi Bv. Artigas)\n                Av. Enrique Legrand 5161 (al lado del Club Malvín)\n                Av. Giannattasio km 18.500 - Ciudad de la Costa\n            \n            \n            #mercadopagolegal{\n                display:none;\n            }\n            #noacumulablelegal{\n                display:none;\n            }\n            \n\n         \n                                      No aplica para compras a través de Mercado Pago. \n                                      Promoción no acumulable con otros descuentos."
+      "desc": "Promoción válida todos los días, del 7 de mayo del 2026 al 30 de abril del 2027, para todas las compras realizadas en locales físicos de Gelatería del Club con OCA Blue. El descuento se realizará en el momento de la compra\n            \n            \n            No aplica para compras a través de Mercado Pago, Pedidos Ya y/o Rappi.\n            \n            Promoción no acumulable con otros descuentos.\n            \n            \n            Sucursales:\n            \n            \n                18 de Julio 1261\n                8 de octubre 2702 esq Garibaldi\n                Bv. Artigas 3654 esq. San Martin\n                Rivera 2403 esq. 20 de Setiembre (casi Bv. Artigas)\n                Av. Enrique Legrand 5161 (al lado del Club Malvín)\n                Av. Giannattasio km 18.500 - Ciudad de la Costa\n            \n            \n            #mercadopagolegal{\n                display:none;\n            }\n            #noacumulablelegal{\n                display:none;\n            }\n            \n\n         \n                                      No aplica para compras a través de Mercado Pago. \n                                      Promoción no acumulable con otros descuentos.",
+      "red": "OCA",
+      "niveles": [
+        "Blue"
+      ],
+      "cobranding": null
     },
     {
       "nombre": "10% de dto. todos los días en El Club de la Papa Frita con OCA Blue",
@@ -117,7 +169,12 @@
       "categoria": null,
       "tarjetas": "Abrir cuenta gratis",
       "vigencia": "Todos los díasHasta el 30/04/27",
-      "desc": "Promoción válida todos los días, del 7 de mayo del 2026 al 30 de abril del 2027, para todas las compras realizadas en locales físicos de El Club de la Papa Frita con OCA Blue. El descuento se realizará en el momento de la compra.\n            \n            \n            No aplica para compras a través de Mercado Pago, Pedidos Ya y/o Rappi.\n            \n            Promoción no acumulable con otros descuentos.\n            \n            \n            Sucursales:\n            \n            \n                18 de Julio 1261\n                8 de octubre 2702 esq. Garibaldi\n                Rivera 2403 esq. 20 de Setiembre (casi Bv. Artigas)\n                Av. Enrique Legrand 5161 (al lado del Club Malvín)\n                Av. Giannattasio km 18.500 - Ciudad de la Costa\n            \n            \n            #mercadopagolegal{\n                display:none;\n            }\n            #noacumulablelegal{\n                display:none;\n            }\n            \n\n         \n                                      No aplica para compras a través de Mercado Pago. \n                                      Promoción no acumulable con otros descuentos."
+      "desc": "Promoción válida todos los días, del 7 de mayo del 2026 al 30 de abril del 2027, para todas las compras realizadas en locales físicos de El Club de la Papa Frita con OCA Blue. El descuento se realizará en el momento de la compra.\n            \n            \n            No aplica para compras a través de Mercado Pago, Pedidos Ya y/o Rappi.\n            \n            Promoción no acumulable con otros descuentos.\n            \n            \n            Sucursales:\n            \n            \n                18 de Julio 1261\n                8 de octubre 2702 esq. Garibaldi\n                Rivera 2403 esq. 20 de Setiembre (casi Bv. Artigas)\n                Av. Enrique Legrand 5161 (al lado del Club Malvín)\n                Av. Giannattasio km 18.500 - Ciudad de la Costa\n            \n            \n            #mercadopagolegal{\n                display:none;\n            }\n            #noacumulablelegal{\n                display:none;\n            }\n            \n\n         \n                                      No aplica para compras a través de Mercado Pago. \n                                      Promoción no acumulable con otros descuentos.",
+      "red": "OCA",
+      "niveles": [
+        "Blue"
+      ],
+      "cobranding": null
     },
     {
       "nombre": "10% de dto. todos los días en Kentucky con OCA Blue",
@@ -126,7 +183,12 @@
       "categoria": null,
       "tarjetas": "Abrir cuenta gratis",
       "vigencia": "Todos los díasHasta el 30/04/27",
-      "desc": "Promoción válida todos los días, del 7 de mayo del 2026 al 30 de abril del 2027, para todas las compras realizadas en locales físicos de Kentucky con OCA Blue. El descuento se realizará en el momento de la compra.\n            \n            \n            No aplica para compras a través de Mercado Pago, Pedidos Ya y/o Rappi.\n            \n            Promoción no acumulable con otros descuentos.\n            \n            Sucursales:\n            \n            \n            \n                San José y Cuareim (frente al Teatro Metro)               \n            \n            \n            #mercadopagolegal{\n                display:none;\n            }\n            #noacumulablelegal{\n                display:none;\n            }\n            \n\n         \n                                      No aplica para compras a través de Mercado Pago. \n                                      Promoción no acumulable con otros descuentos."
+      "desc": "Promoción válida todos los días, del 7 de mayo del 2026 al 30 de abril del 2027, para todas las compras realizadas en locales físicos de Kentucky con OCA Blue. El descuento se realizará en el momento de la compra.\n            \n            \n            No aplica para compras a través de Mercado Pago, Pedidos Ya y/o Rappi.\n            \n            Promoción no acumulable con otros descuentos.\n            \n            Sucursales:\n            \n            \n            \n                San José y Cuareim (frente al Teatro Metro)               \n            \n            \n            #mercadopagolegal{\n                display:none;\n            }\n            #noacumulablelegal{\n                display:none;\n            }\n            \n\n         \n                                      No aplica para compras a través de Mercado Pago. \n                                      Promoción no acumulable con otros descuentos.",
+      "red": "OCA",
+      "niveles": [
+        "Blue"
+      ],
+      "cobranding": null
     },
     {
       "nombre": "10% de dto. con OCA Blue en Chajá",
@@ -135,7 +197,12 @@
       "categoria": null,
       "tarjetas": "Abrir cuenta gratis",
       "vigencia": "todos los díasHasta el 31/12/26",
-      "desc": "10% de descuento todos los días en Chajá. Promoción válida hasta el 31 de diciembre del 2026 abonando con OCA Blue. El descuento se realiza en el momento de la compra y es válido únicamente en locales físicos.\n         \n        No aplica para Pedidos Ya ni Rappi.\n        \n            #mercadopagolegal{\n                display:none;\n            }\n        \n \n         \n                                      No aplica para compras a través de Mercado Pago. \n                                      Promoción no acumulable con otros descuentos."
+      "desc": "10% de descuento todos los días en Chajá. Promoción válida hasta el 31 de diciembre del 2026 abonando con OCA Blue. El descuento se realiza en el momento de la compra y es válido únicamente en locales físicos.\n         \n        No aplica para Pedidos Ya ni Rappi.\n        \n            #mercadopagolegal{\n                display:none;\n            }\n        \n \n         \n                                      No aplica para compras a través de Mercado Pago. \n                                      Promoción no acumulable con otros descuentos.",
+      "red": "OCA",
+      "niveles": [
+        "Blue"
+      ],
+      "cobranding": null
     },
     {
       "nombre": "10% de dto. todos los días con OCA Blue en Homeopatía Alemana",
@@ -144,7 +211,12 @@
       "categoria": null,
       "tarjetas": "Abrir cuenta gratis",
       "vigencia": "todos los díasHasta el 31/12/26",
-      "desc": "10% de descuento todos los días en Homeopatía Alemana con OCA Blue. Promoción válida hasta 31 de diciembre del 2026 inclusive. El descuento será realizado al momento de la compra en el punto de venta. Válido únicamente para sucursales físicas.\n            \n            \n            No aplica para compras a través de Mercado Pago ni Pedidos Ya.\n            \n            \n            Conocé el listado de las sucursales participantes aquí \n            \n            \n            Encontrá más info en el sitio web de Homepatía Alemana: homeopatiaalemana.com\n            \n            \n            \n            #mercadopagolegal{\n                display:none;\n            }\n            \n\n         \n                                      No aplica para compras a través de Mercado Pago. \n                                      Promoción no acumulable con otros descuentos."
+      "desc": "10% de descuento todos los días en Homeopatía Alemana con OCA Blue. Promoción válida hasta 31 de diciembre del 2026 inclusive. El descuento será realizado al momento de la compra en el punto de venta. Válido únicamente para sucursales físicas.\n            \n            \n            No aplica para compras a través de Mercado Pago ni Pedidos Ya.\n            \n            \n            Conocé el listado de las sucursales participantes aquí \n            \n            \n            Encontrá más info en el sitio web de Homepatía Alemana: homeopatiaalemana.com\n            \n            \n            \n            #mercadopagolegal{\n                display:none;\n            }\n            \n\n         \n                                      No aplica para compras a través de Mercado Pago. \n                                      Promoción no acumulable con otros descuentos.",
+      "red": "OCA",
+      "niveles": [
+        "Blue"
+      ],
+      "cobranding": null
     },
     {
       "nombre": "2 puntos de IVA menos en todas tus recargas en STM",
@@ -153,7 +225,10 @@
       "categoria": null,
       "tarjetas": "Abrir cuenta gratis",
       "vigencia": null,
-      "desc": "Aplica una reducción de 2 puntos de IVA (Impuesto al Valor Agregado) \n        a todas las recargas de boletos en Uruguay realizadas en locales STM con OCA blue. \n        Reducción amparada en la Ley 19.210. No aplica el descuento si se carga la tarjeta\n         STM en redes de cobranza. \n                                      No aplica para compras a través de Mercado Pago. \n                                      Promoción no acumulable con otros descuentos."
+      "desc": "Aplica una reducción de 2 puntos de IVA (Impuesto al Valor Agregado) \n        a todas las recargas de boletos en Uruguay realizadas en locales STM con OCA blue. \n        Reducción amparada en la Ley 19.210. No aplica el descuento si se carga la tarjeta\n         STM en redes de cobranza. \n                                      No aplica para compras a través de Mercado Pago. \n                                      Promoción no acumulable con otros descuentos.",
+      "red": "OCA",
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "2 puntos de IVA menos en todas tus compras con OCA Blue",
@@ -162,7 +237,12 @@
       "categoria": null,
       "tarjetas": "Abrir cuenta gratis",
       "vigencia": null,
-      "desc": "Aplica una reducción de 2 puntos de IVA (Impuesto al Valor Agregado) a todas las compras en Uruguay realizadas con OCA Blue. Reducción amparada en la Ley 19.210.\n        \n                #mercadopagolegal{\n                    display:none;\n                }\n                \n         \n                                      No aplica para compras a través de Mercado Pago. \n                                      Promoción no acumulable con otros descuentos."
+      "desc": "Aplica una reducción de 2 puntos de IVA (Impuesto al Valor Agregado) a todas las compras en Uruguay realizadas con OCA Blue. Reducción amparada en la Ley 19.210.\n        \n                #mercadopagolegal{\n                    display:none;\n                }\n                \n         \n                                      No aplica para compras a través de Mercado Pago. \n                                      Promoción no acumulable con otros descuentos.",
+      "red": "OCA",
+      "niveles": [
+        "Blue"
+      ],
+      "cobranding": null
     },
     {
       "nombre": "Hasta 9 puntos de devolución de IVA en restaurantes",
@@ -171,7 +251,10 @@
       "categoria": null,
       "tarjetas": "Abrir cuenta gratis",
       "vigencia": null,
-      "desc": "Aplica una reducción de hasta 9 puntos de IVA (Impuesto al Valor Agregado) a todas las compras realizadas con OCA Blue en restaurantes y deliverys. Reducción amparada en la Ley 19.210. No acumulable con los 2 puntos de IVA.\n        \n                #mercadopagolegal{\n                    display:none;\n                }\n                 \n                                      No aplica para compras a través de Mercado Pago. \n                                      Promoción no acumulable con otros descuentos."
+      "desc": "Aplica una reducción de hasta 9 puntos de IVA (Impuesto al Valor Agregado) a todas las compras realizadas con OCA Blue en restaurantes y deliverys. Reducción amparada en la Ley 19.210. No acumulable con los 2 puntos de IVA.\n        \n                #mercadopagolegal{\n                    display:none;\n                }\n                 \n                                      No aplica para compras a través de Mercado Pago. \n                                      Promoción no acumulable con otros descuentos.",
+      "red": "OCA",
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Presentá un amigo y ganá 1.000 Metros",
@@ -180,7 +263,10 @@
       "categoria": null,
       "tarjetas": "Abrir cuenta gratis",
       "vigencia": null,
-      "desc": "¡Presentanos a un amigo que todavía no tenga OCA Blue y ganá 1.000 Metros!\n            \n            \n            Podés hacerlo a través de Mi Cuenta (ingresando a \"Beneficios\" -> \"Presentá a un amigo\")  o en cualquiera de nuestras sucursales. Cuando el nuevo socio retire su tarjeta, automáticamente se acreditarán 1.000 Metros en tu cuenta.\n            \n            \n            No serás garantía del nuevo usuario.\n\n             \n                #mercadopagolegal{\n                display: none;\n                }\n                #sol-oca-beneficio-ampliado{\n                display: none;\n                }\n            \n             \n                                      No aplica para compras a través de Mercado Pago. \n                                      Promoción no acumulable con otros descuentos."
+      "desc": "¡Presentanos a un amigo que todavía no tenga OCA Blue y ganá 1.000 Metros!\n            \n            \n            Podés hacerlo a través de Mi Cuenta (ingresando a \"Beneficios\" -> \"Presentá a un amigo\")  o en cualquiera de nuestras sucursales. Cuando el nuevo socio retire su tarjeta, automáticamente se acreditarán 1.000 Metros en tu cuenta.\n            \n            \n            No serás garantía del nuevo usuario.\n\n             \n                #mercadopagolegal{\n                display: none;\n                }\n                #sol-oca-beneficio-ampliado{\n                display: none;\n                }\n            \n             \n                                      No aplica para compras a través de Mercado Pago. \n                                      Promoción no acumulable con otros descuentos.",
+      "red": "OCA",
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "1.000 Metros de regalo con tu nueva cuenta OCA Blue ganás metros gratis",
@@ -189,7 +275,12 @@
       "categoria": null,
       "tarjetas": "Abrir cuenta gratis",
       "vigencia": null,
-      "desc": "Promoción válida para nuevas cuentas OCA Blue que se soliciten desde el 1/11/2020. La asignación de los 1.000 Metros en la cuenta del cliente se realizará luego de realizada la primera compra con tu Cuenta OCA Blue y tendrán plazo para acreditarse hasta el día 10 del mes siguiente a la compra. Válido por hasta 6 meses de realizada el alta del cliente. \n                                      No aplica para compras a través de Mercado Pago. \n                                      Promoción no acumulable con otros descuentos."
+      "desc": "Promoción válida para nuevas cuentas OCA Blue que se soliciten desde el 1/11/2020. La asignación de los 1.000 Metros en la cuenta del cliente se realizará luego de realizada la primera compra con tu Cuenta OCA Blue y tendrán plazo para acreditarse hasta el día 10 del mes siguiente a la compra. Válido por hasta 6 meses de realizada el alta del cliente. \n                                      No aplica para compras a través de Mercado Pago. \n                                      Promoción no acumulable con otros descuentos.",
+      "red": "OCA",
+      "niveles": [
+        "Blue"
+      ],
+      "cobranding": null
     },
     {
       "nombre": "2x1 en entradas, pop y refresco TODOS LOS DÍAS",
@@ -198,7 +289,10 @@
       "categoria": null,
       "tarjetas": "Abrir cuenta gratis",
       "vigencia": "Todos los díasEn entradas, pop y refresco",
-      "desc": "2x1 todos los días en entradas para películas en 2D o 3D y en Combo Pop + Refresco Mediano en Movie, para \n                compras realizadas con OCA Blue. Promoción válida del 21/05/2023 hasta el 31/12/2026. El tope de la promoción \n                es de cuatro entradas por tarjeta, por compra realizada (dos compras de entradas 2x1). Válido para canjes \n                por web y en boletería presencial. No aplica para películas en 4D. Pueden aplicarse restricciones a este beneficio, \n                cuando el distribuidor de la película no permita realizar promociones durante los días cercanos al estreno de la misma.\n                \n             \n                                      No aplica para compras a través de Mercado Pago. \n                                      Promoción no acumulable con otros descuentos."
+      "desc": "2x1 todos los días en entradas para películas en 2D o 3D y en Combo Pop + Refresco Mediano en Movie, para \n                compras realizadas con OCA Blue. Promoción válida del 21/05/2023 hasta el 31/12/2026. El tope de la promoción \n                es de cuatro entradas por tarjeta, por compra realizada (dos compras de entradas 2x1). Válido para canjes \n                por web y en boletería presencial. No aplica para películas en 4D. Pueden aplicarse restricciones a este beneficio, \n                cuando el distribuidor de la película no permita realizar promociones durante los días cercanos al estreno de la misma.\n                \n             \n                                      No aplica para compras a través de Mercado Pago. \n                                      Promoción no acumulable con otros descuentos.",
+      "red": "OCA",
+      "niveles": [],
+      "cobranding": null
     }
   ]
 }

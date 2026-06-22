@@ -12,7 +12,10 @@
       "vigencia": "15, 21 y 26 de Junio",
       "tarjetas": null,
       "desc": "Acumulás Scotia Puntos X10 en supermercados los días que juega Uruguay",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "TIENDA INGLESA",
@@ -23,7 +26,10 @@
       "vigencia": "Todos los días",
       "tarjetas": "Disfrutá beneficios exclusivos con tus tarjetas Scotiabank.",
       "desc": "Disfrutá beneficios exclusivos con tus tarjetas Scotiabank.",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "CINES 50%",
@@ -39,7 +45,12 @@
       "vigencia": "Todos los días",
       "tarjetas": "50% de ahorro en cines de todo el país con tarjetas débito Premium y débito Infinite.",
       "desc": "50% de ahorro en cines de todo el país con tarjetas débito Premium y débito Infinite.",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [
+        "Infinite"
+      ],
+      "cobranding": null
     },
     {
       "nombre": "COMBUSTIBLE Y TELEPEAJE",
@@ -59,7 +70,12 @@
       "vigencia": "Todos los días",
       "tarjetas": "The Platinum Card American Express (excl. ConnectMiles)",
       "desc": "50% en telepeajes todos los días · 10% en combustible jueves y domingos. Tope $1.200/mes.",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": "Amex",
+      "niveles": [
+        "Platinum"
+      ],
+      "cobranding": null
     },
     {
       "nombre": "SAVE THE WEEK",
@@ -75,7 +91,10 @@
       "vigencia": "De lunes a viernes",
       "tarjetas": "Ahorrá entre semana con tus tarjetas Club Card de Scotia.",
       "desc": "Ahorrá entre semana con tus tarjetas Club Card de Scotia.",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "TIENDA FARMA",
@@ -91,7 +110,10 @@
       "vigencia": "Todos los días",
       "tarjetas": "20% de ahorro Con todas las tarjetas de Crédito y Débito.",
       "desc": "20% de ahorro Con todas las tarjetas de Crédito y Débito.",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "ALBERTOS",
@@ -111,7 +133,14 @@
       "vigencia": "Todos los días",
       "tarjetas": "25% de ahorro con tarjetas Platinum, Infinite, Gold y débito Premium.",
       "desc": "25% de ahorro con tarjetas Platinum, Infinite, Gold y débito Premium.",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [
+        "Infinite",
+        "Platinum",
+        "Gold"
+      ],
+      "cobranding": null
     },
     {
       "nombre": "SOPRANOS",
@@ -131,7 +160,14 @@
       "vigencia": "Todos los días",
       "tarjetas": "25% de ahorro con tarjetas Platinum, Infinite, Gold y débito Premium.",
       "desc": "25% de ahorro con tarjetas Platinum, Infinite, Gold y débito Premium.",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [
+        "Infinite",
+        "Platinum",
+        "Gold"
+      ],
+      "cobranding": null
     },
     {
       "nombre": "DECANO",
@@ -151,7 +187,14 @@
       "vigencia": "Todos los días",
       "tarjetas": "25% de ahorro con tarjetas Platinum, Infinite, Gold y débito Premium.",
       "desc": "25% de ahorro con tarjetas Platinum, Infinite, Gold y débito Premium.",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [
+        "Infinite",
+        "Platinum",
+        "Gold"
+      ],
+      "cobranding": null
     },
     {
       "nombre": "MENDIZABAL",
@@ -171,7 +214,14 @@
       "vigencia": "Todos los días",
       "tarjetas": "25% de ahorro con tarjetas Platinum, Infinite, Gold y débito Premium.",
       "desc": "25% de ahorro con tarjetas Platinum, Infinite, Gold y débito Premium.",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [
+        "Infinite",
+        "Platinum",
+        "Gold"
+      ],
+      "cobranding": null
     },
     {
       "nombre": "EL REY DEL CHIVITO",
@@ -191,7 +241,14 @@
       "vigencia": "Todos los días",
       "tarjetas": "25% de ahorro con tarjetas Platinum, Infinite, Gold y débito Premium.",
       "desc": "25% de ahorro con tarjetas Platinum, Infinite, Gold y débito Premium.",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [
+        "Infinite",
+        "Platinum",
+        "Gold"
+      ],
+      "cobranding": null
     },
     {
       "nombre": "BROWNIES LUIS",
@@ -211,7 +268,14 @@
       "vigencia": "Todos los días",
       "tarjetas": "25% de ahorro con tarjetas Platinum, Infinite, Gold y débito Premium.",
       "desc": "25% de ahorro con tarjetas Platinum, Infinite, Gold y débito Premium.",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [
+        "Infinite",
+        "Platinum",
+        "Gold"
+      ],
+      "cobranding": null
     },
     {
       "nombre": "IL GIARDINO CAFÉ",
@@ -231,7 +295,14 @@
       "vigencia": "Todos los días",
       "tarjetas": "25% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y débito Premium.",
       "desc": "25% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y débito Premium.",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [
+        "Infinite",
+        "Platinum",
+        "Gold"
+      ],
+      "cobranding": null
     },
     {
       "nombre": "ATENEA COFFEE",
@@ -251,7 +322,14 @@
       "vigencia": "Todos los días",
       "tarjetas": "25% de ahorro con tarjetas Platinum, Infinite, Gold y débito Premium.",
       "desc": "25% de ahorro con tarjetas Platinum, Infinite, Gold y débito Premium.",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [
+        "Infinite",
+        "Platinum",
+        "Gold"
+      ],
+      "cobranding": null
     },
     {
       "nombre": "TRANQUILO",
@@ -271,7 +349,14 @@
       "vigencia": "Todos los días",
       "tarjetas": "25% de ahorro con tarjetas Platinum, Infinite, Gold y débito Premium.",
       "desc": "25% de ahorro con tarjetas Platinum, Infinite, Gold y débito Premium.",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [
+        "Infinite",
+        "Platinum",
+        "Gold"
+      ],
+      "cobranding": null
     },
     {
       "nombre": "FOK",
@@ -291,7 +376,14 @@
       "vigencia": "Todos los días",
       "tarjetas": "25% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y Débito Premium.",
       "desc": "25% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y Débito Premium.",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [
+        "Infinite",
+        "Platinum",
+        "Gold"
+      ],
+      "cobranding": null
     },
     {
       "nombre": "ADAGIO LIBRERÍA CAFÉ",
@@ -311,7 +403,14 @@
       "vigencia": "Todos los días",
       "tarjetas": "25% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y Débito Premium.",
       "desc": "25% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y Débito Premium.",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [
+        "Infinite",
+        "Platinum",
+        "Gold"
+      ],
+      "cobranding": null
     },
     {
       "nombre": "ONEILL",
@@ -331,7 +430,14 @@
       "vigencia": "Todos los días",
       "tarjetas": "25% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y Débito Premium.",
       "desc": "25% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y Débito Premium.",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [
+        "Infinite",
+        "Platinum",
+        "Gold"
+      ],
+      "cobranding": null
     },
     {
       "nombre": "HARRINGTON",
@@ -347,7 +453,10 @@
       "vigencia": "Todos los días",
       "tarjetas": "15% de ahorro con tarjetas de crédito y débito.",
       "desc": "15% de ahorro con tarjetas de crédito y débito.",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "POLANCO",
@@ -363,7 +472,10 @@
       "vigencia": "Todos los días",
       "tarjetas": "15% de ahorro con tarjetas de crédito y débito.",
       "desc": "15% de ahorro con tarjetas de crédito y débito.",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "MCONCEPT",
@@ -379,7 +491,10 @@
       "vigencia": "Todos los días",
       "tarjetas": "15% de ahorro con tarjetas de crédito y débito.",
       "desc": "15% de ahorro con tarjetas de crédito y débito.",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "MISTRAL",
@@ -395,7 +510,10 @@
       "vigencia": "Todos los días",
       "tarjetas": "15% de ahorro con tarjetas de crédito y débito.",
       "desc": "15% de ahorro con tarjetas de crédito y débito.",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "BROOKSFIELD",
@@ -411,7 +529,10 @@
       "vigencia": "Todos los días",
       "tarjetas": "15% de ahorro con tarjetas de crédito y débito.",
       "desc": "15% de ahorro con tarjetas de crédito y débito.",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "AMEX PRESS READER",
@@ -422,7 +543,12 @@
       "vigencia": "Todos los días",
       "tarjetas": "Accedé a más de 7.000 periódicos y revistas, en más de 60 idiomas. Cada suscripción proporciona lectura ilimitada en hasta 5 dispositivos. Todos los clientes de Tarjeta Platinum Card tendrán acceso gratuito.",
       "desc": "Accedé a más de 7.000 periódicos y revistas, en más de 60 idiomas. Cada suscripción proporciona lectura ilimitada en hasta 5 dispositivos. Todos los clientes de Tarjeta Platinum Card tendrán acceso gratuito.",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [
+        "Platinum"
+      ],
+      "cobranding": null
     },
     {
       "nombre": "TELEPEAJE",
@@ -433,7 +559,12 @@
       "vigencia": "Todos los días",
       "tarjetas": "The Platinum Card American Express (excl. ConnectMiles)",
       "desc": "50% de ahorro todos los días en telepeajes. Tope $1.200/mes.",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": "Amex",
+      "niveles": [
+        "Platinum"
+      ],
+      "cobranding": null
     },
     {
       "nombre": "PASELIBRE",
@@ -444,7 +575,10 @@
       "vigencia": "Todos los días",
       "tarjetas": null,
       "desc": "Asociate a Paselibre. Empezá a disfrutar grandes beneficios.",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "OLD CHRISTIANS CLUB",
@@ -455,7 +589,12 @@
       "vigencia": "Todos los días",
       "tarjetas": "Con la nueva Visa Infinite del OCC difrutá Todos los días de múltiples beneficios. Ingresá aquí y descubrilos.",
       "desc": "Con la nueva Visa Infinite del OCC difrutá Todos los días de múltiples beneficios. Ingresá aquí y descubrilos.",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": "Visa",
+      "niveles": [
+        "Infinite"
+      ],
+      "cobranding": null
     },
     {
       "nombre": "CLUB DEL LAGO - GOLF",
@@ -471,7 +610,10 @@
       "vigencia": "Todos los días",
       "tarjetas": "25% de ahorro en la cuota anual con Tarjetas Scotiabank",
       "desc": "25% de ahorro en la cuota anual con Tarjetas Scotiabank",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "MAXIMSTORE",
@@ -487,7 +629,10 @@
       "vigencia": "Todos los días",
       "tarjetas": "15% de ahorro con tarjetas de crédito.",
       "desc": "15% de ahorro con tarjetas de crédito.",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "ART COMPUTER",
@@ -507,7 +652,10 @@
       "vigencia": "Todos los días",
       "tarjetas": "15% de ahorro con tarjetas de crédito.",
       "desc": "15% de ahorro con tarjetas de crédito.",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "ACHER",
@@ -523,7 +671,10 @@
       "vigencia": "Del 1 de junio al 31 de julio",
       "tarjetas": "25% de ahorro con tarjetas de crédito y débito.",
       "desc": "25% de ahorro con tarjetas de crédito y débito.",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "ARQUETIPO",
@@ -539,7 +690,10 @@
       "vigencia": "Todos los días",
       "tarjetas": "15% de ahorro con Tarjetas de Crédito.",
       "desc": "15% de ahorro con Tarjetas de Crédito.",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "DORMIFLEX",
@@ -555,7 +709,10 @@
       "vigencia": "Todos los días",
       "tarjetas": "10% de ahorro con Tarjetas de Crédito y Débito",
       "desc": "10% de ahorro con Tarjetas de Crédito y Débito",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "CLEMENTINE NATURAL",
@@ -571,7 +728,10 @@
       "vigencia": "Todos los días",
       "tarjetas": "15% de ahorro con Tarjetas de Crédito",
       "desc": "15% de ahorro con Tarjetas de Crédito",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "ORGANIZA SIMPLE",
@@ -587,7 +747,10 @@
       "vigencia": "Todos los días",
       "tarjetas": "15% de ahorro con Tarjetas de Crédito y Débito.",
       "desc": "15% de ahorro con Tarjetas de Crédito y Débito.",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "KOLHER",
@@ -603,7 +766,10 @@
       "vigencia": "Todos los días",
       "tarjetas": "15% de ahorro con tarjetas de crédito, 12 cuotas sin recargo en pesos y dólares",
       "desc": "15% de ahorro con tarjetas de crédito, 12 cuotas sin recargo en pesos y dólares",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "LA PERDIZ - RIVERA",
@@ -623,7 +789,14 @@
       "vigencia": "Todos los días",
       "tarjetas": "25% con tarjetas de crédito Platinum, Infinite y Gold.",
       "desc": "25% con tarjetas de crédito Platinum, Infinite y Gold.",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [
+        "Infinite",
+        "Platinum",
+        "Gold"
+      ],
+      "cobranding": null
     },
     {
       "nombre": "ALBANES - FLORIDA",
@@ -634,7 +807,10 @@
       "vigencia": "Todos los días",
       "tarjetas": "12 y 18 cuotas sin interés con Tarjetas de Crédito",
       "desc": "12 y 18 cuotas sin interés con Tarjetas de Crédito",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "SALÓN OCRE - TREINTA Y TRES",
@@ -654,7 +830,14 @@
       "vigencia": "Todos los días",
       "tarjetas": "25% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y Débito Premium.",
       "desc": "25% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y Débito Premium.",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [
+        "Infinite",
+        "Platinum",
+        "Gold"
+      ],
+      "cobranding": null
     },
     {
       "nombre": "SYMPHORINE",
@@ -670,7 +853,10 @@
       "vigencia": "Todos los días",
       "tarjetas": "15% de ahorro con Tarjetas de Crédito y Débito",
       "desc": "15% de ahorro con Tarjetas de Crédito y Débito",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "KAUNAS",
@@ -686,7 +872,10 @@
       "vigencia": "Todos los días",
       "tarjetas": "15% de ahorro con Tarjetas de Crédito y Débito",
       "desc": "15% de ahorro con Tarjetas de Crédito y Débito",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "JOYERÍA REVELLO",
@@ -706,7 +895,14 @@
       "vigencia": "Todos los días",
       "tarjetas": "25% de ahorro con Tarjetas Platinum, Infinite, Gold y Débito Premium.",
       "desc": "25% de ahorro con Tarjetas Platinum, Infinite, Gold y Débito Premium.",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [
+        "Infinite",
+        "Platinum",
+        "Gold"
+      ],
+      "cobranding": null
     },
     {
       "nombre": "CULTURAL ALFABETA",
@@ -726,7 +922,14 @@
       "vigencia": "Todos los días",
       "tarjetas": "25% de ahorro con Tarjetas Platinum, Infinite, Gold y Débito Premium.",
       "desc": "25% de ahorro con Tarjetas Platinum, Infinite, Gold y Débito Premium.",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [
+        "Infinite",
+        "Platinum",
+        "Gold"
+      ],
+      "cobranding": null
     },
     {
       "nombre": "LIBRERÍA AVISTA",
@@ -746,7 +949,14 @@
       "vigencia": "Todos los días",
       "tarjetas": "25% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y Débito Premium.",
       "desc": "25% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y Débito Premium.",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [
+        "Infinite",
+        "Platinum",
+        "Gold"
+      ],
+      "cobranding": null
     },
     {
       "nombre": "3 MUSAS",
@@ -766,7 +976,14 @@
       "vigencia": "Todos los días",
       "tarjetas": "25% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y Débito Premium.",
       "desc": "25% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y Débito Premium.",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [
+        "Infinite",
+        "Platinum",
+        "Gold"
+      ],
+      "cobranding": null
     },
     {
       "nombre": "ESCOOL",
@@ -786,7 +1003,14 @@
       "vigencia": "Todos los días",
       "tarjetas": "25% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y Débito Premium.",
       "desc": "25% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y Débito Premium.",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [
+        "Infinite",
+        "Platinum",
+        "Gold"
+      ],
+      "cobranding": null
     },
     {
       "nombre": "DBD",
@@ -806,7 +1030,14 @@
       "vigencia": "Todos los días",
       "tarjetas": "25% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y Débito Premium.",
       "desc": "25% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y Débito Premium.",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [
+        "Infinite",
+        "Platinum",
+        "Gold"
+      ],
+      "cobranding": null
     },
     {
       "nombre": "LAIKA",
@@ -822,7 +1053,10 @@
       "vigencia": "Todos los días",
       "tarjetas": "10% de ahorro con tus tarjetas de crédito en todos los productos.",
       "desc": "10% de ahorro con tus tarjetas de crédito en todos los productos.",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "LAVAKAN",
@@ -838,7 +1072,14 @@
       "vigencia": "Todos los días",
       "tarjetas": "15% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y débito Premium.",
       "desc": "15% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y débito Premium.",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [
+        "Infinite",
+        "Platinum",
+        "Gold"
+      ],
+      "cobranding": null
     },
     {
       "nombre": "FULL PET",
@@ -854,7 +1095,10 @@
       "vigencia": "Todos los días",
       "tarjetas": "15% de ahorro con tarjetas de crédito y débito.",
       "desc": "15% de ahorro con tarjetas de crédito y débito.",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "RACIONES ROCHA",
@@ -870,7 +1114,10 @@
       "vigencia": "Todos los días",
       "tarjetas": "15% de ahorro con tarjetas de crédito y débito.",
       "desc": "15% de ahorro con tarjetas de crédito y débito.",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "VETERINARIA AKITA",
@@ -886,7 +1133,10 @@
       "vigencia": "Todos los días",
       "tarjetas": "15% de ahorro con tarjetas de crédito y débito.",
       "desc": "15% de ahorro con tarjetas de crédito y débito.",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "VETERINARIA DEL MAR",
@@ -902,7 +1152,10 @@
       "vigencia": "Todos los días",
       "tarjetas": "15% de ahorro con tarjetas de crédito y débito.",
       "desc": "15% de ahorro con tarjetas de crédito y débito.",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "MKL COTTON",
@@ -918,7 +1171,10 @@
       "vigencia": "Todos los días",
       "tarjetas": "15% de ahorro con tarjetas de crédito y débito.",
       "desc": "15% de ahorro con tarjetas de crédito y débito.",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "BALLON",
@@ -938,7 +1194,10 @@
       "vigencia": "Todos los días",
       "tarjetas": "15% y 25% de ahorro Todos los días con tus Tarjetas Scotiabank.",
       "desc": "15% y 25% de ahorro Todos los días con tus Tarjetas Scotiabank.",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "MVD KIDS",
@@ -954,7 +1213,10 @@
       "vigencia": "Todos los días",
       "tarjetas": "15% Todos los días con Tarjetas de Crédito y Débito Scotiabank.",
       "desc": "15% Todos los días con Tarjetas de Crédito y Débito Scotiabank.",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "SCHOOL",
@@ -974,7 +1236,10 @@
       "vigencia": "Todos los días",
       "tarjetas": "15% y 25% de ahorro con Tarjetas Scotiabank",
       "desc": "15% y 25% de ahorro con Tarjetas Scotiabank",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "MIKANGAROO",
@@ -990,7 +1255,10 @@
       "vigencia": "Todos los días",
       "tarjetas": "15% de ahorro con Tarjetas de Crédito Scotiabank",
       "desc": "15% de ahorro con Tarjetas de Crédito Scotiabank",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "ÓPTICA RUGLIO",
@@ -1006,7 +1274,10 @@
       "vigencia": "Todos los días",
       "tarjetas": "15% de ahorro con tarjetas de crédito.",
       "desc": "15% de ahorro con tarjetas de crédito.",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "ÓPTICA CASINO",
@@ -1022,7 +1293,10 @@
       "vigencia": "Todos los días",
       "tarjetas": "15% de ahorro con Tarjetas de Crédito.",
       "desc": "15% de ahorro con Tarjetas de Crédito.",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "ÓPTICA ATLÁNTIDA",
@@ -1038,7 +1312,10 @@
       "vigencia": "Todos los días",
       "tarjetas": "15% de ahorro con tarjetas de crédito y débito.",
       "desc": "15% de ahorro con tarjetas de crédito y débito.",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "ÓPTICA GARESE",
@@ -1054,7 +1331,10 @@
       "vigencia": "Todos los días",
       "tarjetas": "15% de ahorro con tarjetas de crédito.",
       "desc": "15% de ahorro con tarjetas de crédito.",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "PIGALLE",
@@ -1070,7 +1350,10 @@
       "vigencia": "Todos los días",
       "tarjetas": "20% de ahorro con tarjetas de crédito.",
       "desc": "20% de ahorro con tarjetas de crédito.",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "FARMACIA IBIZA",
@@ -1090,7 +1373,10 @@
       "vigencia": "Todos los días",
       "tarjetas": "15% de ahorro el primer y último domingo de cada mes, con Tarjetas de Débito.",
       "desc": "15% de ahorro el primer y último domingo de cada mes, con Tarjetas de Débito.",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "NIVEL 1",
@@ -1110,7 +1396,14 @@
       "vigencia": "Todos los días",
       "tarjetas": "25% de ahorro con tarjetas de Crédito Platinum, Infinite y Gold.",
       "desc": "25% de ahorro con tarjetas de Crédito Platinum, Infinite y Gold.",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [
+        "Infinite",
+        "Platinum",
+        "Gold"
+      ],
+      "cobranding": null
     },
     {
       "nombre": "PELUQUERÍA JIMENA NOGUEIRA",
@@ -1126,7 +1419,10 @@
       "vigencia": "Todos los días",
       "tarjetas": "15% de ahorro con Tarjetas de Crédito Scotiabank.",
       "desc": "15% de ahorro con Tarjetas de Crédito Scotiabank.",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "PELUQUERÍA LAMOR",
@@ -1142,7 +1438,10 @@
       "vigencia": "Todos los días",
       "tarjetas": "15% de ahorro con Tarjetas de Crédito Scotiabank.",
       "desc": "15% de ahorro con Tarjetas de Crédito Scotiabank.",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "BARBERÍA ALVARO ROMAN",
@@ -1162,7 +1461,14 @@
       "vigencia": "Todos los días",
       "tarjetas": "25% de ahorro con Tarjetas de Crédito Platinum, Infinite y Gold.",
       "desc": "25% de ahorro con Tarjetas de Crédito Platinum, Infinite y Gold.",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [
+        "Infinite",
+        "Platinum",
+        "Gold"
+      ],
+      "cobranding": null
     },
     {
       "nombre": "KINKO",
@@ -1182,7 +1488,14 @@
       "vigencia": "Todos los días",
       "tarjetas": "15% de ahorro Todos los días con Tarjetas de Crédito Visa Infinite, Visa Platinum, American Express Platinum y Gold y Tarjetas de Débito Premium.",
       "desc": "15% de ahorro Todos los días con Tarjetas de Crédito Visa Infinite, Visa Platinum, American Express Platinum y Gold y Tarjetas de Débito Premium.",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [
+        "Infinite",
+        "Platinum",
+        "Gold"
+      ],
+      "cobranding": null
     },
     {
       "nombre": "CANTINAS MILITARES",
@@ -1198,7 +1511,10 @@
       "vigencia": "Todos los dias",
       "tarjetas": "10% de ahorro con tarjetas de débito",
       "desc": "10% de ahorro con tarjetas de débito",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "HOTELES EN URUGUAY",
@@ -1218,7 +1534,10 @@
       "vigencia": "Todos los días",
       "tarjetas": "25% y 30% de ahorro con Tarjetas de Crédito: Visa, MasterCard y American Express Tarjetas de Débito Scotiabank.",
       "desc": "25% y 30% de ahorro con Tarjetas de Crédito: Visa, MasterCard y American Express Tarjetas de Débito Scotiabank.",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "JORGE MARTÍNEZ",
@@ -1229,7 +1548,10 @@
       "vigencia": "Todos los días",
       "tarjetas": null,
       "desc": "Pagá tus pasajes en 12 y 18 cuotas sin recargo, en dólares",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     }
   ]
 }

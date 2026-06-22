@@ -11,7 +11,10 @@
       "tarjetas": "Beneficios exclusivos para clientes MIBROU y Tarjeta Joven",
       "vigencia": null,
       "desc": "Banco Hipotecario del Uruguay",
-      "categoria": "ensenanza"
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "MI BROU Tarjeta Joven",
@@ -20,7 +23,12 @@
       "tarjetas": "MI BROU Tarjeta Joven",
       "vigencia": null,
       "desc": "MI BROU Tarjeta Joven",
-      "categoria": "ensenanza"
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [
+        "Clásica"
+      ],
+      "cobranding": null
     },
     {
       "nombre": "SODRE",
@@ -29,7 +37,13 @@
       "tarjetas": "50% para las tarjetas BROU Recompensa Mastercard Black y VISA Platino del Banco.",
       "vigencia": "Vigencia: 28/02/2027",
       "desc": "Disfrutá de hasta un 50% de descuento en todas las obras del cuerpo estable del SODRE",
-      "categoria": "espectaculos"
+      "categoria": "espectaculos",
+      "red": null,
+      "niveles": [
+        "Platinum",
+        "Black"
+      ],
+      "cobranding": "Recompensa"
     },
     {
       "nombre": "RUA Asistencia",
@@ -38,7 +52,10 @@
       "tarjetas": "30% de descuento con todas las tarjetas del Banco República",
       "vigencia": null,
       "desc": "Abonando con todas las tarjetas del Banco República, obtenés un 30% de descuento en distintos servicios brindados por RUA Asistencia.",
-      "categoria": "transporte"
+      "categoria": "transporte",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Beneficios Para Vos",
@@ -47,7 +64,10 @@
       "tarjetas": "Si estás en Artigas, Cerro Largo, Rivera o Rocha, con tu BROU Recompensa Mastercard Crédito ahora tenés más beneficios:",
       "vigencia": "De lunes a viernes, aprovechá los beneficios que Tu Banco tiene para vos",
       "desc": "De lunes a viernes, aprovechá los beneficios que Tu Banco tiene para vos",
-      "categoria": "hogar"
+      "categoria": "hogar",
+      "red": "Mastercard",
+      "niveles": [],
+      "cobranding": "Recompensa"
     },
     {
       "nombre": "Cabify",
@@ -56,7 +76,10 @@
       "tarjetas": "Con el código \"BROUJUN30\" obtenés 4 viajes hasta el 30 de Junio con un 30% de descuento en la zona de Montevideo y Maldonado, abonando con tarjetas de crédito y débito VISA, BROU Recompensa Mastercard",
       "vigencia": "Vigencia: 30/06/2026",
       "desc": "Aprovechá el siguiente beneficio con Cabify",
-      "categoria": "ensenanza"
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [],
+      "cobranding": "Recompensa"
     },
     {
       "nombre": "Cuatroases",
@@ -65,7 +88,13 @@
       "tarjetas": "25% de descuento abonando con tarjetas de crédito BROU VISA Platino y BROU Recompensa Mastercard Platino y Black.",
       "vigencia": "Vigencia: 28/02/2027",
       "desc": "Disfrutá de los descuentos que te ofrece Tu Banco en Cuatroases pagando con los Medios de Pago seleccionados",
-      "categoria": "moda"
+      "categoria": "moda",
+      "red": null,
+      "niveles": [
+        "Platinum",
+        "Black"
+      ],
+      "cobranding": "Recompensa"
     },
     {
       "nombre": "La Dolfina",
@@ -74,7 +103,13 @@
       "tarjetas": "25% de descuento con tarjetas de crédito BROU VISA Platinum y BROU Recompensa Mastercard Platinum y Black.",
       "vigencia": "Vigencia: 28/02/2027",
       "desc": "Disfrutá de los descuentos que te ofrece Tu Banco en La Dolfina pagando con los Medios de Pago seleccionados",
-      "categoria": "moda"
+      "categoria": "moda",
+      "red": null,
+      "niveles": [
+        "Platinum",
+        "Black"
+      ],
+      "cobranding": "Recompensa"
     },
     {
       "nombre": "Ser Animal",
@@ -83,7 +118,13 @@
       "tarjetas": "25% de dto. con las tarjetas de crédito BROU VISA Platino y BROU Recompensa Mastercard Black.",
       "vigencia": "Vigencia: 31/03/2027",
       "desc": "Aprovechá los siguientes descuentos en Ser Animal",
-      "categoria": "ensenanza"
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [
+        "Platinum",
+        "Black"
+      ],
+      "cobranding": "Recompensa"
     },
     {
       "nombre": "Óptica Mataró",
@@ -92,7 +133,10 @@
       "tarjetas": "25% de descuento con tarjetas de débito VISA, MI BROU y Mastercard del BROU en lentes de receta (cristales y armazones) y lentes de sol.",
       "vigencia": null,
       "desc": "Importantes descuentos con todas las tarjetas del Banco República.",
-      "categoria": "salud-estetica"
+      "categoria": "salud-estetica",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Restaurante Arcadia",
@@ -101,7 +145,13 @@
       "tarjetas": "• 25% de descuento con tarjetas de crédito BROU VISA Platinum y Black y BROU Recompensa Mastercard Platinum y Black.",
       "vigencia": "Vigencia: 31/05/2027",
       "desc": "Disfrutá de hasta un 25% de dto en Restaurante Arcadia con tarjetas del BROU",
-      "categoria": "ensenanza"
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [
+        "Platinum",
+        "Black"
+      ],
+      "cobranding": "Recompensa"
     },
     {
       "nombre": "Confitería LIONDOR",
@@ -110,7 +160,13 @@
       "tarjetas": "• 25% de descuento con tarjetas de crédito BROU VISA Platinum y BROU Recompensa Mastercard Black.",
       "vigencia": "Vigencia: 31/05/2027",
       "desc": "Disfrutá de hasta un 25% de dto. en Confitería LIONDOR con medios de pago del BROU",
-      "categoria": "ensenanza"
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [
+        "Platinum",
+        "Black"
+      ],
+      "cobranding": "Recompensa"
     },
     {
       "nombre": "Pastelería Camomila",
@@ -119,7 +175,13 @@
       "tarjetas": "• 25% de descuento con tarjetas de crédito BROU VISA Platinum y BROU Recompensa Mastercard Black.",
       "vigencia": "Vigencia: 31/05/2027",
       "desc": "Disfrutá de hasta un 25% de dto. en Pastelería Camomila con medios de pago de tu Banco",
-      "categoria": "ensenanza"
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [
+        "Platinum",
+        "Black"
+      ],
+      "cobranding": "Recompensa"
     },
     {
       "nombre": "La Sacristía",
@@ -128,7 +190,13 @@
       "tarjetas": "25% de descuento para tarjetas de crédito VISA Platinum y BROU Recompensa Mastercard Black y Platinum.",
       "vigencia": "Vigencia: 30/09/2026",
       "desc": "En la tienda de vinos, productos gourmet y regalos La Sacristía, también podés aprovechar los beneficios de los medios de pago de Tu Banco:",
-      "categoria": "ensenanza"
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [
+        "Platinum",
+        "Black"
+      ],
+      "cobranding": "Recompensa"
     },
     {
       "nombre": "COSMESHOP",
@@ -137,7 +205,13 @@
       "tarjetas": "25% de descuento con tarjetas de crédito BROU VISA Platinum y BROU Recompensa Mastercard Platinum y Black.",
       "vigencia": "Vigencia: 30/04/2027",
       "desc": "Disfrutá de descuentos en COSMESHOP con medios de pago seleccionados.",
-      "categoria": "ensenanza"
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [
+        "Platinum",
+        "Black"
+      ],
+      "cobranding": "Recompensa"
     },
     {
       "nombre": "Farmacias Asociación Española",
@@ -146,7 +220,10 @@
       "tarjetas": "20% descuento en artículos de farmacia de la Asociación Española abonando con tarjetas de crédito BROU Recompensa Mastercard.",
       "vigencia": "Vigencia: 31/12/2026",
       "desc": "Farmacias Asociación Española",
-      "categoria": "salud-estetica"
+      "categoria": "salud-estetica",
+      "red": "Mastercard",
+      "niveles": [],
+      "cobranding": "Recompensa"
     },
     {
       "nombre": "Clínica de la Sonrisa",
@@ -155,7 +232,10 @@
       "tarjetas": "Abonando con las tarjetas de crédito y débito VISA y Mastercard del Banco República obtenés los siguientes beneficios:",
       "vigencia": null,
       "desc": "Clínica de la Sonrisa",
-      "categoria": "salud-estetica"
+      "categoria": "salud-estetica",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Beneficio AUF",
@@ -164,7 +244,10 @@
       "tarjetas": "Preventa exclusiva y compra de entradas con 20% de descuento pagando con Tarjetas BROU Recompensa Mastercard.",
       "vigencia": "Vigencia: 31/12/2026",
       "desc": "Preventa exclusiva y compra de entradas con 20% de descuento pagando con Tarjetas BROU Recompensa Mastercard.",
-      "categoria": "espectaculos"
+      "categoria": "espectaculos",
+      "red": "Mastercard",
+      "niveles": [],
+      "cobranding": "Recompensa"
     },
     {
       "nombre": "Hotel del Lago",
@@ -173,7 +256,10 @@
       "tarjetas": "Disfrutá de tu escapada en Hotel del Lago con un 20% de descuento pagando con tus tarjetas de crédito BROU Recompensa Mastercard y VISA.",
       "vigencia": "Vigencia: 31/07/2026",
       "desc": "Aprovechá un 20% de descuento en tus vacaciones con las tarjetas seleccionadas del BROU",
-      "categoria": "ensenanza"
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [],
+      "cobranding": "Recompensa"
     },
     {
       "nombre": "Novatex",
@@ -182,7 +268,10 @@
       "tarjetas": "20% de descuento con tarjetas de Crédito VISA y BROU Recompensa Mastercard.",
       "vigencia": "Vigencia: 30/11/2026",
       "desc": "En Novatex aprovechá estos beneficios con los siguientes medios de pago de Tu Banco:",
-      "categoria": "ensenanza"
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [],
+      "cobranding": "Recompensa"
     },
     {
       "nombre": "Beneficios en Cifer",
@@ -191,7 +280,10 @@
       "tarjetas": "20% de descuento con Tarjetas de Crédito VISA y BROU Recompensa Mastercard.",
       "vigencia": "Vigencia: 31/12/2026",
       "desc": "Ahora tus compras en Cifer tienen descuentos imperdibles con los medios de pago del Banco República.",
-      "categoria": "hogar"
+      "categoria": "hogar",
+      "red": null,
+      "niveles": [],
+      "cobranding": "Recompensa"
     },
     {
       "nombre": "Country Atlantida",
@@ -200,7 +292,10 @@
       "tarjetas": "BROU VISA Crédito y Débito",
       "vigencia": "Vigencia: 31/01/2027",
       "desc": "Disfrutá del 20% de descuento en en tus vacaciones, con medios de pago seleccionados de Tu Banco.",
-      "categoria": "ensenanza"
+      "categoria": "ensenanza",
+      "red": "Visa",
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Pappolino",
@@ -209,7 +304,13 @@
       "tarjetas": "20% de descuento con tarjetas de crédito BROU VISA Platinum y BROU Recompensa Mastercard Platinum y Black.",
       "vigencia": "Vigencia: 30/06/2026",
       "desc": "Aprovechá los siguientes beneficios en tus compras",
-      "categoria": "moda"
+      "categoria": "moda",
+      "red": null,
+      "niveles": [
+        "Platinum",
+        "Black"
+      ],
+      "cobranding": "Recompensa"
     },
     {
       "nombre": "Óptica Net",
@@ -218,7 +319,10 @@
       "tarjetas": "20% de descuento abonando con todas las tarjetas del Banco República.",
       "vigencia": null,
       "desc": "Abonando con todas las tarjetas del Banco República, obtené un 20% de descuento en todos los servicios de Óptica Net.",
-      "categoria": "salud-estetica"
+      "categoria": "salud-estetica",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Guapa!",
@@ -227,7 +331,13 @@
       "tarjetas": "20% de descuento con tarjetas de crédito BROU VISA Platinum y BROU Recompensa Mastercard Platinum y Black.",
       "vigencia": "Vigencia: 30/06/2026",
       "desc": "Aprovechá los siguientes descuentos en tus compras",
-      "categoria": "ensenanza"
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [
+        "Platinum",
+        "Black"
+      ],
+      "cobranding": "Recompensa"
     },
     {
       "nombre": "Barraca Malvín",
@@ -236,7 +346,10 @@
       "tarjetas": "20% de descuento con todas las tarjetas del Banco República.",
       "vigencia": null,
       "desc": "Abonando tus compras en Barraca Malvín con todas las tarjetas del Banco República, tenés un 20% de descuento en todos los productos (materiales de terminación, sanitaria, grifería y equipamiento para baño, cocina y jardín).",
-      "categoria": "hogar"
+      "categoria": "hogar",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Beneficios FUBB",
@@ -245,7 +358,10 @@
       "tarjetas": "Obtené un 20% de descuento en tus entradas durante toda la fase regular para los torneos de la FUBB abonando con tarjetas de crédito y débito VISA, BROU Recompensa Mastercard y MI BROU Tarjeta Joven.",
       "vigencia": null,
       "desc": "Descuento en entradas durante la fase regular con medios de pago seleccionados.",
-      "categoria": "ensenanza"
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [],
+      "cobranding": "Recompensa"
     },
     {
       "nombre": "AGUERREBERE",
@@ -254,7 +370,10 @@
       "tarjetas": "20% de descuento con tarjetas de Crédito VISA y BROU Recompensa Mastercard.",
       "vigencia": "Vigencia: 30/11/2026",
       "desc": "En Aguerrebere aprovechá estos beneficios con los siguientes medios de pago de Tu Banco:",
-      "categoria": "ensenanza"
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [],
+      "cobranding": "Recompensa"
     },
     {
       "nombre": "Paprika",
@@ -263,7 +382,13 @@
       "tarjetas": "20% de descuento con tarjetas de crédito BROU VISA Platinum y BROU Recompensa Mastercard Platinum y Black.",
       "vigencia": "Vigencia: 30/06/2026",
       "desc": "Abonando con tarjetas del Banco República accedés a los siguientes descuentos:",
-      "categoria": "moda"
+      "categoria": "moda",
+      "red": null,
+      "niveles": [
+        "Platinum",
+        "Black"
+      ],
+      "cobranding": "Recompensa"
     },
     {
       "nombre": "Aprendé inglés en Executive",
@@ -272,7 +397,10 @@
       "tarjetas": "20% de descuento abonando con tarjetas de débito VISA, BROU Recompensa Mastercard y MI BROU Tarjeta Joven.",
       "vigencia": null,
       "desc": "Aprendé inglés en Executive",
-      "categoria": "ensenanza"
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [],
+      "cobranding": "Recompensa"
     },
     {
       "nombre": "Óptica Focal",
@@ -281,7 +409,10 @@
       "tarjetas": "15% de descuento con todas las tarjetas del Banco República",
       "vigencia": null,
       "desc": "Abonando con tarjetas del Banco República, obtené 15% de descuento en lentes de receta, lentes de contacto, lentes de sol y audífonos de Óptica Focal.",
-      "categoria": "salud-estetica"
+      "categoria": "salud-estetica",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "ANTEL y MI BROU Tarjeta Joven",
@@ -290,7 +421,12 @@
       "tarjetas": "ANTEL y MI BROU Tarjeta Joven",
       "vigencia": null,
       "desc": "ANTEL y MI BROU Tarjeta Joven",
-      "categoria": "ensenanza"
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [
+        "Clásica"
+      ],
+      "cobranding": null
     },
     {
       "nombre": "Supergas ANCAP",
@@ -299,7 +435,10 @@
       "tarjetas": "Disfrutá de un 15% de descuento en tu recarga de Supergás ANCAP pagando con tu tarjeta de crédito BROU ANCAP.",
       "vigencia": "Vigencia: 30/06/2026",
       "desc": "Disfrutá de un 15% de descuento en tu recarga de Supergás ANCAP pagando con tu tarjeta de crédito BROU ANCAP.",
-      "categoria": "ensenanza"
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "IPlace",
@@ -308,7 +447,10 @@
       "tarjetas": "En iPlace, abonando con tarjetas de crédito BROU VISA y BROU Recompensa Mastercard, aprovechá estos beneficios:",
       "vigencia": "Vigencia: 30/06/2026",
       "desc": "En iPlace, abonando con tarjetas de crédito BROU VISA y BROU Recompensa Mastercard, aprovechá estos beneficios:",
-      "categoria": "ensenanza"
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [],
+      "cobranding": "Recompensa"
     },
     {
       "nombre": "GR Joyeros",
@@ -317,7 +459,10 @@
       "tarjetas": "Obtené un 15% de descuento con todas las tarjetas de crédito y débito del Banco República en GR Joyeros.",
       "vigencia": null,
       "desc": "Obtené un 15% de descuento con todas las tarjetas de crédito y débito del Banco República en GR Joyeros.",
-      "categoria": "moda"
+      "categoria": "moda",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Confiteria Carrera",
@@ -326,7 +471,10 @@
       "tarjetas": "Aprovechá todos los días el descuento de un 15% pagando con tus tarjetas de crédito BROU Recompensa Mastercard y VISA crédito.",
       "vigencia": "Todos los días tenés descuento con los Medios de Pago de Tu Banco",
       "desc": "Todos los días tenés descuento con los Medios de Pago de Tu Banco",
-      "categoria": "PYMES-BENEFICIO"
+      "categoria": "PYMES-BENEFICIO",
+      "red": null,
+      "niveles": [],
+      "cobranding": "Recompensa"
     },
     {
       "nombre": "Lorenza Indumentaria femenina",
@@ -335,7 +483,10 @@
       "tarjetas": "Aprovechá un 15% en todas las compras con tarjetas de crédito y débito VISA, BROU Recompensa Mastercard y MI BROU Tarjeta Joven tanto para compras web como presenciales y Multipagos eBROU.",
       "vigencia": "Vigencia: 31/07/2026",
       "desc": "Lorenza Indumentaria femenina",
-      "categoria": "ensenanza"
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [],
+      "cobranding": "Recompensa"
     },
     {
       "nombre": "ADOBE PYMES",
@@ -344,7 +495,10 @@
       "tarjetas": null,
       "vigencia": "Vigencia: 30/04/2027",
       "desc": "¡Obtené un 14% de descuento en la facturación anual de Adobe!",
-      "categoria": "ensenanza"
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Aprendé Portugués en Instituto Instituto Vinicius de Moraes- Língua & Cultura do Brasil",
@@ -353,7 +507,10 @@
       "tarjetas": "10% de descuento con todas las tarjetas del Banco República",
       "vigencia": null,
       "desc": "Aprendé Portugués en Instituto Instituto Vinicius de Moraes- Língua & Cultura do Brasil",
-      "categoria": "ensenanza"
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Espacio Mascota",
@@ -362,7 +519,10 @@
       "tarjetas": "Aprovechá un 10% de descuento en los puntos de venta, una promoción válida exclusivamente para aquellos clientes NO SOCIOS que abonen con tarjetas de crédito y débito VISA, BROU Recompensa Mastercard",
       "vigencia": "Vigencia: 30/11/2026",
       "desc": "Aprovechá los siguientes descuentos en Espacio Mascota",
-      "categoria": "ensenanza"
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [],
+      "cobranding": "Recompensa"
     },
     {
       "nombre": "Micro Macro",
@@ -371,7 +531,10 @@
       "tarjetas": "Todos los martes y jueves tenés un 10% de descuento abonando con tarjetas de crédito BROU Recompensa Mastercard, Tarjeta de Débito Corporativa y Tarjetas de Crédito BROU PYME Mastercard y BROU PYME Ma",
       "vigencia": "Vigencia: 30/04/2027",
       "desc": "Aprovecha estos beneficios en Micro Macro con las tarjetas seleccionadas de Tu Banco",
-      "categoria": "ensenanza"
+      "categoria": "ensenanza",
+      "red": "Mastercard",
+      "niveles": [],
+      "cobranding": "Recompensa"
     },
     {
       "nombre": "Óptica Maynard",
@@ -380,7 +543,10 @@
       "tarjetas": "10% de descuento con todas las Tarjetas del Banco República",
       "vigencia": null,
       "desc": "Abonando con todas las tarjetas del Banco República, obtené un 10% de descuento en Óptica Maynard.",
-      "categoria": "salud-estetica"
+      "categoria": "salud-estetica",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "El Dorado",
@@ -389,7 +555,10 @@
       "tarjetas": "Todos los Martes y Jueves, tenés un descuento del 10% abonando con tarjetas de crédito BROU Recompensa Mastercard, Tarjeta de Débito Corporativa y Tarjetas de Crédito BROU PYME Mastercard y BROU PYME",
       "vigencia": "Vigencia: 30/04/2027",
       "desc": "Aprovecha estos beneficios en El Dorado con las tarjetas seleccionadas de Tu Banco",
-      "categoria": "hogar"
+      "categoria": "hogar",
+      "red": "Mastercard",
+      "niveles": [],
+      "cobranding": "Recompensa"
     },
     {
       "nombre": "Superventas - Artículos electrónicos",
@@ -398,7 +567,10 @@
       "tarjetas": "10% y 5% de descuento abonando con todas las tarjetas del Banco República.",
       "vigencia": null,
       "desc": "Superventas - Artículos electrónicos",
-      "categoria": "tecnologia"
+      "categoria": "tecnologia",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "G! Market",
@@ -407,7 +579,10 @@
       "tarjetas": "Aprovecha un 10% de descuento abonando con tarjetas de crédito y débito BROU VISA y BROU Recompensa Mastercard.",
       "vigencia": "Vigencia: 30/06/2026",
       "desc": "Aprovecha un 10% de descuento abonando con tarjetas de crédito y débito BROU VISA y BROU Recompensa Mastercard.",
-      "categoria": "ensenanza"
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [],
+      "cobranding": "Recompensa"
     },
     {
       "nombre": "SIUR ViajoFeliz",
@@ -416,7 +591,10 @@
       "tarjetas": "10% de descuento con tus tarjetas de crédito BROU Recompensa Mastercard y BROU VISA.",
       "vigencia": "Vigencia: 31/12/2026",
       "desc": "Disfrutá de beneficios exclusivos en tus próximos viajes internacionales y paquetes seleccionados con ViajoFeliz.",
-      "categoria": "ensenanza"
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [],
+      "cobranding": "Recompensa"
     },
     {
       "nombre": "Florencia Nuñez",
@@ -425,7 +603,10 @@
       "tarjetas": "Abonando con tarjetas de crédito y débito BROU VISA y BROU Recompensa Mastercard.",
       "vigencia": "Vigencia: 20/09/2026",
       "desc": "Disfrutá del 10% de dto. para “Década y Media”, la gira nacional de Florencia Núñez que celebra sus 15 años de carrera.",
-      "categoria": "ensenanza"
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [],
+      "cobranding": "Recompensa"
     },
     {
       "nombre": "Macromercado",
@@ -434,7 +615,10 @@
       "tarjetas": "Todos los martes y jueves tenés un 10% de descuento abonando con tarjetas de crédito BROU Recompensa Mastercard, Tarjeta de Débito Corporativa y Tarjetas de Crédito BROU PYME Mastercard y BROU PYME Ma",
       "vigencia": "Vigencia: 30/04/2027",
       "desc": "Aprovecha estos beneficios en Macromercado con las tarjetas seleccionadas de Tu Banco",
-      "categoria": "ensenanza"
+      "categoria": "ensenanza",
+      "red": "Mastercard",
+      "niveles": [],
+      "cobranding": "Recompensa"
     },
     {
       "nombre": "Farmacias",
@@ -443,7 +627,10 @@
       "tarjetas": "La promoción comprende un 10% de descuento en el rubro FARMACIAS todos los miércoles, sábados y domingos abonando con Tarjetas de Crédito y Prepagas BROU Recompensa Mastercard, Tarjeta de Débito Corpo",
       "vigencia": "Vigencia: 30/04/2027",
       "desc": "La promoción comprende un 10% de descuento en el rubro FARMACIAS todos los miércoles, sábados y domingos abonando con Tarjetas de Crédito y Prepagas BROU Recompensa Mastercard, Tarjeta de Débito Corporativa y Tarjetas de Crédito BROU PYME Mastercard y BROU PYME Mastercard Platinum.",
-      "categoria": "salud-estetica"
+      "categoria": "salud-estetica",
+      "red": "Mastercard",
+      "niveles": [],
+      "cobranding": "Recompensa"
     },
     {
       "nombre": "Supermercados seleccionados",
@@ -452,7 +639,12 @@
       "tarjetas": "La promoción comprende un 10% de descuento todos los martes y jueves en supermercados Ta-Ta, El Dorado, Macro Mercado, Micro Macro, Red Expres y Tienda Inglesa abonando con Tarjetas de Crédito y Prepa",
       "vigencia": "Vigencia: 30/04/2027",
       "desc": "Supermercados seleccionados",
-      "categoria": "hogar"
+      "categoria": "hogar",
+      "red": null,
+      "niveles": [
+        "Red"
+      ],
+      "cobranding": null
     },
     {
       "nombre": "TaTa",
@@ -461,7 +653,10 @@
       "tarjetas": "Todos los Martes y Jueves hasta el 30 de abril de 2027 tenés un descuento del 10% abonando con tarjetas de crédito Mastercard BROU Recompensa.",
       "vigencia": "Vigencia: 30/04/2027",
       "desc": "Mundial 2026 – Armar la previa",
-      "categoria": "ensenanza"
+      "categoria": "ensenanza",
+      "red": "Mastercard",
+      "niveles": [],
+      "cobranding": "Recompensa"
     },
     {
       "nombre": "Tienda Inglesa",
@@ -470,7 +665,10 @@
       "tarjetas": "Todos los martes y jueves tenés un 10% de descuento abonando con tarjetas de crédito BROU Recompensa Mastercard.",
       "vigencia": "Vigencia: 30/04/2027",
       "desc": "Aprovecha estos beneficios en Tienda Inglesa con las tarjetas seleccionadas de Tu Banco",
-      "categoria": "ensenanza"
+      "categoria": "ensenanza",
+      "red": "Mastercard",
+      "niveles": [],
+      "cobranding": "Recompensa"
     },
     {
       "nombre": "Red Expres",
@@ -479,7 +677,10 @@
       "tarjetas": "Todos los martes y jueves tenés un 10% de descuento abonando con tarjetas de crédito BROU Recompensa Mastercard.",
       "vigencia": "Vigencia: 30/04/2027",
       "desc": "Aprovecha estos beneficios en Red Expres con las tarjetas seleccionadas de Tu Banco",
-      "categoria": "ensenanza"
+      "categoria": "ensenanza",
+      "red": "Mastercard",
+      "niveles": [],
+      "cobranding": "Recompensa"
     },
     {
       "nombre": "Combustible en Estaciones ANCAP",
@@ -488,7 +689,10 @@
       "tarjetas": "La promoción comprende un 5% de descuento en combustibles en Estaciones ANCAP los días lunes y viernes abonando con Tarjetas de Crédito y Prepagas BROU Recompensa Mastercard, Tarjeta de Débito Corpora",
       "vigencia": "Vigencia: 30/04/2027",
       "desc": "Combustible en Estaciones ANCAP",
-      "categoria": "transporte"
+      "categoria": "transporte",
+      "red": "Mastercard",
+      "niveles": [],
+      "cobranding": "Recompensa"
     },
     {
       "nombre": "Life Cinemas",
@@ -497,7 +701,10 @@
       "tarjetas": "Tarjetas de Crédito VISA y BROU Recompensa Mastercard.",
       "vigencia": "2x1 en entradas todos los días con medios de pago seleccionados de Tu Banco.",
       "desc": "Tarjetas de Crédito VISA y BROU Recompensa Mastercard.",
-      "categoria": "espectaculos"
+      "categoria": "espectaculos",
+      "red": null,
+      "niveles": [],
+      "cobranding": "Recompensa"
     },
     {
       "nombre": "Google Ads PYMES",
@@ -506,7 +713,10 @@
       "tarjetas": null,
       "vigencia": "Vigencia: 31/12/2026",
       "desc": "Obtené hasta USD 500 de descuento en publicidad de Google",
-      "categoria": "ensenanza"
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Meta Ads PYMES",
@@ -515,7 +725,10 @@
       "tarjetas": null,
       "vigencia": "Vigencia: 31/12/2026",
       "desc": "Obtené hasta $500 de descuento en metapublicidad",
-      "categoria": "ensenanza"
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Pedí tu Visa Débito",
@@ -524,7 +737,10 @@
       "tarjetas": "Pedí tu Visa Débito",
       "vigencia": null,
       "desc": "Las mejores ventajas y beneficios en una sola tarjeta",
-      "categoria": "destacados"
+      "categoria": "destacados",
+      "red": "Visa",
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Shopify by Marmeto PYMES",
@@ -533,7 +749,10 @@
       "tarjetas": null,
       "vigencia": "Vigencia: 31/03/2028",
       "desc": "Shopify by Marmeto PYMES",
-      "categoria": "ensenanza"
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Ciberseguridad Mastercard",
@@ -542,7 +761,10 @@
       "tarjetas": "Ciberseguridad Mastercard",
       "vigencia": null,
       "desc": "Ciberseguridad Mastercard",
-      "categoria": "ensenanza"
+      "categoria": "ensenanza",
+      "red": "Mastercard",
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Micromentor",
@@ -551,7 +773,10 @@
       "tarjetas": null,
       "vigencia": null,
       "desc": "Hacé crecer tu pequeño negocio con el asesoramiento de mentores expertos",
-      "categoria": "ensenanza"
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Compras en el exterior",
@@ -560,7 +785,10 @@
       "tarjetas": "Con Tarjetas de Crédito no abonás la comisión del 3% + IVA sobre la compra realizada en el exterior.",
       "vigencia": null,
       "desc": "Compras en el exterior",
-      "categoria": "turismo"
+      "categoria": "turismo",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Priority Pass",
@@ -569,7 +797,12 @@
       "tarjetas": "2 accesos anuales a salas VIP con Visa Platinum del Banco República en Aeropuertos con Priority Pass",
       "vigencia": null,
       "desc": "2 accesos anuales a salas VIP con Visa Platinum del Banco República en Aeropuertos con Priority Pass",
-      "categoria": "turismo"
+      "categoria": "turismo",
+      "red": "Visa",
+      "niveles": [
+        "Platinum"
+      ],
+      "cobranding": null
     },
     {
       "nombre": "Carlos Gutierrez",
@@ -578,7 +811,10 @@
       "tarjetas": null,
       "vigencia": null,
       "desc": "Aprovechá los beneficios que te da Tu Banco.",
-      "categoria": "hogar"
+      "categoria": "hogar",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Supergas ANCAPuntos",
@@ -587,7 +823,10 @@
       "tarjetas": null,
       "vigencia": "Vigencia: 30/06/2026",
       "desc": "Canjeá tus ANCAPuntos y obtené un descuento de $200 para tu recarga de Supergás ANCAP en estaciones adheridas.",
-      "categoria": "ensenanza"
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Teatro El Galpón",
@@ -596,7 +835,10 @@
       "tarjetas": "2 x 1 en entradas con tus Tarjetas de Crédito y Débito VISA y BROU Recompensa Mastercard.",
       "vigencia": null,
       "desc": "2 x 1 en entradas con tus Tarjetas de Crédito y Débito VISA y BROU Recompensa Mastercard.",
-      "categoria": "espectaculos"
+      "categoria": "espectaculos",
+      "red": null,
+      "niveles": [],
+      "cobranding": "Recompensa"
     },
     {
       "nombre": "Preventa Luana",
@@ -605,7 +847,10 @@
       "tarjetas": "Accedé a la preventa exclusiva abonando con tarjetas de crédito y débito BROU Recompensa Mastercard y BROU VISA.",
       "vigencia": null,
       "desc": "Preventa exclusiva para el show de Luana en el Antel Arena con tarjetas del BROU.",
-      "categoria": "ensenanza"
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [],
+      "cobranding": "Recompensa"
     },
     {
       "nombre": "Cinemateca",
@@ -614,7 +859,10 @@
       "tarjetas": "Tarjetas de Crédito VISA y BROU Recompensa Mastercard.",
       "vigencia": null,
       "desc": "Aprovecha el beneficio de 2x1 en tus entrada de Cinemateca con los siguientes medios de pago:",
-      "categoria": "espectaculos"
+      "categoria": "espectaculos",
+      "red": null,
+      "niveles": [],
+      "cobranding": "Recompensa"
     },
     {
       "nombre": "Grupocine",
@@ -623,7 +871,10 @@
       "tarjetas": "2x1 en la compra de entradas con tarjetas de Débito y Crédito VISA y MI BROU Tarjeta Joven.",
       "vigencia": "2x1 en entradas de cine todos los días en los complejos de GRUPOCINE",
       "desc": "Con los siguientes medios de pago del Banco República tenés 2x1* en entradas de cine todos los días en los complejos de GRUPOCINE:",
-      "categoria": "espectaculos"
+      "categoria": "espectaculos",
+      "red": "Visa",
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Multipagos eBROU",
@@ -632,7 +883,10 @@
       "tarjetas": null,
       "vigencia": null,
       "desc": "Conocé los beneficios que tiene multipagos eBROU:",
-      "categoria": "ensenanza"
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     }
   ]
 }

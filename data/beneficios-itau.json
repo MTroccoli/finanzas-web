@@ -16,7 +16,10 @@
       "vigencia": null,
       "tarjetas": null,
       "desc": "15% menos en Cantegrill Joyas",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Divino",
@@ -31,7 +34,10 @@
       "vigencia": null,
       "tarjetas": null,
       "desc": "15% y 10% menos en Divino",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Frog",
@@ -41,7 +47,10 @@
       "vigencia": null,
       "tarjetas": null,
       "desc": "Millas x 3 en Frog",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Wikimusculos",
@@ -56,7 +65,10 @@
       "vigencia": null,
       "tarjetas": null,
       "desc": "15% menos en Wikimusculos",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "iPlace",
@@ -71,7 +83,10 @@
       "vigencia": null,
       "tarjetas": null,
       "desc": "15% menos en iPlace",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Le Blanc",
@@ -86,7 +101,10 @@
       "vigencia": null,
       "tarjetas": null,
       "desc": "25% y 15% menos en Le Blanc",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Soho",
@@ -101,7 +119,10 @@
       "vigencia": null,
       "tarjetas": null,
       "desc": "25% y 15% menos en Soho",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Natuzzi",
@@ -116,7 +137,10 @@
       "vigencia": null,
       "tarjetas": null,
       "desc": "25% y 15% menos en Natuzzi",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Starbucks",
@@ -131,7 +155,10 @@
       "vigencia": null,
       "tarjetas": null,
       "desc": "15% menos en Starbucks en bebidas",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Riviera Joyería",
@@ -146,7 +173,10 @@
       "vigencia": null,
       "tarjetas": null,
       "desc": "15% menos en Riviera Joyería",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Farmacia El Túnel",
@@ -161,7 +191,10 @@
       "vigencia": null,
       "tarjetas": null,
       "desc": "25% y 15% menos en Farmacia El Túnel",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "San Roque",
@@ -176,7 +209,10 @@
       "vigencia": null,
       "tarjetas": null,
       "desc": "25% y 15% menos en San Roque",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Espacio Aroma",
@@ -191,7 +227,10 @@
       "vigencia": null,
       "tarjetas": null,
       "desc": "25% y 15% menos en Espacio Aroma",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "CIR Acondicionamiento térmico",
@@ -206,7 +245,10 @@
       "vigencia": null,
       "tarjetas": null,
       "desc": "15% menos en CIR Acondicionamiento térmico",
-      "exclusivo": false
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Restaurantes",
@@ -220,7 +262,14 @@
       ],
       "vigencia": null,
       "tarjetas": "25% menos Todos los días, pagando con tus tarjetas de crédito Platinum, Infinite, Black y tarjetas de débito y crédito Personal Bank.",
-      "exclusivo": true
+      "exclusivo": true,
+      "red": null,
+      "niveles": [
+        "Infinite",
+        "Platinum",
+        "Black"
+      ],
+      "cobranding": null
     },
     {
       "nombre": "Tiendas Gourmet",
@@ -234,7 +283,14 @@
       ],
       "vigencia": null,
       "tarjetas": "25% menos Todos los días, pagando con tus tarjetas de crédito Platinum, Infinite, Black y tarjetas de débito y crédito Personal Bank.",
-      "exclusivo": true
+      "exclusivo": true,
+      "red": null,
+      "niveles": [
+        "Infinite",
+        "Platinum",
+        "Black"
+      ],
+      "cobranding": null
     },
     {
       "nombre": "Librerías",
@@ -248,7 +304,14 @@
       ],
       "vigencia": null,
       "tarjetas": "25% menos Todos los días, pagando con tus tarjetas de crédito Platinum, Infinite, Black y tarjetas de débito y crédito Personal Bank.",
-      "exclusivo": true
+      "exclusivo": true,
+      "red": null,
+      "niveles": [
+        "Infinite",
+        "Platinum",
+        "Black"
+      ],
+      "cobranding": null
     }
   ]
 }

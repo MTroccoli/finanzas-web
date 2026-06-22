@@ -9,7 +9,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Iber",
@@ -17,7 +20,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Bruta",
@@ -25,7 +31,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Bigg",
@@ -33,7 +42,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "En BIGG podés encontrar múltiples entrenamientos y programaciones pensadas para que logres tus objetivos sin dejar de entrenar en grupo. Elegí tu objetivo y cada vez que vengas a entrenar te vamos a r"
+      "desc": "En BIGG podés encontrar múltiples entrenamientos y programaciones pensadas para que logres tus objetivos sin dejar de entrenar en grupo. Elegí tu objetivo y cada vez que vengas a entrenar te vamos a r",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Mónaco Calzados",
@@ -41,7 +53,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "Mónaco es una tienda multimarca para hombres y mujeres que tiene una gran variedad de calzado formal e informal, se caracteriza por seguir la moda, la buena calidad de sus productos y la diversidad de"
+      "desc": "Mónaco es una tienda multimarca para hombres y mujeres que tiene una gran variedad de calzado formal e informal, se caracteriza por seguir la moda, la buena calidad de sus productos y la diversidad de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Heladeria Lekker",
@@ -49,7 +64,10 @@
       "pctMax": 50,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución: el mismo se calcula por tipo de tarjeta: crédito o débito.",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Nora Rey",
@@ -57,7 +75,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "Nora Rey es una boutique de alimentos que ofrece diariamente productos frescos, elaborados, para que el cliente disfrute en la comodidad de su casa. También cuenta con una variedad de productos congel"
+      "desc": "Nora Rey es una boutique de alimentos que ofrece diariamente productos frescos, elaborados, para que el cliente disfrute en la comodidad de su casa. También cuenta con una variedad de productos congel",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "La Pasiva Arocena",
@@ -65,7 +86,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Facal",
@@ -73,7 +97,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Parador El Paso",
@@ -81,7 +108,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Disco",
@@ -89,7 +119,10 @@
       "pctMax": null,
       "vigencia": null,
       "tarjetas": "Tarjetas adicionales gratis: comparte los beneficios con tus seres queridos.",
-      "desc": "Descuentos exclusivos para socios Hipermás."
+      "desc": "Descuentos exclusivos para socios Hipermás.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Suóptica",
@@ -97,7 +130,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Merrell",
@@ -105,7 +141,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "Para apasionados por las actividades outdoor, nos inspiramos en el atleta de aire libre que hay en todos. Calzado, vestimenta y accesorios que brindan calidad, estilo y durabilidad."
+      "desc": "Para apasionados por las actividades outdoor, nos inspiramos en el atleta de aire libre que hay en todos. Calzado, vestimenta y accesorios que brindan calidad, estilo y durabilidad.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Magnolio Sala",
@@ -113,7 +152,10 @@
       "pctMax": null,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "Financiación y bonificaciones en compra de entradas, variable según espectáculo."
+      "desc": "Financiación y bonificaciones en compra de entradas, variable según espectáculo.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Nona",
@@ -121,7 +163,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Tienda Ezquerra",
@@ -129,7 +174,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "Tienda Ezquerra es una tienda multimarca para damas, hombres y adolescentes, tiene prendas para toda ocasión, destacándose en la ciudad por contar con gran variedad de marcas internacionales."
+      "desc": "Tienda Ezquerra es una tienda multimarca para damas, hombres y adolescentes, tiene prendas para toda ocasión, destacándose en la ciudad por contar con gran variedad de marcas internacionales.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Kave Home",
@@ -137,7 +185,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Renart Libros",
@@ -145,7 +196,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Extreme Force",
@@ -153,7 +207,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "Extreme Force es una cadena de tiendas especializadas en la venta de suplementos nutricionales y accesorios para fitness, ofrecemos soluciones a medida para cada cliente."
+      "desc": "Extreme Force es una cadena de tiendas especializadas en la venta de suplementos nutricionales y accesorios para fitness, ofrecemos soluciones a medida para cada cliente.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Rotunda",
@@ -161,7 +218,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "Rotunda es una marca para mujeres jóvenes y modernas, tiene una gran variedad de prendas de vestir y calzado para cada momento del día, se caracteriza por la elegancia y diseños audaces."
+      "desc": "Rotunda es una marca para mujeres jóvenes y modernas, tiene una gran variedad de prendas de vestir y calzado para cada momento del día, se caracteriza por la elegancia y diseños audaces.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Balcony Shop",
@@ -169,7 +229,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "Balcony Shop vende macetas de cerámica, muebles de exterior y tela Sunbrella especiales para espacios exteriores."
+      "desc": "Balcony Shop vende macetas de cerámica, muebles de exterior y tela Sunbrella especiales para espacios exteriores.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "La Rural",
@@ -177,7 +240,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Geant",
@@ -185,7 +251,10 @@
       "pctMax": null,
       "vigencia": null,
       "tarjetas": "Tarjetas adicionales gratis: comparte los beneficios con tus seres queridos.",
-      "desc": "Descuentos exclusivos para socios Hipermás."
+      "desc": "Descuentos exclusivos para socios Hipermás.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Optica Lombardi",
@@ -193,7 +262,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Smart",
@@ -201,7 +273,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Shoe Express",
@@ -209,7 +284,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Crepas (Montevideo)",
@@ -217,7 +295,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "Crepas es una crepería que ofrece diversas propuestas para todo momento del día, cuenta con una variada carta de crepes dulces y salados, sándwiches, sopas, ensaladas y jugos naturales."
+      "desc": "Crepas es una crepería que ofrece diversas propuestas para todo momento del día, cuenta con una variada carta de crepes dulces y salados, sándwiches, sopas, ensaladas y jugos naturales.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Indian",
@@ -225,7 +306,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "Indian es una marca para mujeres que tiene una gran variedad de prendas de vestir y accesorios muy bien definidos por las tendencias globales, lo que hace que la marca se caracterice por brindar una s"
+      "desc": "Indian es una marca para mujeres que tiene una gran variedad de prendas de vestir y accesorios muy bien definidos por las tendencias globales, lo que hace que la marca se caracterice por brindar una s",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Fivisa",
@@ -233,7 +317,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Isidora Restaurant",
@@ -241,7 +328,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Restaurante Oscar",
@@ -249,7 +339,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Bazar La Familia",
@@ -257,7 +350,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Savia",
@@ -265,7 +361,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "Savia es una marca para mujeres jóvenes y modernas que tiene una gran variedad de prendas de vestir clásicas y actuales, se caracteriza por sus prendas únicas."
+      "desc": "Savia es una marca para mujeres jóvenes y modernas que tiene una gran variedad de prendas de vestir clásicas y actuales, se caracteriza por sus prendas únicas.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "De Arcos",
@@ -273,7 +372,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "Tienda de muebles, accesorios de decoración, iluminación y regalos!"
+      "desc": "Tienda de muebles, accesorios de decoración, iluminación y regalos!",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Principes del Sur",
@@ -281,7 +383,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Oriundo",
@@ -289,7 +394,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Devoto",
@@ -297,7 +405,10 @@
       "pctMax": null,
       "vigencia": null,
       "tarjetas": "Tarjetas adicionales gratis: comparte los beneficios con tus seres queridos.",
-      "desc": "Descuentos exclusivos para socios Hipermás."
+      "desc": "Descuentos exclusivos para socios Hipermás.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Lemon",
@@ -305,7 +416,12 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "Lemon es una marca para mujeres que tiene una gran variedad de prendas prácticas y versátiles con un estilo muy femenino y fresco. Se caracteriza por tener el equilibrio perfecto entre lo clásico y lo"
+      "desc": "Lemon es una marca para mujeres que tiene una gran variedad de prendas prácticas y versátiles con un estilo muy femenino y fresco. Se caracteriza por tener el equilibrio perfecto entre lo clásico y lo",
+      "red": null,
+      "niveles": [
+        "Clásica"
+      ],
+      "cobranding": null
     },
     {
       "nombre": "Hush Puppies",
@@ -313,7 +429,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "Hush Puppies, pionera en el estilo casual, nació en el año 1958. Desde ese entonces ha revolucionado el mercado del calzado, innovando continuamente y creando un andar mucho más confortable."
+      "desc": "Hush Puppies, pionera en el estilo casual, nació en el año 1958. Desde ese entonces ha revolucionado el mercado del calzado, innovando continuamente y creando un andar mucho más confortable.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "ML Center",
@@ -321,7 +440,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "Suministro e instalación de seguridad y accesorios para vehículos, casas y comercios."
+      "desc": "Suministro e instalación de seguridad y accesorios para vehículos, casas y comercios.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Posto 5",
@@ -329,7 +451,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Cafe del Sol",
@@ -337,7 +462,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Porto Vanila",
@@ -345,7 +473,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "Porto Vanila es una cadena de pastelería y cafetería que ofrece una variedad de exquisiteces dulces y saladas como masitas, sándwiches, tortas y postres individuales. Un sitio ideal para darse un gust"
+      "desc": "Porto Vanila es una cadena de pastelería y cafetería que ofrece una variedad de exquisiteces dulces y saladas como masitas, sándwiches, tortas y postres individuales. Un sitio ideal para darse un gust",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Los Leños",
@@ -353,7 +484,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "La Trattoria",
@@ -361,7 +495,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Pizzorno Family States",
@@ -369,7 +506,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Vivero los Suspiros",
@@ -377,7 +517,10 @@
       "pctMax": null,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "En nuestro local podes encontrar todo lo que buscas para tu patio o jardín!"
+      "desc": "En nuestro local podes encontrar todo lo que buscas para tu patio o jardín!",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Nicolini",
@@ -385,7 +528,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Viasono",
@@ -393,7 +539,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "La Cigale",
@@ -401,7 +550,10 @@
       "pctMax": 50,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución: el mismo se calcula por tipo de tarjeta:",
-      "desc": "Con una amplia trayectoria en el sector artesanal, LA CIGALE es hoy en día la cadena más reconocida de Uruguay en fabricación y comercialización de helados puramente artesanales. Todos sus productos s"
+      "desc": "Con una amplia trayectoria en el sector artesanal, LA CIGALE es hoy en día la cadena más reconocida de Uruguay en fabricación y comercialización de helados puramente artesanales. Todos sus productos s",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Las Nazarenas",
@@ -409,7 +561,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Mis Petates",
@@ -417,7 +572,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Columbia",
@@ -425,7 +583,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "Equípate para todo tipo de aventuras con productos Columbia y dedícate a disfrutar sin importar el clima."
+      "desc": "Equípate para todo tipo de aventuras con productos Columbia y dedícate a disfrutar sin importar el clima.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Late",
@@ -433,7 +594,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Farmashop",
@@ -441,7 +605,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "Conoce más en https://tienda.farmashop.com.uy/"
+      "desc": "Conoce más en https://tienda.farmashop.com.uy/",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Deco Hogar",
@@ -449,7 +616,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Provaca",
@@ -457,7 +627,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Naru Sushi Bar",
@@ -465,7 +638,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "Naru Sushi Bar es un restaurante que fusiona la gastronomía peruana y japonesa, conocida como cocina nikkei."
+      "desc": "Naru Sushi Bar es un restaurante que fusiona la gastronomía peruana y japonesa, conocida como cocina nikkei.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Infantozzi",
@@ -473,7 +649,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "Aplica únicamente en local de Infantozzi ubicado en Avenida Uruguay 1653 (Montevideo). El descuento aplica únicamente para compras a consumidor final. No aplica sobre compras de Colegios y otras insti"
+      "desc": "Aplica únicamente en local de Infantozzi ubicado en Avenida Uruguay 1653 (Montevideo). El descuento aplica únicamente para compras a consumidor final. No aplica sobre compras de Colegios y otras insti",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Tranquera",
@@ -481,7 +660,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "Tranquera es una marca para hombres y mujeres, sus prendas combinan la comodidad y la funcionalidad con la estética y la moda, se caracteriza por integrar el espíritu campestre con la estética de la c"
+      "desc": "Tranquera es una marca para hombres y mujeres, sus prendas combinan la comodidad y la funcionalidad con la estética y la moda, se caracteriza por integrar el espíritu campestre con la estética de la c",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Artico Sea Food",
@@ -489,7 +671,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Toledo",
@@ -497,7 +682,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Magnum Marine",
@@ -505,7 +693,10 @@
       "pctMax": null,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El comercio acepta canje de puntos Soy Santander."
+      "desc": "El comercio acepta canje de puntos Soy Santander.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "SiSi",
@@ -513,7 +704,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "Si-Si es una tienda multimarca para toda la familia, cuenta con una amplia variedad de ropa interior, lencería, medias, corsetería, indumentaria deportiva, vestimenta para playa y accesorios de moda, "
+      "desc": "Si-Si es una tienda multimarca para toda la familia, cuenta con una amplia variedad de ropa interior, lencería, medias, corsetería, indumentaria deportiva, vestimenta para playa y accesorios de moda, ",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Royce",
@@ -521,7 +715,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento no aplica para los casos de servicios, arreglos y composturas."
+      "desc": "El descuento no aplica para los casos de servicios, arreglos y composturas.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Arredo",
@@ -529,7 +726,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Cat",
@@ -537,7 +737,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El espíritu Cat representa el progreso, el diseño y la construcción en torno a un legado de éxito e innovación. Tiene un estilo robusto y respaldado por una construcción sólida."
+      "desc": "El espíritu Cat representa el progreso, el diseño y la construcción en torno a un legado de éxito e innovación. Tiene un estilo robusto y respaldado por una construcción sólida.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "BBC Burger & Sushi",
@@ -545,7 +748,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Bookshop",
@@ -553,7 +759,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El beneficio aplica únicamente para la compra de libros. Promoción no válida para textos de estudio."
+      "desc": "El beneficio aplica únicamente para la compra de libros. Promoción no válida para textos de estudio.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Vivion Haus",
@@ -561,7 +770,10 @@
       "pctMax": null,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El comercio acepta canje de puntos Soy Santander."
+      "desc": "El comercio acepta canje de puntos Soy Santander.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Umami",
@@ -569,7 +781,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Jugetería Avellana",
@@ -577,7 +792,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Buquebus",
@@ -585,7 +803,10 @@
       "pctMax": 10,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "Hasta 12 cuotas sin recargo convenio vigente 31/03/2026."
+      "desc": "Hasta 12 cuotas sin recargo convenio vigente 31/03/2026.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Dakota Steakhouse & Bar",
@@ -593,7 +814,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "Dakota es el primer restaurante Steakhouse & Bar americano en Montevideo, un lugar ideal para compartir una deliciosa comida, celebrar y degustar una amplia variedad de platos, o simplemente disfrutar"
+      "desc": "Dakota es el primer restaurante Steakhouse & Bar americano en Montevideo, un lugar ideal para compartir una deliciosa comida, celebrar y degustar una amplia variedad de platos, o simplemente disfrutar",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "La Marea",
@@ -601,7 +825,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "481 Gourmet",
@@ -609,7 +836,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Panadería Brava",
@@ -617,7 +847,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Limite",
@@ -625,7 +858,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "Límite es una marca para mujeres adultas que cuenta con una gran variedad de prendas de vestir y complementos. Se caracteriza por la nobleza de sus materiales, la comodidad y el calce perfecto de sus "
+      "desc": "Límite es una marca para mujeres adultas que cuenta con una gran variedad de prendas de vestir y complementos. Se caracteriza por la nobleza de sus materiales, la comodidad y el calce perfecto de sus ",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Mazzam",
@@ -633,7 +869,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El beneficio no aplica para composturas."
+      "desc": "El beneficio no aplica para composturas.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "No se lo Digas a Nadie",
@@ -641,7 +880,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "No se lo Digas es una tienda para mujeres de todas las edades, que tiene una gran variedad de prendas casuales, formales y accesorios, se caracteriza por estar al tanto de las tendencias de la moda in"
+      "desc": "No se lo Digas es una tienda para mujeres de todas las edades, que tiene una gran variedad de prendas casuales, formales y accesorios, se caracteriza por estar al tanto de las tendencias de la moda in",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Rockford",
@@ -649,7 +891,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "Rockford crea un estilo de vida, descubrilo en todas sus tiendas."
+      "desc": "Rockford crea un estilo de vida, descubrilo en todas sus tiendas.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Bagno & Company",
@@ -657,7 +902,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "La promoción no aplica para la compra de electrodomésticos."
+      "desc": "La promoción no aplica para la compra de electrodomésticos.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Baby City",
@@ -665,7 +913,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "Baby City es una tienda infantil multimarca, cuenta con una amplia variedad de productos pensados para facilitarle a padres y madres el cuidado y entretenimiento de sus hijos."
+      "desc": "Baby City es una tienda infantil multimarca, cuenta con una amplia variedad de productos pensados para facilitarle a padres y madres el cuidado y entretenimiento de sus hijos.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Mision",
@@ -673,7 +924,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Complejo Luis Suarez",
@@ -681,7 +935,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "EL COMPLEJO. Complejo Suárez fue pensado como un espacio ideal para practicar deporte y al mismo tiempo disfrutar en familia y con amigos."
+      "desc": "EL COMPLEJO. Complejo Suárez fue pensado como un espacio ideal para practicar deporte y al mismo tiempo disfrutar en familia y con amigos.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Duciana Cafetería",
@@ -689,7 +946,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Guamatur",
@@ -697,7 +957,10 @@
       "pctMax": null,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El comercio acepta canje de puntos Soy Santander."
+      "desc": "El comercio acepta canje de puntos Soy Santander.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Montevideo Beer Company",
@@ -705,7 +968,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "Montevideo Beer Company es una cervecería que ofrece una variedad de productos gastronómicos además de sus populares cervezas artesanales. Es un lugar pensado para ser un espacio de encuentro tanto de"
+      "desc": "Montevideo Beer Company es una cervecería que ofrece una variedad de productos gastronómicos además de sus populares cervezas artesanales. Es un lugar pensado para ser un espacio de encuentro tanto de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Gelatería Il Porto",
@@ -713,7 +979,10 @@
       "pctMax": 50,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución: el mismo se calcula por tipo de tarjeta: crédito o débito.",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Shark Club",
@@ -721,7 +990,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Sucan",
@@ -729,7 +1001,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "Comida y accesorios para mascotas."
+      "desc": "Comida y accesorios para mascotas.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "La Isla",
@@ -737,7 +1012,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "La Isla es una tienda multimarca para los amantes de la playa y el surf, cuenta con una variedad de prendas y productos que buscan fomentar el surf como estilo de vida y se caracteriza por trabajar la"
+      "desc": "La Isla es una tienda multimarca para los amantes de la playa y el surf, cuenta con una variedad de prendas y productos que buscan fomentar el surf como estilo de vida y se caracteriza por trabajar la",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Gaudin",
@@ -745,7 +1023,10 @@
       "pctMax": null,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El comercio acepta canje de puntos Soy Santander."
+      "desc": "El comercio acepta canje de puntos Soy Santander.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Chiarino Uniformes",
@@ -753,7 +1034,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "M. Cecilia Chiarino uniformes es una tienda para niños y adolescentes que cuenta con una variedad de uniformes escolares de distintas instituciones, se caracteriza por su excelente calidad y el servic"
+      "desc": "M. Cecilia Chiarino uniformes es una tienda para niños y adolescentes que cuenta con una variedad de uniformes escolares de distintas instituciones, se caracteriza por su excelente calidad y el servic",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "SushiAPP",
@@ -761,7 +1045,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Desigual",
@@ -769,7 +1056,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "Desigual es una marca para hombres y mujeres de todas las edades, tiene una gran variedad de prendas informales y accesorios, se caracteriza por potenciar la autenticidad de las personas a través de s"
+      "desc": "Desigual es una marca para hombres y mujeres de todas las edades, tiene una gran variedad de prendas informales y accesorios, se caracteriza por potenciar la autenticidad de las personas a través de s",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Peekaboo",
@@ -777,7 +1067,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "Peekaboo es una tienda infantil multimarca, cuenta con una amplia variedad de productos pensados para facilitarle a padres y madres el cuidado y entretenimiento de sus hijos."
+      "desc": "Peekaboo es una tienda infantil multimarca, cuenta con una amplia variedad de productos pensados para facilitarle a padres y madres el cuidado y entretenimiento de sus hijos.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "JP Uniformes",
@@ -785,7 +1078,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Cayetana Calzados",
@@ -793,7 +1089,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Mundo Mac",
@@ -801,7 +1100,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Ositos & Cia",
@@ -809,7 +1111,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Punto Design",
@@ -817,7 +1122,10 @@
       "pctMax": null,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El comercio acepta canje de puntos Soy Santander."
+      "desc": "El comercio acepta canje de puntos Soy Santander.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Gouda",
@@ -825,7 +1133,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Uniform & Co",
@@ -833,7 +1144,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "Uniform & Co es una marca para hombres y mujeres de todas las edades, tiene una amplia variedad de prendas de vestir informales, se caracteriza por seguir las tendencias, ser originales y tener prenda"
+      "desc": "Uniform & Co es una marca para hombres y mujeres de todas las edades, tiene una amplia variedad de prendas de vestir informales, se caracteriza por seguir las tendencias, ser originales y tener prenda",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Petit Baby",
@@ -841,7 +1155,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Restaurante García",
@@ -849,7 +1166,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Baquiano",
@@ -857,7 +1177,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Pintelux",
@@ -865,7 +1188,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Reina Urbana",
@@ -873,7 +1199,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "Reina Urbana es una marca para mujeres de todas las edades, tiene una gran variedad de prendas de vestir formales e informales al alcance de todos, se caracteriza por estar a la moda, tener estilo y d"
+      "desc": "Reina Urbana es una marca para mujeres de todas las edades, tiene una gran variedad de prendas de vestir formales e informales al alcance de todos, se caracteriza por estar a la moda, tener estilo y d",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Lavender",
@@ -881,7 +1210,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "Instalado en medio de un Vivero, al mejor estilo europeo, este salón de té ofrece una gran variedad de exquisiteces a la hora de tomar el té, que combina con las distintas plantas y el delicioso aroma"
+      "desc": "Instalado en medio de un Vivero, al mejor estilo europeo, este salón de té ofrece una gran variedad de exquisiteces a la hora de tomar el té, que combina con las distintas plantas y el delicioso aroma",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Calabaza",
@@ -889,7 +1221,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Life Distrito M",
@@ -897,7 +1232,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "Descuento válido para mensualidades pagas con débito automático de tarjeta de crédito, y para compra de membresías de mínimo 3 meses con tarjeta de débito o crédito.",
-      "desc": "Descuento válido para mensualidades pagas con débito automático de tarjeta de crédito, y para compra de membresías de mínimo 3 meses con tarjeta de débito o crédito."
+      "desc": "Descuento válido para mensualidades pagas con débito automático de tarjeta de crédito, y para compra de membresías de mínimo 3 meses con tarjeta de débito o crédito.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Telesistemas",
@@ -905,7 +1243,10 @@
       "pctMax": null,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El comercio acepta canje de puntos Soy Santander."
+      "desc": "El comercio acepta canje de puntos Soy Santander.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Soho",
@@ -913,7 +1254,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "Soho es un bar que ofrece cócteles y platos elaborados por chefs internacionales. Ubicado en el puerto de Punta del Este, siempre propone buena comida, buenos tragos y música, para sorprender a los pa"
+      "desc": "Soho es un bar que ofrece cócteles y platos elaborados por chefs internacionales. Ubicado en el puerto de Punta del Este, siempre propone buena comida, buenos tragos y música, para sorprender a los pa",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Meat House",
@@ -921,7 +1265,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Asterisco",
@@ -929,7 +1276,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "Asterisco es una tienda multimarca para mujeres jóvenes, que tiene una gran variedad de prendas de vestir casuales y modernas, se caracteriza por reunir marcas que siguen las últimas tendencias de la "
+      "desc": "Asterisco es una tienda multimarca para mujeres jóvenes, que tiene una gran variedad de prendas de vestir casuales y modernas, se caracteriza por reunir marcas que siguen las últimas tendencias de la ",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Cymaco",
@@ -937,7 +1287,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Ramona",
@@ -945,7 +1298,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Dhouse",
@@ -953,7 +1309,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Centro Hogar",
@@ -961,7 +1320,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Vidriería BIA",
@@ -969,7 +1331,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Olivia",
@@ -977,7 +1342,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Fuel Oil",
@@ -985,7 +1353,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Óptica Meerhoff",
@@ -993,7 +1364,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "I’Marangatú",
@@ -1001,7 +1375,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Finca Boutique de Carnes",
@@ -1009,7 +1386,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Mónaco Athletic",
@@ -1017,7 +1397,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "Mónaco Athletic es una tienda multimarca para hombres y mujeres de todas las edades, tiene gran diversidad prendas de vestir y calzado deportivo, se caracteriza por llegar mediante envíos a todo el pa"
+      "desc": "Mónaco Athletic es una tienda multimarca para hombres y mujeres de todas las edades, tiene gran diversidad prendas de vestir y calzado deportivo, se caracteriza por llegar mediante envíos a todo el pa",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Fundación de Cultura Universitaria",
@@ -1025,7 +1408,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "Fundación de Cultura Universitaria"
+      "desc": "Fundación de Cultura Universitaria",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Cloé",
@@ -1033,7 +1419,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "Cloé es una marca que busca imaginar, diseñar y crear junto a las mujeres productos que den soluciones y disfruten usarlos. Línea de calidad superior de bolsos, accesorios de viaje"
+      "desc": "Cloé es una marca que busca imaginar, diseñar y crear junto a las mujeres productos que den soluciones y disfruten usarlos. Línea de calidad superior de bolsos, accesorios de viaje",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Bed Home",
@@ -1041,7 +1430,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Samsung",
@@ -1049,7 +1441,10 @@
       "pctMax": 20,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "Samsung te ayuda a descubrir una amplia gama de dispositivos electrónicos con tecnología de punta, incluyendo smartphones, televisores y más."
+      "desc": "Samsung te ayuda a descubrir una amplia gama de dispositivos electrónicos con tecnología de punta, incluyendo smartphones, televisores y más.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "El Bar",
@@ -1057,7 +1452,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Cheers",
@@ -1065,7 +1463,10 @@
       "pctMax": null,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El comercio acepta canje de puntos Soy Santander."
+      "desc": "El comercio acepta canje de puntos Soy Santander.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Under Armour",
@@ -1073,7 +1474,10 @@
       "pctMax": null,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El comercio acepta canje de puntos Soy Santander."
+      "desc": "El comercio acepta canje de puntos Soy Santander.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Mango",
@@ -1081,7 +1485,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "Mango es una empresa multinacional española dedicada al diseño, la fabricación y la comercialización de prendas de vestir y complementos para mujer, niño y hombre."
+      "desc": "Mango es una empresa multinacional española dedicada al diseño, la fabricación y la comercialización de prendas de vestir y complementos para mujer, niño y hombre.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Pasqualini",
@@ -1089,7 +1496,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "Conocé los zapatos y accesorios que buscas, lleva contigo lo mejor y siéntete tú misma con lo que usas #tequedamuybien."
+      "desc": "Conocé los zapatos y accesorios que buscas, lleva contigo lo mejor y siéntete tú misma con lo que usas #tequedamuybien.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Nstore",
@@ -1097,7 +1507,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "Nstore.uy es una tienda online que vende tecnología, electrodomésticos, bicicletas y motos eléctricas. También son distribuidores oficiales de Samsung."
+      "desc": "Nstore.uy es una tienda online que vende tecnología, electrodomésticos, bicicletas y motos eléctricas. También son distribuidores oficiales de Samsung.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Margo Baridon",
@@ -1105,7 +1518,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "Una esencia auténtica, una mirada aguda y un espíritu explorador caracterizan a Margo Baridon, diseñadora de su firma homónima dedicada desde Uruguay."
+      "desc": "Una esencia auténtica, una mirada aguda y un espíritu explorador caracterizan a Margo Baridon, diseñadora de su firma homónima dedicada desde Uruguay.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Garmin",
@@ -1113,7 +1529,10 @@
       "pctMax": null,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "Encontrá todos Los Productos Garmin. Triatlón, Outdoor, Fitness, Montañismo, Etc. Relojes Inteligentes Con GPS, Equipos Multideporte, Las Mejores Ofertas Garmin."
+      "desc": "Encontrá todos Los Productos Garmin. Triatlón, Outdoor, Fitness, Montañismo, Etc. Relojes Inteligentes Con GPS, Equipos Multideporte, Las Mejores Ofertas Garmin.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Garnié",
@@ -1121,7 +1540,10 @@
       "pctMax": null,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "Garnié es una empresa referente en Uruguay en la fabricación de artículos en cuero y similares, con más de 30 años de trayectoria."
+      "desc": "Garnié es una empresa referente en Uruguay en la fabricación de artículos en cuero y similares, con más de 30 años de trayectoria.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Indoor Padel",
@@ -1129,7 +1551,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "Indoor Pádel Montevideo es un club de pádel con cuatro canchas panorámicas en Carrasco, Montevideo. El club cuenta con: Vestuario, Club house, Barbacoa, Estacionamiento privado, Torneos mensuales."
+      "desc": "Indoor Pádel Montevideo es un club de pádel con cuatro canchas panorámicas en Carrasco, Montevideo. El club cuenta con: Vestuario, Club house, Barbacoa, Estacionamiento privado, Torneos mensuales.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Clínica Presage",
@@ -1137,7 +1562,10 @@
       "pctMax": null,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "Clínica Présage es un centro médico estético en Montevideo que ofrece tratamientos corporales, faciales y capilares. Los tratamientos se personalizan para adaptarse a los objetivos de cada paciente."
+      "desc": "Clínica Présage es un centro médico estético en Montevideo que ofrece tratamientos corporales, faciales y capilares. Los tratamientos se personalizan para adaptarse a los objetivos de cada paciente.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Brote",
@@ -1145,7 +1573,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "Brote es una tienda de plantas exóticas en Montevideo que vende orquídeas, plantas carnívoras, cactus y palmeras."
+      "desc": "Brote es una tienda de plantas exóticas en Montevideo que vende orquídeas, plantas carnívoras, cactus y palmeras.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Gravity",
@@ -1153,7 +1584,10 @@
       "pctMax": null,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "Gravity es un parque de Trampolines, ubicado en el Plaza Italia Shopping de Montevideo - Uruguay. Gravity es una experiencia de diversión para grandes y chicos."
+      "desc": "Gravity es un parque de Trampolines, ubicado en el Plaza Italia Shopping de Montevideo - Uruguay. Gravity es una experiencia de diversión para grandes y chicos.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Via Disegno",
@@ -1161,7 +1595,10 @@
       "pctMax": null,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "Via Disegno es el primer centro comercial de diseño y decoración de Uruguay. Se inauguró en octubre de 2022 y está ubicado en Carrasco, frente al Aeropuerto Internacional."
+      "desc": "Via Disegno es el primer centro comercial de diseño y decoración de Uruguay. Se inauguró en octubre de 2022 y está ubicado en Carrasco, frente al Aeropuerto Internacional.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Barraca Sanitaria Paysandú",
@@ -1169,7 +1606,10 @@
       "pctMax": null,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "Barraca Sanitaria Paysandú"
+      "desc": "Barraca Sanitaria Paysandú",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "La Asturiana",
@@ -1177,7 +1617,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "La Asturiana es una tienda en Durazno que vende electrodomésticos, muebles e informática."
+      "desc": "La Asturiana es una tienda en Durazno que vende electrodomésticos, muebles e informática.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Barraca Buen Color",
@@ -1185,7 +1628,10 @@
       "pctMax": null,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "Barraca Buen Color es una tienda de materiales para la construcción en Salto, Uruguay."
+      "desc": "Barraca Buen Color es una tienda de materiales para la construcción en Salto, Uruguay.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Minimon",
@@ -1193,7 +1639,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "Ropa de bebé y niño hecha por las mejores manos en Uruguay. Ajuar de bebe. Primeras mudas en punto. Body, peleles, remeras de algodón pima."
+      "desc": "Ropa de bebé y niño hecha por las mejores manos en Uruguay. Ajuar de bebe. Primeras mudas en punto. Body, peleles, remeras de algodón pima.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Nuevocentro Shopping",
@@ -1201,7 +1650,10 @@
       "pctMax": null,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "Nuevocentro Shopping es un centro comercial que cuenta con 120 locales comerciales, siendo el shopping más moderno del país."
+      "desc": "Nuevocentro Shopping es un centro comercial que cuenta con 120 locales comerciales, siendo el shopping más moderno del país.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Palacio de la Música",
@@ -1209,7 +1661,10 @@
       "pctMax": null,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "Palacio de la Música es una empresa con más de 100 años de experiencia en la música, especializándose en instrumentos, audio profesional, iluminación, equipos DJ, CDs y Vinilos."
+      "desc": "Palacio de la Música es una empresa con más de 100 años de experiencia en la música, especializándose en instrumentos, audio profesional, iluminación, equipos DJ, CDs y Vinilos.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Ecoflex",
@@ -1217,7 +1672,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "Ecoflex es una marca de colchones y sommiers."
+      "desc": "Ecoflex es una marca de colchones y sommiers.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Casa Caulin",
@@ -1225,7 +1683,10 @@
       "pctMax": null,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El comercio acepta canje de puntos Soy Santander."
+      "desc": "El comercio acepta canje de puntos Soy Santander.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Bersal",
@@ -1233,7 +1694,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Axion",
@@ -1241,7 +1705,10 @@
       "pctMax": null,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "AXION energy es una marca del grupo Nexzur S.A., la principal compañía integrada privada de energía de la región. Suministra combustibles con tecnología de vanguardia y la máxima calidad."
+      "desc": "AXION energy es una marca del grupo Nexzur S.A., la principal compañía integrada privada de energía de la región. Suministra combustibles con tecnología de vanguardia y la máxima calidad.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Cafetto Prado",
@@ -1249,7 +1716,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Boss Padel",
@@ -1257,7 +1727,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "Boss Padel es un lugar de entrenamiento para jugar al pádel para todos los niveles."
+      "desc": "Boss Padel es un lugar de entrenamiento para jugar al pádel para todos los niveles.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "El Colmenar",
@@ -1265,7 +1738,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El Colmenar es un reconocido centro de compras con locales en Mercedes, Nueva Palmira, Fray Bentos y Dolores."
+      "desc": "El Colmenar es un reconocido centro de compras con locales en Mercedes, Nueva Palmira, Fray Bentos y Dolores.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Kiehl´s",
@@ -1273,7 +1749,10 @@
       "pctMax": null,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "Kiehl's es una marca de cosméticos estadounidense que ofrece productos para el cuidado de la piel, el cuerpo y el cabello."
+      "desc": "Kiehl's es una marca de cosméticos estadounidense que ofrece productos para el cuidado de la piel, el cuerpo y el cabello.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Botiga",
@@ -1281,7 +1760,10 @@
       "pctMax": null,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "Una Tienda Online donde encontrás todo lo que necesitás y querés para vos y tu familia. Cuenta con más de 10.000 artículos para complementar cada etapa de la vida sin tener que trasladarte a ningún la"
+      "desc": "Una Tienda Online donde encontrás todo lo que necesitás y querés para vos y tu familia. Cuenta con más de 10.000 artículos para complementar cada etapa de la vida sin tener que trasladarte a ningún la",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Indrana Home Deco",
@@ -1289,7 +1771,10 @@
       "pctMax": null,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "Indrana Home Deco es una tienda de Montevideo, Uruguay que vende artículos de decoración para el hogar. También tiene una ubicación en Punta del Este. Indrana Home Deco ofrece envíos a todo el país."
+      "desc": "Indrana Home Deco es una tienda de Montevideo, Uruguay que vende artículos de decoración para el hogar. También tiene una ubicación en Punta del Este. Indrana Home Deco ofrece envíos a todo el país.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Ai Haus",
@@ -1297,7 +1782,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "Ai Haus es una importadora de muebles, amantes del diseño y la decoración de interiores."
+      "desc": "Ai Haus es una importadora de muebles, amantes del diseño y la decoración de interiores.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Toc Toc Viajes",
@@ -1305,7 +1793,10 @@
       "pctMax": null,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "TocToc Viajes es una reconocida agencia de viajes online que ofrece servicios turísticos como pasajes aéreos y hoteles."
+      "desc": "TocToc Viajes es una reconocida agencia de viajes online que ofrece servicios turísticos como pasajes aéreos y hoteles.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Fresh Market",
@@ -1313,7 +1804,10 @@
       "pctMax": null,
       "vigencia": null,
       "tarjetas": "Tarjetas adicionales gratis: comparte los beneficios con tus seres queridos.",
-      "desc": "Descuentos exclusivos para socios Hipermás."
+      "desc": "Descuentos exclusivos para socios Hipermás.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Metros Cuadrados Pilay Uruguay",
@@ -1321,7 +1815,10 @@
       "pctMax": null,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "Metros Cuadrados Pilay Uruguay"
+      "desc": "Metros Cuadrados Pilay Uruguay",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Pellicer Parrilla Gourmet",
@@ -1329,7 +1826,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "Los fuegos, las brasas y el ahumado son la base de nuestra cocina."
+      "desc": "Los fuegos, las brasas y el ahumado son la base de nuestra cocina.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Walnut - Home & Deco",
@@ -1337,7 +1837,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "Somos una marca uruguaya dedicada a la fabricación, importación, distribución y venta de muebles y accesorios de decoración para el hogar. Nuestro objetivo es proveer al mercado uruguayo de la decorac"
+      "desc": "Somos una marca uruguaya dedicada a la fabricación, importación, distribución y venta de muebles y accesorios de decoración para el hogar. Nuestro objetivo es proveer al mercado uruguayo de la decorac",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Otero (By Rotunda)",
@@ -1345,7 +1848,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Dilema Café & Restobar",
@@ -1353,7 +1859,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Charo Cocina y Café",
@@ -1361,7 +1870,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Adoré",
@@ -1369,7 +1881,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "La Pasiva 26 de Marzo",
@@ -1377,7 +1892,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "El Cabeza Ferretería",
@@ -1385,7 +1903,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "En ferretería el cabeza encontrara todo lo que pueda necesitar para el trabajo, hogar y construcción."
+      "desc": "En ferretería el cabeza encontrara todo lo que pueda necesitar para el trabajo, hogar y construcción.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Be Padel",
@@ -1393,7 +1914,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución: el mismo se calcula por tipo de tarjeta: crédito o débito.",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Cienta",
@@ -1401,7 +1925,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "El Mingus",
@@ -1409,7 +1936,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Inside",
@@ -1417,7 +1947,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Mikenpacking",
@@ -1425,7 +1958,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Matilda",
@@ -1433,7 +1969,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Para Tus Bajitos",
@@ -1441,7 +1980,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "El Cabeza Mueblería",
@@ -1449,7 +1991,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Venancio",
@@ -1457,7 +2002,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "Prendas de diseño y confección local."
+      "desc": "Prendas de diseño y confección local.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Las Pavas",
@@ -1465,7 +2013,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Cafe Julisa",
@@ -1473,7 +2024,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Café Salvo",
@@ -1481,7 +2035,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Gymtonic",
@@ -1489,7 +2046,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Pekemundo",
@@ -1497,7 +2057,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Aire",
@@ -1505,7 +2068,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Ferretería la Hogareña",
@@ -1513,7 +2079,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Tato Pescador",
@@ -1521,7 +2090,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Las Marías",
@@ -1529,7 +2101,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "Las Marías es una marca de ropa femenina uruguaya que ofrece prendas de calidad. Fabricamos algunas de nuestras piezas en Uruguay, combinando diseño único con producción local."
+      "desc": "Las Marías es una marca de ropa femenina uruguaya que ofrece prendas de calidad. Fabricamos algunas de nuestras piezas en Uruguay, combinando diseño único con producción local.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Luxo",
@@ -1537,7 +2112,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "Ropa sin género diseñada para seres humanos."
+      "desc": "Ropa sin género diseñada para seres humanos.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Cali Cafe",
@@ -1545,7 +2123,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "Café de especialidad, cocina consciente."
+      "desc": "Café de especialidad, cocina consciente.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Indian Home",
@@ -1553,7 +2134,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "Descuento no acumulable con otras promociones."
+      "desc": "Descuento no acumulable con otras promociones.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Innato",
@@ -1561,7 +2145,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Oh Jacinta! - The Kul Store",
@@ -1569,7 +2156,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "Oh Jacinta! - The Kul Store"
+      "desc": "Oh Jacinta! - The Kul Store",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Chili Accesorios - The Kul Store",
@@ -1577,7 +2167,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "Chili Accesorios - The Kul Store"
+      "desc": "Chili Accesorios - The Kul Store",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Baleine - The Kul Store",
@@ -1585,7 +2178,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Macushop - The Kul Store",
@@ -1593,7 +2189,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta, únicamente en el local de Kul Store."
+      "desc": "El descuento se efectúa en el punto de venta, únicamente en el local de Kul Store.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Bodega Spinoglio",
@@ -1601,7 +2200,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Café Butiá",
@@ -1609,7 +2211,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "The Kul Store",
@@ -1617,7 +2222,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Gocco",
@@ -1625,7 +2233,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Librería Difusión",
@@ -1633,7 +2244,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Sintel",
@@ -1641,7 +2255,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Imprenta La Canasta",
@@ -1649,7 +2266,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Medialunas Calentitas",
@@ -1657,7 +2277,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Popei",
@@ -1665,7 +2288,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "OrderEat",
@@ -1673,7 +2299,10 @@
       "pctMax": 10,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución: el mismo se calcula por tipo de tarjeta:",
-      "desc": "• Los descuentos aplican a las tarjetas de DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de Ley 19.21"
+      "desc": "• Los descuentos aplican a las tarjetas de DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de Ley 19.21",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Ocho Nudos",
@@ -1681,7 +2310,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Felix Caffè",
@@ -1689,7 +2321,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Fresa y Lima",
@@ -1697,7 +2332,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Veterinaria Cavia",
@@ -1705,7 +2343,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Jack & Jones",
@@ -1713,7 +2354,10 @@
       "pctMax": null,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El comercio acepta canje de puntos Soy Santander."
+      "desc": "El comercio acepta canje de puntos Soy Santander.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Name It",
@@ -1721,7 +2365,10 @@
       "pctMax": null,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El comercio acepta canje de puntos Soy Santander."
+      "desc": "El comercio acepta canje de puntos Soy Santander.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Pencil",
@@ -1729,7 +2376,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Only",
@@ -1737,7 +2387,10 @@
       "pctMax": null,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El comercio acepta canje de puntos Soy Santander."
+      "desc": "El comercio acepta canje de puntos Soy Santander.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Vinibel",
@@ -1745,7 +2398,10 @@
       "pctMax": null,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El comercio acepta canje de puntos Soy Santander."
+      "desc": "El comercio acepta canje de puntos Soy Santander.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "City Winery",
@@ -1753,7 +2409,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Coppelia",
@@ -1761,7 +2420,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Alma Mía Boutique",
@@ -1769,7 +2431,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Knuss heladería y café",
@@ -1777,7 +2442,10 @@
       "pctMax": null,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El comercio acepta canje de puntos Soy Santander."
+      "desc": "El comercio acepta canje de puntos Soy Santander.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "De Diez Burger",
@@ -1785,7 +2453,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Will B - The Kul Store",
@@ -1793,7 +2464,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Flavia Donatti",
@@ -1801,7 +2475,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Bequelo",
@@ -1809,7 +2486,10 @@
       "pctMax": null,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El comercio acepta canje de puntos Soy Santander."
+      "desc": "El comercio acepta canje de puntos Soy Santander.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Empanadas Calentitas",
@@ -1817,7 +2497,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Lolo",
@@ -1825,7 +2508,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Cresta Cafe",
@@ -1833,7 +2519,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Delirio",
@@ -1841,7 +2530,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Laferre",
@@ -1849,7 +2541,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Life Bistro",
@@ -1857,7 +2552,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Papirosen",
@@ -1865,7 +2563,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Edusil",
@@ -1873,7 +2574,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Todomoda",
@@ -1881,7 +2585,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Isadora",
@@ -1889,7 +2596,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Campera Almacen",
@@ -1897,7 +2607,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "La Cocktelería",
@@ -1905,7 +2618,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Manantiales Point",
@@ -1913,7 +2629,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Sep Importaciones",
@@ -1921,7 +2640,10 @@
       "pctMax": null,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El comercio acepta canje de puntos Soy Santander."
+      "desc": "El comercio acepta canje de puntos Soy Santander.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Pour La Plage",
@@ -1929,7 +2651,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "By Vero Melo",
@@ -1937,7 +2662,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Jump Club",
@@ -1945,7 +2673,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Nike",
@@ -1953,7 +2684,10 @@
       "pctMax": null,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El comercio acepta canje de Puntos Soy Santander."
+      "desc": "El comercio acepta canje de Puntos Soy Santander.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Sportline Kids",
@@ -1961,7 +2695,10 @@
       "pctMax": null,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El comercio acepta canje de puntos Soy Santander."
+      "desc": "El comercio acepta canje de puntos Soy Santander.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Sportline",
@@ -1969,7 +2706,10 @@
       "pctMax": null,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El comercio acepta canje de puntos Soy Santander."
+      "desc": "El comercio acepta canje de puntos Soy Santander.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Kicks",
@@ -1977,7 +2717,10 @@
       "pctMax": null,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El comercio acepta canje de puntos Soy Santander."
+      "desc": "El comercio acepta canje de puntos Soy Santander.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "La Cancha",
@@ -1985,7 +2728,10 @@
       "pctMax": null,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El comercio acepta canje de puntos Soy Santander."
+      "desc": "El comercio acepta canje de puntos Soy Santander.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Las Zapas",
@@ -1993,7 +2739,10 @@
       "pctMax": null,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El comercio acepta canje de puntos Soy Santander."
+      "desc": "El comercio acepta canje de puntos Soy Santander.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Gabbs",
@@ -2001,7 +2750,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Mariapasión",
@@ -2009,7 +2761,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Café Mallorca",
@@ -2017,7 +2772,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Almar",
@@ -2025,7 +2783,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Top Ten",
@@ -2033,7 +2794,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Vans",
@@ -2041,7 +2805,10 @@
       "pctMax": null,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El comercio acepta canje de puntos Soy Santander."
+      "desc": "El comercio acepta canje de puntos Soy Santander.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Kiabi",
@@ -2049,7 +2816,10 @@
       "pctMax": null,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El comercio acepta canje de puntos Soy Santander."
+      "desc": "El comercio acepta canje de puntos Soy Santander.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Jysk",
@@ -2057,7 +2827,10 @@
       "pctMax": null,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El comercio acepta canje de puntos Soy Santander."
+      "desc": "El comercio acepta canje de puntos Soy Santander.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Futvolt",
@@ -2065,7 +2838,10 @@
       "pctMax": null,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El comercio acepta canje de puntos Soy Santander."
+      "desc": "El comercio acepta canje de puntos Soy Santander.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Naterial",
@@ -2073,7 +2849,10 @@
       "pctMax": null,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El comercio acepta canje de puntos Soy Santander."
+      "desc": "El comercio acepta canje de puntos Soy Santander.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "La Vuelta",
@@ -2081,7 +2860,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "The Beer House",
@@ -2089,7 +2871,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Incasa",
@@ -2097,7 +2882,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Gryk",
@@ -2105,7 +2893,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Bravo Restó",
@@ -2113,7 +2904,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "El Fondin",
@@ -2121,7 +2915,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "La Perrera",
@@ -2129,7 +2926,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Arraí",
@@ -2137,7 +2937,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Cafetería Ferran",
@@ -2145,7 +2948,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Franca",
@@ -2153,7 +2959,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Genuina",
@@ -2161,7 +2970,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Irisarri",
@@ -2169,7 +2981,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Boutique de Carnes",
@@ -2177,7 +2992,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "La Casita by Cari",
@@ -2185,7 +3003,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "La Pasiva Solanas",
@@ -2193,7 +3014,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Legua",
@@ -2201,7 +3025,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Lincanto",
@@ -2209,7 +3036,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Manon",
@@ -2217,7 +3047,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Menos Mal",
@@ -2225,7 +3058,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Parador 8 de la Brava",
@@ -2233,7 +3069,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Parador San Rafael",
@@ -2241,7 +3080,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Sushi Meshi",
@@ -2249,7 +3091,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Tommy Bistro",
@@ -2257,7 +3102,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Las Tres Marias",
@@ -2265,7 +3113,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Da Haus",
@@ -2273,7 +3124,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Gelato House",
@@ -2281,7 +3135,10 @@
       "pctMax": 50,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución: el mismo se calcula por tipo de tarjeta: crédito o débito.",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Nihon Sushi",
@@ -2289,7 +3146,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "El Berretin",
@@ -2297,7 +3157,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Anushka Elliot",
@@ -2305,7 +3168,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectuará en el estado de cuenta, pudiendo figurar en el mismo hasta 30 días después de efectuada la compra."
+      "desc": "El descuento se efectuará en el estado de cuenta, pudiendo figurar en el mismo hasta 30 días después de efectuada la compra.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Sentido",
@@ -2313,7 +3179,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectuará en el estado de cuenta , pudiendo figurar en el mismo hasta 30 días después de efectuada la compra."
+      "desc": "El descuento se efectuará en el estado de cuenta , pudiendo figurar en el mismo hasta 30 días después de efectuada la compra.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Bardo",
@@ -2321,7 +3190,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Converse",
@@ -2329,7 +3201,10 @@
       "pctMax": null,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El comercio acepta canje de puntos Soy Santander."
+      "desc": "El comercio acepta canje de puntos Soy Santander.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Häven",
@@ -2337,7 +3212,10 @@
       "pctMax": null,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El comercio acepta canje de puntos Soy Santander."
+      "desc": "El comercio acepta canje de puntos Soy Santander.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Concepto OM",
@@ -2345,7 +3223,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "Descuentos exclusivos para socios Farmacard."
+      "desc": "Descuentos exclusivos para socios Farmacard.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Burger Point",
@@ -2353,7 +3234,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Autoría Café",
@@ -2361,7 +3245,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Azu",
@@ -2369,7 +3256,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta únicamente en el local de Kul Store."
+      "desc": "El descuento se efectúa en el punto de venta únicamente en el local de Kul Store.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Brownie",
@@ -2377,7 +3267,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "By Pass Padel",
@@ -2385,7 +3278,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Café a la Antigua",
@@ -2393,7 +3289,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Casa Ribera",
@@ -2401,7 +3300,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Felix",
@@ -2409,7 +3311,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "The Mood House",
@@ -2417,7 +3322,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Igual a Mi",
@@ -2425,7 +3333,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Viasono Jardín",
@@ -2433,7 +3344,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "El Refugio de Mailhos",
@@ -2441,7 +3355,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Restaurante VyB",
@@ -2449,7 +3366,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Santo Café",
@@ -2457,7 +3377,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Velas de la Ballena",
@@ -2465,7 +3388,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "De Flores y Floreros",
@@ -2473,7 +3399,10 @@
       "pctMax": null,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El comercio acepta canje de puntos Soy Santander."
+      "desc": "El comercio acepta canje de puntos Soy Santander.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Dropz - The Kul Store",
@@ -2481,7 +3410,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Especie Humana - The Kul Store",
@@ -2489,7 +3421,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "Especie Humana - The Kul Store"
+      "desc": "Especie Humana - The Kul Store",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Heladería Imperial",
@@ -2497,7 +3432,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Manu.be - The Kul Store",
@@ -2505,7 +3443,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Vang - The Kul Store",
@@ -2513,7 +3454,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "La Buhardilla",
@@ -2521,7 +3465,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "La Hacienda",
@@ -2529,7 +3476,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Maleza Beach Club",
@@ -2537,7 +3487,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Marian la que Cocina - Cookies",
@@ -2545,7 +3498,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Adoré Dolores",
@@ -2553,7 +3509,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Aimée",
@@ -2561,7 +3520,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Caramora - Restaurante",
@@ -2569,7 +3531,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Doña Maruja",
@@ -2577,7 +3542,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Dulce Avellana",
@@ -2585,7 +3553,10 @@
       "pctMax": null,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El comercio acepta canje de puntos Soy Santander."
+      "desc": "El comercio acepta canje de puntos Soy Santander.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Gozar",
@@ -2593,7 +3564,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Las Dos Reinas",
@@ -2601,7 +3575,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Life Zonamérica",
@@ -2609,7 +3586,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "Descuento válido para mensualidades pagas con débito automático de tarjeta de crédito, y para compra de membresías de mínimo 3 meses con tarjeta de débito o crédito.",
-      "desc": "Descuento válido para mensualidades pagas con débito automático de tarjeta de crédito, y para compra de membresías de mínimo 3 meses con tarjeta de débito o crédito."
+      "desc": "Descuento válido para mensualidades pagas con débito automático de tarjeta de crédito, y para compra de membresías de mínimo 3 meses con tarjeta de débito o crédito.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "PedidosYa",
@@ -2617,7 +3597,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "Fecha: Válido días Martes y Sábados desde 11/04/2026 al 31/01/2027."
+      "desc": "Fecha: Válido días Martes y Sábados desde 11/04/2026 al 31/01/2027.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Individuo Pastas",
@@ -2625,7 +3608,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Pando Pádel Club",
@@ -2633,7 +3619,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Periplo",
@@ -2641,7 +3630,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Ronda",
@@ -2649,7 +3641,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Sweetly Cafeteria",
@@ -2657,7 +3652,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "La Esquina",
@@ -2665,7 +3663,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Donut City",
@@ -2673,7 +3674,10 @@
       "pctMax": null,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El comercio acepta canje de puntos Soy Santander."
+      "desc": "El comercio acepta canje de puntos Soy Santander.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Lo de Marcos",
@@ -2681,7 +3685,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "The North Face",
@@ -2689,7 +3696,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Cafetería Paulette",
@@ -2697,7 +3707,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Burger Time",
@@ -2705,7 +3718,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "La Esquina Café",
@@ -2713,7 +3729,10 @@
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de"
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Vanitas",
@@ -2721,7 +3740,10 @@
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta."
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     }
   ]
 }
