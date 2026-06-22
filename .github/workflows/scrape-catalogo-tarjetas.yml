@@ -1,8 +1,7 @@
 name: Scrape catálogo de tarjetas
 
 on:
-  schedule:
-    - cron: '0 15 * * 1,5'   # lunes y viernes, 15:00 UTC
+  # schedule deshabilitado — catálogo se mantiene manual (URLs de bancos retornan 404)
   workflow_dispatch:
     inputs:
       modo:
