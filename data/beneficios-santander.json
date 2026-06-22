@@ -1,7 +1,7 @@
 {
   "fuente": "santander.com.uy",
-  "actualizado": "2026-06-20T21:26:57.812Z",
-  "total": 340,
+  "actualizado": "2026-06-22T15:52:57.293Z",
+  "total": 339,
   "beneficios": [
     {
       "nombre": "Optica Estela Jinchuk",
@@ -3704,17 +3704,6 @@
     {
       "nombre": "Cafetería Paulette",
       "url": "https://www.santander.com.uy/beneficios/cafeteria-paulette",
-      "pctMax": 25,
-      "vigencia": null,
-      "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
-      "nombre": "Burger Time",
-      "url": "https://www.santander.com.uy/beneficios/burger-time",
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
