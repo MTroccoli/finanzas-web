@@ -1,8 +1,8 @@
 {
   "fuente": "BROU",
   "url": "https://beneficios.brou.com.uy/beneficios",
-  "fecha": "2026-06-21",
-  "total": 70,
+  "fecha": "2026-06-22",
+  "total": 69,
   "beneficios": [
     {
       "nombre": "Banco Hipotecario del Uruguay",
@@ -724,7 +724,7 @@
       "url": "https://beneficios.brou.com.uy/ensenanza/meta-ads-pymes",
       "tarjetas": null,
       "vigencia": "Vigencia: 31/12/2026",
-      "desc": "Obtené hasta $500 de descuento en metapublicidad",
+      "desc": "Obtené hasta USD 500 de descuento en metapublicidad",
       "categoria": "ensenanza",
       "red": null,
       "niveles": [],
@@ -836,18 +836,6 @@
       "vigencia": null,
       "desc": "2 x 1 en entradas con tus Tarjetas de Crédito y Débito VISA y BROU Recompensa Mastercard.",
       "categoria": "espectaculos",
-      "red": null,
-      "niveles": [],
-      "cobranding": "Recompensa"
-    },
-    {
-      "nombre": "Preventa Luana",
-      "pctMax": null,
-      "url": "https://beneficios.brou.com.uy/ensenanza/preventa-luana",
-      "tarjetas": "Accedé a la preventa exclusiva abonando con tarjetas de crédito y débito BROU Recompensa Mastercard y BROU VISA.",
-      "vigencia": null,
-      "desc": "Preventa exclusiva para el show de Luana en el Antel Arena con tarjetas del BROU.",
-      "categoria": "ensenanza",
       "red": null,
       "niveles": [],
       "cobranding": "Recompensa"
