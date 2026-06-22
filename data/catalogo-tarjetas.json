@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-06-21",
+  "actualizado": "2026-06-22",
   "nota": "Seed manual — scraper mensual actualiza automáticamente",
   "tarjetas": [
     { "banco": "BBVA",       "red": "Visa",        "nivel": "Clásica",  "cobranding": null },
@@ -20,7 +20,9 @@
 
     { "banco": "Itaú",       "red": "Visa",        "nivel": "Clásica",  "cobranding": null },
     { "banco": "Itaú",       "red": "Visa",        "nivel": "Oro",      "cobranding": null },
+    { "banco": "Itaú",       "red": "Visa",        "nivel": "Oro",      "cobranding": "Volar" },
     { "banco": "Itaú",       "red": "Visa",        "nivel": "Platinum", "cobranding": null },
+    { "banco": "Itaú",       "red": "Visa",        "nivel": "Platinum", "cobranding": "Volar" },
     { "banco": "Itaú",       "red": "Mastercard",  "nivel": "Clásica",  "cobranding": null },
     { "banco": "Itaú",       "red": "Mastercard",  "nivel": "Oro",      "cobranding": null },
     { "banco": "Itaú",       "red": "Mastercard",  "nivel": "Platinum", "cobranding": null },

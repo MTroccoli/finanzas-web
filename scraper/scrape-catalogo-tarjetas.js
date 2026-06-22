@@ -48,6 +48,7 @@ const COBRAND_MAP = [
   { re: /advantage/i,                    name: 'Advantage'             },
   { re: /connect\s*miles/i,              name: 'ConnectMiles'          },
   { re: /recompensa/i,                   name: 'Recompensa'            },
+  { re: /\bvolar\b/i,                    name: 'Volar'                 },
   { re: /aero\s*l[ií]neas/i,             name: 'Aerolíneas Argentinas' },
   { re: /latam\s*pass/i,                 name: 'LATAM Pass'            },
   { re: /\blider\b/i,                    name: 'Lider'                 },
