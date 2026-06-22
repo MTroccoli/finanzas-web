@@ -1,7 +1,7 @@
 {
   "fuente": "bbva.com.uy",
-  "actualizado": "2026-06-20T15:03:22.159Z",
-  "total": 294,
+  "actualizado": "2026-06-22T14:45:35.399Z",
+  "total": 293,
   "categorias": [
     "Gastronomía",
     "Moda",
@@ -2609,7 +2609,7 @@
       "comercio": "Emporio de los sándwiches",
       "categoria": "Gastronomía",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/gastronomia/el-emporio-de-los-sandwiches.html",
-      "vigencia": "31 de Julio 2025",
+      "vigencia": "31 de Julio 2027",
       "local": null,
       "descuentos": [
         {
@@ -2621,25 +2621,33 @@
         },
         {
           "pct": 20,
-          "tarjetas": "Tarjetas de Crédito Internacionales, Oro, Pymes, Corporativas, Platinum, Black e Infinite",
-          "texto": "20% Off con Tarjetas de Crédito Internacionales, Oro, Pymes, Corporativas, Platinum, Black e Infinite",
+          "tarjetas": "Tarjetas de Crédito Internacionales, Oro, Pymes, Corporativas",
+          "texto": "20% Off con Tarjetas de Crédito Internacionales, Oro, Pymes, Corporativas",
+          "isDebit": false,
+          "niveles": [
+            "Oro"
+          ]
+        },
+        {
+          "pct": 30,
+          "tarjetas": "Tarjetas de Crédito Platinum, Black e Infinite",
+          "texto": "30% Off con Tarjetas de Crédito Platinum, Black e Infinite",
           "isDebit": false,
           "niveles": [
             "Infinite",
             "Platinum",
-            "Black",
-            "Oro"
+            "Black"
           ]
         }
       ],
-      "pctMax": 20,
+      "pctMax": 30,
       "tope": null,
       "red": null,
       "niveles": [
+        "Oro",
         "Infinite",
         "Platinum",
-        "Black",
-        "Oro"
+        "Black"
       ],
       "cobranding": null
     },
@@ -9322,39 +9330,6 @@
         "Infinite",
         "Platinum",
         "Black"
-      ],
-      "cobranding": null
-    },
-    {
-      "comercio": "Xiaomi Uruguay",
-      "categoria": "Tecnología",
-      "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/tecnologia/xiaomi.html",
-      "vigencia": "Desde el 11 al 18 de junio de 2026",
-      "local": null,
-      "descuentos": [
-        {
-          "pct": 15,
-          "tarjetas": "Tarjetas de Crédito Internacional, Oro, Pymes, Corporativas, Infinite, Platinum y Black",
-          "texto": "15% Off con Tarjetas de Crédito Internacional, Oro, Pymes, Corporativas, Infinite, Platinum y Black",
-          "isDebit": false,
-          "niveles": [
-            "Infinite",
-            "Platinum",
-            "Black",
-            "Oro",
-            "Clásica"
-          ]
-        }
-      ],
-      "pctMax": 15,
-      "tope": "El descuento será de un 15%, se aplicará en el punto de venta, sin tope de devolución.",
-      "red": null,
-      "niveles": [
-        "Infinite",
-        "Platinum",
-        "Black",
-        "Oro",
-        "Clásica"
       ],
       "cobranding": null
     },
