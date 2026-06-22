@@ -1784,7 +1784,6 @@ window.Mods.tarjetas = {
         Titular <span style="color:var(--text-sec)">(desmarcar si es adicional)</span>
       </label>`;
     };
-    `;
 
     const readForm = wrap => ({
       banco:      wrap.querySelector('.mt-f-banco').value,
