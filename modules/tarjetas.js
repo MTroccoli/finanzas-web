@@ -1726,79 +1726,64 @@ window.Mods.tarjetas = {
           .map(c => c.cobranding)
       )].sort();
 
-    const cobrandingField = (banco, red, nivel, cur = '') => {
-      const opts = getCobrandings(banco, red, nivel);
-      if (!opts.length) return '';
-      return `
-        <div class="form-group mt-f-cobranding-wrap">
-          <label style="font-size:.8rem">Co-branding</label>
-          <select class="mt-f-cobranding form-control">
-            <option value="">Sin co-branding</option>
-            ${opts.map(o => `<option${cur === o ? ' selected' : ''}>${o}</option>`).join('')}
-          </select>
-        </div>`;
-    };
-
     const updateCobWrap = container => {
       const banco = container.querySelector('.mt-f-banco')?.value || '';
       const red   = container.querySelector('.mt-f-red')?.value   || '';
       const nivel = container.querySelector('.mt-f-nivel')?.value  || '';
       const opts  = getCobrandings(banco, red, nivel);
-      let wrap = container.querySelector('.mt-f-cobranding-wrap');
-      const apodoWrap = container.querySelector('.mt-f-apodo')?.closest('.form-group');
-      if (!opts.length) {
-        wrap?.remove();
-        return;
-      }
-      const cur = wrap?.querySelector('.mt-f-cobranding')?.value || '';
-      const html = `
-        <div class="form-group mt-f-cobranding-wrap">
-          <label style="font-size:.8rem">Co-branding</label>
-          <select class="mt-f-cobranding form-control">
-            <option value="">Sin co-branding</option>
-            ${opts.map(o => `<option${cur === o ? ' selected' : ''}>${o}</option>`).join('')}
-          </select>
-        </div>`;
-      if (wrap) {
-        wrap.outerHTML = html;
-      } else if (apodoWrap) {
-        apodoWrap.insertAdjacentHTML('beforebegin', html);
+      const wrap  = container.querySelector('.mt-f-cobranding-wrap');
+      if (!wrap) return;
+      wrap.style.display = opts.length ? '' : 'none';
+      const sel = wrap.querySelector('.mt-f-cobranding');
+      if (sel) {
+        const cur = sel.value;
+        sel.innerHTML = `<option value="">Sin co-branding</option>
+          ${opts.map(o => `<option${cur === o ? ' selected' : ''}>${o}</option>`).join('')}`;
       }
     };
 
-    const formFields = (r = {}) => `
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr ${getCobrandings(r.banco, r.red, r.nivel).length ? '1fr ' : ''}1fr;gap:10px">
-        <div class="form-group">
+    const formFields = (r = {}) => {
+      const cobOpts = getCobrandings(r.banco, r.red, r.nivel);
+      return `
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px">
+        <div class="form-group" style="min-width:0">
           <label style="font-size:.8rem">Banco</label>
-          <select class="mt-f-banco form-control">
+          <select class="mt-f-banco form-control" style="width:100%">
             <option value="">— Banco —</option>
             ${BANCOS.map(b => `<option${r.banco === b ? ' selected' : ''}>${b}</option>`).join('')}
           </select>
         </div>
-        <div class="form-group">
+        <div class="form-group" style="min-width:0">
           <label style="font-size:.8rem">Red</label>
-          <select class="mt-f-red form-control">
+          <select class="mt-f-red form-control" style="width:100%">
             <option value="">— Red —</option>
             ${REDES.map(n => `<option${r.red === n ? ' selected' : ''}>${n}</option>`).join('')}
           </select>
         </div>
-        <div class="form-group">
+        <div class="form-group" style="min-width:0">
           <label style="font-size:.8rem">Nivel</label>
-          <select class="mt-f-nivel form-control">
+          <select class="mt-f-nivel form-control" style="width:100%">
             <option value="">— Nivel —</option>
             ${NIVELES.map(n => `<option${r.nivel === n ? ' selected' : ''}>${n}</option>`).join('')}
           </select>
         </div>
-        ${cobrandingField(r.banco, r.red, r.nivel, r.cobranding)}
-        <div class="form-group">
+        <div class="form-group mt-f-cobranding-wrap" style="min-width:0${cobOpts.length ? '' : ';display:none'}">
+          <label style="font-size:.8rem">Co-branding</label>
+          <select class="mt-f-cobranding form-control" style="width:100%">
+            <option value="">Sin co-branding</option>
+            ${cobOpts.map(o => `<option${r.cobranding === o ? ' selected' : ''}>${o}</option>`).join('')}
+          </select>
+        </div>
+        <div class="form-group" style="min-width:0">
           <label style="font-size:.8rem">Apodo <span style="opacity:.55">(opcional)</span></label>
-          <input type="text" class="mt-f-apodo form-control" value="${r.apodo || ''}" placeholder="Mi Visa Oro">
+          <input type="text" class="mt-f-apodo form-control" style="width:100%;box-sizing:border-box" value="${r.apodo || ''}" placeholder="Mi Visa Oro">
         </div>
       </div>
       <label style="display:flex;align-items:center;gap:7px;margin-top:10px;cursor:pointer;font-size:.83rem">
         <input type="checkbox" class="mt-f-principal"${r.principal !== false ? ' checked' : ''} style="accent-color:var(--accent)">
         Titular <span style="color:var(--text-sec)">(desmarcar si es adicional)</span>
-      </label>
+      </label>`;
+    };
     `;
 
     const readForm = wrap => ({
