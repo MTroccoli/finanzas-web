@@ -25,6 +25,9 @@ window.Mods.tarjetas = {
   _misCards:        null,
   _misCatCache:     null,
 
+  _analCache:       null,
+  _analOpen:        false,
+
   // State needed by helpers
   _cats:            [],
   _learned:         {},
@@ -40,6 +43,7 @@ window.Mods.tarjetas = {
     this._adicRawCache      = null;
     this._descCatSpendCache = null;
     this._descCache         = null;
+    this._analCache         = null;
   },
 
   _normMerchant(s) {
@@ -565,6 +569,17 @@ window.Mods.tarjetas = {
         </table>
         ${filtered.length === 0 ? '<div style="padding:18px;text-align:center;color:var(--text-sec);font-size:.8rem">Sin resultados</div>' : ''}
       </div>
+
+      <details id="desc-anal-det" ${this._analOpen ? 'open' : ''} style="margin-top:18px;background:var(--surface);border:1px solid var(--border);border-radius:10px">
+        <summary style="padding:12px 16px;cursor:pointer;font-size:.82rem;font-weight:600;color:var(--text);list-style:none;display:flex;align-items:center;gap:8px;user-select:none">
+          <span id="anal-arr" style="display:inline-block;transition:transform .2s;transform:rotate(${this._analOpen ? '90' : '0'}deg);font-size:.7rem;color:var(--text-sec)">▶</span>
+          Análisis de beneficios
+          <span style="font-size:.72rem;color:var(--text-sec);font-weight:400">estimado vs. acreditado en EDC</span>
+        </summary>
+        <div id="desc-anal-body" style="padding:0 16px 14px">
+          ${this._analOpen ? '<div style="padding:12px 0;text-align:center;color:var(--text-sec);font-size:.8rem">Cargando…</div>' : ''}
+        </div>
+      </details>
     `;
 
     const searchEl = document.getElementById('desc-search');
@@ -603,6 +618,163 @@ window.Mods.tarjetas = {
         btn.style.color = open ? '' : 'var(--accent)';
       });
     });
+
+    const analDet = document.getElementById('desc-anal-det');
+    if (analDet) {
+      analDet.addEventListener('toggle', () => {
+        this._analOpen = analDet.open;
+        const arr = document.getElementById('anal-arr');
+        if (arr) arr.style.transform = analDet.open ? 'rotate(90deg)' : '';
+        if (analDet.open) this._renderBenefAnalysis(benefits, userCards);
+      });
+      if (this._analOpen) this._renderBenefAnalysis(benefits, userCards);
+    }
+  },
+
+  async _renderBenefAnalysis(benefits, userCards) {
+    const body = document.getElementById('desc-anal-body');
+    if (!body) return;
+    body.innerHTML = '<div style="padding:12px 0;text-align:center;color:var(--text-sec);font-size:.8rem">Cargando…</div>';
+
+    if (!this._analCache) {
+      const hoy  = new Date();
+      const desde = new Date(hoy.getFullYear(), hoy.getMonth() - 3, 1).toISOString().slice(0, 10);
+      const hasta = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0).toISOString().slice(0, 10);
+      const [gRes, tcCfg, bcCfg] = await Promise.all([
+        getDB().from('gastos')
+          .select('comercio, monto, moneda, categoria_id')
+          .gte('fecha', desde).lte('fecha', hasta)
+          .or('titular_adicional.is.null,incluido_en_gastos.eq.true'),
+        getConfig('tipo_cambio'),
+        getConfig('benefit_categories'),
+      ]);
+      this._analCache = {
+        rows:        gRes.data || [],
+        tc:          parseFloat(tcCfg) || 44,
+        benefCatIds: new Set((bcCfg || '').split(',').map(s => parseInt(s)).filter(n => !isNaN(n))),
+        desde,
+      };
+    }
+    const { rows, tc, benefCatIds, desde } = this._analCache;
+
+    if (!userCards?.length) {
+      body.innerHTML = '<div style="padding:12px 0;font-size:.8rem;color:var(--text-sec)">Configurá tus tarjetas en <a href="#tarjetas/mis-tarjetas" style="color:var(--accent)">Mis Tarjetas</a> para ver el análisis.</div>';
+      return;
+    }
+
+    const nivelAliases = { Gold: 'Oro', Oro: 'Gold' };
+    const userHas = b => userCards.some(c => {
+      if (c.banco !== b.fuente) return false;
+      if (b.red && b.red !== c.red) return false;
+      if (b.cobranding && b.cobranding !== c.cobranding) return false;
+      if (b.niveles?.length) {
+        if (!b.niveles.includes(c.nivel) && !b.niveles.includes(nivelAliases[c.nivel])) return false;
+      }
+      return true;
+    });
+
+    const benefitMap = {};
+    for (const b of benefits) {
+      if (!b.pctMax || !userHas(b)) continue;
+      const k = this._normMerchant(b.comercio);
+      if (!k || k.length < 3) continue;
+      if (!benefitMap[k] || b.pctMax > benefitMap[k].pct)
+        benefitMap[k] = { name: b.corto || b.comercio, fuente: b.fuente, pct: b.pctMax };
+    }
+    const benefKeys = Object.keys(benefitMap);
+
+    if (!benefKeys.length) {
+      body.innerHTML = '<div style="padding:12px 0;font-size:.8rem;color:var(--text-sec)">Sin beneficios activos en el catálogo para tus tarjetas.</div>';
+      return;
+    }
+
+    const normCredit = s => this._normMerchant(
+      (s || '').replace(/^(benef\.?\s*|beneficio\s*|devoluci\w*\.?\s*|descuento\s*|dto\.?\s*|cred\.?\s*|credito\s*)/i, '').trim()
+    );
+
+    const findKey = normStr => {
+      if (!normStr) return null;
+      if (benefitMap[normStr]) return normStr;
+      for (const bk of benefKeys) {
+        if (bk.length < 4) continue;
+        if (normStr.includes(bk) || (bk.includes(normStr) && normStr.length >= 4)) return bk;
+      }
+      return null;
+    };
+
+    const agg = {};
+    const ensure = k => { if (!agg[k]) agg[k] = { ...benefitMap[k], consumo: 0, est: 0, real: 0 }; };
+
+    for (const r of rows) {
+      if (!r.comercio) continue;
+      const monto  = parseFloat(r.monto) || 0;
+      const inUYU  = r.moneda === 'USD' ? Math.abs(monto) * tc : Math.abs(monto);
+      const isCredit = monto < 0 || benefCatIds.has(r.categoria_id);
+
+      if (isCredit) {
+        const k = findKey(normCredit(r.comercio));
+        if (k) { ensure(k); agg[k].real += inUYU; }
+      } else {
+        const k = findKey(this._normMerchant(r.comercio));
+        if (k) { ensure(k); agg[k].consumo += inUYU; agg[k].est += inUYU * benefitMap[k].pct / 100; }
+      }
+    }
+
+    const aggRows = Object.values(agg).filter(r => r.consumo > 0 || r.real > 0)
+      .sort((a, b) => b.est - a.est);
+
+    const fmtDesde = desde.slice(8, 10) + '/' + desde.slice(5, 7) + '/' + desde.slice(0, 4);
+
+    if (!aggRows.length) {
+      body.innerHTML = `<div style="padding:12px 0;font-size:.8rem;color:var(--text-sec)">Sin coincidencias entre tus consumos y los beneficios de tus tarjetas desde ${fmtDesde}.</div>`;
+      return;
+    }
+
+    let totCon = 0, totEst = 0, totReal = 0;
+    for (const r of aggRows) { totCon += r.consumo; totEst += r.est; totReal += r.real; }
+    const dif    = totReal - totEst;
+    const difClr = dif >= 0 ? '#4ade80' : '#fbbf24';
+    const f  = n => '$U ' + fmt(Math.round(n), 0);
+    const tdS = 'padding:6px 8px;border-bottom:1px solid rgba(255,255,255,.05)';
+    const thS = 'padding:6px 8px;font-size:.7rem;color:var(--text-sec);font-weight:500;border-bottom:1px solid var(--border);white-space:nowrap';
+
+    body.innerHTML = `
+      <div style="font-size:.71rem;color:var(--text-sec);margin-bottom:10px">Desde ${fmtDesde} · beneficios de tus tarjetas · USD×${fmt(tc, 0)} =$U</div>
+      <div style="overflow-x:auto;-webkit-overflow-scrolling:touch">
+        <table style="width:100%;min-width:400px;border-collapse:collapse">
+          <thead><tr>
+            <th style="${thS};text-align:left">Comercio</th>
+            <th style="${thS};text-align:right">%</th>
+            <th style="${thS};text-align:right">Consumo</th>
+            <th style="${thS};text-align:right">Estimado</th>
+            <th style="${thS};text-align:right">EDC real</th>
+            <th style="${thS};text-align:right">Dif.</th>
+          </tr></thead>
+          <tbody>
+            ${aggRows.map(r => {
+              const d  = r.real - r.est;
+              const dc = !r.real ? 'var(--text-sec)' : d >= 0 ? '#4ade80' : '#fbbf24';
+              return `<tr>
+                <td style="${tdS};font-size:.8rem">${r.name}<span style="font-size:.62rem;margin-left:5px;color:var(--text-sec)">${r.fuente}</span></td>
+                <td style="${tdS};font-size:.78rem;font-family:'DM Mono',monospace;color:var(--gold);text-align:right">${r.pct}%</td>
+                <td style="${tdS};font-size:.78rem;font-family:'DM Mono',monospace;text-align:right">${f(r.consumo)}</td>
+                <td style="${tdS};font-size:.78rem;font-family:'DM Mono',monospace;color:var(--gold);text-align:right">${r.est ? f(r.est) : '—'}</td>
+                <td style="${tdS};font-size:.78rem;font-family:'DM Mono',monospace;color:#4ade80;text-align:right">${r.real ? f(r.real) : '—'}</td>
+                <td style="${tdS};font-size:.78rem;font-family:'DM Mono',monospace;color:${dc};text-align:right">${r.real ? (d >= 0 ? '+' : '') + f(d) : '—'}</td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+          <tfoot><tr style="border-top:1px solid var(--border-strong)">
+            <td colspan="2" style="padding:7px 8px;font-size:.78rem;font-weight:600">Total</td>
+            <td style="padding:7px 8px;font-size:.78rem;font-family:'DM Mono',monospace;text-align:right">${f(totCon)}</td>
+            <td style="padding:7px 8px;font-size:.78rem;font-family:'DM Mono',monospace;color:var(--gold);text-align:right">${f(totEst)}</td>
+            <td style="padding:7px 8px;font-size:.78rem;font-family:'DM Mono',monospace;color:#4ade80;text-align:right">${f(totReal)}</td>
+            <td style="padding:7px 8px;font-size:.78rem;font-family:'DM Mono',monospace;color:${difClr};text-align:right">${(dif >= 0 ? '+' : '') + f(Math.abs(dif))}</td>
+          </tr></tfoot>
+        </table>
+      </div>
+      <div style="font-size:.7rem;color:var(--text-sec);margin-top:8px">Dif. negativa = acreditaron menos de lo esperado (puede ser descuento ya aplicado en el comercio, o beneficio no cobrado).</div>
+    `;
   },
 
   async _drawHistorialComercios() {
