@@ -19,6 +19,7 @@ puppeteer.use(StealthPlugin());
 
 const fs   = require('fs');
 const path = require('path');
+const { parseCardScope } = require('./lib/parse-card-scope');
 
 const HUB    = 'https://www.scotiabank.com.uy/Personas/Tarjetas/Beneficios/default';
 const ORIGIN = 'https://www.scotiabank.com.uy';
@@ -401,17 +402,24 @@ async function scrapeAllCategories(page) {
   const allCards = await scrapeAllCategories(page);
   await browser.close();
 
-  const beneficios = allCards.map(c => ({
-    nombre:     c.nombre,
-    url:        c.url || null,
-    categoria:  c.categoria || null,
-    pctMax:     c.pctMax,
-    descuentos: c.descuentos || [],
-    vigencia:   c.vigencia || null,
-    tarjetas:   c.tarjetas || null,
-    desc:       c.desc || null,
-    exclusivo:  false,
-  }));
+  const beneficios = allCards.map(c => {
+    const tarjetas  = c.tarjetas || null;
+    const scope     = parseCardScope('Scotiabank', { tarjetas, nombre: c.nombre, desc: c.desc });
+    return {
+      nombre:     c.nombre,
+      url:        c.url || null,
+      categoria:  c.categoria || null,
+      pctMax:     c.pctMax,
+      descuentos: c.descuentos || [],
+      vigencia:   c.vigencia || null,
+      tarjetas,
+      desc:       c.desc || null,
+      exclusivo:  false,
+      red:        scope.red,
+      niveles:    scope.niveles,
+      cobranding: scope.cobranding,
+    };
+  });
 
   beneficios.forEach((b, i) =>
     console.log(`  [${i+1}] ${b.nombre} — ${b.pctMax ?? '?'}%  tarj="${(b.tarjetas || '—').slice(0, 60)}"`));

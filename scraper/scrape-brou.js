@@ -17,6 +17,7 @@ puppeteer.use(StealthPlugin());
 
 const fs   = require('fs');
 const path = require('path');
+const { parseCardScope } = require('./lib/parse-card-scope');
 
 const HUB    = 'https://beneficios.brou.com.uy/beneficios';
 const ORIGIN = 'https://beneficios.brou.com.uy';
@@ -299,6 +300,13 @@ async function scrapeAll(page) {
     } else {
       const beneficios = await scrapeAll(page);
       if (!beneficios.length) { console.log('Sin datos.'); return; }
+
+      beneficios.forEach(b => {
+        const scope = parseCardScope('BROU', { tarjetas: b.tarjetas, nombre: b.nombre, desc: b.desc });
+        b.red       = scope.red;
+        b.niveles   = scope.niveles;
+        b.cobranding = scope.cobranding;
+      });
 
       const out = {
         fuente: 'BROU',

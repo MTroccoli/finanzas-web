@@ -14,6 +14,7 @@ puppeteer.use(StealthPlugin());
 
 const fs   = require('fs');
 const path = require('path');
+const { parseCardScope } = require('./lib/parse-card-scope');
 
 const HUB_URL     = 'https://ocablue.uy/beneficios.html';
 const HUB_ORIGIN  = 'https://ocablue.uy';
@@ -397,7 +398,8 @@ async function prodMode(browser) {
     const raw = (b.categoria || '').toLowerCase()
       .normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z]/g, '');
     const catLabel = Object.entries(CAT_LABELS).find(([k]) => raw.includes(k))?.[1] || b.categoria || null;
-    return { ...b, categoria: catLabel };
+    const scope    = parseCardScope('OCA', { tarjetas: b.tarjetas, nombre: b.nombre, desc: b.desc });
+    return { ...b, categoria: catLabel, red: scope.red, niveles: scope.niveles, cobranding: scope.cobranding };
   });
 
   const out = {

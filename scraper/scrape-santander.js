@@ -19,6 +19,7 @@ puppeteer.use(StealthPlugin());
 
 const fs   = require('fs');
 const path = require('path');
+const { parseCardScope } = require('./lib/parse-card-scope');
 
 const HUB    = 'https://www.santander.com.uy/beneficios';
 const ORIGIN = 'https://www.santander.com.uy';
@@ -262,9 +263,16 @@ async function parseDetail(page, card) {
     const desc = mainLines[0]?.slice(0, 200) || ogDesc?.slice(0, 200) || null;
 
     // ── Tarjetas aplicables ──────────────────────────────────────────────────
-    const tarjLine = bodyLines.find(l => /tarjeta|cr[eé]dito|d[eé]bito/i.test(l) && l.length < 200
+    const allBodyText = bodyLines.join(' ');
+    const tarjLine = bodyLines.find(l => /tarjeta|cr[eé]dito|d[eé]bito|amex|american\s*express|advantage/i.test(l)
+                                          && l.length < 200
                                           && !/(art\.|ley|banco\s+sant)/i.test(l));
-    const tarjetas = tarjLine || null;
+    // Also check if Advantage is mentioned anywhere in body (for Amex Advantage benefits)
+    const hasAdvantage = /\badvantage\b/i.test(allBodyText);
+    const hasAmex      = /\bamex\b|\bamerican\s*express\b/i.test(allBodyText);
+    let tarjetas = tarjLine || null;
+    if (!tarjetas && hasAdvantage) tarjetas = 'Amex Advantage';
+    else if (!tarjetas && hasAmex)  tarjetas = 'American Express';
 
     return { nombre, url: urlStr, pctMax, vigencia, tarjetas, desc };
   }, url, card.nombre, card.pctHub);
@@ -323,6 +331,13 @@ async function parseDetail(page, card) {
     beneficios.forEach(b => console.log(JSON.stringify(b, null, 2)));
     return;
   }
+
+  beneficios.forEach(b => {
+    const scope = parseCardScope('Santander', { tarjetas: b.tarjetas, nombre: b.nombre, desc: b.desc });
+    b.red       = scope.red;
+    b.niveles   = scope.niveles;
+    b.cobranding = scope.cobranding;
+  });
 
   const payload = {
     fuente: 'santander.com.uy',

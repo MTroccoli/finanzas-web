@@ -14,6 +14,7 @@ puppeteer.use(StealthPlugin());
 
 const fs   = require('fs');
 const path = require('path');
+const { parseCardScope } = require('./lib/parse-card-scope');
 
 const HUBS = [
   { url: 'https://www.itau.com.uy/inst/beneficios.html',           exclusivo: false },
@@ -313,6 +314,7 @@ async function diagCardClasses(page, url) {
       const key = c.nombre.toLowerCase().slice(0, 50);
       if (seen.has(key)) continue;
       seen.add(key);
+      const scope = parseCardScope('Itaú', { tarjetas: c.tarjetas, nombre: c.nombre, desc: c.desc });
       beneficios.push({
         nombre:    c.nombre,
         url:       c.url,
@@ -323,6 +325,9 @@ async function diagCardClasses(page, url) {
         tarjetas:  c.tarjetas,
         desc:      c.desc,
         exclusivo: c.exclusivo,
+        red:        scope.red,
+        niveles:    scope.niveles,
+        cobranding: scope.cobranding,
       });
     }
     await sleep(DELAY_MS);
