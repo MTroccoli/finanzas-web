@@ -200,6 +200,12 @@ window.Mods.tarjetas = {
     }
     const { benefits, actualizado } = this._descCache;
 
+    if (this._misCards === null) {
+      const rows = await dbFetch('mis_tarjetas', { order: { col: 'created_at', asc: true } });
+      this._misCards = rows || [];
+    }
+    const userCards = this._misCards;
+
     let comRows = this._comRawCache;
     if (!comRows) {
       const { data: d } = await getDB()
@@ -329,6 +335,30 @@ window.Mods.tarjetas = {
     };
     const canonCat = c => c ? (CAT_MAP.hasOwnProperty(c) ? CAT_MAP[c] : c) : null;
 
+    const nivelAliases = { 'Gold': 'Oro', 'Oro': 'Gold' };
+    const matchCards = b => {
+      if (!userCards?.length) return [];
+      return userCards.filter(c => {
+        if (c.banco !== b.fuente) return false;
+        if (b.red && b.red !== c.red) return false;
+        if (b.cobranding && b.cobranding !== c.cobranding) return false;
+        if (b.niveles?.length) {
+          if (!b.niveles.includes(c.nivel) && !b.niveles.includes(nivelAliases[c.nivel])) return false;
+        }
+        return true;
+      });
+    };
+    const bestBBVAPct = (b, myCards) => {
+      if (b.fuente !== 'BBVA' || !myCards.length || !b.descuentos?.length) return null;
+      const myNiveles = new Set(myCards.flatMap(c => [c.nivel, nivelAliases[c.nivel]].filter(Boolean)));
+      const relevant = b.descuentos.filter(d => {
+        if (d.isDebit) return false;
+        return !d.niveles?.length || d.niveles.some(n => myNiveles.has(n));
+      });
+      return relevant.length ? Math.max(...relevant.map(d => d.pct)) : null;
+    };
+    const noWallet = !userCards?.length;
+
     const banco   = this._descBanco;
     const cat     = this._descCat;
     const gozado  = this._descGozado;
@@ -353,8 +383,11 @@ window.Mods.tarjetas = {
       if (banco  && b.fuente !== banco) return false;
       if (cat    && canonCat(b.categoria) !== cat) return false;
       if (q      && !normBen(b).includes(q)) return false;
-      if (gozado === 'gozado'    && !spendByNorm[normBen(b)]) return false;
-      if (gozado === 'no-gozado' &&  spendByNorm[normBen(b)]) return false;
+      if (!noWallet) {
+        const matched = matchCards(b);
+        if (gozado === 'gozado'    && !matched.length) return false;
+        if (gozado === 'no-gozado' &&  matched.length) return false;
+      }
       return true;
     }).sort((a, b) => (b.pctMax || 0) - (a.pctMax || 0));
 
@@ -487,14 +520,18 @@ window.Mods.tarjetas = {
           </select>
         ` : ''}
       </div>
-      <div style="display:flex;gap:6px;margin-bottom:12px">
-        ${[['', 'Todos'], ['gozado', '✓ Gozados'], ['no-gozado', '○ Sin gozar']].map(([val, lbl]) => `
+      <div style="display:flex;gap:6px;margin-bottom:${noWallet ? '4px' : '12px'}">
+        ${[['', 'Todos'], ['gozado', '✓ Tengo tarjeta'], ['no-gozado', '○ Sin tarjeta']].map(([val, lbl]) => `
           <button class="desc-goz-btn" data-goz="${val}" style="font-size:.74rem;padding:4px 11px;border-radius:6px;cursor:pointer;
             border:1px solid ${gozado === val ? 'var(--accent)' : 'var(--border)'};
             background:${gozado === val ? 'rgba(46,142,200,.15)' : 'transparent'};
             color:${gozado === val ? 'var(--accent)' : 'var(--text-sec)'}">${lbl}</button>
         `).join('')}
       </div>
+      ${noWallet ? `
+        <div style="font-size:.72rem;color:var(--text-sec);margin-bottom:12px;padding:5px 10px;background:var(--surface);border-radius:6px;border:1px solid var(--border)">
+          💳 <a href="#tarjetas/mis-tarjetas" style="color:var(--accent)">Configurá tus tarjetas</a> para filtrar por las que tenés y ver tu descuento específico
+        </div>` : ''}
 
       <div style="overflow-x:auto;-webkit-overflow-scrolling:touch">
         <table style="width:100%;min-width:340px;border-collapse:collapse">
@@ -503,18 +540,27 @@ window.Mods.tarjetas = {
             <th style="${thStyle};text-align:left">%</th>
           </tr></thead>
           <tbody>
-            ${filtered.map((b, idx) => `
+            ${filtered.map((b, idx) => {
+              const myMatch = noWallet ? [] : matchCards(b);
+              const myPct   = myMatch.length ? bestBBVAPct(b, myMatch) : null;
+              const dispPct = myPct !== null ? myPct : (b.pctMax || null);
+              const pctClr  = myPct !== null ? '#4ade80' : dispPct ? 'var(--gold)' : 'var(--text-sec)';
+              const cardBadge = myMatch.length
+                ? '<span style="font-size:.58rem;padding:1px 5px;border-radius:3px;background:rgba(74,222,128,.15);color:#4ade80;font-weight:700;letter-spacing:.03em;vertical-align:middle;margin-left:5px">✓</span>'
+                : '';
+              return `
               <tr>
                 <td style="padding:7px 6px;${tdBorder};font-size:.82rem">
-                  <span>${b.corto || b.comercio}</span>${fuenteBadge(b.fuente)}<button class="di-btn" data-i="${idx}" style="background:none;border:none;color:var(--text-sec);cursor:pointer;padding:0 4px;font-size:.85rem;line-height:1;vertical-align:middle;margin-left:3px" title="Ver detalle">ⓘ</button>
+                  <span>${b.corto || b.comercio}</span>${cardBadge}${fuenteBadge(b.fuente)}<button class="di-btn" data-i="${idx}" style="background:none;border:none;color:var(--text-sec);cursor:pointer;padding:0 4px;font-size:.85rem;line-height:1;vertical-align:middle;margin-left:3px" title="Ver detalle">ⓘ</button>
                 </td>
-                <td style="padding:7px 6px;${tdBorder};font-size:${b.pctMax ? '.82rem' : '.72rem'};font-family:'DM Mono',monospace;color:${b.pctMax ? 'var(--gold)' : 'var(--text-sec)'};white-space:nowrap">${b.pctMax ? b.pctMax + '%' : 'Otros'}</td>
+                <td style="padding:7px 6px;${tdBorder};font-size:${dispPct ? '.82rem' : '.72rem'};font-family:'DM Mono',monospace;color:${pctClr};white-space:nowrap">${dispPct ? dispPct + '%' : 'Otros'}</td>
               </tr>
               <tr id="di-row-${idx}" style="display:none">
                 <td colspan="2" style="padding:3px 8px 8px 16px;font-size:11px;background:rgba(255,255,255,.025);${tdBorder}">
                   ${renderDet(b)}
                 </td>
-              </tr>`).join('')}
+              </tr>`;
+            }).join('')}
           </tbody>
         </table>
         ${filtered.length === 0 ? '<div style="padding:18px;text-align:center;color:var(--text-sec);font-size:.8rem">Sin resultados</div>' : ''}
