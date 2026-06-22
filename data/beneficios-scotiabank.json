@@ -1,6 +1,6 @@
 {
   "fuente": "scotiabank.com.uy",
-  "actualizado": "2026-06-21T01:28:04.002Z",
+  "actualizado": "2026-06-22T16:58:10.223Z",
   "total": 72,
   "beneficios": [
     {
@@ -573,7 +573,7 @@
       "pctMax": null,
       "descuentos": [],
       "vigencia": "Todos los días",
-      "tarjetas": null,
+      "tarjetas": "El débito del costo mensual se realizará de forma automática en la tarjeta con la que decidas registrarte al beneficio",
       "desc": "Asociate a Paselibre. Empezá a disfrutar grandes beneficios.",
       "exclusivo": false,
       "red": null,
@@ -600,7 +600,7 @@
       "nombre": "CLUB DEL LAGO - GOLF",
       "url": "https://www.scotiabank.com.uy/Personas/Tarjetas/Beneficios/Especiales/club-del-lago",
       "categoria": "Deportes",
-      "pctMax": 25,
+      "pctMax": 50,
       "descuentos": [
         {
           "pct": 25,
