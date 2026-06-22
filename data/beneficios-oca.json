@@ -1,9 +1,10 @@
 {
   "fuente": "OCA",
-  "actualizado": "2026-06-21",
+  "actualizado": "2026-06-22",
   "beneficios": [
     {
       "nombre": "Tipo de cambio preferencial con tu OCA Blue para hacer transacciones en Mi Cuenta o la App OCA",
+      "corto": "Tipode Cambio OCA Blue",
       "pctMax": null,
       "url": "https://ocablue.uy/beneficios.html?id=61&name=TipodeCambioOCABlue",
       "categoria": null,
@@ -18,6 +19,7 @@
     },
     {
       "nombre": "30% de dto. en restaurantes y Fast Food en EE.UU, México y Canadá, pagando con el celular. Además 0% de comisión en todo el mundo.",
+      "corto": "Mundial Exterior OCA Blue",
       "pctMax": 0,
       "url": "https://ocablue.uy/beneficios.html?id=120&name=MundialExteriorOCABlue",
       "categoria": null,
@@ -30,6 +32,7 @@
     },
     {
       "nombre": "30% de dto. en cualquier supermercado los días de partido de Uruguay, pagando con el celular.",
+      "corto": "Mundial Uruguay OCA",
       "pctMax": null,
       "url": "https://ocablue.uy/beneficios.html?id=121&name=MundialUruguayOCA",
       "categoria": null,
@@ -42,6 +45,7 @@
     },
     {
       "nombre": "Hasta 20% de dto. + 5% de dto extra pagando con el celular con OCA Blue y tarjetas de crédito, en comercios identificados de Handy.",
+      "corto": "Handy OCA",
       "pctMax": 20,
       "url": "https://ocablue.uy/beneficios.html?id=123&name=HandyOCA",
       "categoria": null,
@@ -56,6 +60,7 @@
     },
     {
       "nombre": "Cupón de 30% de dto. en tus viajes de Cabify con tu OCA Blue",
+      "corto": "Viajacon OC Ay Cabify",
       "pctMax": 30,
       "url": "https://ocablue.uy/beneficios.html?id=71&name=ViajaconOCAyCabify",
       "categoria": null,
@@ -70,6 +75,7 @@
     },
     {
       "nombre": "10% de dto. en productos seleccionados con OCA Blue en Megal",
+      "corto": "Megal OCA Blue",
       "pctMax": 10,
       "url": "https://ocablue.uy/beneficios.html?id=122&name=MegalOCABlue",
       "categoria": null,
@@ -84,6 +90,7 @@
     },
     {
       "nombre": "Compras sin recargos con tu OCA Blue",
+      "corto": "Compras Sin Recargo OCA Blue",
       "pctMax": 0,
       "url": "https://ocablue.uy/beneficios.html?id=88&name=ComprasSinRecargoOCABlue",
       "categoria": null,
@@ -98,6 +105,7 @@
     },
     {
       "nombre": "Tienda En Tu Ciudad",
+      "corto": "Tienda En Tu Ciudad",
       "pctMax": 10,
       "url": "https://ocablue.uy/beneficios.html?id=74&name=tienda-en-tu-ciudad",
       "categoria": null,
@@ -110,6 +118,7 @@
     },
     {
       "nombre": "10% de dto. todo los viernes + el mejor precio con OCA Blue.",
+      "corto": "Macromercado",
       "pctMax": 10,
       "url": "https://ocablue.uy/beneficios.html?id=58&name=Macromercado",
       "categoria": null,
@@ -124,6 +133,7 @@
     },
     {
       "nombre": "10% de dto. todos los días con OCA Blue en Bela",
+      "corto": "Descuento Bela",
       "pctMax": 10,
       "url": "https://ocablue.uy/beneficios.html?id=12&name=DescuentoBela",
       "categoria": null,
@@ -138,6 +148,7 @@
     },
     {
       "nombre": "10% de descuento todos los días en Burger King.",
+      "corto": "Burguer King",
       "pctMax": 10,
       "url": "https://ocablue.uy/beneficios.html?id=30&name=BurguerKing",
       "categoria": null,
@@ -150,6 +161,7 @@
     },
     {
       "nombre": "10% de dto. de lunes a jueves en Gelatería del Club con OCA Blue",
+      "corto": "Gelatería Del Club OCA Blue",
       "pctMax": 10,
       "url": "https://ocablue.uy/beneficios.html?id=82&name=GelateríaDelClubOCABlue",
       "categoria": null,
@@ -164,6 +176,7 @@
     },
     {
       "nombre": "10% de dto. todos los días en El Club de la Papa Frita con OCA Blue",
+      "corto": "El Clubdela Papa Frita OCA Blue",
       "pctMax": 10,
       "url": "https://ocablue.uy/beneficios.html?id=84&name=ElClubdelaPapaFritaOCABlue",
       "categoria": null,
@@ -178,6 +191,7 @@
     },
     {
       "nombre": "10% de dto. todos los días en Kentucky con OCA Blue",
+      "corto": "Kentucky OCA Blue",
       "pctMax": 10,
       "url": "https://ocablue.uy/beneficios.html?id=83&name=KentuckyOCABlue",
       "categoria": null,
@@ -192,6 +206,7 @@
     },
     {
       "nombre": "10% de dto. con OCA Blue en Chajá",
+      "corto": "Chaja OCA Blue",
       "pctMax": 10,
       "url": "https://ocablue.uy/beneficios.html?id=15&name=ChajaOCABlue",
       "categoria": null,
@@ -206,6 +221,7 @@
     },
     {
       "nombre": "10% de dto. todos los días con OCA Blue en Homeopatía Alemana",
+      "corto": "Homeopatia Alemana OCA",
       "pctMax": 10,
       "url": "https://ocablue.uy/beneficios.html?id=80&name=HomeopatiaAlemanaOCA",
       "categoria": null,
@@ -220,6 +236,7 @@
     },
     {
       "nombre": "2 puntos de IVA menos en todas tus recargas en STM",
+      "corto": "STM",
       "pctMax": null,
       "url": "https://ocablue.uy/beneficios.html?id=38&name=STM",
       "categoria": null,
@@ -232,6 +249,7 @@
     },
     {
       "nombre": "2 puntos de IVA menos en todas tus compras con OCA Blue",
+      "corto": "2puntos Iva Compras",
       "pctMax": null,
       "url": "https://ocablue.uy/beneficios.html?id=9&name=2puntosIvaCompras",
       "categoria": null,
@@ -246,6 +264,7 @@
     },
     {
       "nombre": "Hasta 9 puntos de devolución de IVA en restaurantes",
+      "corto": "9puntos Iva Restaurantes",
       "pctMax": null,
       "url": "https://ocablue.uy/beneficios.html?id=8&name=9puntosIvaRestaurantes",
       "categoria": null,
@@ -258,6 +277,7 @@
     },
     {
       "nombre": "Presentá un amigo y ganá 1.000 Metros",
+      "corto": "Metros",
       "pctMax": null,
       "url": "https://ocablue.uy/beneficios.html?id=73&name=Metros",
       "categoria": null,
@@ -270,6 +290,7 @@
     },
     {
       "nombre": "1.000 Metros de regalo con tu nueva cuenta OCA Blue ganás metros gratis",
+      "corto": "1000Metros",
       "pctMax": null,
       "url": "https://ocablue.uy/beneficios.html?id=5&name=1000Metros",
       "categoria": null,
@@ -284,6 +305,7 @@
     },
     {
       "nombre": "2x1 en entradas, pop y refresco TODOS LOS DÍAS",
+      "corto": "2x1todoslosdíasen Movie",
       "pctMax": null,
       "url": "https://ocablue.uy/beneficios.html?id=2&name=2x1todoslosdíasenMovie",
       "categoria": null,
