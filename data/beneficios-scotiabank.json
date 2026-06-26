@@ -1,34 +1,87 @@
 {
   "fuente": "scotiabank.com.uy",
-  "actualizado": "2026-06-22T16:58:10.223Z",
-  "total": 72,
+  "actualizado": "2026-06-26T14:26:37.380Z",
+  "total": 78,
   "beneficios": [
     {
-      "nombre": "¿JUEGA URUGUAY?",
+      "nombre": "ALMENARA MALL",
       "url": null,
       "categoria": "Destacados",
-      "pctMax": null,
-      "descuentos": [],
-      "vigencia": "15, 21 y 26 de Junio",
-      "tarjetas": null,
-      "desc": "Acumulás Scotia Puntos X10 en supermercados los días que juega Uruguay",
+      "pctMax": 25,
+      "descuentos": [
+        {
+          "pct": 25,
+          "texto": "25% de ahorro"
+        },
+        {
+          "pct": 15,
+          "texto": "15% de ahorro"
+        }
+      ],
+      "vigencia": "Todos los días",
+      "tarjetas": "25% de ahorro con tarjetas de crédito Platinum, Infinite, Gold y débito Premium.",
+      "desc": "25% de ahorro con tarjetas de crédito Platinum, Infinite, Gold y débito Premium.",
       "exclusivo": false,
       "red": null,
-      "niveles": [],
+      "niveles": [
+        "Infinite",
+        "Platinum",
+        "Gold"
+      ],
       "cobranding": null
     },
     {
-      "nombre": "TIENDA INGLESA",
-      "url": "https://www.scotiabank.com.uy/Personas/Tarjetas/Beneficios/Supermercados/tienda-inglesa-junio",
+      "nombre": "ZONA LASER",
+      "url": null,
       "categoria": "Destacados",
-      "pctMax": null,
-      "descuentos": [],
+      "pctMax": 25,
+      "descuentos": [
+        {
+          "pct": 25,
+          "texto": "25% de ahorro"
+        },
+        {
+          "pct": 15,
+          "texto": "15% de ahorro"
+        }
+      ],
       "vigencia": "Todos los días",
-      "tarjetas": "Disfrutá beneficios exclusivos con tus tarjetas Scotiabank.",
-      "desc": "Disfrutá beneficios exclusivos con tus tarjetas Scotiabank.",
+      "tarjetas": "25% de ahorro con tarjetas de crédito Platinum, Infinite, Gold y débito Premium.",
+      "desc": "25% de ahorro con tarjetas de crédito Platinum, Infinite, Gold y débito Premium.",
       "exclusivo": false,
       "red": null,
-      "niveles": [],
+      "niveles": [
+        "Infinite",
+        "Platinum",
+        "Gold"
+      ],
+      "cobranding": null
+    },
+    {
+      "nombre": "BOWLING CENTER",
+      "url": null,
+      "categoria": "Destacados",
+      "pctMax": 25,
+      "descuentos": [
+        {
+          "pct": 25,
+          "texto": "25% de ahorro"
+        },
+        {
+          "pct": 15,
+          "texto": "15% de ahorro"
+        }
+      ],
+      "vigencia": "Todos los días",
+      "tarjetas": "25% de ahorro con tarjetas de crédito Platinum, Infinite, Gold y débito Premium.",
+      "desc": "25% de ahorro con tarjetas de crédito Platinum, Infinite, Gold y débito Premium.",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [
+        "Infinite",
+        "Platinum",
+        "Gold"
+      ],
       "cobranding": null
     },
     {
@@ -53,51 +106,21 @@
       "cobranding": null
     },
     {
-      "nombre": "COMBUSTIBLE Y TELEPEAJE",
+      "nombre": "¿JUEGA URUGUAY?",
       "url": null,
       "categoria": "Destacados",
-      "pctMax": 50,
-      "descuentos": [
-        {
-          "pct": 50,
-          "texto": "50% de ahorro"
-        },
-        {
-          "pct": 10,
-          "texto": "10% de ahorro"
-        }
-      ],
-      "vigencia": "Todos los días",
-      "tarjetas": "The Platinum Card American Express (excl. ConnectMiles)",
-      "desc": "50% en telepeajes todos los días · 10% en combustible jueves y domingos. Tope $1.200/mes.",
-      "exclusivo": false,
-      "red": "Amex",
-      "niveles": [
-        "Platinum"
-      ],
-      "cobranding": null
-    },
-    {
-      "nombre": "SAVE THE WEEK",
-      "url": "https://www.scotiabank.com.uy/Personas/Tarjetas/Beneficios/Especiales/save-the-week",
-      "categoria": "Destacados",
-      "pctMax": 10,
-      "descuentos": [
-        {
-          "pct": 10,
-          "texto": "10% de ahorro"
-        }
-      ],
-      "vigencia": "De lunes a viernes",
-      "tarjetas": "Ahorrá entre semana con tus tarjetas Club Card de Scotia.",
-      "desc": "Ahorrá entre semana con tus tarjetas Club Card de Scotia.",
+      "pctMax": null,
+      "descuentos": [],
+      "vigencia": "15, 21 y 26 de Junio",
+      "tarjetas": null,
+      "desc": "Acumulás Scotia Puntos X10 en supermercados los días que juega Uruguay",
       "exclusivo": false,
       "red": null,
       "niveles": [],
       "cobranding": null
     },
     {
-      "nombre": "TIENDA FARMA",
+      "nombre": "FIFA MUNDIAL",
       "url": null,
       "categoria": "Destacados",
       "pctMax": 20,
@@ -107,11 +130,11 @@
           "texto": "20% de ahorro"
         }
       ],
-      "vigencia": "Todos los días",
-      "tarjetas": "20% de ahorro Con todas las tarjetas de Crédito y Débito.",
-      "desc": "20% de ahorro Con todas las tarjetas de Crédito y Débito.",
+      "vigencia": "Del 11 de Junio al 19 de Julio",
+      "tarjetas": "20% de ahorro en USA, MÉXICO y CANADÁ usando tu Visa crédito Scotia con billetera digital en todos tus consumos.",
+      "desc": "20% de ahorro en USA, MÉXICO y CANADÁ usando tu Visa crédito Scotia con billetera digital en todos tus consumos.",
       "exclusivo": false,
-      "red": null,
+      "red": "Visa",
       "niveles": [],
       "cobranding": null
     },
@@ -428,8 +451,8 @@
         }
       ],
       "vigencia": "Todos los días",
-      "tarjetas": "25% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y Débito Premium.",
-      "desc": "25% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y Débito Premium.",
+      "tarjetas": "25% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y Débito Premium",
+      "desc": "25% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y Débito Premium",
       "exclusivo": false,
       "red": null,
       "niveles": [
@@ -532,6 +555,31 @@
       "exclusivo": false,
       "red": null,
       "niveles": [],
+      "cobranding": null
+    },
+    {
+      "nombre": "COMBUSTIBLE Y TELEPEAJE",
+      "url": null,
+      "categoria": "The Platinum Card Amex",
+      "pctMax": 50,
+      "descuentos": [
+        {
+          "pct": 50,
+          "texto": "50% de ahorro"
+        },
+        {
+          "pct": 10,
+          "texto": "10% de ahorro"
+        }
+      ],
+      "vigencia": "Todos los días",
+      "tarjetas": "The Platinum Card American Express (excl. ConnectMiles)",
+      "desc": "50% en telepeajes todos los días · 10% en combustible jueves y domingos. Tope $1.200/mes.",
+      "exclusivo": false,
+      "red": "Amex",
+      "niveles": [
+        "Platinum"
+      ],
       "cobranding": null
     },
     {
@@ -1043,16 +1091,16 @@
       "nombre": "LAIKA",
       "url": null,
       "categoria": "Mascotas",
-      "pctMax": 10,
+      "pctMax": 20,
       "descuentos": [
         {
-          "pct": 10,
-          "texto": "10% de ahorro"
+          "pct": 20,
+          "texto": "20% de ahorro"
         }
       ],
-      "vigencia": "Todos los días",
-      "tarjetas": "10% de ahorro con tus tarjetas de crédito en todos los productos.",
-      "desc": "10% de ahorro con tus tarjetas de crédito en todos los productos.",
+      "vigencia": "Del 23 al 26 de junio",
+      "tarjetas": "20% de ahorro con tarjetas de crédito.",
+      "desc": "20% de ahorro con tarjetas de crédito.",
       "exclusivo": false,
       "red": null,
       "niveles": [],
@@ -1062,16 +1110,16 @@
       "nombre": "LAVAKAN",
       "url": null,
       "categoria": "Mascotas",
-      "pctMax": 15,
+      "pctMax": 25,
       "descuentos": [
         {
-          "pct": 15,
-          "texto": "15% de ahorro"
+          "pct": 25,
+          "texto": "25% de ahorro"
         }
       ],
-      "vigencia": "Todos los días",
-      "tarjetas": "15% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y débito Premium.",
-      "desc": "15% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y débito Premium.",
+      "vigencia": "Del 26 al 30 de junio",
+      "tarjetas": "25% de ahorro con tarjetas de crédito Platinum, Infinite, Gold y Débito Premium.",
+      "desc": "25% de ahorro con tarjetas de crédito Platinum, Infinite, Gold y Débito Premium.",
       "exclusivo": false,
       "red": null,
       "niveles": [
@@ -1142,6 +1190,25 @@
       "nombre": "VETERINARIA DEL MAR",
       "url": null,
       "categoria": "Mascotas",
+      "pctMax": 15,
+      "descuentos": [
+        {
+          "pct": 15,
+          "texto": "15% de ahorro"
+        }
+      ],
+      "vigencia": "Todos los días",
+      "tarjetas": "15% de ahorro con tarjetas de crédito y débito.",
+      "desc": "15% de ahorro con tarjetas de crédito y débito.",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
+    },
+    {
+      "nombre": "SCHOOL UNIFORMES",
+      "url": null,
+      "categoria": "Niños",
       "pctMax": 15,
       "descuentos": [
         {
@@ -1337,6 +1404,25 @@
       "cobranding": null
     },
     {
+      "nombre": "TIENDA FARMA",
+      "url": null,
+      "categoria": "Farmacias",
+      "pctMax": 20,
+      "descuentos": [
+        {
+          "pct": 20,
+          "texto": "20% de ahorro"
+        }
+      ],
+      "vigencia": "Todos los días",
+      "tarjetas": "20% de ahorro Con todas las tarjetas de Crédito y Débito.",
+      "desc": "20% de ahorro Con todas las tarjetas de Crédito y Débito.",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
+    },
+    {
       "nombre": "PIGALLE",
       "url": null,
       "categoria": "Farmacias",
@@ -1471,6 +1557,39 @@
       "cobranding": null
     },
     {
+      "nombre": "SAVE THE WEEK",
+      "url": "https://www.scotiabank.com.uy/Personas/Tarjetas/Beneficios/Especiales/save-the-week",
+      "categoria": "Supermercados",
+      "pctMax": 10,
+      "descuentos": [
+        {
+          "pct": 10,
+          "texto": "10% de ahorro"
+        }
+      ],
+      "vigencia": "De lunes a viernes",
+      "tarjetas": "Ahorrá entre semana con tus tarjetas Club Card de Scotia.",
+      "desc": "Ahorrá entre semana con tus tarjetas Club Card de Scotia.",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
+    },
+    {
+      "nombre": "TIENDA INGLESA",
+      "url": "https://www.scotiabank.com.uy/Personas/Tarjetas/Beneficios/Supermercados/tienda-inglesa-junio",
+      "categoria": "Supermercados",
+      "pctMax": null,
+      "descuentos": [],
+      "vigencia": "Todos los días",
+      "tarjetas": "Disfrutá beneficios exclusivos con tus tarjetas Scotiabank.",
+      "desc": "Disfrutá beneficios exclusivos con tus tarjetas Scotiabank.",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
+    },
+    {
       "nombre": "KINKO",
       "url": null,
       "categoria": "Supermercados",
@@ -1515,6 +1634,29 @@
       "red": null,
       "niveles": [],
       "cobranding": null
+    },
+    {
+      "nombre": "MILES + CASH",
+      "url": null,
+      "categoria": "Viajes",
+      "pctMax": 40,
+      "descuentos": [
+        {
+          "pct": 40,
+          "texto": "40% de ahorro"
+        },
+        {
+          "pct": 10,
+          "texto": "10% de ahorro"
+        }
+      ],
+      "vigencia": "Hasta el 8 de Julio",
+      "tarjetas": "Obtené 40% de descuento comprando tu viaje con la forma de pago Miles + Cash y tu tarjeta Amex ConnectMiles.",
+      "desc": "Obtené 40% de descuento comprando tu viaje con la forma de pago Miles + Cash y tu tarjeta Amex ConnectMiles.",
+      "exclusivo": false,
+      "red": "Amex",
+      "niveles": [],
+      "cobranding": "ConnectMiles"
     },
     {
       "nombre": "HOTELES EN URUGUAY",
