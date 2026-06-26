@@ -1,7 +1,7 @@
 {
   "fuente": "itau.com.uy",
-  "actualizado": "2026-06-22T15:56:11.231Z",
-  "total": 17,
+  "actualizado": "2026-06-26T13:13:55.847Z",
+  "total": 18,
   "beneficios": [
     {
       "nombre": "Cantegrill Joyas",
@@ -65,6 +65,19 @@
       "vigencia": null,
       "tarjetas": null,
       "desc": "15% menos en Wikimusculos",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
+    },
+    {
+      "nombre": "Duty Free Uruguay",
+      "url": null,
+      "pctMax": null,
+      "descuentos": [],
+      "vigencia": null,
+      "tarjetas": null,
+      "desc": "Millas X3 o X5 en Duty Free Uruguay",
       "exclusivo": false,
       "red": null,
       "niveles": [],
