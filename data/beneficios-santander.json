@@ -1,7 +1,7 @@
 {
   "fuente": "santander.com.uy",
-  "actualizado": "2026-06-22T15:52:57.293Z",
-  "total": 339,
+  "actualizado": "2026-06-26T12:42:33.105Z",
+  "total": 337,
   "beneficios": [
     {
       "nombre": "Optica Estela Jinchuk",
@@ -158,12 +158,12 @@
       "cobranding": null
     },
     {
-      "nombre": "Nona",
+      "nombre": "Error 503",
       "url": "https://www.santander.com.uy/beneficios/nona",
       "pctMax": 25,
       "vigencia": null,
-      "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "tarjetas": null,
+      "desc": "Estamos trabajando en el sitio para mejorar tu experiencia",
       "red": null,
       "niveles": [],
       "cobranding": null
@@ -340,17 +340,6 @@
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
-      "nombre": "Bazar La Familia",
-      "url": "https://www.santander.com.uy/beneficios/bazar-la-familia",
-      "pctMax": 15,
-      "vigencia": null,
-      "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta.",
       "red": null,
       "niveles": [],
       "cobranding": null
@@ -1909,17 +1898,6 @@
       "cobranding": null
     },
     {
-      "nombre": "Be Padel",
-      "url": "https://www.santander.com.uy/beneficios/be-padel",
-      "pctMax": 15,
-      "vigencia": null,
-      "tarjetas": "• Tope de Devolución: el mismo se calcula por tipo de tarjeta: crédito o débito.",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
       "nombre": "Cienta",
       "url": "https://www.santander.com.uy/beneficios/cienta",
       "pctMax": 15,
@@ -2762,17 +2740,6 @@
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta.",
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
-      "nombre": "Café Mallorca",
-      "url": "https://www.santander.com.uy/beneficios/cafe-mallorca",
-      "pctMax": 25,
-      "vigencia": null,
-      "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
       "red": null,
       "niveles": [],
       "cobranding": null
@@ -3704,6 +3671,17 @@
     {
       "nombre": "Cafetería Paulette",
       "url": "https://www.santander.com.uy/beneficios/cafeteria-paulette",
+      "pctMax": 25,
+      "vigencia": null,
+      "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
+    },
+    {
+      "nombre": "Burger Time",
+      "url": "https://www.santander.com.uy/beneficios/burger-time",
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
