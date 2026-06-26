@@ -1,6 +1,6 @@
 {
   "fuente": "bbva.com.uy",
-  "actualizado": "2026-06-22T14:45:35.399Z",
+  "actualizado": "2026-06-26T11:56:44.904Z",
   "total": 293,
   "categorias": [
     "Gastronomía",
@@ -2609,7 +2609,7 @@
       "comercio": "Emporio de los sándwiches",
       "categoria": "Gastronomía",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/gastronomia/el-emporio-de-los-sandwiches.html",
-      "vigencia": "31 de Julio 2027",
+      "vigencia": "31 de Julio 2025",
       "local": null,
       "descuentos": [
         {
@@ -2621,33 +2621,25 @@
         },
         {
           "pct": 20,
-          "tarjetas": "Tarjetas de Crédito Internacionales, Oro, Pymes, Corporativas",
-          "texto": "20% Off con Tarjetas de Crédito Internacionales, Oro, Pymes, Corporativas",
-          "isDebit": false,
-          "niveles": [
-            "Oro"
-          ]
-        },
-        {
-          "pct": 30,
-          "tarjetas": "Tarjetas de Crédito Platinum, Black e Infinite",
-          "texto": "30% Off con Tarjetas de Crédito Platinum, Black e Infinite",
+          "tarjetas": "Tarjetas de Crédito Internacionales, Oro, Pymes, Corporativas, Platinum, Black e Infinite",
+          "texto": "20% Off con Tarjetas de Crédito Internacionales, Oro, Pymes, Corporativas, Platinum, Black e Infinite",
           "isDebit": false,
           "niveles": [
             "Infinite",
             "Platinum",
-            "Black"
+            "Black",
+            "Oro"
           ]
         }
       ],
-      "pctMax": 30,
+      "pctMax": 20,
       "tope": null,
       "red": null,
       "niveles": [
-        "Oro",
         "Infinite",
         "Platinum",
-        "Black"
+        "Black",
+        "Oro"
       ],
       "cobranding": null
     },
