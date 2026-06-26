@@ -1,6 +1,6 @@
 {
   "fuente": "OCA",
-  "actualizado": "2026-06-22",
+  "actualizado": "2026-06-26",
   "beneficios": [
     {
       "nombre": "Tipo de cambio preferencial con tu OCA Blue para hacer transacciones en Mi Cuenta o la App OCA",
@@ -132,13 +132,26 @@
       "cobranding": null
     },
     {
+      "nombre": "2x1 en entradas, pop y refresco TODOS LOS DÍAS",
+      "corto": "2x1todoslosdíasen Movie",
+      "pctMax": null,
+      "url": "https://ocablue.uy/beneficios.html?id=2&name=2x1todoslosdíasenMovie",
+      "categoria": null,
+      "tarjetas": "Abrir cuenta gratis",
+      "vigencia": "Todos los díasEn entradas, pop y refresco",
+      "desc": "2x1 todos los días en entradas para películas en 2D o 3D y en Combo Pop + Refresco Mediano en Movie, para \n                compras realizadas con OCA Blue. Promoción válida del 21/05/2023 hasta el 31/12/2026. El tope de la promoción \n                es de cuatro entradas por tarjeta, por compra realizada (dos compras de entradas 2x1). Válido para canjes \n                por web y en boletería presencial. No aplica para películas en 4D. Pueden aplicarse restricciones a este beneficio, \n                cuando el distribuidor de la película no permita realizar promociones durante los días cercanos al estreno de la misma.\n                \n             \n                                      No aplica para compras a través de Mercado Pago. \n                                      Promoción no acumulable con otros descuentos.",
+      "red": "OCA",
+      "niveles": [],
+      "cobranding": null
+    },
+    {
       "nombre": "10% de dto. todos los días con OCA Blue en Bela",
       "corto": "Descuento Bela",
       "pctMax": 10,
       "url": "https://ocablue.uy/beneficios.html?id=12&name=DescuentoBela",
       "categoria": null,
       "tarjetas": "Abrir cuenta gratis",
-      "vigencia": "Hasta el 30/7/26",
+      "vigencia": "todos los díasHasta 30/07/26",
       "desc": "10% de dto. todos los días en Bela, hasta el 31/7/2026 inclusive, pagando con OCA Blue. \n                    Válido para compras realizadas en pesos. El descuento se realizará en el punto venta al momento de realizar la compra.\n                    \n                    \n                    No aplica para compras a través de Mercado Pago.\n                    \n                    Promoción no acumulable con otros descuentos.\n                    \n                    \n                    Encontrá más info en el sitio web de Bela: bela.com.uy\n                    \n                    \n                    \n                     Con tus tarjetas de crédito OCA\n                    \n                    \n                    Todos los viernes disfrutá del 20% de dto.\n                    \n                    Ver más\n                    \n                        #mercadopagolegal{\n                            display:none;\n                        }\n                        #noacumulablelegal{\n                            display:none;\n                        }\n                    \n                     \n                                      No aplica para compras a través de Mercado Pago. \n                                      Promoción no acumulable con otros descuentos.",
       "red": "OCA",
       "niveles": [
@@ -153,7 +166,7 @@
       "url": "https://ocablue.uy/beneficios.html?id=30&name=BurguerKing",
       "categoria": null,
       "tarjetas": "Abrir cuenta gratis",
-      "vigencia": "Todos los días en locales Burger King",
+      "vigencia": "todos los díasEn locales",
       "desc": "Promoción válida todos los días, del 1 de enero al 30 de junio del 2026, para todas las compras realizadas en locales físicos de Burger King con tarjetas OCA Blue. El descuento se realizará en el momento de la compra.\n                \n                \n                No aplica para compras a través de Mercado Pago, Pedidos Ya y/o Rappi.\n                \n                Promoción no acumulable con otros descuentos.\n                \n                \n                Ver lista de comercios participantes.\n                \n                Con tus tarjetas de crédito OCA.De lunes a jueves disfrutá de un 20% de descuento                \n                Ver beneficio\n                \n                    #mercadopagolegal{\n                        display: none;\n                    }\n                    #noacumulablelegal{\n                        display: none;\n                    }\n                \n                 \n                                      No aplica para compras a través de Mercado Pago. \n                                      Promoción no acumulable con otros descuentos.",
       "red": "OCA",
       "niveles": [],
@@ -166,7 +179,7 @@
       "url": "https://ocablue.uy/beneficios.html?id=82&name=GelateríaDelClubOCABlue",
       "categoria": null,
       "tarjetas": "Abrir cuenta gratis",
-      "vigencia": "Todos los díasHasta el 30/04/27",
+      "vigencia": "todos los díasHasta el 30/04/27",
       "desc": "Promoción válida todos los días, del 7 de mayo del 2026 al 30 de abril del 2027, para todas las compras realizadas en locales físicos de Gelatería del Club con OCA Blue. El descuento se realizará en el momento de la compra\n            \n            \n            No aplica para compras a través de Mercado Pago, Pedidos Ya y/o Rappi.\n            \n            Promoción no acumulable con otros descuentos.\n            \n            \n            Sucursales:\n            \n            \n                18 de Julio 1261\n                8 de octubre 2702 esq Garibaldi\n                Bv. Artigas 3654 esq. San Martin\n                Rivera 2403 esq. 20 de Setiembre (casi Bv. Artigas)\n                Av. Enrique Legrand 5161 (al lado del Club Malvín)\n                Av. Giannattasio km 18.500 - Ciudad de la Costa\n            \n            \n            #mercadopagolegal{\n                display:none;\n            }\n            #noacumulablelegal{\n                display:none;\n            }\n            \n\n         \n                                      No aplica para compras a través de Mercado Pago. \n                                      Promoción no acumulable con otros descuentos.",
       "red": "OCA",
       "niveles": [
@@ -181,7 +194,7 @@
       "url": "https://ocablue.uy/beneficios.html?id=84&name=ElClubdelaPapaFritaOCABlue",
       "categoria": null,
       "tarjetas": "Abrir cuenta gratis",
-      "vigencia": "Todos los díasHasta el 30/04/27",
+      "vigencia": "todos los díasHasta el 30/04/27",
       "desc": "Promoción válida todos los días, del 7 de mayo del 2026 al 30 de abril del 2027, para todas las compras realizadas en locales físicos de El Club de la Papa Frita con OCA Blue. El descuento se realizará en el momento de la compra.\n            \n            \n            No aplica para compras a través de Mercado Pago, Pedidos Ya y/o Rappi.\n            \n            Promoción no acumulable con otros descuentos.\n            \n            \n            Sucursales:\n            \n            \n                18 de Julio 1261\n                8 de octubre 2702 esq. Garibaldi\n                Rivera 2403 esq. 20 de Setiembre (casi Bv. Artigas)\n                Av. Enrique Legrand 5161 (al lado del Club Malvín)\n                Av. Giannattasio km 18.500 - Ciudad de la Costa\n            \n            \n            #mercadopagolegal{\n                display:none;\n            }\n            #noacumulablelegal{\n                display:none;\n            }\n            \n\n         \n                                      No aplica para compras a través de Mercado Pago. \n                                      Promoción no acumulable con otros descuentos.",
       "red": "OCA",
       "niveles": [
@@ -196,7 +209,7 @@
       "url": "https://ocablue.uy/beneficios.html?id=83&name=KentuckyOCABlue",
       "categoria": null,
       "tarjetas": "Abrir cuenta gratis",
-      "vigencia": "Todos los díasHasta el 30/04/27",
+      "vigencia": "todos los díasHasta el 30/04/27",
       "desc": "Promoción válida todos los días, del 7 de mayo del 2026 al 30 de abril del 2027, para todas las compras realizadas en locales físicos de Kentucky con OCA Blue. El descuento se realizará en el momento de la compra.\n            \n            \n            No aplica para compras a través de Mercado Pago, Pedidos Ya y/o Rappi.\n            \n            Promoción no acumulable con otros descuentos.\n            \n            Sucursales:\n            \n            \n            \n                San José y Cuareim (frente al Teatro Metro)               \n            \n            \n            #mercadopagolegal{\n                display:none;\n            }\n            #noacumulablelegal{\n                display:none;\n            }\n            \n\n         \n                                      No aplica para compras a través de Mercado Pago. \n                                      Promoción no acumulable con otros descuentos.",
       "red": "OCA",
       "niveles": [
@@ -301,19 +314,6 @@
       "niveles": [
         "Blue"
       ],
-      "cobranding": null
-    },
-    {
-      "nombre": "2x1 en entradas, pop y refresco TODOS LOS DÍAS",
-      "corto": "2x1todoslosdíasen Movie",
-      "pctMax": null,
-      "url": "https://ocablue.uy/beneficios.html?id=2&name=2x1todoslosdíasenMovie",
-      "categoria": null,
-      "tarjetas": "Abrir cuenta gratis",
-      "vigencia": "Todos los díasEn entradas, pop y refresco",
-      "desc": "2x1 todos los días en entradas para películas en 2D o 3D y en Combo Pop + Refresco Mediano en Movie, para \n                compras realizadas con OCA Blue. Promoción válida del 21/05/2023 hasta el 31/12/2026. El tope de la promoción \n                es de cuatro entradas por tarjeta, por compra realizada (dos compras de entradas 2x1). Válido para canjes \n                por web y en boletería presencial. No aplica para películas en 4D. Pueden aplicarse restricciones a este beneficio, \n                cuando el distribuidor de la película no permita realizar promociones durante los días cercanos al estreno de la misma.\n                \n             \n                                      No aplica para compras a través de Mercado Pago. \n                                      Promoción no acumulable con otros descuentos.",
-      "red": "OCA",
-      "niveles": [],
       "cobranding": null
     }
   ]
