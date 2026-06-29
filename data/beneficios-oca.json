@@ -1,6 +1,6 @@
 {
   "fuente": "OCA",
-  "actualizado": "2026-06-26",
+  "actualizado": "2026-06-29",
   "beneficios": [
     {
       "nombre": "Tipo de cambio preferencial con tu OCA Blue para hacer transacciones en Mi Cuenta o la App OCA",
@@ -26,19 +26,6 @@
       "tarjetas": "Abrir cuenta gratis",
       "vigencia": "Del 8/6/26 al 20/7/26",
       "desc": "Promoción válida en Estados Unidos, México y Canadá:\n                \n            30% de descuento todos los días, en compras presenciales en restaurantes y Fast Food, que se realicen del 8 de junio al 20 de julio del 2026, pagando con el celular*.   \n            \n            US$ 150 de tope de descuento, por cuenta, compartido entre las tarjetas de crédito OCA (MasterCard y Visa). US$ 150 de tope de descuento, por cuenta, para OCA Blue. Tope válido durante todo el período de la promoción.\n            \n            *Apple Pay: Aplica solo a tarjeta de crédito Mastercard.\n                        \n            *Google Pay: Aplica para OCA Blue y tarjetas de crédito Mastercard y Visa.\n                        \n            *App OCA: Aplica mediante NFC, solo en Android, para OCA Blue y tarjetas de crédito Mastercard y Visa.            \n            \n                        \n            ¿Dónde se verá reflejado el descuento?:\n            \n            \n            \n                \n                    Compras con OCA Blue: el descuento se verá reflejado en los movimientos de la cuenta hasta 10 días hábiles luego de realizada la compra.\n                \n                \n                    Compras con tarjetas de crédito OCA: el descuento se verá reflejado en el estado de cuenta.\n                \n            \n            \n            Además, 0% de comisión en  todo el mundo. \n            Condiciones completas ingresando acá.\n            \n            \n            **Monedas participantes: USD, pesos mexicanos y dólar canadiense.\n\n            \n            \n            \n             Con tus tarjetas de crédito OCA\n            \n            \n            30% de dto. en restaurantes y Fast Food en EE.UU, México y Canadá.\n            \n            Ver más\n            \n                #mercadopagolegal{\n                    display:none\n                }\n                    #noacumulablelegal{\n                    display:none\n                }\n            \n            \n             \n                                      No aplica para compras a través de Mercado Pago. \n                                      Promoción no acumulable con otros descuentos.",
-      "red": "OCA",
-      "niveles": [],
-      "cobranding": null
-    },
-    {
-      "nombre": "30% de dto. en cualquier supermercado los días de partido de Uruguay, pagando con el celular.",
-      "corto": "Mundial Uruguay OCA",
-      "pctMax": null,
-      "url": "https://ocablue.uy/beneficios.html?id=121&name=MundialUruguayOCA",
-      "categoria": null,
-      "tarjetas": "Abrir cuenta gratis",
-      "vigencia": "Los días que juega Uruguay15, 21 y 26 de junio del 2026",
-      "desc": "Promoción válida en Uruguay.\n                \n            30% de descuento los días de partido de Uruguay, en compras presenciales en cualquier supermercado, pagando con el celular (App OCA*, Google Pay y Apple Pay).\n            \n            Tope de $300 por compra, $1.500 por cuenta. Tope compartido entre las tarjetas de crédito (MasterCard y Visa). Tope de $1.500 por cuenta para OCA Blue. Tope válido durante todo el período de la promoción.\n            \n            *Apple Pay: Aplica solo a tarjeta de crédito Mastercard.\n            \n            *Google Pay: Aplica para OCA Blue y tarjetas de crédito Mastercard y Visa.\n            \n            *App OCA: Aplica mediante NFC, solo en Android, para OCA Blue y tarjetas de crédito Mastercard y Visa.\n            \n            \n            ¿Dónde se verá reflejado el descuento?:\n            \n            \n                \n                    Compras con OCA Blue: el descuento se verá reflejado en los movimientos de la cuenta hasta 10 días hábiles luego de realizada la compra.\n                \n                \n                    Compras con tarjetas de crédito OCA: el descuento se verá reflejado en el estado de cuenta.     \n                \n            \n            \n            *Fechas de partidos:\n            \n            \n                Lunes 15/6/2026\n                Domingo 21/6/2026\n                Viernes 26/6/2026\n                        \n\n            \n                #mercadopagolegal{\n                    display:none\n                }\n                    #noacumulablelegal{\n                    display:none\n                }\n            \n             \n                                      No aplica para compras a través de Mercado Pago. \n                                      Promoción no acumulable con otros descuentos.",
       "red": "OCA",
       "niveles": [],
       "cobranding": null
