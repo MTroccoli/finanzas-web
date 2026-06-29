@@ -1,6 +1,6 @@
 {
   "fuente": "santander.com.uy",
-  "actualizado": "2026-06-26T12:42:33.105Z",
+  "actualizado": "2026-06-29T14:37:35.194Z",
   "total": 337,
   "beneficios": [
     {
@@ -158,12 +158,12 @@
       "cobranding": null
     },
     {
-      "nombre": "Error 503",
+      "nombre": "Nona",
       "url": "https://www.santander.com.uy/beneficios/nona",
       "pctMax": 25,
       "vigencia": null,
-      "tarjetas": null,
-      "desc": "Estamos trabajando en el sitio para mejorar tu experiencia",
+      "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
       "red": null,
       "niveles": [],
       "cobranding": null
