@@ -1,7 +1,7 @@
 {
   "fuente": "scotiabank.com.uy",
-  "actualizado": "2026-06-26T14:26:37.380Z",
-  "total": 78,
+  "actualizado": "2026-06-29T15:48:04.015Z",
+  "total": 77,
   "beneficios": [
     {
       "nombre": "ALMENARA MALL",
@@ -106,20 +106,6 @@
       "cobranding": null
     },
     {
-      "nombre": "¿JUEGA URUGUAY?",
-      "url": null,
-      "categoria": "Destacados",
-      "pctMax": null,
-      "descuentos": [],
-      "vigencia": "15, 21 y 26 de Junio",
-      "tarjetas": null,
-      "desc": "Acumulás Scotia Puntos X10 en supermercados los días que juega Uruguay",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
       "nombre": "FIFA MUNDIAL",
       "url": null,
       "categoria": "Destacados",
@@ -136,6 +122,31 @@
       "exclusivo": false,
       "red": "Visa",
       "niveles": [],
+      "cobranding": null
+    },
+    {
+      "nombre": "COMBUSTIBLE Y TELEPEAJE",
+      "url": null,
+      "categoria": "Destacados",
+      "pctMax": 50,
+      "descuentos": [
+        {
+          "pct": 50,
+          "texto": "50% de ahorro"
+        },
+        {
+          "pct": 10,
+          "texto": "10% de ahorro"
+        }
+      ],
+      "vigencia": "Todos los días",
+      "tarjetas": "The Platinum Card American Express (excl. ConnectMiles)",
+      "desc": "50% en telepeajes todos los días · 10% en combustible jueves y domingos. Tope $1.200/mes.",
+      "exclusivo": false,
+      "red": "Amex",
+      "niveles": [
+        "Platinum"
+      ],
       "cobranding": null
     },
     {
@@ -555,31 +566,6 @@
       "exclusivo": false,
       "red": null,
       "niveles": [],
-      "cobranding": null
-    },
-    {
-      "nombre": "COMBUSTIBLE Y TELEPEAJE",
-      "url": null,
-      "categoria": "The Platinum Card Amex",
-      "pctMax": 50,
-      "descuentos": [
-        {
-          "pct": 50,
-          "texto": "50% de ahorro"
-        },
-        {
-          "pct": 10,
-          "texto": "10% de ahorro"
-        }
-      ],
-      "vigencia": "Todos los días",
-      "tarjetas": "The Platinum Card American Express (excl. ConnectMiles)",
-      "desc": "50% en telepeajes todos los días · 10% en combustible jueves y domingos. Tope $1.200/mes.",
-      "exclusivo": false,
-      "red": "Amex",
-      "niveles": [
-        "Platinum"
-      ],
       "cobranding": null
     },
     {
@@ -1091,16 +1077,16 @@
       "nombre": "LAIKA",
       "url": null,
       "categoria": "Mascotas",
-      "pctMax": 20,
+      "pctMax": 10,
       "descuentos": [
         {
-          "pct": 20,
-          "texto": "20% de ahorro"
+          "pct": 10,
+          "texto": "10% de ahorro"
         }
       ],
-      "vigencia": "Del 23 al 26 de junio",
-      "tarjetas": "20% de ahorro con tarjetas de crédito.",
-      "desc": "20% de ahorro con tarjetas de crédito.",
+      "vigencia": "Todos los días",
+      "tarjetas": "10% de ahorro con tus tarjetas de crédito en todos los productos.",
+      "desc": "10% de ahorro con tus tarjetas de crédito en todos los productos.",
       "exclusivo": false,
       "red": null,
       "niveles": [],
