@@ -1,7 +1,7 @@
 {
   "fuente": "bbva.com.uy",
-  "actualizado": "2026-06-26T11:56:44.904Z",
-  "total": 293,
+  "actualizado": "2026-06-29T13:16:53.695Z",
+  "total": 294,
   "categorias": [
     "Gastronomía",
     "Moda",
@@ -19,6 +19,43 @@
     "Otros"
   ],
   "beneficios": [
+    {
+      "comercio": "Restaurante 1900",
+      "categoria": "Gastronomía",
+      "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/gastronomia/1900.html",
+      "vigencia": "30 de Junio 2027",
+      "local": "– General Urquiza, Puerta 4, piso 3, Gran Parque Central, La Blanqueada",
+      "descuentos": [
+        {
+          "pct": 20,
+          "tarjetas": "Tarjetas de Crédito Internacional, Oro BBVA Club Nacional de Football",
+          "texto": "20% Off con Tarjetas de Crédito Internacional, Oro BBVA Club Nacional de Football",
+          "isDebit": false,
+          "niveles": [
+            "Oro",
+            "Clásica"
+          ]
+        },
+        {
+          "pct": 30,
+          "tarjetas": "Tarjetas de Crédito Platinum BBVA Club Nacional de Football",
+          "texto": "30% Off con Tarjetas de Crédito Platinum BBVA Club Nacional de Football",
+          "isDebit": false,
+          "niveles": [
+            "Platinum"
+          ]
+        }
+      ],
+      "pctMax": 30,
+      "tope": null,
+      "red": null,
+      "niveles": [
+        "Oro",
+        "Clásica",
+        "Platinum"
+      ],
+      "cobranding": null
+    },
     {
       "comercio": "Casa Berracos",
       "categoria": "Gastronomía",
@@ -8981,7 +9018,7 @@
       "comercio": "ABC Papelerìa",
       "categoria": "Librerías y papelerías",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/librerias-y-papelerias/ABC_Papeleria.html",
-      "vigencia": "28 de Febrero 2026",
+      "vigencia": "28 de Febrero 2027",
       "local": null,
       "descuentos": [
         {
