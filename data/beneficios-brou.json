@@ -1,8 +1,8 @@
 {
   "fuente": "BROU",
   "url": "https://beneficios.brou.com.uy/beneficios",
-  "fecha": "2026-06-29",
-  "total": 69,
+  "fecha": "2026-07-03",
+  "total": 65,
   "beneficios": [
     {
       "nombre": "Banco Hipotecario del Uruguay",
@@ -73,8 +73,8 @@
       "nombre": "Cabify",
       "pctMax": 30,
       "url": "https://beneficios.brou.com.uy/ensenanza/cabify",
-      "tarjetas": "Con el código \"BROUJUN30\" obtenés 4 viajes hasta el 30 de Junio con un 30% de descuento en la zona de Montevideo y Maldonado, abonando con tarjetas de crédito y débito VISA, BROU Recompensa Mastercard",
-      "vigencia": "Vigencia: 30/06/2026",
+      "tarjetas": "Con el código \"BROUJUL30\" obtenés 4 viajes hasta el 31 de Julio con un 30% de descuento en la zona de Montevideo y Maldonado, abonando con tarjetas de crédito y débito VISA, BROU Recompensa Mastercard",
+      "vigencia": "Vigencia: 31/07/2026",
       "desc": "Aprovechá el siguiente beneficio con Cabify",
       "categoria": "ensenanza",
       "red": null,
@@ -262,6 +262,18 @@
       "cobranding": "Recompensa"
     },
     {
+      "nombre": "Beneficios de Invierno",
+      "pctMax": 20,
+      "url": "https://beneficios.brou.com.uy/ensenanza/beneficios-de-invierno-2026",
+      "tarjetas": "20% de descuento, todos los días abonando con tarjetas de crédito VISA y BROU Recompensa Mastercard.",
+      "vigencia": "Vigencia: 30/09/2026",
+      "desc": "¡Aprovechá hasta 20% OFF en restaurantes de todo el país!",
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [],
+      "cobranding": "Recompensa"
+    },
+    {
       "nombre": "Novatex",
       "pctMax": 20,
       "url": "https://beneficios.brou.com.uy/ensenanza/novatex",
@@ -298,21 +310,6 @@
       "cobranding": null
     },
     {
-      "nombre": "Pappolino",
-      "pctMax": 20,
-      "url": "https://beneficios.brou.com.uy/moda/pappolino",
-      "tarjetas": "20% de descuento con tarjetas de crédito BROU VISA Platinum y BROU Recompensa Mastercard Platinum y Black.",
-      "vigencia": "Vigencia: 30/06/2026",
-      "desc": "Aprovechá los siguientes beneficios en tus compras",
-      "categoria": "moda",
-      "red": null,
-      "niveles": [
-        "Platinum",
-        "Black"
-      ],
-      "cobranding": "Recompensa"
-    },
-    {
       "nombre": "Óptica Net",
       "pctMax": 20,
       "url": "https://beneficios.brou.com.uy/salud-estetica/OPticaNet_Estetica",
@@ -323,21 +320,6 @@
       "red": null,
       "niveles": [],
       "cobranding": null
-    },
-    {
-      "nombre": "Guapa!",
-      "pctMax": 20,
-      "url": "https://beneficios.brou.com.uy/ensenanza/guapa",
-      "tarjetas": "20% de descuento con tarjetas de crédito BROU VISA Platinum y BROU Recompensa Mastercard Platinum y Black.",
-      "vigencia": "Vigencia: 30/06/2026",
-      "desc": "Aprovechá los siguientes descuentos en tus compras",
-      "categoria": "ensenanza",
-      "red": null,
-      "niveles": [
-        "Platinum",
-        "Black"
-      ],
-      "cobranding": "Recompensa"
     },
     {
       "nombre": "Barraca Malvín",
@@ -364,6 +346,18 @@
       "cobranding": "Recompensa"
     },
     {
+      "nombre": "Finde descuentos en Las Piedras Shopping",
+      "pctMax": 20,
+      "url": "https://beneficios.brou.com.uy/ensenanza/1803-off-en-las-piedras-shopping",
+      "tarjetas": "18,03% OFF en Las Piedras Shopping y hasta 20% de descuento adicional con tarjetas de crédito del BROU.",
+      "vigencia": "Vigencia: 06/07/2026",
+      "desc": "Finde descuentos en Las Piedras Shopping",
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
+    },
+    {
       "nombre": "AGUERREBERE",
       "pctMax": 20,
       "url": "https://beneficios.brou.com.uy/ensenanza/beneficios-aguerrebere",
@@ -373,21 +367,6 @@
       "categoria": "ensenanza",
       "red": null,
       "niveles": [],
-      "cobranding": "Recompensa"
-    },
-    {
-      "nombre": "Paprika",
-      "pctMax": 20,
-      "url": "https://beneficios.brou.com.uy/moda/paprika",
-      "tarjetas": "20% de descuento con tarjetas de crédito BROU VISA Platinum y BROU Recompensa Mastercard Platinum y Black.",
-      "vigencia": "Vigencia: 30/06/2026",
-      "desc": "Abonando con tarjetas del Banco República accedés a los siguientes descuentos:",
-      "categoria": "moda",
-      "red": null,
-      "niveles": [
-        "Platinum",
-        "Black"
-      ],
       "cobranding": "Recompensa"
     },
     {
@@ -429,23 +408,11 @@
       "cobranding": null
     },
     {
-      "nombre": "Supergas ANCAP",
-      "pctMax": 15,
-      "url": "https://beneficios.brou.com.uy/ensenanza/supergas-ancap",
-      "tarjetas": "Disfrutá de un 15% de descuento en tu recarga de Supergás ANCAP pagando con tu tarjeta de crédito BROU ANCAP.",
-      "vigencia": "Vigencia: 30/06/2026",
-      "desc": "Disfrutá de un 15% de descuento en tu recarga de Supergás ANCAP pagando con tu tarjeta de crédito BROU ANCAP.",
-      "categoria": "ensenanza",
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
       "nombre": "IPlace",
       "pctMax": 15,
       "url": "https://beneficios.brou.com.uy/ensenanza/iplace",
       "tarjetas": "En iPlace, abonando con tarjetas de crédito BROU VISA y BROU Recompensa Mastercard, aprovechá estos beneficios:",
-      "vigencia": "Vigencia: 30/06/2026",
+      "vigencia": "Vigencia: 05/07/2026",
       "desc": "En iPlace, abonando con tarjetas de crédito BROU VISA y BROU Recompensa Mastercard, aprovechá estos beneficios:",
       "categoria": "ensenanza",
       "red": null,
@@ -571,18 +538,6 @@
       "red": null,
       "niveles": [],
       "cobranding": null
-    },
-    {
-      "nombre": "G! Market",
-      "pctMax": 10,
-      "url": "https://beneficios.brou.com.uy/ensenanza/g-market",
-      "tarjetas": "Aprovecha un 10% de descuento abonando con tarjetas de crédito y débito BROU VISA y BROU Recompensa Mastercard.",
-      "vigencia": "Vigencia: 30/06/2026",
-      "desc": "Aprovecha un 10% de descuento abonando con tarjetas de crédito y débito BROU VISA y BROU Recompensa Mastercard.",
-      "categoria": "ensenanza",
-      "red": null,
-      "niveles": [],
-      "cobranding": "Recompensa"
     },
     {
       "nombre": "SIUR ViajoFeliz",
@@ -812,18 +767,6 @@
       "vigencia": null,
       "desc": "Aprovechá los beneficios que te da Tu Banco.",
       "categoria": "hogar",
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
-      "nombre": "Supergas ANCAPuntos",
-      "pctMax": null,
-      "url": "https://beneficios.brou.com.uy/ensenanza/supergasANCAPuntos",
-      "tarjetas": null,
-      "vigencia": "Vigencia: 30/06/2026",
-      "desc": "Canjeá tus ANCAPuntos y obtené un descuento de $200 para tu recarga de Supergás ANCAP en estaciones adheridas.",
-      "categoria": "ensenanza",
       "red": null,
       "niveles": [],
       "cobranding": null
