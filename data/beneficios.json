@@ -1,7 +1,7 @@
 {
   "fuente": "bbva.com.uy",
-  "actualizado": "2026-06-29T13:16:53.695Z",
-  "total": 294,
+  "actualizado": "2026-07-03T11:44:32.069Z",
+  "total": 296,
   "categorias": [
     "Gastronomía",
     "Moda",
@@ -19,6 +19,54 @@
     "Otros"
   ],
   "beneficios": [
+    {
+      "comercio": "Restaurante 1930",
+      "categoria": "Gastronomía",
+      "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/gastronomia/Restaurante_1930.html",
+      "vigencia": "30 de Junio 2027",
+      "local": "Avenida Ricaldoni 1861, Parque Batlle,",
+      "descuentos": [
+        {
+          "pct": 20,
+          "tarjetas": "Tarjetas de Débito",
+          "texto": "20% Off con Tarjetas de Débito",
+          "isDebit": true,
+          "niveles": []
+        },
+        {
+          "pct": 20,
+          "tarjetas": "Tarjetas de Crédito Internacional, Oro, Pymes y Corporativas",
+          "texto": "20% Off con Tarjetas de Crédito Internacional, Oro, Pymes y Corporativas",
+          "isDebit": false,
+          "niveles": [
+            "Oro",
+            "Clásica"
+          ]
+        },
+        {
+          "pct": 30,
+          "tarjetas": "Tarjetas de Crédito Platinum, Black e Infinite",
+          "texto": "30% Off con Tarjetas de Crédito Platinum, Black e Infinite",
+          "isDebit": false,
+          "niveles": [
+            "Infinite",
+            "Platinum",
+            "Black"
+          ]
+        }
+      ],
+      "pctMax": 30,
+      "tope": null,
+      "red": null,
+      "niveles": [
+        "Oro",
+        "Clásica",
+        "Infinite",
+        "Platinum",
+        "Black"
+      ],
+      "cobranding": null
+    },
     {
       "comercio": "Restaurante 1900",
       "categoria": "Gastronomía",
@@ -841,7 +889,7 @@
       "comercio": "Zanti Pizza",
       "categoria": "Gastronomía",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/gastronomia/Zanti_Pizza.html",
-      "vigencia": "30 de Junio 2026",
+      "vigencia": "31 de Julio 2026",
       "local": "Avenida España 1530, Paysandú",
       "descuentos": [
         {
@@ -2366,7 +2414,7 @@
       "comercio": "Don Bigote",
       "categoria": "Gastronomía",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/gastronomia/restaurante-don-bigote.html",
-      "vigencia": "30 de Junio 2026",
+      "vigencia": "30 de Junio 2027",
       "local": "Dr. Carlos Vaz Ferreira 3700",
       "descuentos": [
         {
@@ -2606,7 +2654,7 @@
       "comercio": "Marmatu",
       "categoria": "Gastronomía",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/gastronomia/Marmatu.html",
-      "vigencia": "30 de Junio 2026",
+      "vigencia": "31 de Julio 2026",
       "local": null,
       "descuentos": [
         {
@@ -2646,37 +2694,45 @@
       "comercio": "Emporio de los sándwiches",
       "categoria": "Gastronomía",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/gastronomia/el-emporio-de-los-sandwiches.html",
-      "vigencia": "31 de Julio 2025",
+      "vigencia": "31 de Agosto de 2026",
       "local": null,
       "descuentos": [
         {
-          "pct": 20,
+          "pct": 25,
           "tarjetas": "Tarjetas de Débito",
-          "texto": "20% Off con Tarjetas de Débito",
+          "texto": "25% Off con Tarjetas de Débito",
           "isDebit": true,
           "niveles": []
         },
         {
-          "pct": 20,
-          "tarjetas": "Tarjetas de Crédito Internacionales, Oro, Pymes, Corporativas, Platinum, Black e Infinite",
-          "texto": "20% Off con Tarjetas de Crédito Internacionales, Oro, Pymes, Corporativas, Platinum, Black e Infinite",
+          "pct": 25,
+          "tarjetas": "Tarjetas de Crédito Internacionales, Oro, Pymes y Corporativas",
+          "texto": "25% Off con Tarjetas de Crédito Internacionales, Oro, Pymes y Corporativas",
+          "isDebit": false,
+          "niveles": [
+            "Oro"
+          ]
+        },
+        {
+          "pct": 35,
+          "tarjetas": "Tarjetas de Crédito Platinum, Black e Infinite",
+          "texto": "35% Off con Tarjetas de Crédito Platinum, Black e Infinite",
           "isDebit": false,
           "niveles": [
             "Infinite",
             "Platinum",
-            "Black",
-            "Oro"
+            "Black"
           ]
         }
       ],
-      "pctMax": 20,
+      "pctMax": 35,
       "tope": null,
       "red": null,
       "niveles": [
+        "Oro",
         "Infinite",
         "Platinum",
-        "Black",
-        "Oro"
+        "Black"
       ],
       "cobranding": null
     },
@@ -3225,7 +3281,7 @@
       "comercio": "Kraken Piriápolis",
       "categoria": "Gastronomía",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/gastronomia/Kraken-Piriapolis.html",
-      "vigencia": "30 de Junio 2026",
+      "vigencia": "31 de Julio 2026",
       "local": "Rambla de los Ingleses y Montes de Oca, Punta Fría, Priápolis",
       "descuentos": [
         {
@@ -3798,6 +3854,47 @@
       "cobranding": null
     },
     {
+      "comercio": "Tienda Pegazzano",
+      "categoria": "Moda",
+      "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/moda/Tienda_Pegazzano.html",
+      "vigencia": "30 de junio 2027",
+      "local": "Uruguay y Treinta y Tres, Carmelo",
+      "descuentos": [
+        {
+          "pct": 20,
+          "tarjetas": "Tarjetas de Crédito Internacional, Oro, Pymes y Corporativas",
+          "texto": "20% Off con Tarjetas de Crédito Internacional, Oro, Pymes y Corporativas",
+          "isDebit": false,
+          "niveles": [
+            "Oro",
+            "Clásica"
+          ]
+        },
+        {
+          "pct": 30,
+          "tarjetas": "Tarjetas de Crédito Platinum, Black e Infinite",
+          "texto": "30% Off con Tarjetas de Crédito Platinum, Black e Infinite",
+          "isDebit": false,
+          "niveles": [
+            "Infinite",
+            "Platinum",
+            "Black"
+          ]
+        }
+      ],
+      "pctMax": 30,
+      "tope": null,
+      "red": null,
+      "niveles": [
+        "Oro",
+        "Clásica",
+        "Infinite",
+        "Platinum",
+        "Black"
+      ],
+      "cobranding": null
+    },
+    {
       "comercio": "RDC",
       "categoria": "Moda",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/moda/RDC.html",
@@ -4006,7 +4103,7 @@
       "comercio": "Bas",
       "categoria": "Moda",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/moda/miercoles-25.html",
-      "vigencia": "25 de julio de 2026",
+      "vigencia": "31 de diciembre de 2026",
       "local": null,
       "descuentos": [],
       "pctMax": null,
@@ -4220,7 +4317,7 @@
       "comercio": "BAS",
       "categoria": "Moda",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/moda/bas.html",
-      "vigencia": "30 de abril de 2026",
+      "vigencia": "31 de Diciembre de 2026",
       "local": null,
       "descuentos": [],
       "pctMax": null,
@@ -4561,7 +4658,7 @@
       "comercio": "Basefield",
       "categoria": "Moda",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/moda/basefield.html",
-      "vigencia": "30 de Junio 2026",
+      "vigencia": "30 de Junio 2027",
       "local": null,
       "descuentos": [
         {
@@ -5492,7 +5589,7 @@
       "comercio": "Gibernau",
       "categoria": "Mundo Infantil",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/mundo-infantil/jugueteria-gibernau.html",
-      "vigencia": "30 de Junio de 2026",
+      "vigencia": "31 de Julio de 2026",
       "local": "Agraciada 2382, Aguada",
       "descuentos": [
         {
@@ -6332,19 +6429,6 @@
       "cobranding": null
     },
     {
-      "comercio": "Viernes IVA Off Multi Ahorro Hogar Hometech",
-      "categoria": "Hogar y Decoración",
-      "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/hogar-y-decoracion/viernes-iva-off-multi-ahorro-hogar-hometech.html",
-      "vigencia": "25 de julio de 2026",
-      "local": null,
-      "descuentos": [],
-      "pctMax": null,
-      "tope": null,
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
       "comercio": "Cande Kids",
       "categoria": "Hogar y Decoración",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/hogar-y-decoracion/Cande_Kids.html",
@@ -6430,7 +6514,7 @@
       "comercio": "Descuento de bienvenida",
       "categoria": "Hogar y Decoración",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/hogar-y-decoracion/Descuento_de_bienvenida.html",
-      "vigencia": "25 de julio de 2026",
+      "vigencia": "31 de diciembre de 2026",
       "local": null,
       "descuentos": [],
       "pctMax": null,
@@ -7034,7 +7118,7 @@
       "comercio": "Punto Arte",
       "categoria": "Hogar y Decoración",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/hogar-y-decoracion/punto-arte.html",
-      "vigencia": "30 de Junio 2026",
+      "vigencia": "31 de Julio 2026",
       "local": "San José 1333, Centro",
       "descuentos": [
         {
@@ -7231,7 +7315,7 @@
       "comercio": "Forum Design",
       "categoria": "Hogar y Decoración",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/hogar-y-decoracion/forum-design.html",
-      "vigencia": "30 de Junio 2026",
+      "vigencia": "30 de Junio 2027",
       "local": null,
       "descuentos": [
         {
@@ -7272,13 +7356,61 @@
       "comercio": "Tata",
       "categoria": "Hogar y Decoración",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/hogar-y-decoracion/miercoles-10.html",
-      "vigencia": "25 de julio de 2026",
+      "vigencia": "31 de diciembre de 2026",
       "local": null,
       "descuentos": [],
       "pctMax": null,
       "tope": null,
       "red": null,
       "niveles": [],
+      "cobranding": null
+    },
+    {
+      "comercio": "Farmacity",
+      "categoria": "Cuidado Personal",
+      "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/cuidado-personal/Farmacity.html",
+      "vigencia": "30 de Junio 2027",
+      "local": null,
+      "descuentos": [
+        {
+          "pct": 20,
+          "tarjetas": "Tarjetas de Débito",
+          "texto": "20% Off con Tarjetas de Débito",
+          "isDebit": true,
+          "niveles": []
+        },
+        {
+          "pct": 20,
+          "tarjetas": "Tarjetas de Crédito Internacional, Oro, Pymes y Corporativas",
+          "texto": "20% Off con Tarjetas de Crédito Internacional, Oro, Pymes y Corporativas",
+          "isDebit": false,
+          "niveles": [
+            "Oro",
+            "Clásica"
+          ]
+        },
+        {
+          "pct": 30,
+          "tarjetas": "Tarjetas de Crédito Platinum, Black e Infinite",
+          "texto": "30% Off con Tarjetas de Crédito Platinum, Black e Infinite",
+          "isDebit": false,
+          "niveles": [
+            "Infinite",
+            "Platinum",
+            "Black"
+          ]
+        }
+      ],
+      "pctMax": 30,
+      "tope": "El descuento será de un 20%, se aplicará en el punto de venta, sin tope de devolución.",
+      "red": null,
+      "niveles": [
+        "Oro",
+        "Clásica",
+        "Infinite",
+        "Platinum",
+        "Black"
+      ],
       "cobranding": null
     },
     {
@@ -7508,7 +7640,7 @@
       "comercio": "Flo Beauty",
       "categoria": "Cuidado Personal",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/cuidado-personal/flo-beauty.html",
-      "vigencia": "30 de Junio 2026",
+      "vigencia": "31 de Julio 2026",
       "local": null,
       "descuentos": [
         {
@@ -7669,7 +7801,7 @@
       "comercio": "Farmacia Garcén",
       "categoria": "Cuidado Personal",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/cuidado-personal/Farmacia-Garcen.html",
-      "vigencia": "30 de Junio 2026",
+      "vigencia": "30 de Junio 2027",
       "local": "18 de Julio 1400, Young",
       "descuentos": [],
       "pctMax": null,
@@ -7696,7 +7828,7 @@
       "categoria": "Cuidado Personal",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/cuidado-personal/Botica-Farmacia-Albisu.html",
       "vigencia": "30 de Abril 2027",
-      "local": "Artigas 799, Salto",
+      "local": null,
       "descuentos": [],
       "pctMax": null,
       "tope": null,
@@ -9113,7 +9245,7 @@
       "comercio": "Santillana",
       "categoria": "Librerías y papelerías",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/librerias-y-papelerias/santillana.html",
-      "vigencia": "30 de Junio 2026",
+      "vigencia": "31 de Julio 2026",
       "local": "Juan Manuel Blanes 1132 esq. Maldonado, Cordón",
       "descuentos": [
         {
@@ -9202,7 +9334,7 @@
       "comercio": "Puro Verso",
       "categoria": "Librerías y papelerías",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/librerias-y-papelerias/puro-verso.html",
-      "vigencia": "30 de Junio 2026",
+      "vigencia": "30 de Junio 2027",
       "local": "18 de Julio 1199, Centro",
       "descuentos": [
         {
@@ -9498,7 +9630,7 @@
       "comercio": "Market",
       "categoria": "Tecnología",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/tecnologia/celular-market.html",
-      "vigencia": "31 de Mayo 2026",
+      "vigencia": "31 de Julio 2026",
       "local": null,
       "descuentos": [
         {
@@ -9571,7 +9703,7 @@
       "comercio": "Álamo Rent a Car",
       "categoria": "Autos",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/autos/alamo-rent-a-car.html",
-      "vigencia": "30 de Junio 2026",
+      "vigencia": "30 de Junio 2027",
       "local": "Nicaragua 1144, Montevideo",
       "descuentos": [],
       "pctMax": null,
@@ -9617,7 +9749,7 @@
       "comercio": "Biela Repuestos",
       "categoria": "Autos",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/autos/biela-repuestos.html",
-      "vigencia": "30 de Junio 2026",
+      "vigencia": "30 de Junio 2027",
       "local": null,
       "descuentos": [],
       "pctMax": null,
@@ -9735,6 +9867,39 @@
       "cobranding": null
     },
     {
+      "comercio": "Barraca Maldonado",
+      "categoria": "Otros",
+      "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/otros/Barraca_Maldonado.html",
+      "vigencia": "30 de Junio 2027",
+      "local": "Aparicio Saravia, Maldonado",
+      "descuentos": [
+        {
+          "pct": 15,
+          "tarjetas": "Tarjetas de Crédito Internacional, Oro, Pymes, Corporativas, Crédito Platinum, Black e Infinite",
+          "texto": "15% Off con Tarjetas de Crédito Internacional, Oro, Pymes, Corporativas, Crédito Platinum, Black e Infinite",
+          "isDebit": false,
+          "niveles": [
+            "Infinite",
+            "Platinum",
+            "Black",
+            "Oro",
+            "Clásica"
+          ]
+        }
+      ],
+      "pctMax": 15,
+      "tope": "El descuento será de un 15 %, se aplicará en el punto de venta, sin tope de devolución",
+      "red": null,
+      "niveles": [
+        "Infinite",
+        "Platinum",
+        "Black",
+        "Oro",
+        "Clásica"
+      ],
+      "cobranding": null
+    },
+    {
       "comercio": "Dufour rural",
       "categoria": "Otros",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/otros/Dufour_rural.html",
@@ -9797,33 +9962,6 @@
         "Black",
         "Oro",
         "Clásica"
-      ],
-      "cobranding": null
-    },
-    {
-      "comercio": "Tata",
-      "categoria": "Otros",
-      "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/otros/ofertata.html",
-      "vigencia": "31 de Marzo de 2026",
-      "local": null,
-      "descuentos": [
-        {
-          "pct": 20,
-          "tarjetas": "Tarjetas de Crédito Comunidad Plus Internacionales, Oro,Infinite",
-          "texto": "20% Off con Tarjetas de Crédito Comunidad Plus Internacionales, Oro,Infinite",
-          "isDebit": false,
-          "niveles": [
-            "Infinite",
-            "Oro"
-          ]
-        }
-      ],
-      "pctMax": 20,
-      "tope": null,
-      "red": null,
-      "niveles": [
-        "Infinite",
-        "Oro"
       ],
       "cobranding": null
     },
@@ -9978,7 +10116,7 @@
       "comercio": "BuyBox",
       "categoria": "Otros",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/otros/buybox.html",
-      "vigencia": "30 de Junio 2026",
+      "vigencia": "30 de Junio 2027",
       "local": "Palmar 2529, Montevideo",
       "descuentos": [],
       "pctMax": null,
@@ -9991,7 +10129,7 @@
       "comercio": "Hacienda Tierra Negra",
       "categoria": "Otros",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/otros/hacienda-tierra-negra.html",
-      "vigencia": "30 de junio 2026",
+      "vigencia": "31 de julio 2026",
       "local": "Hacienda Tierra Negra, Zonamerica",
       "descuentos": [
         {
@@ -10039,7 +10177,7 @@
       "comercio": "La Hora Exacta",
       "categoria": "Otros",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/otros/la-hora-exacta.html",
-      "vigencia": "30 de Junio 2026",
+      "vigencia": "30 de Junio 2027",
       "local": null,
       "descuentos": [
         {
