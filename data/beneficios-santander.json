@@ -1,7 +1,7 @@
 {
   "fuente": "santander.com.uy",
-  "actualizado": "2026-06-29T14:37:35.194Z",
-  "total": 337,
+  "actualizado": "2026-07-03T12:37:06.093Z",
+  "total": 330,
   "beneficios": [
     {
       "nombre": "Optica Estela Jinchuk",
@@ -1306,10 +1306,10 @@
     {
       "nombre": "Centro Hogar",
       "url": "https://www.santander.com.uy/beneficios/centro-hogar",
-      "pctMax": 15,
+      "pctMax": null,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta.",
+      "desc": "El comercio acepta canje de puntos Soy Santander.",
       "red": null,
       "niveles": [],
       "cobranding": null
@@ -1416,10 +1416,10 @@
     {
       "nombre": "Bed Home",
       "url": "https://www.santander.com.uy/beneficios/bed-home",
-      "pctMax": 15,
+      "pctMax": null,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta.",
+      "desc": "El comercio acepta canje de puntos Soy Santander.",
       "red": null,
       "niveles": [],
       "cobranding": null
@@ -2019,17 +2019,6 @@
       "cobranding": null
     },
     {
-      "nombre": "Gymtonic",
-      "url": "https://www.santander.com.uy/beneficios/gymtonic",
-      "pctMax": 15,
-      "vigencia": null,
-      "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta.",
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
       "nombre": "Pekemundo",
       "url": "https://www.santander.com.uy/beneficios/pekemundo",
       "pctMax": 15,
@@ -2135,17 +2124,6 @@
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "Oh Jacinta! - The Kul Store",
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
-      "nombre": "Chili Accesorios - The Kul Store",
-      "url": "https://www.santander.com.uy/beneficios/chili-accesorios-kul-store",
-      "pctMax": 15,
-      "vigencia": null,
-      "tarjetas": "Tarjetas de crédito",
-      "desc": "Chili Accesorios - The Kul Store",
       "red": null,
       "niveles": [],
       "cobranding": null
@@ -2846,10 +2824,10 @@
     {
       "nombre": "Incasa",
       "url": "https://www.santander.com.uy/beneficios/incasa",
-      "pctMax": 15,
+      "pctMax": null,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta.",
+      "desc": "El comercio acepta canje de puntos Soy Santander.",
       "red": null,
       "niveles": [],
       "cobranding": null
@@ -2976,17 +2954,6 @@
       "cobranding": null
     },
     {
-      "nombre": "La Pasiva Solanas",
-      "url": "https://www.santander.com.uy/beneficios/la-pasiva-solanas",
-      "pctMax": 25,
-      "vigencia": null,
-      "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
       "nombre": "Legua",
       "url": "https://www.santander.com.uy/beneficios/legua",
       "pctMax": 25,
@@ -3022,28 +2989,6 @@
     {
       "nombre": "Menos Mal",
       "url": "https://www.santander.com.uy/beneficios/menos-mal",
-      "pctMax": 25,
-      "vigencia": null,
-      "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
-      "nombre": "Parador 8 de la Brava",
-      "url": "https://www.santander.com.uy/beneficios/parador-8-de-la-brava",
-      "pctMax": 25,
-      "vigencia": null,
-      "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
-      "nombre": "Parador San Rafael",
-      "url": "https://www.santander.com.uy/beneficios/parador-san-rafael",
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
@@ -3097,17 +3042,6 @@
       "cobranding": null
     },
     {
-      "nombre": "Gelato House",
-      "url": "https://www.santander.com.uy/beneficios/gelato-house",
-      "pctMax": 50,
-      "vigencia": null,
-      "tarjetas": "• Tope de Devolución: el mismo se calcula por tipo de tarjeta: crédito o débito.",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
       "nombre": "Nihon Sushi",
       "url": "https://www.santander.com.uy/beneficios/nihon-sushi",
       "pctMax": 25,
@@ -3125,28 +3059,6 @@
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
-      "nombre": "Anushka Elliot",
-      "url": "https://www.santander.com.uy/beneficios/anushka-elliot",
-      "pctMax": 15,
-      "vigencia": null,
-      "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectuará en el estado de cuenta, pudiendo figurar en el mismo hasta 30 días después de efectuada la compra.",
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
-      "nombre": "Sentido",
-      "url": "https://www.santander.com.uy/beneficios/sentido",
-      "pctMax": 15,
-      "vigencia": null,
-      "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectuará en el estado de cuenta , pudiendo figurar en el mismo hasta 30 días después de efectuada la compra.",
       "red": null,
       "niveles": [],
       "cobranding": null
@@ -3708,6 +3620,17 @@
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
+    },
+    {
+      "nombre": "Victoriana",
+      "url": "https://www.santander.com.uy/beneficios/victoriana",
+      "pctMax": null,
+      "vigencia": null,
+      "tarjetas": "Tarjetas de crédito",
+      "desc": "El comercio acepta canje de puntos Soy Santander.",
       "red": null,
       "niveles": [],
       "cobranding": null
