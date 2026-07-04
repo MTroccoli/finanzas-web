@@ -560,5 +560,22 @@ La app pasó de single-user a **multi-usuario con Supabase Auth (email/password)
 
 **Restricción:** plan gratuito de Supabase — se pausa tras 7 días sin actividad (primer request reactiva en ~30s). Suficiente para testing con amigos.
 
-### Próximo trabajo planificado: mensaje de bienvenida / onboarding
-Guiar al usuario nuevo tras el registro: mensaje de bienvenida, breve descripción de cada módulo, y que elija por dónde empezar y qué módulos quiere usar. (En discusión.)
+### Onboarding / mensaje de bienvenida — IMPLEMENTADO (sesión 2026-07-04)
+
+`modules/onboarding.js` (`v=20260704`) — overlay de 3 pasos tras el primer login:
+1. **Nombre** — input; se guarda en `configuracion.user_nombre` (per-user). Da calidez a los textos siguientes.
+2. **Módulos** — tarjetas con checkbox (todos ON por defecto) para elegir qué usar. Requiere ≥1.
+3. **Por dónde empezar** — botones de los módulos habilitados que rutean directo.
+
+- Módulos toggleables: `dashboard, inversiones, gastos, tarjetas, ingresos` (Presupuesto está dormido: sin ruta ni nav). Configuración siempre visible.
+- Estado guardado en `configuracion` (per-user): `user_nombre`, `modules_enabled` (CSV de keys; ausente = todos), `onboarding_done` (`'true'`).
+- **`js/auth.js`** `_afterSignIn()` carga las 3 claves, setea `window.APP_MODULES` (Set o `null`=todos), pinta nombre en `#sn-user-area`, llama `applyModuleVisibility()`, y si `!onboarding_done` lanza `onboarding.start()` (al finalizar rutea); si no, `handleRoute()`.
+- **`js/app.js`**: `applyModuleVisibility()` oculta ítems del sidenav por `NAV_SELECTORS`; `firstEnabledModule()` da landing por defecto; `handleRoute` hace fallback si la página pedida está deshabilitada (con `history.replaceState`).
+- **`modules/config_page.js`** (`v=20260704`): tarjeta "Presentación y módulos" con checkboxes (guardan `modules_enabled` + reaplican visibilidad) y botón "Rehacer presentación de bienvenida" (`onboarding.start()`).
+
+### Próximo trabajo planificado: asistente de carga inicial (fase 2 del onboarding)
+Para que la app no arranque vacía, guiar la primera carga de datos (opcional, tras el onboarding). Ideas:
+- Cargar una compra de acción (1 operación) → sembrar Inversiones.
+- Cargar ingresos mensuales recurrentes → sembrar Ingresos + presets.
+- Cargar ~3 meses de gastos vía import EDC → **más pesado**: avisar que tenga los EDC a mano y que puede llevar ~10 min de seteo.
+(En discusión — todavía sin implementar.)

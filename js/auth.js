@@ -1,5 +1,6 @@
 window.Auth = {
   _user: null,
+  _nombre: '',
 
   async init() {
     const sb = getDB();
@@ -24,10 +25,20 @@ window.Auth = {
   async _afterSignIn() {
     try { await getDB().rpc('claim_existing_data'); } catch (_) {}
     document.getElementById('auth-screen')?.remove();
+
+    // Preferencias per-user: nombre + módulos habilitados (null = todos)
+    const [nombre, mods, onbDone] = await Promise.all([
+      getConfig('user_nombre').catch(() => null),
+      getConfig('modules_enabled').catch(() => null),
+      getConfig('onboarding_done').catch(() => null),
+    ]);
+    this._nombre = nombre || '';
+    window.APP_MODULES = mods ? new Set(mods.split(',').filter(Boolean)) : null;
+
     const userArea = document.getElementById('sn-user-area');
     if (userArea && !userArea.querySelector('.sn-signout')) {
       userArea.innerHTML = `
-        <div class="sn-user-email">${this._user.email}</div>
+        <div class="sn-user-email">${this._nombre || this._user.email}</div>
         <button class="sn-signout">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
@@ -38,7 +49,14 @@ window.Auth = {
         </button>`;
       userArea.querySelector('.sn-signout').addEventListener('click', () => this.signOut());
     }
-    handleRoute();
+
+    if (typeof applyModuleVisibility === 'function') applyModuleVisibility();
+
+    if (!onbDone && window.Mods?.onboarding) {
+      window.Mods.onboarding.start();   // al finalizar rutea al módulo elegido
+    } else {
+      handleRoute();
+    }
   },
 
   _showScreen() {

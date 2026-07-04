@@ -12,14 +12,51 @@ const PAGE_NAMES = {
   gastos: 'Gastos', tarjetas: 'Tarjetas', ingresos: 'Ingresos', configuracion: 'Configuración',
 };
 
+// Orden de módulos para elegir landing por defecto cuando el pedido está deshabilitado
+const MODULE_ORDER = ['dashboard', 'inversiones', 'gastos', 'tarjetas', 'ingresos'];
+
+// Selectores del sidenav por módulo (para ocultar los no habilitados)
+const NAV_SELECTORS = {
+  dashboard:   ['a.sn-item[data-page="dashboard"]'],
+  inversiones: ['.sn-acc[data-acc="inversiones"]'],
+  gastos:      ['.sn-acc[data-acc="gastos"]', 'a.sn-item[data-page="gastos"][data-sub="importar"]'],
+  tarjetas:    ['.sn-acc[data-acc="tarjetas"]'],
+  ingresos:    ['a.sn-item[data-page="ingresos"]'],
+};
+
+function moduleEnabled(key) {
+  return !window.APP_MODULES || window.APP_MODULES.has(key);
+}
+
+function firstEnabledModule() {
+  return MODULE_ORDER.find(moduleEnabled) || 'configuracion';
+}
+
+function applyModuleVisibility() {
+  for (const [key, sels] of Object.entries(NAV_SELECTORS)) {
+    const show = moduleEnabled(key);
+    sels.forEach(sel => document.querySelectorAll(sel).forEach(el => {
+      el.style.display = show ? '' : 'none';
+    }));
+  }
+}
+
 async function handleRoute() {
   if (!window.Auth?._user) return;
   document.getElementById('gas-subnav')?.remove();
 
-  const hash = window.location.hash.slice(1) || 'dashboard';
-  const [page, sub] = hash.split('/');
-  const route = PAGES[page] || PAGES.dashboard;
-  const activePage = PAGES[page] ? page : 'dashboard';
+  const hash = window.location.hash.slice(1) || firstEnabledModule();
+  const [reqPage, reqSub] = hash.split('/');
+
+  // Página pedida, con fallback si no existe o está deshabilitada (config siempre disponible)
+  let activePage = PAGES[reqPage] ? reqPage : firstEnabledModule();
+  if (activePage !== 'configuracion' && !moduleEnabled(activePage)) {
+    activePage = firstEnabledModule();
+  }
+  if (activePage !== reqPage) history.replaceState(null, '', '#' + activePage);
+
+  const sub = activePage === reqPage ? reqSub : undefined;
+  const route = PAGES[activePage];
   const activeSub = sub || (activePage === 'inversiones' ? 'portafolio' : 'resumen');
 
   document.body.classList.remove('nav-open');

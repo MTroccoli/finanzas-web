@@ -55,6 +55,30 @@ window.Mods.configuracion = {
       </div>
 
       <div class="form-card">
+        <h3>Presentación y módulos</h3>
+        <p style="font-size:.82rem;color:var(--text-sec);margin:0 0 14px">
+          Elegí qué módulos ver en el menú. Los que desmarques se ocultan (podés volver a activarlos acá cuando quieras).
+        </p>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">
+          ${(window.Mods.onboarding?.MODULES || []).map(m => {
+            const on = !window.APP_MODULES || window.APP_MODULES.has(m.key);
+            return `
+            <label style="display:flex;align-items:center;gap:11px;cursor:pointer;padding:8px 10px;
+              border:1px solid var(--border);border-radius:9px;background:var(--bg)">
+              <input type="checkbox" class="cfg-mod" data-key="${m.key}" ${on ? 'checked' : ''}
+                style="width:17px;height:17px;accent-color:var(--accent);flex-shrink:0">
+              <span style="font-size:1.15rem;line-height:1">${m.emoji}</span>
+              <span style="flex:1;font-size:.88rem;color:var(--text)">${m.name}</span>
+            </label>`;
+          }).join('')}
+        </div>
+        <button id="btn-save-mods" class="btn btn-primary">Guardar módulos</button>
+        <span id="mods-msg" style="margin-left:12px;font-family:'DM Mono',monospace;font-size:.72rem;color:var(--green);display:none">✅ Guardado</span>
+        <hr style="margin:20px 0">
+        <button id="btn-redo-onb" class="btn btn-ghost">Rehacer presentación de bienvenida</button>
+      </div>
+
+      <div class="form-card">
         <h3>Mantenimiento de datos</h3>
         <p style="font-size:.82rem;color:var(--text-sec);margin:0 0 14px">
           Corrige el <strong>tipo de cambio histórico</strong> de todas las operaciones en moneda
@@ -80,6 +104,23 @@ window.Mods.configuracion = {
     `;
 
     document.getElementById('btn-signout-cfg').addEventListener('click', () => window.Auth.signOut());
+
+    document.getElementById('btn-save-mods')?.addEventListener('click', async () => {
+      const keys = [...document.querySelectorAll('.cfg-mod:checked')].map(c => c.dataset.key);
+      if (!keys.length) { toast('Elegí al menos un módulo', 'err'); return; }
+      try {
+        await setConfig('modules_enabled', keys.join(','));
+        window.APP_MODULES = new Set(keys);
+        if (typeof applyModuleVisibility === 'function') applyModuleVisibility();
+        const msg = document.getElementById('mods-msg');
+        msg.style.display = 'inline';
+        setTimeout(() => { msg.style.display = 'none'; }, 2500);
+      } catch (err) { toast('❌ ' + err.message, 'err'); }
+    });
+
+    document.getElementById('btn-redo-onb')?.addEventListener('click', () => {
+      window.Mods.onboarding?.start();
+    });
 
     document.getElementById('cfg-moneda-vista').addEventListener('change', e => {
       const wrap = document.getElementById('cfg-tc-wrap');
