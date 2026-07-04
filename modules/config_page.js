@@ -67,7 +67,7 @@ window.Mods.configuracion = {
               border:1px solid var(--border);border-radius:9px;background:var(--bg)">
               <input type="checkbox" class="cfg-mod" data-key="${m.key}" ${on ? 'checked' : ''}
                 style="width:17px;height:17px;accent-color:var(--accent);flex-shrink:0">
-              <span style="font-size:1.15rem;line-height:1">${m.emoji}</span>
+              <span style="color:var(--accent);display:flex;flex-shrink:0">${window.Mods.onboarding._icon(m.key, 20)}</span>
               <span style="flex:1;font-size:.88rem;color:var(--text)">${m.name}</span>
             </label>`;
           }).join('')}
