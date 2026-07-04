@@ -564,12 +564,13 @@ La app pasó de single-user a **multi-usuario con Supabase Auth (email/password)
 
 ### Onboarding / mensaje de bienvenida — IMPLEMENTADO (sesión 2026-07-04)
 
-`modules/onboarding.js` (`v=20260704`) — overlay de 3 pasos tras el primer login:
-1. **Nombre** — input; se guarda en `configuracion.user_nombre` (per-user). Da calidez a los textos siguientes.
+`modules/onboarding.js` (`v=20260704d`) — overlay de 3 pasos tras el primer login:
+1. **Bienvenida** — explica qué hace la app (lista de módulos con ícono + frase de `WELCOME`) + input de nombre (`configuracion.user_nombre`, per-user).
 2. **Módulos** — tarjetas con checkbox (todos ON por defecto) para elegir qué usar. Requiere ≥1.
-3. **Por dónde empezar** — botones de los módulos habilitados que rutean directo.
+3. **Carga guiada** — muestra el plan (módulos con pantalla de carga, en `GUIDE_ORDER`). Botón "Empezar carga guiada" o "Explorar por mi cuenta".
 
-- Módulos toggleables: `dashboard, inversiones, gastos, tarjetas, ingresos` (Presupuesto está dormido: sin ruta ni nav). Configuración siempre visible.
+- **Carga guiada (widget flotante):** tras "Empezar", `_startGuide()` guarda prefs, cierra el overlay y muestra un widget fijo (`#onb-guide`, en `document.body`, sobrevive a `handleRoute`) que va llevando a cada pantalla de datos: tarjetas→`#tarjetas/mis-tarjetas`, ingresos→`#ingresos`, inversiones→`#inversiones/operaciones`, gastos→`#gastos/importar` (mapa `GUIDE`). Botones Siguiente/Saltar/✕. Al terminar rutea a `#dashboard`. El widget es efímero (no persiste si se refresca a mitad).
+- Módulos toggleables: `dashboard, inversiones, gastos, tarjetas, ingresos` (Presupuesto está dormido: sin ruta ni nav). Configuración siempre visible. Análisis se excluye de la carga guiada (es resultante).
 - Estado guardado en `configuracion` (per-user): `user_nombre`, `modules_enabled` (CSV de keys; ausente = todos), `onboarding_done` (`'true'`).
 - **`js/auth.js`** `_afterSignIn()` carga las 3 claves, setea `window.APP_MODULES` (Set o `null`=todos), pinta nombre en `#sn-user-area`, llama `applyModuleVisibility()`, y si `!onboarding_done` lanza `onboarding.start()` (al finalizar rutea); si no, `handleRoute()`.
 - **`js/app.js`**: `applyModuleVisibility()` oculta ítems del sidenav por `NAV_SELECTORS`; `firstEnabledModule()` da landing por defecto; `handleRoute` hace fallback si la página pedida está deshabilitada (con `history.replaceState`).
