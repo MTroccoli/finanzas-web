@@ -775,6 +775,14 @@ tbody tr:hover td { background: rgba(46,127,217,.04); }
   box-shadow: 0 0 0 2px rgba(46,127,217,.2);
 }
 .form-group select { appearance: none; }
+/* iOS Safari ignora width:100% en input[type=date] por su UA stylesheet.
+   appearance:none lo obliga a respetar el ancho del contenedor. */
+.form-group input[type="date"],
+.form-group input[type="time"] {
+  -webkit-appearance: none;
+  appearance: none;
+  min-height: 38px;
+}
 .form-group input::placeholder { color: var(--text-sec); }
 
 /* ── Botones ───────────────────────────────────────────────────────────── */
@@ -794,7 +802,7 @@ tbody tr:hover td { background: rgba(46,127,217,.04); }
 }
 .btn-primary {
   background: var(--accent-dark);
-  color: var(--text);
+  color: #fff;
   border: 1px solid var(--accent);
 }
 .btn-primary:hover { background: var(--accent); color: #fff; }
