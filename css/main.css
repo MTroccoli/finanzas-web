@@ -17,6 +17,25 @@
   --nav-h:        0px;
   --subnav-h:     44px;
   --mob-nav-h:    0px;
+  color-scheme: dark;
+}
+
+/* ── Modo claro "Lino" — marfil cálido + azul acero apagado ─────────────── */
+:root[data-theme="light"] {
+  --bg:           #FAF7F2;
+  --surface:      #FFFFFF;
+  --surface-alt:  #F1ECE3;
+  --surface-3:    #E7DDCD;
+  --border:       rgba(90,75,55,0.16);
+  --border-strong:rgba(90,75,55,0.30);
+  --text:         #262119;
+  --text-sec:     rgba(60,52,40,0.62);
+  --accent:       #3E7098;
+  --accent-dark:  #2D5474;
+  --green:        #3C8C63;
+  --red:          #C0574C;
+  --gold:         #9A7A2E;
+  color-scheme: light;
 }
 
 /* ── Reset & base ──────────────────────────────────────────────────────── */
@@ -53,6 +72,7 @@ input, select, textarea { font-family: inherit; }
   width: auto;
   display: block;
   flex-shrink: 0;
+  color: var(--text);
 }
 .auth-logo svg {
   height: 76px;

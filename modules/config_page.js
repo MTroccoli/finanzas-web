@@ -55,6 +55,20 @@ window.Mods.configuracion = {
       </div>
 
       <div class="form-card">
+        <h3>Apariencia</h3>
+        <p style="font-size:.82rem;color:var(--text-sec);margin:0 0 14px">Elegí el tema de la app.</p>
+        <div style="display:flex;gap:10px">
+          ${[['dark', '🌙 Oscuro'], ['light', '☀️ Claro']].map(([val, lbl]) => `
+            <button class="cfg-theme-btn" data-theme-val="${val}" style="flex:1;padding:12px;border-radius:10px;cursor:pointer;
+              font-size:.85rem;font-weight:600;
+              border:1px solid ${(window.APP_THEME || 'dark') === val ? 'var(--accent)' : 'var(--border)'};
+              background:${(window.APP_THEME || 'dark') === val ? 'rgba(62,112,152,.14)' : 'transparent'};
+              color:${(window.APP_THEME || 'dark') === val ? 'var(--accent)' : 'var(--text)'}">${lbl}</button>
+          `).join('')}
+        </div>
+      </div>
+
+      <div class="form-card">
         <h3>Presentación y módulos</h3>
         <p style="font-size:.82rem;color:var(--text-sec);margin:0 0 14px">
           Elegí qué módulos ver en el menú. Los que desmarques se ocultan (podés volver a activarlos acá cuando quieras).
@@ -120,6 +134,15 @@ window.Mods.configuracion = {
 
     document.getElementById('btn-redo-onb')?.addEventListener('click', () => {
       window.Mods.onboarding?.start();
+    });
+
+    document.querySelectorAll('.cfg-theme-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const val = btn.dataset.themeVal;
+        if (typeof applyTheme === 'function') applyTheme(val);
+        try { await setConfig('tema', val); } catch (_) {}
+        this.render();   // refresca el estado visual de los botones
+      });
     });
 
     document.getElementById('cfg-moneda-vista').addEventListener('change', e => {

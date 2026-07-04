@@ -24,6 +24,14 @@ const NAV_SELECTORS = {
   ingresos:    ['a.sn-item[data-page="ingresos"]'],
 };
 
+function applyTheme(theme) {
+  const t = theme === 'light' ? 'light' : 'dark';
+  window.APP_THEME = t;
+  document.documentElement.setAttribute('data-theme', t);
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute('content', t === 'light' ? '#FAF7F2' : '#071E3D');
+}
+
 function moduleEnabled(key) {
   return !window.APP_MODULES || window.APP_MODULES.has(key);
 }

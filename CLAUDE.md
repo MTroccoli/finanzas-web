@@ -576,6 +576,19 @@ La app pasó de single-user a **multi-usuario con Supabase Auth (email/password)
 - **`js/app.js`**: `applyModuleVisibility()` oculta ítems del sidenav por `NAV_SELECTORS`; `firstEnabledModule()` da landing por defecto; `handleRoute` hace fallback si la página pedida está deshabilitada (con `history.replaceState`).
 - **`modules/config_page.js`** (`v=20260704`): tarjeta "Presentación y módulos" con checkboxes (guardan `modules_enabled` + reaplican visibilidad) y botón "Rehacer presentación de bienvenida" (`onboarding.start()`).
 
+### Modo claro "Lino" — FASE 1 IMPLEMENTADA (sesión 2026-07-04)
+
+Tema claro opcional (marfil cálido + azul acero apagado), elegido de 3 opciones.
+- **`css/main.css`**: bloque `:root[data-theme="light"]` que overridea los tokens de color (bg `#FAF7F2`, surface `#FFFFFF`, accent `#3E7098`, green `#3C8C63`, red `#C0574C`, gold `#9A7A2E`, etc.) + `color-scheme`. El tema oscuro (`:root`) quedó intacto. `.tb-logo { color: var(--text) }` + logo "inPro" con `fill="currentColor"` para que se adapte.
+- **`js/app.js`**: `applyTheme(t)` setea `data-theme` en `<html>`, `window.APP_THEME` y el `<meta theme-color>`.
+- **`js/auth.js`**: `_afterSignIn()` carga `getConfig('tema')` y aplica el tema antes de rutear.
+- **`modules/config_page.js`** (`v=20260704c`): tarjeta "Apariencia" con toggle 🌙 Oscuro / ☀️ Claro (persiste en `configuracion.tema`).
+- **Preferencia per-user:** `configuracion.tema` (`'dark'` default | `'light'`).
+
+**FASE 2 pendiente (pulido del modo claro):**
+- ~50 overlays inline `rgba(255,255,255,.0x)` en módulos (striping/hover) → se aplanan en claro; tokenizar a una var theme-aware.
+- 15 configs de **Plotly** (dashboard/gastos/inversiones) con colores oscuros hardcodeados (font `#cfcfcf`, grid `rgba(255,255,255,.05)`) → ejes/grilla casi invisibles en claro; centralizar en un helper `plotlyTheme()`.
+
 ### Próximo trabajo planificado: asistente de carga inicial (fase 2 del onboarding)
 Para que la app no arranque vacía, guiar la primera carga de datos (opcional, tras el onboarding). Ideas:
 - Cargar una compra de acción (1 operación) → sembrar Inversiones.

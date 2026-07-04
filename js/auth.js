@@ -26,14 +26,16 @@ window.Auth = {
     try { await getDB().rpc('claim_existing_data'); } catch (_) {}
     document.getElementById('auth-screen')?.remove();
 
-    // Preferencias per-user: nombre + módulos habilitados (null = todos)
-    const [nombre, mods, onbDone] = await Promise.all([
+    // Preferencias per-user: nombre + módulos habilitados (null = todos) + tema
+    const [nombre, mods, onbDone, tema] = await Promise.all([
       getConfig('user_nombre').catch(() => null),
       getConfig('modules_enabled').catch(() => null),
       getConfig('onboarding_done').catch(() => null),
+      getConfig('tema').catch(() => null),
     ]);
     this._nombre = nombre || '';
     window.APP_MODULES = mods ? new Set(mods.split(',').filter(Boolean)) : null;
+    if (typeof applyTheme === 'function') applyTheme(tema || 'dark');
 
     const userArea = document.getElementById('sn-user-area');
     if (userArea && !userArea.querySelector('.sn-signout')) {
