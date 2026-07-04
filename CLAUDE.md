@@ -589,6 +589,14 @@ Tema claro opcional (marfil cálido + azul acero apagado), elegido de 3 opciones
 - ~50 overlays inline `rgba(255,255,255,.0x)` en módulos (striping/hover) → se aplanan en claro; tokenizar a una var theme-aware.
 - 15 configs de **Plotly** (dashboard/gastos/inversiones) con colores oscuros hardcodeados (font `#cfcfcf`, grid `rgba(255,255,255,.05)`) → ejes/grilla casi invisibles en claro; centralizar en un helper `plotlyTheme()`.
 
+### Panel de administración — IMPLEMENTADO (sesión 2026-07-04)
+
+Estadísticas de uso para el admin (troccoliccee), integrado en su perfil normal (sin login separado).
+- **Postgres:** `is_admin()` (SECURITY DEFINER, compara `auth.uid()` contra el UUID de troccoliccee hardcodeado) + `admin_stats()` (SECURITY DEFINER; guard null-safe `IS DISTINCT FROM true`; EXECUTE revocado a `anon`). Devuelve jsonb: `usuarios` (email, alta, último login, nombre, módulos, onboarding, tema, counts de gastos/ingresos/operaciones/tarjetas/EDCs) y `edc_por_mes`. **Aplicado vía `execute_sql` → NO figura en historial de migraciones.**
+- **UI:** `config_page.js` llama `rpc('admin_stats')` en render; si falla (no-admin) no muestra nada; si responde, tarjeta "👑 Administración" con tabla de usuarios + tabla EDCs por mes, antes de la Zona de peligro.
+- Solo agregados/counts — el admin NO ve datos financieros de otros usuarios (RLS intacto).
+- Analytics finos (tiempo en app, pantallas vistas) NO implementados; requeriría tabla de eventos.
+
 ### Próximo trabajo planificado: asistente de carga inicial (fase 2 del onboarding)
 Para que la app no arranque vacía, guiar la primera carga de datos (opcional, tras el onboarding). Ideas:
 - Cargar una compra de acción (1 operación) → sembrar Inversiones.

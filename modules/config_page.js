@@ -2,11 +2,13 @@ window.Mods = window.Mods || {};
 window.Mods.configuracion = {
   async render() {
     const c = document.getElementById('content');
-    const [{ data: { user } }, bench, monedaVista, gastosTc] = await Promise.all([
+    const [{ data: { user } }, bench, monedaVista, gastosTc, adminStats] = await Promise.all([
       getDB().auth.getUser(),
       getConfig('benchmark_ticker'),
       getConfig('moneda_vista').catch(() => null),
       getConfig('gastos_tc').catch(() => ''),
+      // Solo devuelve datos para el admin; para el resto falla silenciosamente
+      getDB().rpc('admin_stats').then(r => (r.error ? null : r.data)).catch(() => null),
     ]);
     const mv = monedaVista || 'ORIGEN';
 
@@ -103,6 +105,69 @@ window.Mods.configuracion = {
         <div id="migrate-log" style="margin-top:10px;font-family:'DM Mono',monospace;font-size:.72rem;
           color:var(--text-sec);min-height:20px;white-space:pre-wrap"></div>
       </div>
+
+      ${adminStats ? (() => {
+        const thA = 'padding:6px 8px;font-size:.62rem;color:var(--text-sec);text-transform:uppercase;letter-spacing:.08em;font-weight:600;border-bottom:1px solid var(--border);text-align:left;white-space:nowrap';
+        const tdA = 'padding:7px 8px;font-size:.78rem;border-bottom:1px solid var(--border)';
+        const num = 'font-family:\'DM Mono\',monospace;text-align:right';
+        const fmtLogin = ts => {
+          if (!ts) return '—';
+          const d = new Date(ts);
+          return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+        };
+        const modBadges = m => m === null
+          ? '<span style="color:var(--text-sec)">todos</span>'
+          : (m || '').split(',').filter(Boolean).map(k =>
+              `<span style="font-size:.6rem;padding:1px 6px;border-radius:4px;background:rgba(62,112,152,.12);color:var(--accent);font-weight:600;margin-right:3px;white-space:nowrap">${k}</span>`).join('') || '<span style="color:var(--text-sec)">ninguno</span>';
+        return `
+      <div class="form-card">
+        <h3>👑 Administración — uso por usuario</h3>
+        <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;margin-bottom:16px">
+          <table style="width:100%;min-width:680px;border-collapse:collapse">
+            <thead><tr>
+              <th style="${thA}">Usuario</th><th style="${thA}">Alta</th><th style="${thA}">Últ. login</th>
+              <th style="${thA}">Módulos</th>
+              <th style="${thA};text-align:right">Gastos</th><th style="${thA};text-align:right">Ingr.</th>
+              <th style="${thA};text-align:right">Oper.</th><th style="${thA};text-align:right">Tarj.</th>
+              <th style="${thA};text-align:right">EDCs</th>
+            </tr></thead>
+            <tbody>
+              ${(adminStats.usuarios || []).map(u => `
+                <tr>
+                  <td style="${tdA}"><div style="font-weight:600">${u.nombre || '—'}</div>
+                    <div style="font-size:.66rem;color:var(--text-sec)">${u.email}</div></td>
+                  <td style="${tdA};white-space:nowrap">${fmtDate(u.alta)}</td>
+                  <td style="${tdA};white-space:nowrap;font-family:'DM Mono',monospace;font-size:.72rem">${fmtLogin(u.ultimo_login)}</td>
+                  <td style="${tdA}">${modBadges(u.modulos)}${u.onboarding !== 'true' ? ' <span style="font-size:.6rem;color:var(--gold)">sin onboarding</span>' : ''}</td>
+                  <td style="${tdA};${num}">${u.gastos}</td>
+                  <td style="${tdA};${num}">${u.ingresos}</td>
+                  <td style="${tdA};${num}">${u.operaciones}</td>
+                  <td style="${tdA};${num}">${u.tarjetas}</td>
+                  <td style="${tdA};${num};font-weight:700">${u.edcs}</td>
+                </tr>`).join('')}
+            </tbody>
+          </table>
+        </div>
+        <h3 style="margin-top:4px">EDCs importados por mes</h3>
+        ${(adminStats.edc_por_mes || []).length ? `
+        <div style="overflow-x:auto;-webkit-overflow-scrolling:touch">
+          <table style="width:100%;min-width:320px;border-collapse:collapse;max-width:480px">
+            <thead><tr>
+              <th style="${thA}">Mes</th><th style="${thA}">Usuario</th>
+              <th style="${thA};text-align:right">EDCs</th>
+            </tr></thead>
+            <tbody>
+              ${adminStats.edc_por_mes.map(r => `
+                <tr>
+                  <td style="${tdA};font-family:'DM Mono',monospace">${r.mes}</td>
+                  <td style="${tdA}">${r.email}</td>
+                  <td style="${tdA};${num};font-weight:700">${r.edcs}</td>
+                </tr>`).join('')}
+            </tbody>
+          </table>
+        </div>` : '<p style="font-size:.8rem;color:var(--text-sec);margin:0">Sin importaciones todavía.</p>'}
+      </div>`;
+      })() : ''}
 
       <div class="form-card" style="border:1px solid rgba(239,68,68,.35);background:rgba(239,68,68,.04)">
         <h3 style="color:var(--red)">⚠️ Zona de peligro</h3>
