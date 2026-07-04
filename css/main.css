@@ -17,6 +17,8 @@
   --nav-h:        0px;
   --subnav-h:     44px;
   --mob-nav-h:    0px;
+  --nav-text:     rgba(180,205,240,0.82);
+  --nav-sub:      rgba(180,205,240,0.75);
   color-scheme: dark;
 }
 
@@ -35,6 +37,8 @@
   --green:        #3C8C63;
   --red:          #C0574C;
   --gold:         #9A7A2E;
+  --nav-text:     #201B14;
+  --nav-sub:      #4A4234;
   color-scheme: light;
 }
 
@@ -183,7 +187,7 @@ body.nav-open #nav-overlay { display: block; }
   gap: 11px;
   padding: 10px 20px;
   font-size: .88rem;
-  color: rgba(180,205,240,0.82);
+  color: var(--nav-text);
   border-left: 3px solid transparent;
   cursor: pointer;
   transition: background .12s, color .12s, border-color .12s;
@@ -220,7 +224,7 @@ body.nav-open #nav-overlay { display: block; }
   display: block;
   padding: 7px 20px 7px 48px;
   font-size: .82rem;
-  color: rgba(180,205,240,0.75);
+  color: var(--nav-sub);
   transition: color .12s, background .12s;
 }
 .sn-sub:hover { color: var(--text); background: rgba(255,255,255,.03); }
