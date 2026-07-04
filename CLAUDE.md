@@ -480,7 +480,8 @@ Plotly.newPlot('id', traces, {
 ### Estado funcional de módulos
 - **dashboard.js**: estable, sin cambios recientes.
 - **inversiones.js**: estable.
-- **gastos.js**: estable (~3300 líneas). TDC extraído. Rutas: resumen, detalle, cuotas, importar, manual.
+- **gastos.js** (`v=20260704`): estable (~3300 líneas). TDC extraído. Rutas: resumen, detalle, cuotas, importar, manual.
+  - **Límite de importaciones EDC por mes** (`_drawImportar`): primer mes de uso → 12; meses siguientes → 4. Banner de cupo arriba; si `impRemaining===0` se oculta el uploader (bloquea el parseo con IA = control de costo). Barrera dura: trigger `enforce_import_limit` en Postgres (BEFORE INSERT en `importaciones`, cuenta filas del mes por `creado`; `has_prior` decide 12 vs 4). Cuenta filas vivas → borrar una importación libera cupo.
 - **tarjetas.js** (`v=20260622d`): 4 sub-tabs: Descuentos, Comercios, Adicional, **Mis Tarjetas**.
   - Caché propio: `_comRawCache`, `_adicRawCache`, `_descCache`, `_descCatSpendCache`
   - Cross-invalidación: gastos.js llama `window.Mods.tarjetas?._invalidateCache?.()` tras mutaciones
@@ -556,6 +557,7 @@ La app pasó de single-user a **multi-usuario con Supabase Auth (email/password)
 #### Historial de la migración de privacidad (2026-07-04)
 - `mis_tarjetas` + `metas_ahorro`: migración `privatize_mis_tarjetas_metas_ahorro` (en historial Supabase).
 - `tarjeta_periodos`: aplicada vía `execute_sql` (el prompt de `apply_migration` se cortaba) → **NO figura en el historial de migraciones**; registrar a mano si se versiona.
+- `enforce_import_limit` (trigger `tr_importaciones_limit` en `importaciones`): también aplicado vía `execute_sql` → **NO figura en el historial de migraciones**. Límite de EDC por mes (12 primer mes / 4 después).
 - Tablas `game_config`, `players`, `sessions`, `bonus`, `faqs`, `history` en el mismo proyecto Supabase parecen ser de **otra app** (no finanzas) — no se tocaron.
 
 **Restricción:** plan gratuito de Supabase — se pausa tras 7 días sin actividad (primer request reactiva en ~30s). Suficiente para testing con amigos.

@@ -311,7 +311,7 @@ window.Mods.gastos = {
     // Cargar importaciones anteriores para el panel de gestión
     const sb = getDB();
     const [impsRes, gastosRes, stoRes, cardCountRes, periodosRes] = await Promise.all([
-      sb.from('importaciones').select('id, registros_importados, archivo_path, banco_tarjeta').order('id', { ascending: false }),
+      sb.from('importaciones').select('id, registros_importados, archivo_path, banco_tarjeta, creado').order('id', { ascending: false }),
       sb.from('gastos').select('importacion_id, fecha').not('importacion_id', 'is', null),
       sb.storage.from('edcs').list('', { limit: 1000, sortBy: { column: 'name', order: 'asc' } }).catch(() => ({ data: [] })),
       sb.from('gastos').select('banco_tarjeta').not('banco_tarjeta', 'is', null),
@@ -347,6 +347,14 @@ window.Mods.gastos = {
     }
     const imps = impsRaw.map(i => ({ ...i, ...(impMap[i.id] || { count: 0, desde: null, hasta: null }) }));
 
+    // Límite de importaciones por mes: primer mes de uso → 12; meses siguientes → 4.
+    // (El trigger enforce_import_limit en Postgres es la barrera dura; esto es UX + control de costo de IA.)
+    const _monthStart = new Date(); _monthStart.setDate(1); _monthStart.setHours(0, 0, 0, 0);
+    const _impThisMonth = impsRaw.filter(i => i.creado && new Date(i.creado) >= _monthStart).length;
+    const _impHasPrior  = impsRaw.some(i => i.creado && new Date(i.creado) < _monthStart);
+    const impLimit      = _impHasPrior ? 4 : 12;
+    const impRemaining  = Math.max(0, impLimit - _impThisMonth);
+
     // Group imports by banco_tarjeta for accordion display
     const impsByCard = {};
     for (const imp of imps) {
@@ -362,10 +370,19 @@ window.Mods.gastos = {
     document.getElementById('g-content').innerHTML = `
       <div class="form-card">
         <h3>Importar Estado de Cuenta VISA</h3>
-        <p style="font-size:.82rem;color:var(--text-sec);margin:0 0 16px">
+        <p style="font-size:.82rem;color:var(--text-sec);margin:0 0 12px">
           Subí el PDF del resumen o una captura. Claude extrae y categoriza todas las transacciones automáticamente,
           incluyendo las tarjetas adicionales detectadas en el documento.
         </p>
+        <div style="display:flex;align-items:center;gap:8px;font-size:.76rem;padding:9px 12px;border-radius:8px;margin-bottom:16px;
+          background:${impRemaining ? 'var(--surface-alt)' : 'rgba(239,68,68,.08)'};
+          border:1px solid ${impRemaining ? 'var(--border)' : 'rgba(239,68,68,.35)'};
+          color:${impRemaining ? 'var(--text-sec)' : '#f87171'}">
+          ${impRemaining
+            ? `Te quedan <strong style="color:var(--text)">${impRemaining}</strong> de ${impLimit} importaciones este mes`
+            : `Alcanzaste el límite de ${impLimit} importaciones este mes. Se renueva a comienzo del mes que viene.`}
+        </div>
+        ${impRemaining ? `
         <div class="g-upload-zone" id="g-drop-zone">
           <div style="font-size:2rem;line-height:1;margin-bottom:8px">📄</div>
           <div style="font-size:.88rem;color:var(--text-sec)">Arrastrá el archivo acá<br>o tocá para seleccionar</div>
@@ -376,6 +393,7 @@ window.Mods.gastos = {
           ✨ Parsear con IA
         </button>
         <div id="g-parse-log" style="margin-top:10px;font-family:'DM Mono',monospace;font-size:.72rem;color:var(--text-sec);min-height:18px"></div>
+        ` : ''}
       </div>
 
       ${imps.length === 0 ? '' : `
@@ -496,6 +514,7 @@ window.Mods.gastos = {
       btnParse.style.display = 'inline-flex';
     };
 
+    if (zone) {
     zone.addEventListener('click', () => input.click());
     zone.addEventListener('dragover',  e => { e.preventDefault(); zone.classList.add('drag'); });
     zone.addEventListener('dragleave', ()  => zone.classList.remove('drag'));
@@ -645,6 +664,7 @@ window.Mods.gastos = {
         btnParse.textContent = '✨ Parsear con IA';
       }
     });
+    }
 
     // ── Gestión de importaciones anteriores ───────────────────────────────
     const deleteImport = async (ids, label) => {

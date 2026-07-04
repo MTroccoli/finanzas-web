@@ -119,7 +119,8 @@ window.Mods.onboarding = {
 
   _step3() {
     const q = this._nombre ? `¿Por dónde empezamos, ${this._nombre}?` : '¿Por dónde empezamos?';
-    const enabled = this.MODULES.filter(m => this._modules.has(m.key));
+    // Análisis es un resultante de los demás módulos: no sirve como punto de arranque con la app vacía
+    const enabled = this.MODULES.filter(m => this._modules.has(m.key) && m.key !== 'dashboard');
     return `
       <div style="max-width:460px;width:100%">
         <h1 style="font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:.06em;margin:0 0 4px;text-align:center">
@@ -127,14 +128,21 @@ window.Mods.onboarding = {
         <p style="color:var(--text-sec);font-size:.9rem;text-align:center;margin:0 0 20px">
           Elegí el módulo con el que querés arrancar. El resto queda a un clic en el menú.</p>
         <div style="display:flex;flex-direction:column;gap:9px">
-          ${enabled.map(m => `
+          ${enabled.length ? enabled.map(m => `
             <button class="ob-start" data-route="${m.route}" style="display:flex;align-items:center;gap:13px;
               padding:13px 15px;border-radius:12px;cursor:pointer;text-align:left;width:100%;
               border:1px solid var(--border);background:var(--surface);color:var(--text);transition:.12s">
               <span style="flex-shrink:0;color:var(--accent);display:flex">${this._icon(m.key, 22)}</span>
               <span style="flex:1;font-size:.95rem;font-weight:600">${m.name}</span>
               <span style="color:var(--text-sec);font-size:1.1rem">→</span>
-            </button>`).join('')}
+            </button>`).join('') : `
+            <button class="ob-start" data-route="#dashboard" style="display:flex;align-items:center;gap:13px;
+              padding:13px 15px;border-radius:12px;cursor:pointer;text-align:left;width:100%;
+              border:1px solid var(--accent);background:rgba(46,142,200,.10);color:var(--text)">
+              <span style="flex-shrink:0;color:var(--accent);display:flex">${this._icon('dashboard', 22)}</span>
+              <span style="flex:1;font-size:.95rem;font-weight:600">Entrar a la app</span>
+              <span style="color:var(--text-sec);font-size:1.1rem">→</span>
+            </button>`}
         </div>
         <div style="margin-top:20px;text-align:center">
           <button id="ob-back3" class="btn btn-ghost" style="padding:9px 18px;font-size:.82rem">Atrás</button>
