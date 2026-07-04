@@ -459,7 +459,7 @@ Plotly.newPlot('id', traces, {
 
 ---
 
-## Estado actual del proyecto — respaldo sesión 2026-06-21
+## Estado actual del proyecto — respaldo sesión 2026-07-04
 
 ### Versiones de archivos clave
 | Archivo | Versión en index.html | Commit |
@@ -467,25 +467,29 @@ Plotly.newPlot('id', traces, {
 | `css/main.css` | `v=20260618m` | — |
 | `js/config.js` | `v=20260625` | — |
 | `js/db.js` | `v=20260618a` | — |
+| `js/auth.js` | `v=20260618d` | — |
 | `modules/dashboard.js` | `v=20260619d` | — |
 | `modules/inversiones.js` | `v=20260619b` | — |
 | `modules/gastos.js` | `v=20260621o` | `b8504dd` |
-| `modules/tarjetas.js` | `v=20260621a` | `b8504dd` |
+| `modules/tarjetas.js` | `v=20260622d` | — |
 | `modules/ingresos.js` | `v=20260616e` | — |
 | `modules/presupuesto.js` | `v=20260625` | — |
 | `modules/config_page.js` | `v=20260618d` | — |
-| `js/app.js` | `v=20260621a` | `b8504dd` |
+| `js/app.js` | `v=20260621b` | — |
 
 ### Estado funcional de módulos
 - **dashboard.js**: estable, sin cambios recientes.
 - **inversiones.js**: estable.
 - **gastos.js**: estable (~3300 líneas). TDC extraído. Rutas: resumen, detalle, cuotas, importar, manual.
-- **tarjetas.js**: NUEVO módulo. Ruta `#tarjetas/...`. 3 sub-tabs: Descuentos, Comercios, Adicional.
+- **tarjetas.js** (`v=20260622d`): 4 sub-tabs: Descuentos, Comercios, Adicional, **Mis Tarjetas**.
   - Caché propio: `_comRawCache`, `_adicRawCache`, `_descCache`, `_descCatSpendCache`
   - Cross-invalidación: gastos.js llama `window.Mods.tarjetas?._invalidateCache?.()` tras mutaciones
   - `_drawDescuentos`: beneficios de BBVA + Santander + Itaú + Scotiabank + BROU + OCA
   - OCA: `parseNameParam()` extrae nombre corto del URL `?name=` param (client-side)
   - TDC subnav visible cuando `activePage === 'tarjetas'`
+  - **Mis Tarjetas** (`_drawMisTarjetas`): wallet del usuario en tabla `mis_tarjetas` (banco/red/nivel/cobranding). Filtra los descuentos por las tarjetas que tenés (`matchCards`, `bestBBVAPct`, alias Gold↔Oro). Cobranding siempre en DOM (`display:none` si no aplica), grid responsivo mobile.
+  - **Análisis de beneficios** (`_renderBenefAnalysis`): acordeón lazy al final de Descuentos. Cruza gastos de últimos 3 meses × beneficios de tus tarjetas → Estimado (consumo×%) vs. EDC real (créditos con categoría beneficio / monto negativo, prefijo "Benef." stripeado) vs. Diferencia. Caché `_analCache`, se invalida en `_invalidateCache()`.
+  - **Condiciones** (`data/condiciones-tarjetas.json`): costo anual UI + comisión exterior + beneficios de nivel por banco/red/nivel/cobranding. Muchos `costo_anual_ui` en `null` (bancos geo-bloquean el datacenter; scraper `scrape-condiciones.js` sólo corre desde IP domiciliaria). Sin integrar en UI todavía.
 - **ingresos.js**: estable. Presets recurrentes con auto-carga funcional.
 - **presupuesto.js**: estable.
 - **config_page.js**: estable.
@@ -521,18 +525,40 @@ Plotly.newPlot('id', traces, {
 - `_descBanco` acepta `'BROU'` y `'OCA'` como valores de filtro
 - Tabla Descuentos: 2 columnas (Comercio con `b.corto || b.comercio` | %) — sin columna Vigencia
 
-### Próximo trabajo planificado: autenticación multi-usuario
-La app es actualmente single-user (Supabase hardcodeado en `config.js`). El plan para permitir que otros usuarios la usen:
+### Autenticación multi-usuario — IMPLEMENTADA (sesión 2026-07-04)
 
-1. **Activar Supabase Auth** (email/password) — incluido en plan free.
-2. **Agregar `user_id` (uuid FK → auth.users) a todas las tablas** con datos de usuario:
-   - `gastos`, `ingresos`, `operaciones`, `activos`, `precios_historicos`, `configuracion`, `categorias`, `tipos_ingreso`, `importaciones`
-3. **Habilitar Row Level Security (RLS)** en cada tabla:
-   ```sql
-   CREATE POLICY "user_data" ON gastos
-     USING (auth.uid() = user_id);
-   ```
-4. **Pantalla de login** antes de cargar la app (en `app.js` o `index.html`).
-5. **Adaptar `db.js`** para incluir `user_id: supabase.auth.getUser().id` en todos los inserts.
+La app pasó de single-user a **multi-usuario con Supabase Auth (email/password)** + Row Level Security.
+
+#### `js/auth.js` (`v=20260618d`)
+- `window.Auth.init()` corre al arrancar: si hay sesión → `_afterSignIn()`, si no → pantalla de login/registro.
+- Pantalla con pestañas **Ingresar / Registrarse** (`signInWithPassword` / `signUp`).
+- Maneja confirmación de email (si Supabase la tiene activa, muestra "✓ Revisá tu email para confirmar").
+- `_afterSignIn()` llama al RPC `claim_existing_data()` (migrador de una sola vez, ver abajo), pinta email + botón "Cerrar sesión" en `#sn-user-area`, y dispara `handleRoute()`.
+- Mensajes de error traducidos en `_authMsg()`.
+
+#### Modelo de datos: privado vs. compartido
+**🔒 Privado por usuario** (RLS `user_id = auth.uid()`, con trigger `set_user_id_on_insert` que estampa `user_id` en cada INSERT):
+`gastos`, `ingresos`, `operaciones`, `importaciones`, `dividendos`, `presupuestos`, `lotes`, `operaciones_cerradas`, `posiciones`, `snapshots_portafolio`, `snapshots_patrimonio`, `alertas`, `cuentas`, `deudas`, `configuracion`, **`mis_tarjetas`**, **`metas_ahorro`**, **`tarjeta_periodos`**.
+
+**🌐 Compartido** (referencia común, RLS con `auth.role()='authenticated'` para lectura/escritura, SIN `user_id`):
+`activos` (catálogo tickers), `precios_historicos` (cotizaciones), `categorias_gastos`, `tipos_ingreso`, `merchant_categorias`.
+
+**🌐 Compartido fuera de la DB:** los descuentos scrapeados viven en `data/beneficios-*.json` (archivos estáticos en GitHub Pages) → compartidos por naturaleza, no requieren RLS.
+
+#### Funciones/triggers clave en Postgres
+- `set_user_id_on_insert()` — trigger `BEFORE INSERT` (SECURITY DEFINER): `NEW.user_id := auth.uid()`. Aplicado a todas las tablas privadas vía `tr_<tabla>_uid`.
+- `claim_existing_data()` — RPC de migración one-shot: si el usuario NO tiene gastos propios, reclama TODAS las filas huérfanas (`user_id IS NULL`) de las tablas privadas. **Ya no queda data huérfana** (0 filas), así que para usuarios nuevos es no-op. ⚠️ No insertar filas con `user_id NULL` a futuro o el próximo usuario nuevo las reclamaría.
+
+#### `js/db.js`
+- `dbInsert` NO inyecta `user_id` — lo estampa el trigger de Postgres.
+- `getConfig`/`setConfig` filtran por `user_id` (vía `getAuthUserId()`); upsert por `onConflict: 'clave,user_id'`.
+
+#### Historial de la migración de privacidad (2026-07-04)
+- `mis_tarjetas` + `metas_ahorro`: migración `privatize_mis_tarjetas_metas_ahorro` (en historial Supabase).
+- `tarjeta_periodos`: aplicada vía `execute_sql` (el prompt de `apply_migration` se cortaba) → **NO figura en el historial de migraciones**; registrar a mano si se versiona.
+- Tablas `game_config`, `players`, `sessions`, `bonus`, `faqs`, `history` en el mismo proyecto Supabase parecen ser de **otra app** (no finanzas) — no se tocaron.
 
 **Restricción:** plan gratuito de Supabase — se pausa tras 7 días sin actividad (primer request reactiva en ~30s). Suficiente para testing con amigos.
+
+### Próximo trabajo planificado: mensaje de bienvenida / onboarding
+Guiar al usuario nuevo tras el registro: mensaje de bienvenida, breve descripción de cada módulo, y que elija por dónde empezar y qué módulos quiere usar. (En discusión.)
