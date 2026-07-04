@@ -2719,10 +2719,11 @@ window.Mods.gastos = {
     // ── Bar chart ─────────────────────────────────────────────────────────
     const tickPfx = convCur === 'UYU' ? '$U ' : 'USD ';
 
+    const pt = plotlyTheme();
     const layoutBase = {
       paper_bgcolor: 'rgba(0,0,0,0)',
       plot_bgcolor:  'rgba(0,0,0,0)',
-      font: { color: '#cfcfcf', family: 'DM Sans, sans-serif', size: 11 },
+      font: { color: pt.font, family: 'DM Sans, sans-serif', size: 11 },
     };
 
     if (isCuotas) {
@@ -2788,8 +2789,8 @@ window.Mods.gastos = {
         barmode: 'stack',
         dragmode: false,
         margin: { t: 40, r: 10, b: 80, l: 70 },
-        xaxis: { gridcolor: 'rgba(255,255,255,.05)', fixedrange: true },
-        yaxis: { tickformat: ',d', gridcolor: 'rgba(255,255,255,.05)', zerolinecolor: 'rgba(255,255,255,.1)', fixedrange: true },
+        xaxis: { gridcolor: pt.grid, fixedrange: true },
+        yaxis: { tickformat: ',d', gridcolor: pt.grid, zerolinecolor: pt.zero, fixedrange: true },
         legend: { orientation: 'h', y: -0.38, x: 0 },
       }, { displayModeBar: false, responsive: true, scrollZoom: false });
     } else {
@@ -2838,8 +2839,8 @@ window.Mods.gastos = {
         barmode: 'stack',
         dragmode: false,
         margin: { t: 10, r: 10, b: 70, l: 70 },
-        xaxis: { tickangle: -30, gridcolor: 'rgba(255,255,255,.05)', fixedrange: true },
-        yaxis: { tickprefix: isBenef ? '$U ' : tickPfx, tickformat: ',d', gridcolor: 'rgba(255,255,255,.05)', zerolinecolor: 'rgba(255,255,255,.1)', fixedrange: true },
+        xaxis: { tickangle: -30, gridcolor: pt.grid, fixedrange: true },
+        yaxis: { tickprefix: isBenef ? '$U ' : tickPfx, tickformat: ',d', gridcolor: pt.grid, zerolinecolor: pt.zero, fixedrange: true },
         legend: { orientation: 'h', y: -0.25, x: 0 },
       }, { displayModeBar: false, responsive: true, scrollZoom: false });
     }

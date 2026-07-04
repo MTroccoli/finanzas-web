@@ -78,3 +78,30 @@ function fmtDate(d) {
 }
 function plClass(n) { return n > 0 ? 'pos' : n < 0 ? 'neg' : 'neu'; }
 function plSign(n)  { return n > 0 ? '+' : ''; }
+
+// Paleta Plotly según tema activo. Los valores dark son los históricos de la app
+// (el modo oscuro queda idéntico); los light corresponden al tema "Lino".
+function plotlyTheme() {
+  const light = window.APP_THEME === 'light';
+  return light ? {
+    font:       '#5C5142',
+    fontMono:   '#6E6455',
+    axis:       '#9A8C74',
+    tick:       '#7A6F5D',
+    grid:       'rgba(70,58,40,.10)',
+    gridStrong: '#E7DFD2',
+    zero:       'rgba(70,58,40,.20)',
+    spike:      '#B9AD97',
+    plotBg:     '#FFFFFF',
+  } : {
+    font:       '#cfcfcf',
+    fontMono:   '#8096b0',
+    axis:       '#3d5568',
+    tick:       '#6a88a0',
+    grid:       'rgba(255,255,255,.05)',
+    gridStrong: '#0d2848',
+    zero:       'rgba(255,255,255,.1)',
+    spike:      '#546272',
+    plotBg:     '#071E3D',
+  };
+}

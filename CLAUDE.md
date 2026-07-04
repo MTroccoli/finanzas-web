@@ -585,9 +585,13 @@ Tema claro opcional (marfil cálido + azul acero apagado), elegido de 3 opciones
 - **`modules/config_page.js`** (`v=20260704c`): tarjeta "Apariencia" con toggle 🌙 Oscuro / ☀️ Claro (persiste en `configuracion.tema`).
 - **Preferencia per-user:** `configuracion.tema` (`'dark'` default | `'light'`).
 
-**FASE 2 pendiente (pulido del modo claro):**
-- ~50 overlays inline `rgba(255,255,255,.0x)` en módulos (striping/hover) → se aplanan en claro; tokenizar a una var theme-aware.
-- 15 configs de **Plotly** (dashboard/gastos/inversiones) con colores oscuros hardcodeados (font `#cfcfcf`, grid `rgba(255,255,255,.05)`) → ejes/grilla casi invisibles en claro; centralizar en un helper `plotlyTheme()`.
+**FASE 2 — Plotly HECHO (sesión 2026-07-04):**
+- **`plotlyTheme()` en `js/db.js`**: helper global que devuelve la paleta de gráficos según `window.APP_THEME`. Claves: `font, fontMono, axis, tick, grid, gridStrong, zero, spike, plotBg`. Los valores dark son los históricos exactos (oscuro pixel-idéntico); los light son tonos Lino (grises cálidos + fondo blanco).
+- Aplicado a los 6 gráficos: `pan-trend` (dashboard), `g-bar-chart` ×2 + `g-pie-chart` (gastos, vía `layoutBase` + grids), `mkt-chart` + `port-chart` (inversiones, incl. `plot_bgcolor` que era `#071E3D` fijo).
+- Los gráficos se re-renderizan al navegar (hash routing), así que el cambio de tema se aplica en la próxima visita a la página — no hace falta re-render en vivo.
+
+**FASE 2 pendiente (menor):**
+- ~50 overlays inline `rgba(255,255,255,.0x)` en módulos (striping/hover) → se aplanan en claro (cosmético, no rompe legibilidad); tokenizar a una var theme-aware si se quiere pulir.
 
 ### Panel de administración — IMPLEMENTADO (sesión 2026-07-04)
 

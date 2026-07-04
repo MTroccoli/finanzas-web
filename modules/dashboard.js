@@ -405,6 +405,7 @@ window.Mods.dashboard = {
 
     // Trend chart — current month bar slightly translucent to signal "estimated"
     const tickpfx = mode === 'USD' ? '$' : '$U ';
+    const pt = plotlyTheme();
     Plotly.newPlot('pan-trend', [
       {
         x: months6.map(m => m.label),
@@ -427,15 +428,15 @@ window.Mods.dashboard = {
     ], {
       paper_bgcolor: 'rgba(0,0,0,0)',
       plot_bgcolor:  'rgba(0,0,0,0)',
-      font: {color: '#cfcfcf', family: 'DM Sans, sans-serif', size: 11},
+      font: {color: pt.font, family: 'DM Sans, sans-serif', size: 11},
       dragmode: false,
       barmode: 'group',
       bargap: 0.25,
       bargroupgap: 0.08,
       margin: {t: 10, r: 10, b: 50, l: 65},
       legend: {orientation: 'h', y: -0.28, x: 0.5, xanchor: 'center', font: {size: 11}},
-      xaxis: {fixedrange: true, gridcolor: 'rgba(255,255,255,.05)'},
-      yaxis: {fixedrange: true, gridcolor: 'rgba(255,255,255,.05)', tickprefix: tickpfx},
+      xaxis: {fixedrange: true, gridcolor: pt.grid},
+      yaxis: {fixedrange: true, gridcolor: pt.grid, tickprefix: tickpfx},
     }, {displayModeBar: false, responsive: true, scrollZoom: false});
 
     // Reminder dismiss

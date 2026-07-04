@@ -130,6 +130,7 @@ window.Mods.inversiones = {
           : '%b %y';
         const hoverFmt = period === '1d' ? '%H:%M' : '%d %b';
 
+        const pt = plotlyTheme();
         try { Plotly.purge('mkt-chart'); } catch(_) {}
         Plotly.newPlot('mkt-chart', [{
           x: dates, y: prices,
@@ -146,25 +147,25 @@ window.Mods.inversiones = {
         }], {
           height: 280,
           margin: { l: 50, r: 8, t: 32, b: 28 },
-          plot_bgcolor:  '#071E3D',
+          plot_bgcolor:  pt.plotBg,
           paper_bgcolor: 'rgba(0,0,0,0)',
-          font: { color: '#8096b0', size: 11, family: "'DM Mono', monospace" },
+          font: { color: pt.fontMono, size: 11, family: "'DM Mono', monospace" },
           title: {
             text: `${isUp ? '▲' : '▼'} ${Math.abs(chgPct).toFixed(2)}% en ${pd.label}`,
             font: { size: 12, color }, x: 0.01,
           },
           dragmode: false,
           xaxis: {
-            showgrid: false, color: '#3d5568',
+            showgrid: false, color: pt.axis,
             tickformat: xTickFmt, hoverformat: hoverFmt,
-            tickfont: { size: 10, color: '#6a88a0', family: "'DM Sans', sans-serif" },
+            tickfont: { size: 10, color: pt.tick, family: "'DM Sans', sans-serif" },
             fixedrange: true, showspikes: true, spikemode: 'across',
-            spikecolor: '#546272', spikethickness: 1, spikedash: 'dot',
+            spikecolor: pt.spike, spikethickness: 1, spikedash: 'dot',
             showline: false, zeroline: false,
           },
           yaxis: {
-            showgrid: true, gridcolor: '#0d2848', griddash: 'dot', color: '#3d5568',
-            tickfont: { size: 10, color: '#6a88a0', family: "'DM Mono', monospace" },
+            showgrid: true, gridcolor: pt.gridStrong, griddash: 'dot', color: pt.axis,
+            tickfont: { size: 10, color: pt.tick, family: "'DM Mono', monospace" },
             nticks: 5,
             showspikes: false, showline: false, zeroline: false,
             range: [Math.min(...prices) * 0.995, Math.max(...prices) * 1.005],
@@ -1012,6 +1013,7 @@ window.Mods.inversiones = {
         : ['5d','1mo','3mo'].includes(period) ? '%d %b' : '%b %y';
       const hoverFmt = period === '1d' ? '%H:%M' : '%d %b';
 
+      const pt = plotlyTheme();
       try { Plotly.purge('port-chart'); } catch(_) {}
       Plotly.newPlot('port-chart', [
         // Baseline invisible — ancla el fill en el percentil 10 (no en cero)
@@ -1037,22 +1039,22 @@ window.Mods.inversiones = {
       ], {
         height: 260,
         margin: { l: 58, r: 8, t: 36, b: 28 },
-        plot_bgcolor:  '#071E3D',
+        plot_bgcolor:  pt.plotBg,
         paper_bgcolor: 'rgba(0,0,0,0)',
-        font: { color: '#8096b0', size: 11, family: "'DM Mono', monospace" },
+        font: { color: pt.fontMono, size: 11, family: "'DM Mono', monospace" },
         title: { text: `${isUp ? '▲' : '▼'} ${Math.abs(chgPct).toFixed(2)}%`, font: { size: 12, color }, x: 0.01 },
         dragmode: false,
         xaxis: {
-          showgrid: false, color: '#3d5568',
+          showgrid: false, color: pt.axis,
           tickformat: xTickFmt, hoverformat: hoverFmt,
-          tickfont: { size: 10, color: '#6a88a0', family: "'DM Sans', sans-serif" },
+          tickfont: { size: 10, color: pt.tick, family: "'DM Sans', sans-serif" },
           fixedrange: true, showspikes: true, spikemode: 'across',
-          spikecolor: '#546272', spikethickness: 1, spikedash: 'dot',
+          spikecolor: pt.spike, spikethickness: 1, spikedash: 'dot',
           showline: false, zeroline: false,
         },
         yaxis: {
-          showgrid: true, gridcolor: '#0d2848', griddash: 'dot', color: '#3d5568',
-          tickfont: { size: 10, color: '#6a88a0', family: "'DM Mono', monospace" },
+          showgrid: true, gridcolor: pt.gridStrong, griddash: 'dot', color: pt.axis,
+          tickfont: { size: 10, color: pt.tick, family: "'DM Mono', monospace" },
           nticks: 5,
           showspikes: false, showline: false, zeroline: false,
           fixedrange: true,
