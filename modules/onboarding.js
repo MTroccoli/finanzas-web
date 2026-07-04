@@ -7,7 +7,7 @@ window.Mods.onboarding = {
   _guideIdx:   0,
 
   MODULES: [
-    { key: 'dashboard',   name: 'Análisis',    desc: 'Panorama de tu patrimonio: ingresos vs. gastos y proyecciones',        route: '#dashboard' },
+    { key: 'dashboard',   name: 'Análisis',    desc: 'Tu tablero general: ingresos vs. gastos, balance, ahorro y proyección a 3 meses. Se arma solo con lo que cargás.', route: '#dashboard' },
     { key: 'inversiones', name: 'Inversiones', desc: 'Tu portafolio de acciones y ETFs, mercado, operaciones y rentabilidad', route: '#inversiones/portafolio' },
     { key: 'gastos',      name: 'Gastos',      desc: 'Registrá o importá tus gastos, con resúmenes, categorías y cuotas',     route: '#gastos/resumen' },
     { key: 'tarjetas',    name: 'Tarjetas',    desc: 'Descuentos bancarios y análisis de los beneficios de tus tarjetas',     route: '#tarjetas/descuentos' },
@@ -20,7 +20,7 @@ window.Mods.onboarding = {
     gastos:      'importá y ordená todos tus gastos',
     tarjetas:    'aprovechá los descuentos de tus tarjetas',
     ingresos:    'registrá lo que entra, con recurrentes automáticos',
-    dashboard:   'y mirá todo junto en Análisis',
+    dashboard:   'el resumen que se arma solo con tus datos',
   },
 
   // Pantallas de carga de datos por módulo (para la carga guiada)
