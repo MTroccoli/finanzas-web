@@ -128,11 +128,13 @@ async function handleRoute() {
   }
 }
 
+let _toastTimer = null;
 function toast(msg, type = 'ok', ms = 2800) {
   const el = document.getElementById('toast');
   el.textContent = msg;
   el.className = `toast ${type}`;
-  setTimeout(() => { el.className = 'toast hidden'; }, ms);
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => { el.className = 'toast hidden'; }, ms);
 }
 
 window.addEventListener('hashchange', handleRoute);

@@ -19,6 +19,9 @@
   --mob-nav-h:    0px;
   --nav-text:     rgba(180,205,240,0.82);
   --nav-sub:      rgba(180,205,240,0.75);
+  --hover:        rgba(255,255,255,.05);
+  --track:        rgba(255,255,255,.08);
+  --line-soft:    rgba(255,255,255,.16);
   color-scheme: dark;
 }
 
@@ -39,6 +42,9 @@
   --gold:         #9A7A2E;
   --nav-text:     #201B14;
   --nav-sub:      #4A4234;
+  --hover:        rgba(60,50,35,.06);
+  --track:        rgba(60,50,35,.12);
+  --line-soft:    rgba(60,50,35,.24);
   color-scheme: light;
 }
 
@@ -101,7 +107,7 @@ input, select, textarea { font-family: inherit; }
   transition: background .15s;
   flex-shrink: 0;
 }
-#hamburger:hover { background: rgba(255,255,255,.06); }
+#hamburger:hover { background: var(--hover); }
 #hamburger span {
   display: block;
   width: 20px; height: 2px;
@@ -193,7 +199,7 @@ body.nav-open #nav-overlay { display: block; }
   transition: background .12s, color .12s, border-color .12s;
   user-select: none;
 }
-.sn-item:hover { background: rgba(255,255,255,.04); color: var(--text); }
+.sn-item:hover { background: var(--hover); color: var(--text); }
 .sn-item.active {
   color: var(--accent);
   border-left-color: var(--accent);
@@ -227,7 +233,7 @@ body.nav-open #nav-overlay { display: block; }
   color: var(--nav-sub);
   transition: color .12s, background .12s;
 }
-.sn-sub:hover { color: var(--text); background: rgba(255,255,255,.03); }
+.sn-sub:hover { color: var(--text); background: var(--hover); }
 .sn-sub.active { color: var(--accent); font-weight: 500; }
 /* Nested accordion inside sn-acc-body */
 .sn-acc-nested {
@@ -251,7 +257,7 @@ body.nav-open #nav-overlay { display: block; }
   color: var(--text-sec);
   transition: color .12s, background .12s;
 }
-.sn-sub2:hover { color: var(--text); background: rgba(255,255,255,.03); }
+.sn-sub2:hover { color: var(--text); background: var(--hover); }
 .sn-sub2.active { color: var(--accent); font-weight: 500; }
 
 .sn-divider {
@@ -423,7 +429,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
   margin-top: 3px;
 }
 .pos-card-weight span { font-size: .68rem; color: var(--text-sec); min-width: 28px; }
-.pos-weight-bar-bg    { flex: 1; height: 3px; background: rgba(255,255,255,.08); border-radius: 2px; overflow: hidden; }
+.pos-weight-bar-bg    { flex: 1; height: 3px; background: var(--track); border-radius: 2px; overflow: hidden; }
 .pos-weight-bar       { height: 100%; background: var(--accent); border-radius: 2px; opacity: .55; }
 
 /* Market status dot */
@@ -441,7 +447,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
   font-size: .72rem;
   cursor: pointer;
   font-family: 'DM Mono', monospace;
-  border: 1px solid rgba(255,255,255,.18);
+  border: 1px solid var(--line-soft);
   background: transparent;
   color: var(--text-sec);
   transition: all .15s;
@@ -537,7 +543,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
 }
 .pl-bar-wrap {
   height: 3px;
-  background: rgba(255,255,255,.07);
+  background: var(--track);
   border-radius: 2px;
   margin-bottom: 12px;
   overflow: hidden;
@@ -564,7 +570,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
   margin-bottom: 3px;
 }
 .pl-comp-label { color: var(--text-sec); min-width: 54px; flex-shrink: 0; }
-.pl-comp-bar   { flex: 1; height: 3px; background: rgba(255,255,255,.07); border-radius: 2px; overflow: hidden; }
+.pl-comp-bar   { flex: 1; height: 3px; background: var(--track); border-radius: 2px; overflow: hidden; }
 .pl-comp-bar-fill      { height: 100%; border-radius: 2px; }
 .pl-comp-bar-fill.pos  { background: #26a69a; }
 .pl-comp-bar-fill.neg  { background: #ef5350; }
@@ -866,7 +872,7 @@ tbody tr:hover td { background: rgba(46,127,217,.04); }
   font-family: 'DM Sans', sans-serif;
   font-weight: 500;
   background: transparent;
-  border: 1px solid rgba(255,255,255,.15);
+  border: 1px solid var(--line-soft);
   color: var(--text-sec);
   cursor: pointer;
   transition: all .15s;
@@ -877,7 +883,7 @@ tbody tr:hover td { background: rgba(46,127,217,.04); }
   color: #fff;
 }
 .g-tab:hover:not(.active) {
-  border-color: rgba(255,255,255,.35);
+  border-color: var(--border-strong);
   color: var(--text);
 }
 /* Mobile: replace button tabs with a native select */
@@ -896,7 +902,7 @@ tbody tr:hover td { background: rgba(46,127,217,.04); }
 
 /* ── Gastos: upload zone ─────────────────────────────────────── */
 .g-upload-zone {
-  border: 2px dashed rgba(255,255,255,.18);
+  border: 2px dashed var(--line-soft);
   border-radius: 12px;
   padding: 32px 20px;
   text-align: center;

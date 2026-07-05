@@ -564,10 +564,11 @@ La app pasó de single-user a **multi-usuario con Supabase Auth (email/password)
 
 ### Onboarding / mensaje de bienvenida — IMPLEMENTADO (sesión 2026-07-04)
 
-`modules/onboarding.js` (`v=20260704d`) — overlay de 3 pasos tras el primer login:
+`modules/onboarding.js` (`v=20260704f`) — overlay de 4 pasos tras el primer login:
 1. **Bienvenida** — explica qué hace la app (lista de módulos con ícono + frase de `WELCOME`) + input de nombre (`configuracion.user_nombre`, per-user).
-2. **Módulos** — tarjetas con checkbox (todos ON por defecto) para elegir qué usar. Requiere ≥1.
-3. **Carga guiada** — muestra el plan (módulos con pantalla de carga, en `GUIDE_ORDER`). Botón "Empezar carga guiada" o "Explorar por mi cuenta".
+2. **Tema** (`_stepTema`) — dos mini-previews con colores fijos de cada paleta (oscuro/Lino); al tocar una se aplica `applyTheme()` EN VIVO. Persiste en `configuracion.tema` al finalizar (`_savePrefs`).
+3. **Módulos** — tarjetas con checkbox (todos ON por defecto) para elegir qué usar. Requiere ≥1.
+4. **Carga guiada** — muestra el plan (módulos con pantalla de carga, en `GUIDE_ORDER`). Botón "Empezar carga guiada" o "Explorar por mi cuenta". El widget agrega `padding-bottom:170px` a `#content` mientras está activo (no tapa botones) y lo limpia en `_endGuide`.
 
 - **Carga guiada (widget flotante):** tras "Empezar", `_startGuide()` guarda prefs, cierra el overlay y muestra un widget fijo (`#onb-guide`, en `document.body`, sobrevive a `handleRoute`) que va llevando a cada pantalla de datos: tarjetas→`#tarjetas/mis-tarjetas`, ingresos→`#ingresos`, inversiones→`#inversiones/operaciones`, gastos→`#gastos/importar` (mapa `GUIDE`). Botones Siguiente/Saltar/✕. Al terminar rutea a `#dashboard`. El widget es efímero (no persiste si se refresca a mitad).
 - Módulos toggleables: `dashboard, inversiones, gastos, tarjetas, ingresos` (Presupuesto está dormido: sin ruta ni nav). Configuración siempre visible. Análisis se excluye de la carga guiada (es resultante).
@@ -590,8 +591,16 @@ Tema claro opcional (marfil cálido + azul acero apagado), elegido de 3 opciones
 - Aplicado a los 6 gráficos: `pan-trend` (dashboard), `g-bar-chart` ×2 + `g-pie-chart` (gastos, vía `layoutBase` + grids), `mkt-chart` + `port-chart` (inversiones, incl. `plot_bgcolor` que era `#071E3D` fijo).
 - Los gráficos se re-renderizan al navegar (hash routing), así que el cambio de tema se aplica en la próxima visita a la página — no hace falta re-render en vivo.
 
+**Tokens theme-aware agregados (revisión 2026-07-04):** `--hover` (hover de nav/hamburger), `--track` (fondo de barras de progreso), `--line-soft` (bordes de chips/tabs/upload-zone). Reemplazaron los `rgba(255,255,255,.0x)` estructurales de `main.css`.
+
+**Fixes de la revisión general 2026-07-04:**
+- `toast()` en app.js: timer compartido con `clearTimeout` (toasts sucesivos ya no se ocultan antes de tiempo).
+- `_checkAutoPresets` en ingresos.js: guard de reentrada `_autoPresetsRunning` (evita auto-ingreso duplicado si dos renders se solapan).
+- Widget de carga guiada: `padding-bottom` en `#content` mientras está visible.
+
 **FASE 2 pendiente (menor):**
-- ~50 overlays inline `rgba(255,255,255,.0x)` en módulos (striping/hover) → se aplanan en claro (cosmético, no rompe legibilidad); tokenizar a una var theme-aware si se quiere pulir.
+- ~40 overlays inline `rgba(255,255,255,.0x)` en módulos (striping/hover de tablas) → se aplanan en claro (cosmético, no rompe legibilidad); tokenizar si se quiere pulir.
+- `admin_stats` RPC se llama en cada render de Configuración (costo mínimo; cachear si molesta).
 
 ### Panel de administración — IMPLEMENTADO (sesión 2026-07-04)
 

@@ -2,6 +2,7 @@ window.Mods = window.Mods || {};
 window.Mods.onboarding = {
   _step:       1,
   _nombre:     '',
+  _tema:       'dark', // 'dark' | 'light' — se aplica en vivo y persiste al finalizar
   _modules:    null,   // Set de keys habilitadas
   _guideQueue: [],     // keys de módulos a recorrer en la carga guiada
   _guideIdx:   0,
@@ -49,6 +50,7 @@ window.Mods.onboarding = {
   start() {
     this._step = 1;
     this._nombre = window.Auth?._nombre || '';
+    this._tema = window.APP_THEME === 'light' ? 'light' : 'dark';
     this._modules = window.APP_MODULES
       ? new Set(window.APP_MODULES)
       : new Set(this.MODULES.map(m => m.key));
@@ -67,16 +69,77 @@ window.Mods.onboarding = {
     const el = document.getElementById('onboarding-screen');
     if (!el) return;
     el.innerHTML = this._step === 1 ? this._step1()
-                 : this._step === 2 ? this._step2()
+                 : this._step === 2 ? this._stepTema()
+                 : this._step === 3 ? this._step2()
                  : this._step3();
     this._bind();
   },
 
   _dots() {
     return `<div style="display:flex;gap:7px;justify-content:center;margin-top:26px">
-      ${[1,2,3].map(n => `<span style="width:8px;height:8px;border-radius:50%;
+      ${[1,2,3,4].map(n => `<span style="width:8px;height:8px;border-radius:50%;
         background:${n === this._step ? 'var(--accent)' : 'var(--border-strong)'}"></span>`).join('')}
     </div>`;
+  },
+
+  // Paso 2 — elegir tema, con preview en miniatura de cada modo (colores fijos
+  // de cada paleta, independientes del tema activo) y aplicación en vivo.
+  _stepTema() {
+    const mock = t => {
+      const c = t === 'dark'
+        ? { bg:'#040F20', sf:'#071E3D', ln:'rgba(46,127,217,.30)', tx:'#E8F0FB', sec:'rgba(180,205,240,.55)', ac:'#2E7FD9', gr:'#29D985' }
+        : { bg:'#FAF7F2', sf:'#FFFFFF', ln:'rgba(90,75,55,.25)',   tx:'#262119', sec:'#6e6455',               ac:'#3E7098', gr:'#3C8C63' };
+      return `
+        <div style="border-radius:9px;overflow:hidden;border:1px solid ${c.ln};background:${c.bg};pointer-events:none">
+          <div style="display:flex;align-items:center;gap:5px;padding:6px 8px;background:${c.sf};border-bottom:1px solid ${c.ln}">
+            <span style="width:7px;height:7px;border-radius:50%;background:${c.ac}"></span>
+            <span style="height:5px;width:34px;border-radius:3px;background:${c.sec};opacity:.6"></span>
+          </div>
+          <div style="padding:9px 8px;display:flex;flex-direction:column;gap:7px">
+            <div style="background:${c.sf};border:1px solid ${c.ln};border-radius:6px;padding:7px 8px">
+              <div style="height:4px;width:42px;border-radius:2px;background:${c.sec};opacity:.55"></div>
+              <div style="font-size:.72rem;font-weight:700;color:${c.tx};margin-top:5px;font-family:'DM Mono',monospace">$U 22.700</div>
+              <div style="font-size:.56rem;font-weight:700;color:${c.gr};margin-top:2px">▲ 6,2%</div>
+            </div>
+            <div style="background:${c.sf};border:1px solid ${c.ln};border-radius:6px;padding:8px;display:flex;align-items:flex-end;gap:5px;height:44px">
+              ${[18, 26, 14, 30, 22].map((h, i) => `
+                <span style="flex:1;height:${h}px;border-radius:2px 2px 0 0;background:${i % 2 ? c.ac : c.gr};opacity:.85"></span>`).join('')}
+            </div>
+          </div>
+        </div>`;
+    };
+    const card = (val, lbl) => {
+      const on = this._tema === val;
+      return `
+      <div class="ob-tema" data-tema="${val}" style="flex:1;min-width:0;cursor:pointer;user-select:none;border-radius:14px;
+        padding:10px;border:2px solid ${on ? 'var(--accent)' : 'var(--border)'};
+        background:${on ? 'rgba(62,112,152,.08)' : 'transparent'};transition:.12s">
+        ${mock(val)}
+        <div style="display:flex;align-items:center;justify-content:center;gap:7px;margin-top:10px">
+          <span style="width:16px;height:16px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;
+            font-size:.6rem;font-weight:700;color:#fff;
+            border:1px solid ${on ? 'var(--accent)' : 'var(--border-strong)'};
+            background:${on ? 'var(--accent)' : 'transparent'}">${on ? '✓' : ''}</span>
+          <span style="font-size:.86rem;font-weight:600;color:${on ? 'var(--accent)' : 'var(--text)'}">${lbl}</span>
+        </div>
+      </div>`;
+    };
+    return `
+      <div style="max-width:440px;width:100%">
+        <h1 style="font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:.06em;margin:0 0 4px;text-align:center">
+          ¿Cómo lo querés ver?</h1>
+        <p style="color:var(--text-sec);font-size:.9rem;text-align:center;margin:0 0 20px">
+          Elegí el modo de la app. Lo podés cambiar cuando quieras desde Configuración.</p>
+        <div style="display:flex;gap:12px">
+          ${card('dark', '🌙 Oscuro')}
+          ${card('light', '☀️ Claro')}
+        </div>
+        <div style="display:flex;gap:10px;margin-top:22px">
+          <button id="ob-back-t" class="btn btn-ghost" style="padding:11px;flex:0 0 auto">Atrás</button>
+          <button id="ob-next-t" class="btn btn-primary" style="padding:11px;flex:1">Continuar</button>
+        </div>
+        ${this._dots()}
+      </div>`;
   },
 
   _step1() {
@@ -207,6 +270,18 @@ window.Mods.onboarding = {
     }
 
     if (this._step === 2) {
+      el.querySelectorAll('.ob-tema').forEach(card => {
+        card.addEventListener('click', () => {
+          this._tema = card.dataset.tema;
+          if (typeof applyTheme === 'function') applyTheme(this._tema);   // preview en vivo
+          this._render();
+        });
+      });
+      el.querySelector('#ob-back-t')?.addEventListener('click', () => { this._step = 1; this._render(); });
+      el.querySelector('#ob-next-t')?.addEventListener('click', () => { this._step = 3; this._render(); });
+    }
+
+    if (this._step === 3) {
       el.querySelectorAll('.ob-mod').forEach(card => {
         card.addEventListener('click', () => {
           const k = card.dataset.key;
@@ -214,15 +289,15 @@ window.Mods.onboarding = {
           this._render();
         });
       });
-      el.querySelector('#ob-back2')?.addEventListener('click', () => { this._step = 1; this._render(); });
+      el.querySelector('#ob-back2')?.addEventListener('click', () => { this._step = 2; this._render(); });
       el.querySelector('#ob-next2')?.addEventListener('click', () => {
         if (!this._modules.size) return;
-        this._step = 3; this._render();
+        this._step = 4; this._render();
       });
     }
 
-    if (this._step === 3) {
-      el.querySelector('#ob-back3')?.addEventListener('click', () => { this._step = 2; this._render(); });
+    if (this._step === 4) {
+      el.querySelector('#ob-back3')?.addEventListener('click', () => { this._step = 3; this._render(); });
       el.querySelector('#ob-guide-start')?.addEventListener('click', () => this._startGuide());
       el.querySelector('#ob-explore')?.addEventListener('click', () => this._finish());
       el.querySelector('#ob-enter')?.addEventListener('click', () => this._finish());
@@ -234,6 +309,7 @@ window.Mods.onboarding = {
       await Promise.all([
         setConfig('user_nombre', this._nombre || ''),
         setConfig('modules_enabled', [...this._modules].join(',')),
+        setConfig('tema', this._tema || 'dark'),
         setConfig('onboarding_done', 'true'),
       ]);
     } catch (_) { /* no bloquear la entrada a la app */ }
@@ -280,6 +356,9 @@ window.Mods.onboarding = {
         'background:var(--surface);border:1px solid var(--accent);border-radius:14px;padding:14px 16px;' +
         'box-shadow:0 8px 30px rgba(0,0,0,.45)';
       document.body.appendChild(w);
+      // Aire extra al final del contenido para que el widget no tape botones
+      const ct = document.getElementById('content');
+      if (ct) ct.style.paddingBottom = '170px';
     }
     const key  = this._guideQueue[this._guideIdx];
     const g    = this.GUIDE[key];
@@ -315,6 +394,8 @@ window.Mods.onboarding = {
 
   _endGuide(done) {
     document.getElementById('onb-guide')?.remove();
+    const ct = document.getElementById('content');
+    if (ct) ct.style.paddingBottom = '';
     this._guideQueue = [];
     this._guideIdx = 0;
     if (done) {

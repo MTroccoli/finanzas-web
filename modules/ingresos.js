@@ -473,6 +473,15 @@ window.Mods.ingresos = {
   },
 
   async _checkAutoPresets() {
+    // Guard de reentrada: dos renders solapados leerían los mismos presets
+    // antes de actualizarse ultima_carga → auto-ingreso duplicado.
+    if (this._autoPresetsRunning) return;
+    this._autoPresetsRunning = true;
+    try { await this._checkAutoPresetsInner(); }
+    finally { this._autoPresetsRunning = false; }
+  },
+
+  async _checkAutoPresetsInner() {
     const today   = new Date().toISOString().slice(0, 10);
     const presets = await this._loadPresets();
     let changed   = false;
