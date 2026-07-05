@@ -450,15 +450,36 @@ window.Mods.inversiones = {
     }
   },
 
+  // Refresco de precios live en segundo plano: si cambiaron y seguimos en
+  // Portafolio, re-renderiza (con el caché ya actualizado → sin parpadeo).
+  async _refreshLivePricesBg(tickers) {
+    if (this._liveRefreshing) return;
+    if (Date.now() - (this._liveTs || 0) < 30000) return;   // precios de <30s: suficiente
+    this._liveRefreshing = true;
+    try {
+      const fresh = await this.fetchLivePrices(tickers).catch(() => null);
+      if (fresh && this._portfolioCache) {
+        const changed = JSON.stringify(fresh) !== JSON.stringify(this._portfolioCache.liveData);
+        this._portfolioCache.liveData = fresh;
+        this._liveTs = Date.now();
+        if (changed && document.getElementById('port-chart')) this.renderPortafolio();
+      }
+    } finally { this._liveRefreshing = false; }
+  },
+
   // ── Portafolio ───────────────────────────────────────────────────────
   async renderPortafolio() {
     const c = document.getElementById('content');
 
-    c.innerHTML = `
-      <h1>Portafolio</h1>
-      <p class="page-subtitle" style="color:var(--text-sec)">Cargando posiciones y precios…</p>
-      <div class="loading" style="height:100px"><div class="spinner"></div></div>
-    `;
+    // Con caché completo (ops + precios) se pinta directo, sin blanquear;
+    // los precios live se refrescan en segundo plano (_refreshLivePricesBg).
+    if (!this._portfolioCache?.liveData) {
+      c.innerHTML = `
+        <h1>Portafolio</h1>
+        <p class="page-subtitle" style="color:var(--text-sec)">Cargando posiciones y precios…</p>
+        <div class="loading" style="height:100px"><div class="spinner"></div></div>
+      `;
+    }
 
     try {
       let allOps;
@@ -519,15 +540,22 @@ window.Mods.inversiones = {
       const tickers = positions.map(p => p.ticker);
 
       let liveData, savedRows;
-      if (this._portfolioCache) {
+      if (this._portfolioCache?.liveData) {
+        // Pintado instantáneo con los últimos precios conocidos; refresco en bg
+        ({ savedRows, liveData } = this._portfolioCache);
+        this._refreshLivePricesBg(tickers);
+      } else if (this._portfolioCache) {
         savedRows = this._portfolioCache.savedRows;
         liveData  = await this.fetchLivePrices(tickers).catch(() => ({}));
+        this._portfolioCache.liveData = liveData;
+        this._liveTs = Date.now();
       } else {
         [liveData, savedRows] = await Promise.all([
           this.fetchLivePrices(tickers).catch(() => ({})),
           dbFetch('precios_historicos', { order: { col: 'fecha', asc: false }, limit: 500 }).catch(() => []),
         ]);
-        this._portfolioCache = { allOps, savedRows };
+        this._portfolioCache = { allOps, savedRows, liveData };
+        this._liveTs = Date.now();
       }
 
       const savedPrices = {};
@@ -624,7 +652,13 @@ window.Mods.inversiones = {
       };
 
       // Fetch dividends in parallel (best-effort)
-      const dividendos = await dbFetch('dividendos', { order: { col: 'fecha', asc: false } }).catch(() => []);
+      let dividendos;
+      if (this._portfolioCache?.dividendos) {
+        dividendos = this._portfolioCache.dividendos;
+      } else {
+        dividendos = await dbFetch('dividendos', { order: { col: 'fecha', asc: false } }).catch(() => []);
+        if (this._portfolioCache) this._portfolioCache.dividendos = dividendos;
+      }
       const totalDividendos = dividendos.reduce((s, d) => s + parseFloat(d.monto_usd), 0);
       const divByTicker = {};
       for (const d of dividendos) divByTicker[d.ticker] = (divByTicker[d.ticker] ?? 0) + parseFloat(d.monto_usd);
@@ -1252,7 +1286,15 @@ window.Mods.inversiones = {
     const c   = document.getElementById('content');
     if (this._opLimit == null) this._opLimit = 25;
     this._opFilter = '';
-    const ops = await dbFetch('operaciones', { order: { col: 'fecha', asc: false }, limit: this._opLimit });
+    // Cache de la lista: _refreshTable (tras guardar/borrar) la actualiza,
+    // así que navegar de vuelta acá no re-consulta.
+    let ops;
+    if (this._lastOps && this._opsCacheLimit === this._opLimit) {
+      ops = this._lastOps;
+    } else {
+      ops = await dbFetch('operaciones', { order: { col: 'fecha', asc: false }, limit: this._opLimit });
+      this._opsCacheLimit = this._opLimit;
+    }
     this._lastOps = ops;
     const today = new Date().toISOString().slice(0, 10);
 
@@ -1633,8 +1675,10 @@ window.Mods.inversiones = {
 
   async _refreshTable() {
     this._portfolioCache = null;
+    if (window.Mods.dashboard) window.Mods.dashboard._cache = null;
     const newOps = await dbFetch('operaciones', { order: { col: 'fecha', asc: false }, limit: this._opLimit });
     this._lastOps = newOps;
+    this._opsCacheLimit = this._opLimit;
     const wrap = document.getElementById('ops-table-wrap');
     if (!wrap) return;
     wrap.innerHTML = this._opsTableHTML(newOps);

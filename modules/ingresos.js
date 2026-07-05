@@ -5,6 +5,12 @@ window.Mods.ingresos = {
   _ingEditId:      null,
   _tipos:          [],
   _rows:           [],
+  _dataCache:      null,   // { ingresos, tipos, presets } — invalidado en cada mutación
+
+  _invalidateIngresos() {
+    this._dataCache = null;
+    if (window.Mods.dashboard) window.Mods.dashboard._cache = null;
+  },
 
   async render() {
     const c = document.getElementById('content');
@@ -12,11 +18,15 @@ window.Mods.ingresos = {
     // Check auto-presets before rendering (silent, no await-blocking UI)
     this._checkAutoPresets().catch(() => {});
 
-    const [ingresos, tipos, presets] = await Promise.all([
-      dbFetch('ingresos',      { order: { col: 'fecha', asc: false }, limit: 200 }),
-      dbFetch('tipos_ingreso', { filters: { activo: 1 }, order: { col: 'nombre', asc: true } }),
-      this._loadPresets(),
-    ]);
+    if (!this._dataCache) {
+      const [ingresos, tipos, presets] = await Promise.all([
+        dbFetch('ingresos',      { order: { col: 'fecha', asc: false }, limit: 200 }),
+        dbFetch('tipos_ingreso', { filters: { activo: 1 }, order: { col: 'nombre', asc: true } }),
+        this._loadPresets(),
+      ]);
+      this._dataCache = { ingresos, tipos, presets };
+    }
+    const { ingresos, tipos, presets } = this._dataCache;
     this._tipos = tipos;
     this._rows  = ingresos;
 
@@ -252,6 +262,7 @@ window.Mods.ingresos = {
             tipo_id:     tipo ? parseInt(tipo) : null,
           });
           toast('✅ Ingreso registrado y guardado como recurrente');
+          this._invalidateIngresos();
         } catch(err) {
           toast('💾 Guardado como recurrente (error al registrar: ' + err.message + ')', 'err');
         }
@@ -341,6 +352,7 @@ window.Mods.ingresos = {
           if (row) newRows.push(row);
         }
         toast(fechas.length > 1 ? `✅ ${fechas.length} ingresos registrados` : '✅ Ingreso registrado');
+        this._invalidateIngresos();
         e.target.reset();
         document.getElementById('i-fechas-wrap').innerHTML = fechaRowHTML();
         _bindRemoveFecha();
@@ -384,6 +396,7 @@ window.Mods.ingresos = {
           const id = parseInt(btn.dataset.id);
           await dbDelete('ingresos', { id });
           toast('🗑 Eliminado');
+          this._invalidateIngresos();
           this._rows = this._rows.filter(r => r.id !== id);
           document.getElementById('ing-list').innerHTML = this._renderList(this._rows, tipos, this._filterTipo);
           this._bindDelete(tipos); this._bindEdit(tipos);
@@ -453,6 +466,7 @@ window.Mods.ingresos = {
           };
           await dbUpdate('ingresos', updated, { id });
           toast('✅ Ingreso actualizado');
+          this._invalidateIngresos();
           this._ingEditId = null;
           const idx = this._rows.findIndex(r => r.id === id);
           if (idx >= 0) this._rows[idx] = { ...this._rows[idx], ...updated };
@@ -536,5 +550,6 @@ window.Mods.ingresos = {
   async _savePresets(arr) {
     if (arr.length > 10) arr.length = 10;
     await setConfig('ingresos_presets', JSON.stringify(arr));
+    this._invalidateIngresos();
   },
 };

@@ -94,8 +94,10 @@ function startServer() {
 
     // ── Mock de Supabase client (chainable + thenable) con contador de queries ──
     window.__queryCount = 0;
+    window.__queryLog = [];
     const mkQuery = (table) => {
       window.__queryCount++;
+      window.__queryLog.push(table);
       const state = { table };
       const rows = () => {
         if (table === 'configuracion') {
@@ -183,6 +185,25 @@ function startServer() {
       const nq = window.__navQueries;
       if (nq > 0) return { fail: true, note: `la re-navegación a resumen hizo ${nq} queries — debería ser 0 (caché)` };
       return { note: '0 queries al volver a resumen ✓' };
+    });
+
+    // ── Re-visitas con caché: portafolio, operaciones, ingresos, importar ──
+    await run('nav: re-visitas usan caché (0 queries)', async () => {
+      const before = window.__queryCount;
+      await window.Mods.inversiones.render('portafolio');
+      await new Promise(r => setTimeout(r, 200));
+      await window.Mods.inversiones.render('operaciones');
+      await new Promise(r => setTimeout(r, 200));
+      await window.Mods.ingresos.render();
+      await new Promise(r => setTimeout(r, 200));
+      window.Mods.gastos._tab = 'importar';
+      await window.Mods.gastos.render();
+      await new Promise(r => setTimeout(r, 250));
+      window.__revisitQueries = window.__queryCount - before;
+    }, async () => {
+      const nq = window.__revisitQueries;
+      if (nq > 0) return { fail: true, note: `las re-visitas hicieron ${nq} queries (${window.__queryLog.slice(-nq).join(', ')}) — deberían ser 0 (caché)` };
+      return { note: '0 queries re-visitando portafolio/operaciones/ingresos/importar ✓' };
     });
 
     // ── Interacción: tarjetas del Resumen sin re-fetch (caché) ──

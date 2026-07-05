@@ -51,12 +51,18 @@ window.Mods.gastos = {
 
   // Invalida todos los caches de datos de gastos. Se llama tras cualquier
   // mutación de gastos y al entrar a pestañas que mutan (importar/manual/cuotas).
-  _invalidateGastosCaches() {
+  // Limpieza local (sin cross-calls — la usa también tarjetas.js para evitar recursión)
+  _clearGastosData() {
     this._histRawCache      = null;
     this._histCacheKey      = null;
     this._resCache          = null;
     this._resCacheKey       = null;
+    this._impCache          = null;
     this._bootLoaded        = false;
+  },
+
+  _invalidateGastosCaches() {
+    this._clearGastosData();
     window.Mods.tarjetas?._invalidateCache?.();
     if (window.Mods.dashboard) window.Mods.dashboard._cache = null;
   },
@@ -532,12 +538,8 @@ window.Mods.gastos = {
   },
 
   _drawTab() {
-    // Las pestañas que pueden mutar gastos (importar, manual, cuotas) invalidan
-    // los caches de tablas, así al volver a Historial se recargan datos frescos.
-    // El editor de tarjetas vive dentro de importar.
-    if (this._tab === 'importar' || this._tab === 'manual' || this._tab === 'cuotas') {
-      this._invalidateGastosCaches();
-    }
+    // Nota: entrar a una pestaña ya NO invalida caches — cada mutación
+    // (guardar, borrar, importar, renombrar) invalida en su propio handler.
     switch (this._tab) {
       case 'resumen':   return this._drawResumen();
       case 'detalle':   return this._drawHistorialGastos();
@@ -554,15 +556,20 @@ window.Mods.gastos = {
   async _drawImportar() {
     if (this._pending.length) return this._drawReview();
 
-    // Cargar importaciones anteriores para el panel de gestión
+    // Cargar importaciones anteriores para el panel de gestión.
+    // Cacheado (_impCache): importar/borrar invalidan vía _invalidateGastosCaches.
     const sb = getDB();
-    const [impsRes, gastosRes, stoRes, cardCountRes, periodosRes] = await Promise.all([
-      sb.from('importaciones').select('id, registros_importados, archivo_path, banco_tarjeta, creado').order('id', { ascending: false }),
-      sb.from('gastos').select('importacion_id, fecha').not('importacion_id', 'is', null),
-      sb.storage.from('edcs').list('', { limit: 1000, sortBy: { column: 'name', order: 'asc' } }).catch(() => ({ data: [] })),
-      sb.from('gastos').select('banco_tarjeta').not('banco_tarjeta', 'is', null),
-      sb.from('tarjeta_periodos').select('*').order('periodo', { ascending: false }),
-    ]);
+    if (!this._impCache) {
+      const [impsRes, gastosRes, stoRes, cardCountRes, periodosRes] = await Promise.all([
+        sb.from('importaciones').select('id, registros_importados, archivo_path, banco_tarjeta, creado').order('id', { ascending: false }),
+        sb.from('gastos').select('importacion_id, fecha').not('importacion_id', 'is', null),
+        sb.storage.from('edcs').list('', { limit: 1000, sortBy: { column: 'name', order: 'asc' } }).catch(() => ({ data: [] })),
+        sb.from('gastos').select('banco_tarjeta').not('banco_tarjeta', 'is', null),
+        sb.from('tarjeta_periodos').select('*').order('periodo', { ascending: false }),
+      ]);
+      this._impCache = { impsRes, gastosRes, stoRes, cardCountRes, periodosRes };
+    }
+    const { impsRes, gastosRes, stoRes, cardCountRes, periodosRes } = this._impCache;
     const impsRaw = impsRes.data || [];
     const gastosAll = gastosRes.data || [];
 
@@ -921,6 +928,7 @@ window.Mods.gastos = {
           await getDB().from('importaciones').delete().eq('id', id);
         }
         toast(`✅ Eliminado${ids.length > 1 ? 's' : ''}`);
+        this._invalidateGastosCaches();
         this._drawImportar();
       } catch(err) { toast('❌ ' + err.message, 'err'); }
     };
@@ -1474,6 +1482,7 @@ window.Mods.gastos = {
       this._adicTitular  = '';
       this._adicCards    = [];
 
+      this._invalidateGastosCaches();
       toast(`✅ ${toSave.length} gastos importados${adicTrack.length ? ` · ${adicTrack.length} al Adicional` : ''}`);
       this._pending = [];
       this._tab = 'historial';
@@ -1816,6 +1825,7 @@ window.Mods.gastos = {
             msg += ' · ⚡ recurrente guardado';
           } catch {}
         }
+        this._invalidateGastosCaches();
         toast(msg);
         e.target.reset();
         document.getElementById('g-fechas-wrap').innerHTML = fechaRowHTML();
@@ -1840,6 +1850,7 @@ window.Mods.gastos = {
             _catLabel: data.catId ? (this._catLabel(+data.catId) || '') : '',
           });
         }
+        this._invalidateGastosCaches();
         let msg = fechas.length > 1 ? `✅ ${fechas.length} gastos guardados` : '✅ Guardado';
         const recPanel = document.getElementById('g-rec-panel');
         if (data.tipo_gasto === 'recurrente' && recPanel?.style.display !== 'none') {
@@ -2444,6 +2455,7 @@ window.Mods.gastos = {
       btn.addEventListener('click', async () => {
         if (!confirm('¿Eliminar este gasto?')) return;
         await dbDelete('gastos', { id: +btn.dataset.id });
+        this._invalidateGastosCaches();
         toast('Eliminado');
         this._drawCuotas();
       })
@@ -2592,6 +2604,7 @@ window.Mods.gastos = {
         await dbDelete('tarjeta_periodos', { banco_tarjeta: oldName });
       }
       if (this._tarjOpen.has(oldName)) { this._tarjOpen.delete(oldName); this._tarjOpen.add(nombre); }
+      this._invalidateGastosCaches();
       toast(`✅ Tarjeta renombrada a "${nombre}"`);
       this._drawTab();
     } catch(err) { toast('❌ ' + err.message, 'err'); }

@@ -45,6 +45,10 @@ window.Mods.tarjetas = {
     this._descCache         = null;
     this._analCache         = null;
     this._bootLoaded        = false;
+    // Las mutaciones de tarjetas (renombrar comercio, adicional) tocan gastos.
+    // _clearGastosData es la versión SIN cross-calls → no hay recursión.
+    window.Mods.gastos?._clearGastosData?.();
+    if (window.Mods.dashboard) window.Mods.dashboard._cache = null;
   },
 
   _normMerchant(s) {
