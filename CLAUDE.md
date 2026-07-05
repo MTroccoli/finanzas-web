@@ -480,7 +480,7 @@ Plotly.newPlot('id', traces, {
 ### Estado funcional de módulos
 - **dashboard.js**: estable, sin cambios recientes.
 - **inversiones.js**: estable.
-- **gastos.js** (`v=20260704`): estable (~3300 líneas). TDC extraído. Rutas: resumen, detalle, cuotas, importar, manual.
+- **gastos.js** (`v=20260704c`): estable (~3300 líneas). TDC extraído. Rutas: resumen, detalle, cuotas, importar, manual.
   - **Límite de importaciones EDC por mes** (`_drawImportar`): primer mes de uso → 12; meses siguientes → 4. Banner de cupo arriba; si `impRemaining===0` se oculta el uploader (bloquea el parseo con IA = control de costo). Barrera dura: trigger `enforce_import_limit` en Postgres (BEFORE INSERT en `importaciones`, cuenta filas del mes por `creado`; `has_prior` decide 12 vs 4). Cuenta filas vivas → borrar una importación libera cupo.
 - **tarjetas.js** (`v=20260622d`): 4 sub-tabs: Descuentos, Comercios, Adicional, **Mis Tarjetas**.
   - Caché propio: `_comRawCache`, `_adicRawCache`, `_descCache`, `_descCatSpendCache`

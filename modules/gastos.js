@@ -158,7 +158,9 @@ window.Mods.gastos = {
     );
     this._invalidateGastosCaches();
     this._drawShell();
-    this._drawTab();
+    // await: si una pestaña falla, el error sube a handleRoute y se muestra
+    // (antes moría silencioso y la página quedaba en blanco)
+    await this._drawTab();
   },
 
   _isSplitCat(catId) { return this._splitCatIds?.has(catId); },
@@ -235,6 +237,235 @@ window.Mods.gastos = {
       list="cat-datalist" autocomplete="off" ${extra}
       value="${v.replace(/"/g, '&quot;')}" placeholder="${placeholder}"
       data-catid="${value != null ? value : ''}" style="${style}">`;
+  },
+
+  // Encabezado de columna ordenable + refresco de flechas (compartidos con
+  // el patrón de tarjetas.js — cada módulo lleva su copia local).
+  _thSort(col, label, s) {
+    const cur = s.col === col;
+    const arrow = cur
+      ? (s.dir === 'asc' ? ' ↑' : ' ↓')
+      : ' <span style="opacity:.25;font-size:.75em">⇅</span>';
+    return `<th data-sort="${col}" data-lbl="${label}" style="cursor:pointer;user-select:none;white-space:nowrap">${label}${arrow}</th>`;
+  },
+
+  _refreshSortArrows(containerEl, sortState) {
+    containerEl.querySelectorAll('th[data-sort]').forEach(th => {
+      const col = th.dataset.sort;
+      const lbl = th.dataset.lbl;
+      const cur = sortState.col === col;
+      th.innerHTML = cur
+        ? lbl + (sortState.dir === 'asc' ? ' ↑' : ' ↓')
+        : lbl + ' <span style="opacity:.25;font-size:.75em">⇅</span>';
+    });
+  },
+
+  _sortPending(arr) {
+    const { col, dir } = this._reviewSort;
+    const asc = dir === 'asc';
+    return [...arr].sort((a, b) => {
+      let va, vb;
+      switch (col) {
+        case 'fecha': va = a.fecha || '';  vb = b.fecha || ''; break;
+        case 'desc':  va = (a.descripcion||'').toLowerCase(); vb = (b.descripcion||'').toLowerCase(); break;
+        case 'monto': va = Math.abs(parseFloat(a.monto||0)); vb = Math.abs(parseFloat(b.monto||0)); break;
+        case 'tipo':  va = a._tipoGasto||''; vb = b._tipoGasto||''; break;
+        default: return 0;
+      }
+      return va < vb ? (asc ? -1 : 1) : va > vb ? (asc ? 1 : -1) : 0;
+    });
+  },
+
+  _sortGastos(arr) {
+    const { col, dir } = this._histSort;
+    const asc = dir === 'asc';
+    return [...arr].sort((a, b) => {
+      let va, vb;
+      switch (col) {
+        case 'fecha':    va = a.fecha||'';    vb = b.fecha||''; break;
+        case 'comercio': va = (a.comercio||'').toLowerCase(); vb = (b.comercio||'').toLowerCase(); break;
+        case 'monto':    va = parseFloat(a.monto||0); vb = parseFloat(b.monto||0); break;
+        default: return 0;
+      }
+      return va < vb ? (asc ? -1 : 1) : va > vb ? (asc ? 1 : -1) : 0;
+    });
+  },
+
+  // ── Importar EDC ────────────────────────────────────────────────────────
+  _histRow(g, catOpts, viewMode, tc) {
+    const monBadge = `<span style="font-size:.7rem;font-family:'DM Mono',monospace;color:var(--text-sec)">${g.moneda}</span>`;
+    const badges = (g.tipo_gasto === 'recurrente' ? ' <span style="font-size:.6rem;color:var(--accent)">🔁</span>' : '')
+      + (g.tipo_gasto === 'tdc' ? ' <span style="font-size:.6rem;color:#f59e0b;background:rgba(245,158,11,.12);padding:1px 5px;border-radius:3px">🏦 TDC</span>' : '')
+      + (g.dividido_entre > 1 ? ` <span style="font-size:.65rem;color:var(--text-sec)">÷${g.dividido_entre}</span>` : '')
+      + (g.cuota_actual && g.cuotas_totales ? ` <span style="font-size:.62rem;color:var(--text-sec);background:rgba(255,255,255,.06);padding:1px 5px;border-radius:3px">📅 ${g.cuota_actual}/${g.cuotas_totales}</span>` : '');
+    const catC = this._cats.find(c => c.id === g.categoria_id);
+    const catLabel = catC ? `${catC.icono} ${catC.nombre}` : '—';
+    const monto = parseFloat(g.monto);
+    const montoDisplay = this._fmtView(monto, g.moneda, viewMode, tc);
+    const montoColor = monto < 0 ? 'color:#10b981;' : '';
+    const titBadge = g.titular_adicional
+      ? `<span style="font-size:.58rem;color:#a78bfa;background:rgba(167,139,250,.12);padding:1px 5px;border-radius:3px">👤 ${g.titular_adicional}</span>`
+      : `<span style="font-size:.58rem;color:var(--text-sec);background:rgba(255,255,255,.05);padding:1px 5px;border-radius:3px">💳 Titular</span>`;
+    return `
+      <tr data-id="${g.id}">
+        <td style="white-space:nowrap">${fmtDate(g.fecha)}</td>
+        <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis">
+          <div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${g.comercio ?? '—'}${badges}</div>
+          <div style="margin-top:2px">${titBadge}</div>
+        </td>
+        <td>${catLabel}</td>
+        <td>${monBadge}</td>
+        <td style="font-family:'DM Mono',monospace;font-weight:600;white-space:nowrap;${montoColor}">${montoDisplay}</td>
+        <td style="font-size:.7rem;color:var(--text-sec);white-space:nowrap">${g.banco_tarjeta || '—'}</td>
+        <td style="white-space:nowrap">
+          <button class="btn btn-ghost btn-edit-g" data-id="${g.id}"
+            style="font-size:.7rem;padding:2px 7px">✏️</button>
+          <button class="btn btn-ghost btn-del-g" data-id="${g.id}"
+            style="font-size:.7rem;padding:2px 7px;color:var(--red)">✕</button>
+        </td>
+      </tr>`;
+  },
+
+  _onDivChange(el) {
+    const row   = el.closest('tr.g-editing');
+    const orig  = parseFloat(row?.dataset.orig) || 0;
+    const newD  = parseInt(el.value) || 1;
+    const mEl   = row?.querySelector('.ge-monto');
+    if (mEl && orig > 0) mEl.value = (orig / newD).toFixed(2);
+  },
+
+  _histEditRow(g, catOpts, bancosList) {
+    return `
+      <tr class="g-editing" data-id="${g.id}" data-orig="${((parseFloat(g.monto)||0) * (g.dividido_entre||1)).toFixed(2)}" style="background:rgba(255,255,255,.04)">
+        <td colspan="7" style="padding:10px 8px">
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end">
+            <div>
+              <div style="font-size:.68rem;color:var(--text-sec);margin-bottom:2px">Fecha</div>
+              <input class="ge-fecha" type="date" value="${g.fecha}"
+                style="font-size:.78rem;padding:4px 7px;border-radius:5px;
+                  border:1px solid var(--border);background:var(--surface);color:var(--text)">
+            </div>
+            <div style="flex:1;min-width:120px">
+              <div style="font-size:.68rem;color:var(--text-sec);margin-bottom:2px">Comercio</div>
+              <input class="ge-comercio" type="text" value="${(g.comercio||'').replace(/"/g,'&quot;')}"
+                style="width:100%;font-size:.78rem;padding:4px 7px;border-radius:5px;
+                  border:1px solid var(--border);background:var(--surface);color:var(--text)">
+            </div>
+            <div>
+              <div style="font-size:.68rem;color:var(--text-sec);margin-bottom:2px">Monto</div>
+              <input class="ge-monto" type="number" step="0.01" value="${g.monto}"
+                style="width:90px;font-size:.78rem;padding:4px 7px;border-radius:5px;
+                  border:1px solid var(--border);background:var(--surface);color:var(--text);
+                  font-family:'DM Mono',monospace">
+            </div>
+            <div>
+              <div style="font-size:.68rem;color:var(--text-sec);margin-bottom:2px">Moneda</div>
+              <select class="ge-moneda" style="font-size:.78rem;padding:4px 7px;border-radius:5px;
+                border:1px solid var(--border);background:var(--surface);color:var(--text)">
+                <option value="UYU"${g.moneda==='UYU'?' selected':''}>UYU</option>
+                <option value="USD"${g.moneda==='USD'?' selected':''}>USD</option>
+              </select>
+            </div>
+            <div>
+              <div style="font-size:.68rem;color:var(--text-sec);margin-bottom:2px">Categoría</div>
+              ${this._catComboHTML({ cls: 'ge-cat', value: g.categoria_id || null, placeholder: '—', style: 'font-size:.78rem;padding:4px 7px;border-radius:5px;border:1px solid var(--border);background:var(--surface);color:var(--text);min-width:140px' })}
+            </div>
+            <div>
+              <div style="font-size:.68rem;color:var(--text-sec);margin-bottom:2px">Tipo</div>
+              <select class="ge-tipo" style="font-size:.78rem;padding:4px 7px;border-radius:5px;
+                border:1px solid var(--border);background:var(--surface);color:var(--text)">
+                <option value="casual"${g.tipo_gasto!=='recurrente'?' selected':''}>💳 Casual</option>
+                <option value="recurrente"${g.tipo_gasto==='recurrente'?' selected':''}>🔁 Recurrente</option>
+              </select>
+            </div>
+            <div>
+              <div style="font-size:.68rem;color:var(--text-sec);margin-bottom:2px">Medio de pago</div>
+              <select class="ge-banco" style="font-size:.78rem;padding:4px 7px;border-radius:5px;
+                border:1px solid var(--border);background:var(--surface);color:var(--text)">
+                <option value="">— Sin asignar</option>
+                <option value="Efectivo"${g.banco_tarjeta==='Efectivo'?' selected':''}>Efectivo</option>
+                ${(bancosList||[]).filter(b=>b!=='Efectivo').map(b=>`<option value="${b}"${g.banco_tarjeta===b?' selected':''}>${b}</option>`).join('')}
+              </select>
+            </div>
+            <div>
+              <div style="font-size:.68rem;color:var(--text-sec);margin-bottom:2px">Dividir entre</div>
+              <input type="number" class="ge-div" min="1" step="1"
+                value="${g.dividido_entre || 1}"
+                oninput="window.Mods.gastos._onDivChange(this)"
+                style="width:60px;font-size:.78rem;padding:4px 7px;border-radius:5px;
+                  border:1px solid var(--border);background:var(--surface);color:var(--text);
+                  text-align:center;-moz-appearance:textfield">
+            </div>
+            <div style="display:flex;gap:6px;align-items:flex-end;padding-bottom:1px">
+              <button class="btn btn-primary ge-save" data-id="${g.id}"
+                style="font-size:.75rem;padding:5px 12px">✓ Guardar</button>
+              <button class="btn btn-ghost ge-cancel" data-id="${g.id}"
+                style="font-size:.75rem;padding:5px 10px">✕</button>
+            </div>
+          </div>
+        </td>
+      </tr>`;
+  },
+
+  _attachHistHandlers(gastos, catOpts, viewMode, tc, bancosList) {
+    const tbody = document.getElementById('g-hist-tbody');
+    if (!tbody) return;
+
+    tbody.addEventListener('click', async e => {
+      const id = +e.target.dataset.id;
+
+      // Eliminar
+      if (e.target.classList.contains('btn-del-g')) {
+        if (!confirm('¿Eliminar este gasto?')) return;
+        await dbDelete('gastos', { id });
+        toast('Eliminado');
+        this._invalidateGastosCaches();
+        this._drawHistorialGastos();
+        return;
+      }
+
+      // Abrir edición
+      if (e.target.classList.contains('btn-edit-g')) {
+        const existing = tbody.querySelector('tr.g-editing');
+        if (existing) existing.remove();
+        const dataRow = tbody.querySelector(`tr[data-id="${id}"]:not(.g-editing)`);
+        if (!dataRow) return;
+        const g = gastos.find(x => x.id === id);
+        if (!g) return;
+        dataRow.insertAdjacentHTML('afterend', this._histEditRow(g, catOpts, bancosList));
+        tbody.querySelector(`.ge-comercio`).focus();
+        return;
+      }
+
+      // Cancelar edición
+      if (e.target.classList.contains('ge-cancel')) {
+        tbody.querySelector('tr.g-editing')?.remove();
+        return;
+      }
+
+      // Guardar edición
+      if (e.target.classList.contains('ge-save')) {
+        const editRow = tbody.querySelector('tr.g-editing');
+        if (!editRow) return;
+        const monto = parseFloat(editRow.querySelector('.ge-monto').value);
+        if (!monto || monto === 0) { toast('Monto inválido', 'err'); return; }
+        try {
+          await dbUpdate('gastos', {
+            fecha:       editRow.querySelector('.ge-fecha').value,
+            comercio:    editRow.querySelector('.ge-comercio').value.trim() || null,
+            monto,
+            moneda:        editRow.querySelector('.ge-moneda').value,
+            categoria_id:  this._catIdFromLabel(editRow.querySelector('.ge-cat').value),
+            tipo_gasto:    editRow.querySelector('.ge-tipo').value,
+            banco_tarjeta: editRow.querySelector('.ge-banco')?.value || null,
+            dividido_entre: +editRow.querySelector('.ge-div').value || 1,
+          }, { id });
+          toast('✅ Guardado');
+          this._invalidateGastosCaches();
+          this._drawHistorialGastos();
+        } catch(err) { toast('❌ ' + err.message, 'err'); }
+      }
+    });
   },
 
   _drawShell() {
