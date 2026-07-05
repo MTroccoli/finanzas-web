@@ -202,7 +202,9 @@ _resCacheKey:   null,  // clave: `${desde}|${hasta}|${banco}` (cat/tipo son clie
 
 **Regla crítica de invalidación:**
 - `_invalidateGastosCaches()` se llama en toda mutación (delete, edit, import) y al entrar a pestañas que mutan (importar/manual).
-- La vista `cuotas` en Resumen **nunca** toma el cache-hit: siempre re-fetcha (preserva comportamiento del gráfico Plotly que tuvo un bug histórico con block-scoped variables).
+- Las TRES vistas del Resumen (gastos/beneficios/cuotas) toman el cache-hit (2026-07-04). El bug histórico del gráfico de cuotas era por variables block-scoped (`lastMonthStart/End`), ya a nivel de función; el yield `setTimeout(0)` del hit conserva el gap async que Plotly necesita. El test `test/smoke.js` verifica que el cambio a vista cuotas haga 0 queries.
+- **Navegación sin flash (2026-07-04):** `handleRoute` usa spinner diferido (180ms, solo si el módulo no pintó nada propio); `gastos.render()` solo blanquea la página en el primer boot (`!this._cats.length`).
+- **`test/smoke.js`**: smoke test autocontenido (server estático propio + puppeteer de `scraper/node_modules`, Chrome vía `PUPPETEER_EXECUTABLE_PATH`/`CHROME_PATH`). Renderiza las 15 rutas con DB mockeada + verifica la interacción de tarjetas del Resumen. Correr con `node test/smoke.js` antes de cada deploy grande.
 
 **Filtros client-side vs server-side:**
 | Filtro | Historial | Resumen |

@@ -120,7 +120,9 @@ window.Mods.gastos = {
 
     this._checkAutoPresetsGastos().catch(() => {});
 
-    c.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+    // Spinner solo en el primer boot del módulo; al navegar entre sub-tabs se
+    // conserva el contenido anterior mientras cargan los datos (sin flash).
+    if (!this._cats?.length) c.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
     const [cats, learnedRows, excludedCards, savedTC, monedaVista, divRows] = await Promise.all([
       dbFetch('categorias_gastos', { filters: { activo: 1 }, order: { col: 'nombre', asc: true } }),
       dbFetch('merchant_categorias', { order: { col: 'seen_count', asc: false } }).catch(() => []),
@@ -2617,13 +2619,14 @@ window.Mods.gastos = {
     const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1).toISOString().slice(0,10);
     const lastMonthEnd   = new Date(now.getFullYear(), now.getMonth(), 0).toISOString().slice(0,10);
 
-    // Cache de datos del Resumen — SOLO para las vistas gastos/beneficios.
-    // La vista cuotas (el gráfico problemático) nunca toma el cache-hit: siempre
-    // refetcha, conservando exactamente su comportamiento original.
+    // Cache de datos del Resumen para las tres vistas (gastos/beneficios/cuotas).
+    // El bug histórico del gráfico de cuotas era por variables block-scoped
+    // (lastMonthStart/End) — ya viven a nivel de función, y el yield de abajo
+    // conserva el gap async que Plotly necesita para redibujar.
     const resCacheKey = `${this._resDesde}|${this._resHasta}|${this._resBanco}`;
     let allDataRaw, activeCuotasAll, recurrentesLast;
 
-    if (this._resView !== 'cuotas' && this._resCache && this._resCacheKey === resCacheKey) {
+    if (this._resCache && this._resCacheKey === resCacheKey) {
       // El spinner (arriba) ya destruyó el bar chart de Plotly de forma síncrona.
       // El yield deja que Plotly termine su ciclo de eventos antes de redibujar,
       // replicando el gap async que antes aportaba el fetch.

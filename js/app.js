@@ -119,12 +119,24 @@ async function handleRoute() {
   if (tbPage) tbPage.textContent = SUB_NAMES[`${activePage}/${activeSub}`] || PAGE_NAMES[activePage] || '';
 
   const content = document.getElementById('content');
-  content.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+  // Spinner diferido: se conserva la página anterior mientras carga la nueva.
+  // Solo si a los 180ms el módulo todavía no pintó nada propio, se muestra el
+  // spinner (elimina el "flash" de recarga al navegar con datos rápidos/caché).
+  const prevFirst = content.firstElementChild;
+  let navSettled = false;
+  const spinTimer = setTimeout(() => {
+    if (!navSettled && content.firstElementChild === prevFirst) {
+      content.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+    }
+  }, 180);
   try {
     await route(sub);
   } catch (e) {
     content.innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-text">${e.message}</div></div>`;
     console.error(e);
+  } finally {
+    navSettled = true;
+    clearTimeout(spinTimer);
   }
 }
 
