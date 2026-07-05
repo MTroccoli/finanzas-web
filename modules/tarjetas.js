@@ -44,6 +44,7 @@ window.Mods.tarjetas = {
     this._descCatSpendCache = null;
     this._descCache         = null;
     this._analCache         = null;
+    this._bootLoaded        = false;
   },
 
   _normMerchant(s) {
@@ -120,13 +121,19 @@ window.Mods.tarjetas = {
   async render(sub) {
     const c = document.getElementById('content');
 
-    const cats = await dbFetch('categorias_gastos', { filters: { activo: 1 }, order: { col: 'nombre', asc: true } });
-    this._cats = cats;
-
-    const learnedRows = await dbFetch('merchant_categorias', { order: { col: 'seen_count', asc: false } }).catch(() => []);
-    this._learned = {};
-    for (const r of learnedRows) {
-      this._learned[r.merchant_normalizado] = r.categoria_id;
+    // Boot cache: cats + merchants aprendidos sobreviven a la navegación;
+    // se invalidan en _invalidateCache() (que gastos dispara en mutaciones).
+    if (!this._bootLoaded) {
+      const [cats, learnedRows] = await Promise.all([
+        dbFetch('categorias_gastos', { filters: { activo: 1 }, order: { col: 'nombre', asc: true } }),
+        dbFetch('merchant_categorias', { order: { col: 'seen_count', asc: false } }).catch(() => []),
+      ]);
+      this._cats = cats;
+      this._learned = {};
+      for (const r of learnedRows) {
+        this._learned[r.merchant_normalizado] = r.categoria_id;
+      }
+      this._bootLoaded = true;
     }
 
     c.innerHTML = `

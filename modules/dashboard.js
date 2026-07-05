@@ -8,15 +8,33 @@ window.Mods.dashboard = {
   _cache:       null,
 
   async render() {
-    const c = document.getElementById('content');
+    // Stale-while-revalidate: si hay caché, se pinta al instante y los datos
+    // se refrescan en segundo plano (redibuja solo si cambió algo). Las
+    // mutaciones de gastos invalidan el caché vía _invalidateGastosCaches.
+    if (this._cache) {
+      this._redraw();
+      this._refreshBackground();
+      return;
+    }
+    const d = await this._fetchAll();
+    this._applyData(d);
+    this._redraw();
+  },
+
+  _dateRange() {
     const now  = new Date();
     const curY = now.getFullYear();
     const curM = now.getMonth() + 1;
     const start12 = new Date(curY, curM - 13, 1);
-    const desde12 = `${start12.getFullYear()}-${String(start12.getMonth()+1).padStart(2,'0')}-01`;
     const start6  = new Date(curY, curM - 6, 1);
-    const desde6  = `${start6.getFullYear()}-${String(start6.getMonth()+1).padStart(2,'0')}-01`;
+    return {
+      desde12: `${start12.getFullYear()}-${String(start12.getMonth()+1).padStart(2,'0')}-01`,
+      desde6:  `${start6.getFullYear()}-${String(start6.getMonth()+1).padStart(2,'0')}-01`,
+    };
+  },
 
+  async _fetchAll() {
+    const { desde12, desde6 } = this._dateRange();
     const [gastosRes, ingresosRes, cuotasRes, tcCfg, tiposIngRes] = await Promise.all([
       getDB().from('gastos').select('fecha,monto,moneda,tipo_gasto,incluido_en_gastos,cuotas_totales,cuota_actual,comercio,banco_tarjeta')
         .gte('fecha', desde12).order('fecha', {ascending: true}),
@@ -27,15 +45,32 @@ window.Mods.dashboard = {
       getConfig('tipo_cambio'),
       getDB().from('tipos_ingreso').select('id,nombre'),
     ]);
-
-    this._cache = {
+    return {
       gastos:    gastosRes.data   || [],
       ingresos:  ingresosRes.data || [],
       allCuotas: cuotasRes.data   || [],
       tiposIng:  tiposIngRes.data || [],
+      tcCfg,
     };
-    if (this._tc === null) this._tc = parseFloat(tcCfg) || 42;
-    this._redraw();
+  },
+
+  _applyData(d) {
+    this._cache = { gastos: d.gastos, ingresos: d.ingresos, allCuotas: d.allCuotas, tiposIng: d.tiposIng };
+    if (this._tc === null) this._tc = parseFloat(d.tcCfg) || 42;
+  },
+
+  async _refreshBackground() {
+    if (this._refreshing) return;
+    this._refreshing = true;
+    try {
+      const d = await this._fetchAll();
+      const sig = o => JSON.stringify([o.gastos, o.ingresos, o.allCuotas]);
+      const changed = !this._cache || sig(d) !== sig(this._cache);
+      this._applyData(d);
+      // Redibujar solo si cambió algo y seguimos parados en el dashboard
+      if (changed && document.getElementById('pan-trend')) this._redraw();
+    } catch (_) { /* silencioso: el caché pintado sigue siendo válido */ }
+    finally { this._refreshing = false; }
   },
 
   _redraw() {

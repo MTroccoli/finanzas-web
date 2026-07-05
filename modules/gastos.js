@@ -43,6 +43,7 @@ window.Mods.gastos = {
   _manualSaved:  [],      // gastos guardados en esta sesión desde el panel Nuevo gasto
 
   // ── Cache de datos (tablas + Resumen gastos/beneficios; NUNCA la vista cuotas) ──
+  _bootLoaded:    false,  // datos base (cats/learned/config) cargados; se invalida con los cachés
   _histRawCache:  null,   // filas crudas de _drawHistorialGastos (clave en _histCacheKey)
   _histCacheKey:  null,   // `${desde}|${hasta}`
   _resCache:      null,   // { allDataRaw, activeCuotasAll, recurrentesLast } del Resumen
@@ -55,7 +56,9 @@ window.Mods.gastos = {
     this._histCacheKey      = null;
     this._resCache          = null;
     this._resCacheKey       = null;
+    this._bootLoaded        = false;
     window.Mods.tarjetas?._invalidateCache?.();
+    if (window.Mods.dashboard) window.Mods.dashboard._cache = null;
   },
 
   // Normalizar comercio para matching: lowercase, sin tildes, sin códigos de comercio
@@ -120,6 +123,16 @@ window.Mods.gastos = {
 
     this._checkAutoPresetsGastos().catch(() => {});
 
+    // Boot cache: los datos base (categorías, merchants aprendidos, config)
+    // se cargan una vez y sobreviven a la navegación entre sub-tabs. Se
+    // invalidan junto con los demás cachés en _invalidateGastosCaches()
+    // (mutaciones y pestañas que mutan), garantizando frescura tras cambios.
+    if (this._bootLoaded) {
+      this._drawShell();
+      await this._drawTab();
+      return;
+    }
+
     // Spinner solo en el primer boot del módulo; al navegar entre sub-tabs se
     // conserva el contenido anterior mientras cargan los datos (sin flash).
     if (!this._cats?.length) c.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
@@ -158,7 +171,7 @@ window.Mods.gastos = {
     this._splitCatIds = new Set(
       cats.filter(c => this._splitCatNames.has(c.nombre)).map(c => c.id)
     );
-    this._invalidateGastosCaches();
+    this._bootLoaded = true;
     this._drawShell();
     // await: si una pestaña falla, el error sube a handleRoute y se muestra
     // (antes moría silencioso y la página quedaba en blanco)
@@ -3535,6 +3548,10 @@ window.Mods.gastos = {
   },
 
   async _checkAutoPresetsGastos() {
+    // Throttle: los presets son mensuales — chequear una vez cada 10 min por
+    // sesión alcanza y evita una query extra en cada navegación de sub-tab.
+    if (this._autoPresetsTs && Date.now() - this._autoPresetsTs < 600000) return;
+    this._autoPresetsTs = Date.now();
     const today   = new Date().toISOString().slice(0, 10);
     const presets = await this._loadGastosPresets();
     let changed   = false;
@@ -3561,6 +3578,9 @@ window.Mods.gastos = {
         toast(`⚡ Auto-gasto: ${p.comercio || 'Gasto'} (${p.moneda || 'UYU'} ${p.monto})`);
       } catch { /* silent */ }
     }
-    if (changed) await this._saveGastosPresets(presets);
+    if (changed) {
+      await this._saveGastosPresets(presets);
+      this._invalidateGastosCaches();   // el auto-gasto insertado debe verse al instante
+    }
   },
 };

@@ -476,6 +476,9 @@ window.Mods.ingresos = {
     // Guard de reentrada: dos renders solapados leerían los mismos presets
     // antes de actualizarse ultima_carga → auto-ingreso duplicado.
     if (this._autoPresetsRunning) return;
+    // Throttle: chequear una vez cada 10 min por sesión alcanza (presets mensuales)
+    if (this._autoPresetsTs && Date.now() - this._autoPresetsTs < 600000) return;
+    this._autoPresetsTs = Date.now();
     this._autoPresetsRunning = true;
     try { await this._checkAutoPresetsInner(); }
     finally { this._autoPresetsRunning = false; }

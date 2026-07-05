@@ -165,6 +165,26 @@ function startServer() {
     await run('ingresos',        () => window.Mods.ingresos.render());
     await run('configuracion',   () => window.Mods.configuracion.render());
 
+    // ── Navegación entre sub-tabs sin queries (boot + data cache) ──
+    await run('nav: volver a resumen usa caché (0 queries)', async () => {
+      window.Mods.gastos._tab = 'resumen';
+      await window.Mods.gastos.render();
+      await new Promise(r => setTimeout(r, 250));
+      window.Mods.gastos._tab = 'detalle';
+      await window.Mods.gastos.render();
+      await new Promise(r => setTimeout(r, 250));
+      const before = window.__queryCount;
+      window.Mods.gastos._tab = 'resumen';
+      window.Mods.gastos._resView = 'gastos';
+      await window.Mods.gastos.render();
+      await new Promise(r => setTimeout(r, 300));
+      window.__navQueries = window.__queryCount - before;
+    }, async () => {
+      const nq = window.__navQueries;
+      if (nq > 0) return { fail: true, note: `la re-navegación a resumen hizo ${nq} queries — debería ser 0 (caché)` };
+      return { note: '0 queries al volver a resumen ✓' };
+    });
+
     // ── Interacción: tarjetas del Resumen sin re-fetch (caché) ──
     await run('resumen: card cuotas usa caché', async () => {
       window.Mods.gastos._tab = 'resumen';
