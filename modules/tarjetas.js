@@ -103,6 +103,35 @@ window.Mods.tarjetas = {
     return this._fmtMon(n, mon);
   },
 
+  // Colores de estado/badges según tema. Los valores dark son los históricos;
+  // los light son versiones más oscuras y saturadas (legibles sobre marfil).
+  _pal() {
+    const L = window.APP_THEME === 'light';
+    return L ? {
+      ok: '#22764A', okBg: 'rgba(34,118,74,.12)',
+      warn: '#A16207',
+      bancos: {
+        BBVA:       { c: '#155E8E', bg: 'rgba(21,94,142,.12)'  },
+        Santander:  { c: '#B3202C', bg: 'rgba(179,32,44,.10)'  },
+        'Itaú':     { c: '#A85E00', bg: 'rgba(168,94,0,.12)'   },
+        Scotiabank: { c: '#A82A2A', bg: 'rgba(168,42,42,.10)'  },
+        BROU:       { c: '#1B6F58', bg: 'rgba(27,111,88,.12)'  },
+        OCA:        { c: '#B04E0C', bg: 'rgba(176,78,12,.12)'  },
+      },
+    } : {
+      ok: '#4ade80', okBg: 'rgba(74,222,128,.15)',
+      warn: '#fbbf24',
+      bancos: {
+        BBVA:       { c: '#5bb3e4', bg: 'rgba(46,142,200,.18)' },
+        Santander:  { c: '#e63946', bg: 'rgba(230,57,70,.18)'  },
+        'Itaú':     { c: '#ffaa33', bg: 'rgba(255,152,0,.18)'  },
+        Scotiabank: { c: '#e84040', bg: 'rgba(204,0,0,.18)'    },
+        BROU:       { c: '#29b08c', bg: 'rgba(41,176,140,.18)' },
+        OCA:        { c: '#e86b1e', bg: 'rgba(232,107,30,.18)' },
+      },
+    };
+  },
+
   _thSort(col, label, s) {
     const cur = s.col === col;
     const arrow = cur
@@ -412,19 +441,14 @@ window.Mods.tarjetas = {
       : diffDays === 0 ? 'hoy'
       : diffDays === 1 ? 'ayer'
       : `hace ${diffDays} días`;
-    const freshClr = diffDays === null || diffDays > 7 ? '#fbbf24' : diffDays <= 3 ? '#4ade80' : 'var(--text-sec)';
+    const pal = this._pal();
+    const freshClr = diffDays === null || diffDays > 7 ? pal.warn : diffDays <= 3 ? pal.ok : 'var(--text-sec)';
 
-    const fuenteBadge = f => f === 'BBVA'
-      ? '<span style="font-size:.58rem;padding:1px 5px;border-radius:3px;background:rgba(46,142,200,.18);color:#5bb3e4;font-weight:700;letter-spacing:.03em;vertical-align:middle;margin-left:5px">BBVA</span>'
-      : f === 'Santander'
-      ? '<span style="font-size:.58rem;padding:1px 5px;border-radius:3px;background:rgba(230,57,70,.18);color:#e63946;font-weight:700;letter-spacing:.03em;vertical-align:middle;margin-left:5px">Santander</span>'
-      : f === 'Itaú'
-      ? '<span style="font-size:.58rem;padding:1px 5px;border-radius:3px;background:rgba(255,152,0,.18);color:#ffaa33;font-weight:700;letter-spacing:.03em;vertical-align:middle;margin-left:5px">Itaú</span>'
-      : f === 'BROU'
-      ? '<span style="font-size:.58rem;padding:1px 5px;border-radius:3px;background:rgba(41,176,140,.18);color:#29b08c;font-weight:700;letter-spacing:.03em;vertical-align:middle;margin-left:5px">BROU</span>'
-      : f === 'OCA'
-      ? '<span style="font-size:.58rem;padding:1px 5px;border-radius:3px;background:rgba(232,107,30,.18);color:#e86b1e;font-weight:700;letter-spacing:.03em;vertical-align:middle;margin-left:5px">OCA</span>'
-      : '<span style="font-size:.58rem;padding:1px 5px;border-radius:3px;background:rgba(204,0,0,.18);color:#e84040;font-weight:700;letter-spacing:.03em;vertical-align:middle;margin-left:5px">Scotia</span>';
+    const fuenteBadge = f => {
+      const b = pal.bancos[f] || pal.bancos.Scotiabank;
+      const lbl = f === 'Scotiabank' ? 'Scotia' : f;
+      return `<span style="font-size:.58rem;padding:1px 5px;border-radius:3px;background:${b.bg};color:${b.c};font-weight:700;letter-spacing:.03em;vertical-align:middle;margin-left:5px">${lbl}</span>`;
+    };
 
     const _di = 'font-size:11px;color:var(--text-sec);margin-top:2px';
     const renderDet = b => {
@@ -559,9 +583,9 @@ window.Mods.tarjetas = {
               const myMatch = noWallet ? [] : matchCards(b);
               const myPct   = myMatch.length ? bestBBVAPct(b, myMatch) : null;
               const dispPct = myPct !== null ? myPct : (b.pctMax || null);
-              const pctClr  = myPct !== null ? '#4ade80' : dispPct ? 'var(--gold)' : 'var(--text-sec)';
+              const pctClr  = myPct !== null ? pal.ok : dispPct ? 'var(--gold)' : 'var(--text-sec)';
               const cardBadge = myMatch.length
-                ? '<span style="font-size:.58rem;padding:1px 5px;border-radius:3px;background:rgba(74,222,128,.15);color:#4ade80;font-weight:700;letter-spacing:.03em;vertical-align:middle;margin-left:5px">✓</span>'
+                ? `<span style="font-size:.58rem;padding:1px 5px;border-radius:3px;background:${pal.okBg};color:${pal.ok};font-weight:700;letter-spacing:.03em;vertical-align:middle;margin-left:5px">✓</span>`
                 : '';
               return `
               <tr>
@@ -744,7 +768,8 @@ window.Mods.tarjetas = {
     let totCon = 0, totEst = 0, totReal = 0;
     for (const r of aggRows) { totCon += r.consumo; totEst += r.est; totReal += r.real; }
     const dif    = totReal - totEst;
-    const difClr = dif >= 0 ? '#4ade80' : '#fbbf24';
+    const palA = this._pal();
+    const difClr = dif >= 0 ? palA.ok : palA.warn;
     const f  = n => '$U ' + fmt(Math.round(n), 0);
     const tdS = 'padding:6px 8px;border-bottom:1px solid rgba(255,255,255,.05)';
     const thS = 'padding:6px 8px;font-size:.7rem;color:var(--text-sec);font-weight:500;border-bottom:1px solid var(--border);white-space:nowrap';
@@ -764,13 +789,13 @@ window.Mods.tarjetas = {
           <tbody>
             ${aggRows.map(r => {
               const d  = r.real - r.est;
-              const dc = !r.real ? 'var(--text-sec)' : d >= 0 ? '#4ade80' : '#fbbf24';
+              const dc = !r.real ? 'var(--text-sec)' : d >= 0 ? palA.ok : palA.warn;
               return `<tr>
                 <td style="${tdS};font-size:.8rem">${r.name}<span style="font-size:.62rem;margin-left:5px;color:var(--text-sec)">${r.fuente}</span></td>
                 <td style="${tdS};font-size:.78rem;font-family:'DM Mono',monospace;color:var(--gold);text-align:right">${r.pct}%</td>
                 <td style="${tdS};font-size:.78rem;font-family:'DM Mono',monospace;text-align:right">${f(r.consumo)}</td>
                 <td style="${tdS};font-size:.78rem;font-family:'DM Mono',monospace;color:var(--gold);text-align:right">${r.est ? f(r.est) : '—'}</td>
-                <td style="${tdS};font-size:.78rem;font-family:'DM Mono',monospace;color:#4ade80;text-align:right">${r.real ? f(r.real) : '—'}</td>
+                <td style="${tdS};font-size:.78rem;font-family:'DM Mono',monospace;color:${palA.ok};text-align:right">${r.real ? f(r.real) : '—'}</td>
                 <td style="${tdS};font-size:.78rem;font-family:'DM Mono',monospace;color:${dc};text-align:right">${r.real ? (d >= 0 ? '+' : '') + f(d) : '—'}</td>
               </tr>`;
             }).join('')}
@@ -779,7 +804,7 @@ window.Mods.tarjetas = {
             <td colspan="2" style="padding:7px 8px;font-size:.78rem;font-weight:600">Total</td>
             <td style="padding:7px 8px;font-size:.78rem;font-family:'DM Mono',monospace;text-align:right">${f(totCon)}</td>
             <td style="padding:7px 8px;font-size:.78rem;font-family:'DM Mono',monospace;color:var(--gold);text-align:right">${f(totEst)}</td>
-            <td style="padding:7px 8px;font-size:.78rem;font-family:'DM Mono',monospace;color:#4ade80;text-align:right">${f(totReal)}</td>
+            <td style="padding:7px 8px;font-size:.78rem;font-family:'DM Mono',monospace;color:${palA.ok};text-align:right">${f(totReal)}</td>
             <td style="padding:7px 8px;font-size:.78rem;font-family:'DM Mono',monospace;color:${difClr};text-align:right">${(dif >= 0 ? '+' : '') + f(Math.abs(dif))}</td>
           </tr></tfoot>
         </table>
