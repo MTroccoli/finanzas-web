@@ -1,7 +1,7 @@
 {
   "fuente": "scotiabank.com.uy",
-  "actualizado": "2026-07-03T14:05:37.333Z",
-  "total": 79,
+  "actualizado": "2026-07-06T15:33:54.569Z",
+  "total": 81,
   "beneficios": [
     {
       "nombre": "ALMENARA MALL",
@@ -85,18 +85,27 @@
       "cobranding": null
     },
     {
-      "nombre": "COPA CONNECTMILES",
+      "nombre": "PEDIDOSYA MARKET Y FARMACIAS",
       "url": null,
       "categoria": "Destacados",
-      "pctMax": null,
-      "descuentos": [],
-      "vigencia": "Del 1 al 31 de Julio",
-      "tarjetas": "Triplicá tus millas cargando combustible en todas las estaciones de servicio del país con tarjetas American Express ConnectMiles",
-      "desc": "Triplicá tus millas cargando combustible en todas las estaciones de servicio del país con tarjetas American Express ConnectMiles",
+      "pctMax": 30,
+      "descuentos": [
+        {
+          "pct": 30,
+          "texto": "30% de ahorro"
+        },
+        {
+          "pct": 15,
+          "texto": "15% de ahorro"
+        }
+      ],
+      "vigencia": "De Viernes a Domingo",
+      "tarjetas": "30% de ahorro con tarjetas AMEX si sos usuario Plus.",
+      "desc": "30% de ahorro con tarjetas AMEX si sos usuario Plus.",
       "exclusivo": false,
       "red": "Amex",
       "niveles": [],
-      "cobranding": "ConnectMiles"
+      "cobranding": null
     },
     {
       "nombre": "MONTEVIDEO SHOPPING DÍA DEL PADRE",
@@ -585,6 +594,20 @@
         "Platinum"
       ],
       "cobranding": null
+    },
+    {
+      "nombre": "COPA CONNECTMILES",
+      "url": null,
+      "categoria": "Automóvil",
+      "pctMax": null,
+      "descuentos": [],
+      "vigencia": "Del 1 al 31 de Julio",
+      "tarjetas": "Triplicá tus millas cargando combustible en todas las estaciones de servicio del país con tarjetas American Express ConnectMiles",
+      "desc": "Triplicá tus millas cargando combustible en todas las estaciones de servicio del país con tarjetas American Express ConnectMiles",
+      "exclusivo": false,
+      "red": "Amex",
+      "niveles": [],
+      "cobranding": "ConnectMiles"
     },
     {
       "nombre": "TELEPEAJE",
@@ -1558,6 +1581,20 @@
       "cobranding": null
     },
     {
+      "nombre": "TIENDA INGLESA",
+      "url": "https://www.scotiabank.com.uy/Personas/Tarjetas/Beneficios/Supermercados/tienda-inglesa-julio-2026",
+      "categoria": "Supermercados",
+      "pctMax": null,
+      "descuentos": [],
+      "vigencia": "Todos los días",
+      "tarjetas": "Disfrutá beneficios exclusivos con tus tarjetas Scotiabank.",
+      "desc": "Disfrutá beneficios exclusivos con tus tarjetas Scotiabank.",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
+    },
+    {
       "nombre": "PORTISUR",
       "url": null,
       "categoria": "Supermercados",
@@ -1668,20 +1705,16 @@
       "nombre": "HOTELES EN URUGUAY",
       "url": "https://www.scotiabank.com.uy/Personas/Tarjetas/Beneficios/Viajes-y-Turismo/hoteles-sacramento-management",
       "categoria": "Viajes",
-      "pctMax": 30,
+      "pctMax": 25,
       "descuentos": [
         {
           "pct": 25,
           "texto": "25% de ahorro"
-        },
-        {
-          "pct": 30,
-          "texto": "30% de ahorro"
         }
       ],
       "vigencia": "Todos los días",
-      "tarjetas": "25% y 30% de ahorro con Tarjetas de Crédito: Visa, MasterCard y American Express Tarjetas de Débito Scotiabank.",
-      "desc": "25% y 30% de ahorro con Tarjetas de Crédito: Visa, MasterCard y American Express Tarjetas de Débito Scotiabank.",
+      "tarjetas": "25% de ahorro con Tarjetas de Crédito: Visa, MasterCard y American Express Tarjetas de Débito Scotiabank.",
+      "desc": "25% de ahorro con Tarjetas de Crédito: Visa, MasterCard y American Express Tarjetas de Débito Scotiabank.",
       "exclusivo": false,
       "red": null,
       "niveles": [],
