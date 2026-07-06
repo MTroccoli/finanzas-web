@@ -1,8 +1,8 @@
 {
   "fuente": "BROU",
   "url": "https://beneficios.brou.com.uy/beneficios",
-  "fecha": "2026-07-03",
-  "total": 65,
+  "fecha": "2026-07-06",
+  "total": 68,
   "beneficios": [
     {
       "nombre": "Banco Hipotecario del Uruguay",
@@ -112,12 +112,73 @@
       "cobranding": "Recompensa"
     },
     {
+      "nombre": "Mes de papá en Districomp",
+      "pctMax": 25,
+      "url": "https://beneficios.brou.com.uy/ensenanza/Mes-de-papá-en-districomp",
+      "tarjetas": "25% de descuento con tarjetas de crédito BROU VISA Platinum y BROU Recompensa Mastercard Platinum y Black.",
+      "vigencia": "Vigencia: 12/07/2026",
+      "desc": "Mes de papá en Districomp",
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [
+        "Platinum",
+        "Black"
+      ],
+      "cobranding": "Recompensa"
+    },
+    {
+      "nombre": "Mes de papá en CASA JARDIN",
+      "pctMax": 25,
+      "url": "https://beneficios.brou.com.uy/ensenanza/mes-de-papá-casa-jardin",
+      "tarjetas": "25% de descuento con tarjetas de crédito BROU VISA Platinum y BROU Recompensa Mastercard Platinum y Black.",
+      "vigencia": "Vigencia: 12/07/2026",
+      "desc": "Mes de papá en CASA JARDIN",
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [
+        "Platinum",
+        "Black"
+      ],
+      "cobranding": "Recompensa"
+    },
+    {
       "nombre": "Ser Animal",
       "pctMax": 25,
       "url": "https://beneficios.brou.com.uy/ensenanza/ser-animal",
       "tarjetas": "25% de dto. con las tarjetas de crédito BROU VISA Platino y BROU Recompensa Mastercard Black.",
       "vigencia": "Vigencia: 31/03/2027",
       "desc": "Aprovechá los siguientes descuentos en Ser Animal",
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [
+        "Platinum",
+        "Black"
+      ],
+      "cobranding": "Recompensa"
+    },
+    {
+      "nombre": "Mes de Papá en El Rey del Entretenimiento",
+      "pctMax": 25,
+      "url": "https://beneficios.brou.com.uy/ensenanza/mes-de-papá-en-el-rey-del-entretenimiento",
+      "tarjetas": "25% de descuento con tarjetas de Crédito BROU VISA Platino e Infinite y BROU Recompensa Mastercard Platino y Black.",
+      "vigencia": "Vigencia: 12/07/2026",
+      "desc": "Mes de Papá en El Rey del Entretenimiento",
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [
+        "Infinite",
+        "Platinum",
+        "Black"
+      ],
+      "cobranding": "Recompensa"
+    },
+    {
+      "nombre": "Mes de Papá en Universo Binario",
+      "pctMax": 25,
+      "url": "https://beneficios.brou.com.uy/ensenanza/mes-de-papá-en-universo-binario",
+      "tarjetas": "25% de descuento con tarjetas de crédito VISA y BROU Recompensa Mastercard Black, Platino e Infinitie.",
+      "vigencia": "Vigencia: 12/07/2026",
+      "desc": "Mes de Papá en Universo Binario",
       "categoria": "ensenanza",
       "red": null,
       "niveles": [
@@ -346,18 +407,6 @@
       "cobranding": "Recompensa"
     },
     {
-      "nombre": "Finde descuentos en Las Piedras Shopping",
-      "pctMax": 20,
-      "url": "https://beneficios.brou.com.uy/ensenanza/1803-off-en-las-piedras-shopping",
-      "tarjetas": "18,03% OFF en Las Piedras Shopping y hasta 20% de descuento adicional con tarjetas de crédito del BROU.",
-      "vigencia": "Vigencia: 06/07/2026",
-      "desc": "Finde descuentos en Las Piedras Shopping",
-      "categoria": "ensenanza",
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
       "nombre": "AGUERREBERE",
       "pctMax": 20,
       "url": "https://beneficios.brou.com.uy/ensenanza/beneficios-aguerrebere",
@@ -408,15 +457,19 @@
       "cobranding": null
     },
     {
-      "nombre": "IPlace",
+      "nombre": "Mes de papá en LOI",
       "pctMax": 15,
-      "url": "https://beneficios.brou.com.uy/ensenanza/iplace",
-      "tarjetas": "En iPlace, abonando con tarjetas de crédito BROU VISA y BROU Recompensa Mastercard, aprovechá estos beneficios:",
-      "vigencia": "Vigencia: 05/07/2026",
-      "desc": "En iPlace, abonando con tarjetas de crédito BROU VISA y BROU Recompensa Mastercard, aprovechá estos beneficios:",
+      "url": "https://beneficios.brou.com.uy/ensenanza/mes_de_papá_en_loi",
+      "tarjetas": "15% de descuento abonando con tarjetas de crédito BROU VISA Oro y Platinum y BROU Recompensa Mastercard Oro, Platinum y Black.",
+      "vigencia": "Vigencia: 12/07/2026",
+      "desc": "Aprovechá estos beneficios en LOI con las tarjetas seleccionadas de Tu Banco",
       "categoria": "ensenanza",
       "red": null,
-      "niveles": [],
+      "niveles": [
+        "Platinum",
+        "Black",
+        "Gold"
+      ],
       "cobranding": "Recompensa"
     },
     {
@@ -519,13 +572,13 @@
       "nombre": "El Dorado",
       "pctMax": 10,
       "url": "https://beneficios.brou.com.uy/hogar/SUPERMERCADOS-EL-DORADO",
-      "tarjetas": "Todos los Martes y Jueves, tenés un descuento del 10% abonando con tarjetas de crédito BROU Recompensa Mastercard, Tarjeta de Débito Corporativa y Tarjetas de Crédito BROU PYME Mastercard y BROU PYME",
-      "vigencia": "Vigencia: 30/04/2027",
-      "desc": "Aprovecha estos beneficios en El Dorado con las tarjetas seleccionadas de Tu Banco",
+      "tarjetas": null,
+      "vigencia": null,
+      "desc": null,
       "categoria": "hogar",
-      "red": "Mastercard",
+      "red": null,
       "niveles": [],
-      "cobranding": "Recompensa"
+      "cobranding": null
     },
     {
       "nombre": "Superventas - Artículos electrónicos",
