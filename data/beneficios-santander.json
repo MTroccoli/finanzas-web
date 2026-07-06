@@ -1,7 +1,7 @@
 {
   "fuente": "santander.com.uy",
-  "actualizado": "2026-07-03T12:37:06.093Z",
-  "total": 330,
+  "actualizado": "2026-07-06T14:21:14.079Z",
+  "total": 329,
   "beneficios": [
     {
       "nombre": "Optica Estela Jinchuk",
@@ -1431,17 +1431,6 @@
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "Samsung te ayuda a descubrir una amplia gama de dispositivos electrónicos con tecnología de punta, incluyendo smartphones, televisores y más.",
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
-      "nombre": "El Bar",
-      "url": "https://www.santander.com.uy/beneficios/el-bar",
-      "pctMax": 25,
-      "vigencia": null,
-      "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
       "red": null,
       "niveles": [],
       "cobranding": null
