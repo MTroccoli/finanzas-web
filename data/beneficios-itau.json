@@ -1,7 +1,7 @@
 {
   "fuente": "itau.com.uy",
-  "actualizado": "2026-07-06T14:28:30.680Z",
-  "total": 13,
+  "actualizado": "2026-07-10T13:14:19.257Z",
+  "total": 14,
   "beneficios": [
     {
       "nombre": "Cantegrill Joyas",
@@ -29,6 +29,24 @@
       "vigencia": null,
       "tarjetas": null,
       "desc": "Millas X3 o X5 en Duty Free Uruguay",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
+    },
+    {
+      "nombre": "Riviera Joyería",
+      "url": null,
+      "pctMax": 15,
+      "descuentos": [
+        {
+          "pct": 15,
+          "texto": "15%"
+        }
+      ],
+      "vigencia": null,
+      "tarjetas": null,
+      "desc": "15% menos en Riviera Joyería",
       "exclusivo": false,
       "red": null,
       "niveles": [],
