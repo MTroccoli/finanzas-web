@@ -1,7 +1,7 @@
 {
   "fuente": "scotiabank.com.uy",
-  "actualizado": "2026-07-06T15:33:54.569Z",
-  "total": 81,
+  "actualizado": "2026-07-10T14:27:56.438Z",
+  "total": 89,
   "beneficios": [
     {
       "nombre": "ALMENARA MALL",
@@ -136,7 +136,88 @@
       "cobranding": null
     },
     {
+      "nombre": "SALMUERA",
+      "url": null,
+      "categoria": "Restaurantes",
+      "pctMax": 25,
+      "descuentos": [
+        {
+          "pct": 25,
+          "texto": "25% de ahorro"
+        },
+        {
+          "pct": 15,
+          "texto": "15% de ahorro"
+        }
+      ],
+      "vigencia": "Todos los días",
+      "tarjetas": "25% de ahorro con tarjetas de crédito Platinum, Infinite, Gold y débito Premium.",
+      "desc": "25% de ahorro con tarjetas de crédito Platinum, Infinite, Gold y débito Premium.",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [
+        "Infinite",
+        "Platinum",
+        "Gold"
+      ],
+      "cobranding": null
+    },
+    {
+      "nombre": "LADERO",
+      "url": null,
+      "categoria": "Restaurantes",
+      "pctMax": 25,
+      "descuentos": [
+        {
+          "pct": 25,
+          "texto": "25% de ahorro"
+        },
+        {
+          "pct": 15,
+          "texto": "15% de ahorro"
+        }
+      ],
+      "vigencia": "Todos los días",
+      "tarjetas": "25% de ahorro con tarjetas Platinum, Infinite, Gold y débito Premium.",
+      "desc": "25% de ahorro con tarjetas Platinum, Infinite, Gold y débito Premium.",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [
+        "Infinite",
+        "Platinum",
+        "Gold"
+      ],
+      "cobranding": null
+    },
+    {
       "nombre": "ALBERTOS",
+      "url": null,
+      "categoria": "Restaurantes",
+      "pctMax": 25,
+      "descuentos": [
+        {
+          "pct": 25,
+          "texto": "25% de ahorro"
+        },
+        {
+          "pct": 15,
+          "texto": "15% de ahorro"
+        }
+      ],
+      "vigencia": "Todos los días",
+      "tarjetas": "25% de ahorro con tarjetas Platinum, Infinite, Gold y débito Premium.",
+      "desc": "25% de ahorro con tarjetas Platinum, Infinite, Gold y débito Premium.",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [
+        "Infinite",
+        "Platinum",
+        "Gold"
+      ],
+      "cobranding": null
+    },
+    {
+      "nombre": "BIGA - PIZZA & PASTA",
       "url": null,
       "categoria": "Restaurantes",
       "pctMax": 25,
@@ -191,87 +272,6 @@
     },
     {
       "nombre": "DECANO",
-      "url": null,
-      "categoria": "Restaurantes",
-      "pctMax": 25,
-      "descuentos": [
-        {
-          "pct": 25,
-          "texto": "25% de ahorro"
-        },
-        {
-          "pct": 15,
-          "texto": "15% de ahorro"
-        }
-      ],
-      "vigencia": "Todos los días",
-      "tarjetas": "25% de ahorro con tarjetas Platinum, Infinite, Gold y débito Premium.",
-      "desc": "25% de ahorro con tarjetas Platinum, Infinite, Gold y débito Premium.",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [
-        "Infinite",
-        "Platinum",
-        "Gold"
-      ],
-      "cobranding": null
-    },
-    {
-      "nombre": "MENDIZABAL",
-      "url": null,
-      "categoria": "Restaurantes",
-      "pctMax": 25,
-      "descuentos": [
-        {
-          "pct": 25,
-          "texto": "25% de ahorro"
-        },
-        {
-          "pct": 15,
-          "texto": "15% de ahorro"
-        }
-      ],
-      "vigencia": "Todos los días",
-      "tarjetas": "25% de ahorro con tarjetas Platinum, Infinite, Gold y débito Premium.",
-      "desc": "25% de ahorro con tarjetas Platinum, Infinite, Gold y débito Premium.",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [
-        "Infinite",
-        "Platinum",
-        "Gold"
-      ],
-      "cobranding": null
-    },
-    {
-      "nombre": "EL REY DEL CHIVITO",
-      "url": null,
-      "categoria": "Restaurantes",
-      "pctMax": 25,
-      "descuentos": [
-        {
-          "pct": 25,
-          "texto": "25% de ahorro"
-        },
-        {
-          "pct": 15,
-          "texto": "15% de ahorro"
-        }
-      ],
-      "vigencia": "Todos los días",
-      "tarjetas": "25% de ahorro con tarjetas Platinum, Infinite, Gold y débito Premium.",
-      "desc": "25% de ahorro con tarjetas Platinum, Infinite, Gold y débito Premium.",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [
-        "Infinite",
-        "Platinum",
-        "Gold"
-      ],
-      "cobranding": null
-    },
-    {
-      "nombre": "BROWNIES LUIS",
       "url": null,
       "categoria": "Restaurantes",
       "pctMax": 25,
@@ -353,6 +353,33 @@
     },
     {
       "nombre": "TRANQUILO",
+      "url": null,
+      "categoria": "Cafeterías y Salones de té",
+      "pctMax": 25,
+      "descuentos": [
+        {
+          "pct": 25,
+          "texto": "25% de ahorro"
+        },
+        {
+          "pct": 15,
+          "texto": "15% de ahorro"
+        }
+      ],
+      "vigencia": "Todos los días",
+      "tarjetas": "25% de ahorro con tarjetas Platinum, Infinite, Gold y débito Premium.",
+      "desc": "25% de ahorro con tarjetas Platinum, Infinite, Gold y débito Premium.",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [
+        "Infinite",
+        "Platinum",
+        "Gold"
+      ],
+      "cobranding": null
+    },
+    {
+      "nombre": "BROWNIES LUIS",
       "url": null,
       "categoria": "Cafeterías y Salones de té",
       "pctMax": 25,
@@ -555,7 +582,26 @@
       "cobranding": null
     },
     {
-      "nombre": "COMBUSTIBLE Y TELEPEAJE",
+      "nombre": "COMBUSTIBLE",
+      "url": null,
+      "categoria": "The Platinum Card Amex",
+      "pctMax": 10,
+      "descuentos": [
+        {
+          "pct": 10,
+          "texto": "10% de ahorro"
+        }
+      ],
+      "vigencia": "Jueves y Domingos",
+      "tarjetas": null,
+      "desc": "10% de ahorro jueves y domingos en carga de combustible.",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
+    },
+    {
+      "nombre": "TELEPEAJE",
       "url": null,
       "categoria": "The Platinum Card Amex",
       "pctMax": 50,
@@ -563,15 +609,11 @@
         {
           "pct": 50,
           "texto": "50% de ahorro"
-        },
-        {
-          "pct": 10,
-          "texto": "10% de ahorro"
         }
       ],
       "vigencia": "Todos los días",
       "tarjetas": "The Platinum Card American Express (excl. ConnectMiles)",
-      "desc": "50% en telepeajes todos los días · 10% en combustible jueves y domingos. Tope $1.200/mes.",
+      "desc": "50% de ahorro todos los días en telepeajes. Tope $1.200/mes.",
       "exclusivo": false,
       "red": "Amex",
       "niveles": [
@@ -608,22 +650,6 @@
       "red": "Amex",
       "niveles": [],
       "cobranding": "ConnectMiles"
-    },
-    {
-      "nombre": "TELEPEAJE",
-      "url": null,
-      "categoria": "Automóvil",
-      "pctMax": null,
-      "descuentos": [],
-      "vigencia": "Todos los días",
-      "tarjetas": "The Platinum Card American Express (excl. ConnectMiles)",
-      "desc": "50% de ahorro todos los días en telepeajes. Tope $1.200/mes.",
-      "exclusivo": false,
-      "red": "Amex",
-      "niveles": [
-        "Platinum"
-      ],
-      "cobranding": null
     },
     {
       "nombre": "CINES 50%",
@@ -696,9 +722,36 @@
       "cobranding": null
     },
     {
-      "nombre": "MAXIMSTORE",
+      "nombre": "NIVEL 1",
       "url": null,
-      "categoria": "Electrónica",
+      "categoria": "Estética",
+      "pctMax": 25,
+      "descuentos": [
+        {
+          "pct": 25,
+          "texto": "25% de ahorro"
+        },
+        {
+          "pct": 15,
+          "texto": "15% de ahorro"
+        }
+      ],
+      "vigencia": "Todos los días",
+      "tarjetas": "25% de ahorro con tarjetas de Crédito Platinum, Infinite y Gold.",
+      "desc": "25% de ahorro con tarjetas de Crédito Platinum, Infinite y Gold.",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [
+        "Infinite",
+        "Platinum",
+        "Gold"
+      ],
+      "cobranding": null
+    },
+    {
+      "nombre": "PELUQUERÍA JIMENA NOGUEIRA",
+      "url": null,
+      "categoria": "Estética",
       "pctMax": 15,
       "descuentos": [
         {
@@ -707,17 +760,120 @@
         }
       ],
       "vigencia": "Todos los días",
-      "tarjetas": "15% de ahorro con tarjetas de crédito.",
-      "desc": "15% de ahorro con tarjetas de crédito.",
+      "tarjetas": "15% de ahorro con Tarjetas de Crédito Scotiabank.",
+      "desc": "15% de ahorro con Tarjetas de Crédito Scotiabank.",
       "exclusivo": false,
       "red": null,
       "niveles": [],
       "cobranding": null
     },
     {
-      "nombre": "ART COMPUTER",
+      "nombre": "PELUQUERÍA LAMOR",
       "url": null,
-      "categoria": "Electrónica",
+      "categoria": "Estética",
+      "pctMax": 15,
+      "descuentos": [
+        {
+          "pct": 15,
+          "texto": "15% de ahorro"
+        }
+      ],
+      "vigencia": "Todos los días",
+      "tarjetas": "15% de ahorro con Tarjetas de Crédito Scotiabank.",
+      "desc": "15% de ahorro con Tarjetas de Crédito Scotiabank.",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
+    },
+    {
+      "nombre": "BARBERÍA ALVARO ROMAN",
+      "url": null,
+      "categoria": "Estética",
+      "pctMax": 25,
+      "descuentos": [
+        {
+          "pct": 25,
+          "texto": "25% de ahorro"
+        },
+        {
+          "pct": 15,
+          "texto": "15% de ahorro"
+        }
+      ],
+      "vigencia": "Todos los días",
+      "tarjetas": "25% de ahorro con Tarjetas de Crédito Platinum, Infinite y Gold.",
+      "desc": "25% de ahorro con Tarjetas de Crédito Platinum, Infinite y Gold.",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [
+        "Infinite",
+        "Platinum",
+        "Gold"
+      ],
+      "cobranding": null
+    },
+    {
+      "nombre": "CLÍNICA MURILLO",
+      "url": null,
+      "categoria": "Estética",
+      "pctMax": 15,
+      "descuentos": [
+        {
+          "pct": 15,
+          "texto": "15% de ahorro"
+        }
+      ],
+      "vigencia": "Todos los días",
+      "tarjetas": "15% de ahorro con Tarjetas de crédito Scotiabank.",
+      "desc": "15% de ahorro con Tarjetas de crédito Scotiabank.",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
+    },
+    {
+      "nombre": "TIENDA FARMA",
+      "url": null,
+      "categoria": "Farmacias",
+      "pctMax": 20,
+      "descuentos": [
+        {
+          "pct": 20,
+          "texto": "20% de ahorro"
+        }
+      ],
+      "vigencia": "Todos los días",
+      "tarjetas": "20% de ahorro Con todas las tarjetas de Crédito y Débito.",
+      "desc": "20% de ahorro Con todas las tarjetas de Crédito y Débito.",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
+    },
+    {
+      "nombre": "PIGALLE",
+      "url": null,
+      "categoria": "Farmacias",
+      "pctMax": 20,
+      "descuentos": [
+        {
+          "pct": 20,
+          "texto": "20% de ahorro"
+        }
+      ],
+      "vigencia": "Todos los días",
+      "tarjetas": "20% de ahorro con tarjetas de crédito.",
+      "desc": "20% de ahorro con tarjetas de crédito.",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
+    },
+    {
+      "nombre": "FARMACIA IBIZA",
+      "url": null,
+      "categoria": "Farmacias",
       "pctMax": 15,
       "descuentos": [
         {
@@ -730,8 +886,46 @@
         }
       ],
       "vigencia": "Todos los días",
-      "tarjetas": "15% de ahorro con tarjetas de crédito.",
-      "desc": "15% de ahorro con tarjetas de crédito.",
+      "tarjetas": "15% de ahorro el primer y último domingo de cada mes, con Tarjetas de Débito.",
+      "desc": "15% de ahorro el primer y último domingo de cada mes, con Tarjetas de Débito.",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
+    },
+    {
+      "nombre": "FARMACIA SILVA",
+      "url": null,
+      "categoria": "Farmacias",
+      "pctMax": 15,
+      "descuentos": [
+        {
+          "pct": 15,
+          "texto": "15% de ahorro"
+        }
+      ],
+      "vigencia": "Todos los días",
+      "tarjetas": "15% de ahorro para todas las tarjetas de crédito y débito Scotiabank.",
+      "desc": "15% de ahorro para todas las tarjetas de crédito y débito Scotiabank.",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
+    },
+    {
+      "nombre": "ATENEA",
+      "url": null,
+      "categoria": "Farmacias",
+      "pctMax": 10,
+      "descuentos": [
+        {
+          "pct": 10,
+          "texto": "10% de ahorro"
+        }
+      ],
+      "vigencia": "Todos los días",
+      "tarjetas": "10% de ahorro Todos los días 10% de ahorro con Tarjetas de Débito.",
+      "desc": "10% de ahorro Todos los días 10% de ahorro con Tarjetas de Débito.",
       "exclusivo": false,
       "red": null,
       "niveles": [],
@@ -833,22 +1027,30 @@
       "cobranding": null
     },
     {
-      "nombre": "KOLHER",
+      "nombre": "OFFICE 2000",
       "url": null,
       "categoria": "Hogar",
-      "pctMax": 15,
+      "pctMax": 25,
       "descuentos": [
+        {
+          "pct": 25,
+          "texto": "25% de ahorro"
+        },
         {
           "pct": 15,
           "texto": "15% de ahorro"
         }
       ],
       "vigencia": "Todos los días",
-      "tarjetas": "15% de ahorro con tarjetas de crédito, 12 cuotas sin recargo en pesos y dólares",
-      "desc": "15% de ahorro con tarjetas de crédito, 12 cuotas sin recargo en pesos y dólares",
+      "tarjetas": "25% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y Débito Premium.",
+      "desc": "25% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y Débito Premium.",
       "exclusivo": false,
       "red": null,
-      "niveles": [],
+      "niveles": [
+        "Infinite",
+        "Platinum",
+        "Gold"
+      ],
       "cobranding": null
     },
     {
@@ -922,7 +1124,7 @@
     {
       "nombre": "SYMPHORINE",
       "url": null,
-      "categoria": "Joyerías",
+      "categoria": "Joyerías y accesorios",
       "pctMax": 15,
       "descuentos": [
         {
@@ -941,7 +1143,7 @@
     {
       "nombre": "KAUNAS",
       "url": null,
-      "categoria": "Joyerías",
+      "categoria": "Joyerías y accesorios",
       "pctMax": 15,
       "descuentos": [
         {
@@ -960,7 +1162,7 @@
     {
       "nombre": "JOYERÍA REVELLO",
       "url": null,
-      "categoria": "Joyerías",
+      "categoria": "Joyerías y accesorios",
       "pctMax": 15,
       "descuentos": [
         {
@@ -1004,7 +1206,34 @@
       "cobranding": null
     },
     {
-      "nombre": "LIBRERÍA AVISTA",
+      "nombre": "FELTRINELLI",
+      "url": null,
+      "categoria": "Librerías",
+      "pctMax": 25,
+      "descuentos": [
+        {
+          "pct": 25,
+          "texto": "25% de ahorro"
+        },
+        {
+          "pct": 15,
+          "texto": "15% de ahorro"
+        }
+      ],
+      "vigencia": "Todos los días",
+      "tarjetas": "25% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y Débito Premium.",
+      "desc": "25% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y Débito Premium.",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [
+        "Infinite",
+        "Platinum",
+        "Gold"
+      ],
+      "cobranding": null
+    },
+    {
+      "nombre": "AVISTA",
       "url": null,
       "categoria": "Librerías",
       "pctMax": 25,
@@ -1032,33 +1261,6 @@
     },
     {
       "nombre": "3 MUSAS",
-      "url": null,
-      "categoria": "Librerías",
-      "pctMax": 25,
-      "descuentos": [
-        {
-          "pct": 25,
-          "texto": "25% de ahorro"
-        },
-        {
-          "pct": 15,
-          "texto": "15% de ahorro"
-        }
-      ],
-      "vigencia": "Todos los días",
-      "tarjetas": "25% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y Débito Premium.",
-      "desc": "25% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y Débito Premium.",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [
-        "Infinite",
-        "Platinum",
-        "Gold"
-      ],
-      "cobranding": null
-    },
-    {
-      "nombre": "ESCOOL",
       "url": null,
       "categoria": "Librerías",
       "pctMax": 25,
@@ -1428,70 +1630,9 @@
       "cobranding": null
     },
     {
-      "nombre": "TIENDA FARMA",
+      "nombre": "ESCOOL",
       "url": null,
-      "categoria": "Farmacias",
-      "pctMax": 20,
-      "descuentos": [
-        {
-          "pct": 20,
-          "texto": "20% de ahorro"
-        }
-      ],
-      "vigencia": "Todos los días",
-      "tarjetas": "20% de ahorro Con todas las tarjetas de Crédito y Débito.",
-      "desc": "20% de ahorro Con todas las tarjetas de Crédito y Débito.",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
-      "nombre": "PIGALLE",
-      "url": null,
-      "categoria": "Farmacias",
-      "pctMax": 20,
-      "descuentos": [
-        {
-          "pct": 20,
-          "texto": "20% de ahorro"
-        }
-      ],
-      "vigencia": "Todos los días",
-      "tarjetas": "20% de ahorro con tarjetas de crédito.",
-      "desc": "20% de ahorro con tarjetas de crédito.",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
-      "nombre": "FARMACIA IBIZA",
-      "url": null,
-      "categoria": "Farmacias",
-      "pctMax": 15,
-      "descuentos": [
-        {
-          "pct": 15,
-          "texto": "15% de ahorro"
-        },
-        {
-          "pct": 10,
-          "texto": "10% de ahorro"
-        }
-      ],
-      "vigencia": "Todos los días",
-      "tarjetas": "15% de ahorro el primer y último domingo de cada mes, con Tarjetas de Débito.",
-      "desc": "15% de ahorro el primer y último domingo de cada mes, con Tarjetas de Débito.",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
-      "nombre": "NIVEL 1",
-      "url": null,
-      "categoria": "Estética",
+      "categoria": "Papelerías",
       "pctMax": 25,
       "descuentos": [
         {
@@ -1504,8 +1645,8 @@
         }
       ],
       "vigencia": "Todos los días",
-      "tarjetas": "25% de ahorro con tarjetas de Crédito Platinum, Infinite y Gold.",
-      "desc": "25% de ahorro con tarjetas de Crédito Platinum, Infinite y Gold.",
+      "tarjetas": "25% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y Débito Premium.",
+      "desc": "25% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y Débito Premium.",
       "exclusivo": false,
       "red": null,
       "niveles": [
@@ -1516,47 +1657,9 @@
       "cobranding": null
     },
     {
-      "nombre": "PELUQUERÍA JIMENA NOGUEIRA",
+      "nombre": "PAPELERÍA PACA",
       "url": null,
-      "categoria": "Estética",
-      "pctMax": 15,
-      "descuentos": [
-        {
-          "pct": 15,
-          "texto": "15% de ahorro"
-        }
-      ],
-      "vigencia": "Todos los días",
-      "tarjetas": "15% de ahorro con Tarjetas de Crédito Scotiabank.",
-      "desc": "15% de ahorro con Tarjetas de Crédito Scotiabank.",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
-      "nombre": "PELUQUERÍA LAMOR",
-      "url": null,
-      "categoria": "Estética",
-      "pctMax": 15,
-      "descuentos": [
-        {
-          "pct": 15,
-          "texto": "15% de ahorro"
-        }
-      ],
-      "vigencia": "Todos los días",
-      "tarjetas": "15% de ahorro con Tarjetas de Crédito Scotiabank.",
-      "desc": "15% de ahorro con Tarjetas de Crédito Scotiabank.",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
-      "nombre": "BARBERÍA ALVARO ROMAN",
-      "url": null,
-      "categoria": "Estética",
+      "categoria": "Papelerías",
       "pctMax": 25,
       "descuentos": [
         {
@@ -1569,8 +1672,89 @@
         }
       ],
       "vigencia": "Todos los días",
-      "tarjetas": "25% de ahorro con Tarjetas de Crédito Platinum, Infinite y Gold.",
-      "desc": "25% de ahorro con Tarjetas de Crédito Platinum, Infinite y Gold.",
+      "tarjetas": "25% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y Débito Premium.",
+      "desc": "25% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y Débito Premium.",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [
+        "Infinite",
+        "Platinum",
+        "Gold"
+      ],
+      "cobranding": null
+    },
+    {
+      "nombre": "TRAZOS PAPELERÍA",
+      "url": null,
+      "categoria": "Papelerías",
+      "pctMax": 25,
+      "descuentos": [
+        {
+          "pct": 25,
+          "texto": "25% de ahorro"
+        },
+        {
+          "pct": 15,
+          "texto": "15% de ahorro"
+        }
+      ],
+      "vigencia": "Todos los días",
+      "tarjetas": "25% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y Débito Premium.",
+      "desc": "25% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y Débito Premium.",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [
+        "Infinite",
+        "Platinum",
+        "Gold"
+      ],
+      "cobranding": null
+    },
+    {
+      "nombre": "FLOBER PAPELERÍA",
+      "url": null,
+      "categoria": "Papelerías",
+      "pctMax": 25,
+      "descuentos": [
+        {
+          "pct": 25,
+          "texto": "25% de ahorro"
+        },
+        {
+          "pct": 15,
+          "texto": "15% de ahorro"
+        }
+      ],
+      "vigencia": "Todos los días",
+      "tarjetas": "25% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y Débito Premium.",
+      "desc": "25% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y Débito Premium.",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [
+        "Infinite",
+        "Platinum",
+        "Gold"
+      ],
+      "cobranding": null
+    },
+    {
+      "nombre": "PAPACITO PAPELERÍA",
+      "url": null,
+      "categoria": "Papelerías",
+      "pctMax": 25,
+      "descuentos": [
+        {
+          "pct": 25,
+          "texto": "25% de ahorro"
+        },
+        {
+          "pct": 15,
+          "texto": "15% de ahorro"
+        }
+      ],
+      "vigencia": "Todos los días",
+      "tarjetas": "25% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y Débito Premium.",
+      "desc": "25% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y Débito Premium.",
       "exclusivo": false,
       "red": null,
       "niveles": [
@@ -1679,27 +1863,46 @@
       "cobranding": null
     },
     {
-      "nombre": "MILES + CASH",
+      "nombre": "MAXIMSTORE",
       "url": null,
-      "categoria": "Viajes",
-      "pctMax": 40,
+      "categoria": "Tecnología",
+      "pctMax": 15,
       "descuentos": [
         {
-          "pct": 40,
-          "texto": "40% de ahorro"
+          "pct": 15,
+          "texto": "15% de ahorro"
+        }
+      ],
+      "vigencia": "Todos los días",
+      "tarjetas": "15% de ahorro con tarjetas de crédito.",
+      "desc": "15% de ahorro con tarjetas de crédito.",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
+    },
+    {
+      "nombre": "ART COMPUTER",
+      "url": null,
+      "categoria": "Tecnología",
+      "pctMax": 15,
+      "descuentos": [
+        {
+          "pct": 15,
+          "texto": "15% de ahorro"
         },
         {
           "pct": 10,
           "texto": "10% de ahorro"
         }
       ],
-      "vigencia": "Hasta el 8 de Julio",
-      "tarjetas": "Obtené 40% de descuento comprando tu viaje con la forma de pago Miles + Cash y tu tarjeta Amex ConnectMiles.",
-      "desc": "Obtené 40% de descuento comprando tu viaje con la forma de pago Miles + Cash y tu tarjeta Amex ConnectMiles.",
+      "vigencia": "Todos los días",
+      "tarjetas": "15% de ahorro con tarjetas de crédito.",
+      "desc": "15% de ahorro con tarjetas de crédito.",
       "exclusivo": false,
-      "red": "Amex",
+      "red": null,
       "niveles": [],
-      "cobranding": "ConnectMiles"
+      "cobranding": null
     },
     {
       "nombre": "HOTELES EN URUGUAY",
