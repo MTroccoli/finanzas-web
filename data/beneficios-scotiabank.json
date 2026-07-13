@@ -1,138 +1,114 @@
 {
   "fuente": "scotiabank.com.uy",
-  "actualizado": "2026-07-10T14:27:56.438Z",
-  "total": 89,
+  "actualizado": "2026-07-13T14:35:13.563Z",
+  "total": 85,
   "beneficios": [
     {
-      "nombre": "ALMENARA MALL",
-      "url": null,
+      "nombre": "TIENDA INGLESA",
+      "url": "https://www.scotiabank.com.uy/Personas/Tarjetas/Beneficios/Supermercados/tienda-inglesa-julio-2026",
       "categoria": "Destacados",
-      "pctMax": 25,
-      "descuentos": [
-        {
-          "pct": 25,
-          "texto": "25% de ahorro"
-        },
-        {
-          "pct": 15,
-          "texto": "15% de ahorro"
-        }
-      ],
+      "pctMax": null,
+      "descuentos": [],
       "vigencia": "Todos los días",
-      "tarjetas": "25% de ahorro con tarjetas de crédito Platinum, Infinite, Gold y débito Premium.",
-      "desc": "25% de ahorro con tarjetas de crédito Platinum, Infinite, Gold y débito Premium.",
+      "tarjetas": "Disfrutá beneficios exclusivos con tus tarjetas Scotiabank.",
+      "desc": "Disfrutá beneficios exclusivos con tus tarjetas Scotiabank.",
       "exclusivo": false,
       "red": null,
-      "niveles": [
-        "Infinite",
-        "Platinum",
-        "Gold"
-      ],
+      "niveles": [],
       "cobranding": null
     },
     {
-      "nombre": "ZONA LASER",
+      "nombre": "COPA CONNECTMILES",
       "url": null,
       "categoria": "Destacados",
-      "pctMax": 25,
-      "descuentos": [
-        {
-          "pct": 25,
-          "texto": "25% de ahorro"
-        },
-        {
-          "pct": 15,
-          "texto": "15% de ahorro"
-        }
-      ],
-      "vigencia": "Todos los días",
-      "tarjetas": "25% de ahorro con tarjetas de crédito Platinum, Infinite, Gold y débito Premium.",
-      "desc": "25% de ahorro con tarjetas de crédito Platinum, Infinite, Gold y débito Premium.",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [
-        "Infinite",
-        "Platinum",
-        "Gold"
-      ],
-      "cobranding": null
-    },
-    {
-      "nombre": "BOWLING CENTER",
-      "url": null,
-      "categoria": "Destacados",
-      "pctMax": 25,
-      "descuentos": [
-        {
-          "pct": 25,
-          "texto": "25% de ahorro"
-        },
-        {
-          "pct": 15,
-          "texto": "15% de ahorro"
-        }
-      ],
-      "vigencia": "Todos los días",
-      "tarjetas": "25% de ahorro con tarjetas de crédito Platinum, Infinite, Gold y débito Premium.",
-      "desc": "25% de ahorro con tarjetas de crédito Platinum, Infinite, Gold y débito Premium.",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [
-        "Infinite",
-        "Platinum",
-        "Gold"
-      ],
-      "cobranding": null
-    },
-    {
-      "nombre": "PEDIDOSYA MARKET Y FARMACIAS",
-      "url": null,
-      "categoria": "Destacados",
-      "pctMax": 30,
-      "descuentos": [
-        {
-          "pct": 30,
-          "texto": "30% de ahorro"
-        },
-        {
-          "pct": 15,
-          "texto": "15% de ahorro"
-        }
-      ],
-      "vigencia": "De Viernes a Domingo",
-      "tarjetas": "30% de ahorro con tarjetas AMEX si sos usuario Plus.",
-      "desc": "30% de ahorro con tarjetas AMEX si sos usuario Plus.",
+      "pctMax": null,
+      "descuentos": [],
+      "vigencia": "Del 1 al 31 de Julio",
+      "tarjetas": "Triplicá tus millas cargando combustible en todas las estaciones de servicio del país con tarjetas American Express ConnectMiles",
+      "desc": "Triplicá tus millas cargando combustible en todas las estaciones de servicio del país con tarjetas American Express ConnectMiles",
       "exclusivo": false,
       "red": "Amex",
       "niveles": [],
+      "cobranding": "ConnectMiles"
+    },
+    {
+      "nombre": "CINES 50%",
+      "url": null,
+      "categoria": "Destacados",
+      "pctMax": 50,
+      "descuentos": [
+        {
+          "pct": 50,
+          "texto": "50% de ahorro"
+        }
+      ],
+      "vigencia": "Todos los días",
+      "tarjetas": "50% de ahorro en cines de todo el país con tarjetas débito Premium y débito Infinite.",
+      "desc": "50% de ahorro en cines de todo el país con tarjetas débito Premium y débito Infinite.",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [
+        "Infinite"
+      ],
       "cobranding": null
     },
     {
-      "nombre": "MONTEVIDEO SHOPPING DÍA DEL PADRE",
+      "nombre": "FIFA MUNDIAL",
       "url": null,
       "categoria": "Destacados",
-      "pctMax": null,
-      "descuentos": [],
-      "vigencia": "Del 26 de Junio al 12 de Julio",
-      "tarjetas": "A partir de $2000 en compras con tarjetas de crédito Scotia te podés llevar el mejor whisky Chivas Regal con un costo de $1300 o $1600",
-      "desc": "A partir de $2000 en compras con tarjetas de crédito Scotia te podés llevar el mejor whisky Chivas Regal con un costo de $1300 o $1600",
+      "pctMax": 20,
+      "descuentos": [
+        {
+          "pct": 20,
+          "texto": "20% de ahorro"
+        }
+      ],
+      "vigencia": "Del 11 de Junio al 19 de Julio",
+      "tarjetas": "20% de ahorro en USA, MÉXICO y CANADÁ usando tu Visa crédito Scotia con billetera digital en todos tus consumos.",
+      "desc": "20% de ahorro en USA, MÉXICO y CANADÁ usando tu Visa crédito Scotia con billetera digital en todos tus consumos.",
+      "exclusivo": false,
+      "red": "Visa",
+      "niveles": [],
+      "cobranding": null
+    },
+    {
+      "nombre": "COMBUSTIBLE",
+      "url": null,
+      "categoria": "Destacados",
+      "pctMax": 10,
+      "descuentos": [
+        {
+          "pct": 10,
+          "texto": "10% de ahorro"
+        }
+      ],
+      "vigencia": "Jueves y Domingos",
+      "tarjetas": null,
+      "desc": "10% de ahorro jueves y domingos en carga de combustible.",
       "exclusivo": false,
       "red": null,
       "niveles": [],
       "cobranding": null
     },
     {
-      "nombre": "TRES CRUCES SHOPPING DÍA DEL PADRE",
+      "nombre": "TELEPEAJE",
       "url": null,
       "categoria": "Destacados",
-      "pctMax": null,
-      "descuentos": [],
-      "vigencia": "Del 26 de Junio al 12 de Julio",
-      "tarjetas": "Cada $1500 en compras con tarjetas de crédito Scotia + $750 te llevás una caja de herramientas súper completa para papá.",
-      "desc": "Cada $1500 en compras con tarjetas de crédito Scotia + $750 te llevás una caja de herramientas súper completa para papá.",
+      "pctMax": 50,
+      "descuentos": [
+        {
+          "pct": 50,
+          "texto": "50% de ahorro"
+        }
+      ],
+      "vigencia": "Todos los días",
+      "tarjetas": "The Platinum Card American Express (excl. ConnectMiles)",
+      "desc": "50% de ahorro todos los días en telepeajes. Tope $1.200/mes.",
       "exclusivo": false,
-      "red": null,
-      "niveles": [],
+      "red": "Amex",
+      "niveles": [
+        "Platinum"
+      ],
       "cobranding": null
     },
     {
@@ -433,33 +409,6 @@
       "cobranding": null
     },
     {
-      "nombre": "ADAGIO LIBRERÍA CAFÉ",
-      "url": null,
-      "categoria": "Cafeterías y Salones de té",
-      "pctMax": 25,
-      "descuentos": [
-        {
-          "pct": 25,
-          "texto": "25% de ahorro"
-        },
-        {
-          "pct": 15,
-          "texto": "15% de ahorro"
-        }
-      ],
-      "vigencia": "Todos los días",
-      "tarjetas": "25% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y Débito Premium.",
-      "desc": "25% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y Débito Premium.",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [
-        "Infinite",
-        "Platinum",
-        "Gold"
-      ],
-      "cobranding": null
-    },
-    {
       "nombre": "ONEILL",
       "url": null,
       "categoria": "Vestimenta",
@@ -582,46 +531,6 @@
       "cobranding": null
     },
     {
-      "nombre": "COMBUSTIBLE",
-      "url": null,
-      "categoria": "The Platinum Card Amex",
-      "pctMax": 10,
-      "descuentos": [
-        {
-          "pct": 10,
-          "texto": "10% de ahorro"
-        }
-      ],
-      "vigencia": "Jueves y Domingos",
-      "tarjetas": null,
-      "desc": "10% de ahorro jueves y domingos en carga de combustible.",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
-      "nombre": "TELEPEAJE",
-      "url": null,
-      "categoria": "The Platinum Card Amex",
-      "pctMax": 50,
-      "descuentos": [
-        {
-          "pct": 50,
-          "texto": "50% de ahorro"
-        }
-      ],
-      "vigencia": "Todos los días",
-      "tarjetas": "The Platinum Card American Express (excl. ConnectMiles)",
-      "desc": "50% de ahorro todos los días en telepeajes. Tope $1.200/mes.",
-      "exclusivo": false,
-      "red": "Amex",
-      "niveles": [
-        "Platinum"
-      ],
-      "cobranding": null
-    },
-    {
       "nombre": "AMEX PRESS READER",
       "url": null,
       "categoria": "The Platinum Card Amex",
@@ -634,41 +543,6 @@
       "red": null,
       "niveles": [
         "Platinum"
-      ],
-      "cobranding": null
-    },
-    {
-      "nombre": "COPA CONNECTMILES",
-      "url": null,
-      "categoria": "Automóvil",
-      "pctMax": null,
-      "descuentos": [],
-      "vigencia": "Del 1 al 31 de Julio",
-      "tarjetas": "Triplicá tus millas cargando combustible en todas las estaciones de servicio del país con tarjetas American Express ConnectMiles",
-      "desc": "Triplicá tus millas cargando combustible en todas las estaciones de servicio del país con tarjetas American Express ConnectMiles",
-      "exclusivo": false,
-      "red": "Amex",
-      "niveles": [],
-      "cobranding": "ConnectMiles"
-    },
-    {
-      "nombre": "CINES 50%",
-      "url": null,
-      "categoria": "Cines",
-      "pctMax": 50,
-      "descuentos": [
-        {
-          "pct": 50,
-          "texto": "50% de ahorro"
-        }
-      ],
-      "vigencia": "Todos los días",
-      "tarjetas": "50% de ahorro en cines de todo el país con tarjetas débito Premium y débito Infinite.",
-      "desc": "50% de ahorro en cines de todo el país con tarjetas débito Premium y débito Infinite.",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [
-        "Infinite"
       ],
       "cobranding": null
     },
@@ -804,6 +678,33 @@
       "vigencia": "Todos los días",
       "tarjetas": "25% de ahorro con Tarjetas de Crédito Platinum, Infinite y Gold.",
       "desc": "25% de ahorro con Tarjetas de Crédito Platinum, Infinite y Gold.",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [
+        "Infinite",
+        "Platinum",
+        "Gold"
+      ],
+      "cobranding": null
+    },
+    {
+      "nombre": "TU PAUSE",
+      "url": null,
+      "categoria": "Estética",
+      "pctMax": 25,
+      "descuentos": [
+        {
+          "pct": 25,
+          "texto": "25% de ahorro"
+        },
+        {
+          "pct": 15,
+          "texto": "15% de ahorro"
+        }
+      ],
+      "vigencia": "Todos los días",
+      "tarjetas": "25% de ahorro de ahorro con Tarjetas de Crédito Infinite, Platinum y Gold.",
+      "desc": "25% de ahorro de ahorro con Tarjetas de Crédito Infinite, Platinum y Gold.",
       "exclusivo": false,
       "red": null,
       "niveles": [
@@ -1176,6 +1077,33 @@
       "exclusivo": false,
       "red": null,
       "niveles": [],
+      "cobranding": null
+    },
+    {
+      "nombre": "ADAGIO LIBRERÍA CAFÉ",
+      "url": null,
+      "categoria": "Librerías",
+      "pctMax": 25,
+      "descuentos": [
+        {
+          "pct": 25,
+          "texto": "25% de ahorro"
+        },
+        {
+          "pct": 15,
+          "texto": "15% de ahorro"
+        }
+      ],
+      "vigencia": "Todos los días",
+      "tarjetas": "25% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y Débito Premium.",
+      "desc": "25% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y Débito Premium.",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [
+        "Infinite",
+        "Platinum",
+        "Gold"
+      ],
       "cobranding": null
     },
     {
@@ -1762,20 +1690,6 @@
         "Platinum",
         "Gold"
       ],
-      "cobranding": null
-    },
-    {
-      "nombre": "TIENDA INGLESA",
-      "url": "https://www.scotiabank.com.uy/Personas/Tarjetas/Beneficios/Supermercados/tienda-inglesa-julio-2026",
-      "categoria": "Supermercados",
-      "pctMax": null,
-      "descuentos": [],
-      "vigencia": "Todos los días",
-      "tarjetas": "Disfrutá beneficios exclusivos con tus tarjetas Scotiabank.",
-      "desc": "Disfrutá beneficios exclusivos con tus tarjetas Scotiabank.",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [],
       "cobranding": null
     },
     {
