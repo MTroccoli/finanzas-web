@@ -1,8 +1,8 @@
 {
   "fuente": "BROU",
   "url": "https://beneficios.brou.com.uy/beneficios",
-  "fecha": "2026-07-10",
-  "total": 70,
+  "fecha": "2026-07-13",
+  "total": 64,
   "beneficios": [
     {
       "nombre": "Banco Hipotecario del Uruguay",
@@ -112,73 +112,12 @@
       "cobranding": "Recompensa"
     },
     {
-      "nombre": "Mes de papá en Districomp",
-      "pctMax": 25,
-      "url": "https://beneficios.brou.com.uy/ensenanza/Mes-de-papá-en-districomp",
-      "tarjetas": "25% de descuento con tarjetas de crédito BROU VISA Platinum y BROU Recompensa Mastercard Platinum y Black.",
-      "vigencia": "Vigencia: 12/07/2026",
-      "desc": "Mes de papá en Districomp",
-      "categoria": "ensenanza",
-      "red": null,
-      "niveles": [
-        "Platinum",
-        "Black"
-      ],
-      "cobranding": "Recompensa"
-    },
-    {
-      "nombre": "Mes de papá en CASA JARDIN",
-      "pctMax": 25,
-      "url": "https://beneficios.brou.com.uy/ensenanza/mes-de-papá-casa-jardin",
-      "tarjetas": "25% de descuento con tarjetas de crédito BROU VISA Platinum y BROU Recompensa Mastercard Platinum y Black.",
-      "vigencia": "Vigencia: 12/07/2026",
-      "desc": "Mes de papá en CASA JARDIN",
-      "categoria": "ensenanza",
-      "red": null,
-      "niveles": [
-        "Platinum",
-        "Black"
-      ],
-      "cobranding": "Recompensa"
-    },
-    {
       "nombre": "Ser Animal",
       "pctMax": 25,
       "url": "https://beneficios.brou.com.uy/ensenanza/ser-animal",
       "tarjetas": "25% de dto. con las tarjetas de crédito BROU VISA Platino y BROU Recompensa Mastercard Black.",
       "vigencia": "Vigencia: 31/03/2027",
       "desc": "Aprovechá los siguientes descuentos en Ser Animal",
-      "categoria": "ensenanza",
-      "red": null,
-      "niveles": [
-        "Platinum",
-        "Black"
-      ],
-      "cobranding": "Recompensa"
-    },
-    {
-      "nombre": "Mes de Papá en El Rey del Entretenimiento",
-      "pctMax": 25,
-      "url": "https://beneficios.brou.com.uy/ensenanza/mes-de-papá-en-el-rey-del-entretenimiento",
-      "tarjetas": "25% de descuento con tarjetas de Crédito BROU VISA Platino e Infinite y BROU Recompensa Mastercard Platino y Black.",
-      "vigencia": "Vigencia: 12/07/2026",
-      "desc": "Mes de Papá en El Rey del Entretenimiento",
-      "categoria": "ensenanza",
-      "red": null,
-      "niveles": [
-        "Infinite",
-        "Platinum",
-        "Black"
-      ],
-      "cobranding": "Recompensa"
-    },
-    {
-      "nombre": "Mes de Papá en Universo Binario",
-      "pctMax": 25,
-      "url": "https://beneficios.brou.com.uy/ensenanza/mes-de-papá-en-universo-binario",
-      "tarjetas": "25% de descuento con tarjetas de crédito VISA y BROU Recompensa Mastercard Black, Platino e Infinitie.",
-      "vigencia": "Vigencia: 12/07/2026",
-      "desc": "Mes de Papá en Universo Binario",
       "categoria": "ensenanza",
       "red": null,
       "niveles": [
@@ -371,21 +310,6 @@
       "cobranding": null
     },
     {
-      "nombre": "Mes de Papá en Costa Urbana Shopping",
-      "pctMax": 20,
-      "url": "https://beneficios.brou.com.uy/ensenanza/mes-de-papá-en-costaurbana",
-      "tarjetas": "20% de descuento con tarjetas de crédito BROU VISA Platino y BROU Recompensa Mastercard Platino y Black.",
-      "vigencia": "Vigencia: 12/07/2026",
-      "desc": "Mes de Papá en Costa Urbana Shopping",
-      "categoria": "ensenanza",
-      "red": null,
-      "niveles": [
-        "Platinum",
-        "Black"
-      ],
-      "cobranding": "Recompensa"
-    },
-    {
       "nombre": "Óptica Net",
       "pctMax": 20,
       "url": "https://beneficios.brou.com.uy/salud-estetica/OPticaNet_Estetica",
@@ -470,22 +394,6 @@
         "Clásica"
       ],
       "cobranding": null
-    },
-    {
-      "nombre": "Mes de papá en LOI",
-      "pctMax": 15,
-      "url": "https://beneficios.brou.com.uy/ensenanza/mes_de_papá_en_loi",
-      "tarjetas": "15% de descuento abonando con tarjetas de crédito BROU VISA Oro y Platinum y BROU Recompensa Mastercard Oro, Platinum y Black.",
-      "vigencia": "Vigencia: 12/07/2026",
-      "desc": "Aprovechá estos beneficios en LOI con las tarjetas seleccionadas de Tu Banco",
-      "categoria": "ensenanza",
-      "red": null,
-      "niveles": [
-        "Platinum",
-        "Black",
-        "Gold"
-      ],
-      "cobranding": "Recompensa"
     },
     {
       "nombre": "GR Joyeros",
@@ -627,33 +535,35 @@
       "nombre": "Florencia Nuñez",
       "pctMax": 10,
       "url": "https://beneficios.brou.com.uy/ensenanza/florencia-nuez",
-      "tarjetas": null,
-      "vigencia": null,
-      "desc": null,
+      "tarjetas": "Abonando con tarjetas de crédito y débito BROU VISA y BROU Recompensa Mastercard.",
+      "vigencia": "Vigencia: 15/10/2026",
+      "desc": "Disfrutá del 10% de dto. para “Década y Media”, la gira nacional de Florencia Núñez que celebra sus 15 años de carrera.",
       "categoria": "ensenanza",
       "red": null,
       "niveles": [],
-      "cobranding": null
+      "cobranding": "Recompensa"
     },
     {
       "nombre": "Macromercado",
       "pctMax": 10,
       "url": "https://beneficios.brou.com.uy/ensenanza/macro-mercado",
-      "tarjetas": "Todos los martes y jueves tenés un 10% de descuento abonando con tarjetas de crédito BROU Recompensa Mastercard, Tarjeta de Débito Corporativa y Tarjetas de Crédito BROU PYME Mastercard y BROU PYME Ma",
+      "tarjetas": "Todos los martes y jueves tenés un 10% de descuento abonando con tarjetas de crédito BROU Recompensa Mastercard, y Tarjetas de Crédito BROU PYME Mastercard y BROU PYME Mastercard Platinum.",
       "vigencia": "Vigencia: 30/04/2027",
       "desc": "Aprovecha estos beneficios en Macromercado con las tarjetas seleccionadas de Tu Banco",
       "categoria": "ensenanza",
       "red": "Mastercard",
-      "niveles": [],
+      "niveles": [
+        "Platinum"
+      ],
       "cobranding": "Recompensa"
     },
     {
       "nombre": "Farmacias",
       "pctMax": 10,
       "url": "https://beneficios.brou.com.uy/salud-estetica/Farmacias",
-      "tarjetas": "La promoción comprende un 10% de descuento en el rubro FARMACIAS todos los miércoles, sábados y domingos abonando con Tarjetas de Crédito y Débito BROU Recompensa Mastercard, y Tarjetas de Crédito BRO",
+      "tarjetas": "La promoción comprende un 10% de descuento en el rubro FARMACIAS todos los miércoles, sábados y domingos abonando con Tarjetas de Crédito BROU Recompensa Mastercard, y Tarjetas de Crédito BROU PYME Ma",
       "vigencia": "Vigencia: 30/04/2027",
-      "desc": "La promoción comprende un 10% de descuento en el rubro FARMACIAS todos los miércoles, sábados y domingos abonando con Tarjetas de Crédito y Débito BROU Recompensa Mastercard, y Tarjetas de Crédito BROU PYME Mastercard y BROU PYME Mastercard Platinum.",
+      "desc": "La promoción comprende un 10% de descuento en el rubro FARMACIAS todos los miércoles, sábados y domingos abonando con Tarjetas de Crédito BROU Recompensa Mastercard, y Tarjetas de Crédito BROU PYME Mastercard y BROU PYME Mastercard Platinum.",
       "categoria": "salud-estetica",
       "red": "Mastercard",
       "niveles": [],
@@ -663,7 +573,7 @@
       "nombre": "Supermercados seleccionados",
       "pctMax": 10,
       "url": "https://beneficios.brou.com.uy/hogar/Recompensa-Supermercados",
-      "tarjetas": "La promoción comprende un 10% de descuento todos los martes y jueves en supermercados Ta-Ta, El Dorado, Macro Mercado, Micro Macro, Red Expres y Tienda Inglesa abonando con Tarjetas de Crédito y Prepa",
+      "tarjetas": "La promoción comprende un 10% de descuento todos los martes y jueves en supermercados Ta-Ta, El Dorado, Macro Mercado, Micro Macro, Red Expres y Tienda Inglesa abonando con Tarjetas de Crédito y BROU",
       "vigencia": "Vigencia: 30/04/2027",
       "desc": "Supermercados seleccionados",
       "categoria": "hogar",
@@ -701,19 +611,19 @@
       "nombre": "Red Expres",
       "pctMax": 10,
       "url": "https://beneficios.brou.com.uy/ensenanza/red-expres",
-      "tarjetas": null,
-      "vigencia": null,
-      "desc": null,
+      "tarjetas": "Todos los martes y jueves tenés un 10% de descuento abonando con tarjetas de crédito BROU Recompensa Mastercard.",
+      "vigencia": "Vigencia: 30/04/2027",
+      "desc": "Aprovecha estos beneficios en Red Expres con las tarjetas seleccionadas de Tu Banco",
       "categoria": "ensenanza",
-      "red": null,
+      "red": "Mastercard",
       "niveles": [],
-      "cobranding": null
+      "cobranding": "Recompensa"
     },
     {
       "nombre": "Combustible en Estaciones ANCAP",
       "pctMax": 5,
       "url": "https://beneficios.brou.com.uy/transporte/Recompensa-Combustible ",
-      "tarjetas": "La promoción comprende un 5% de descuento en combustibles en Estaciones ANCAP los días lunes y viernes abonando con Tarjetas de Crédito y Prepagas BROU Recompensa Mastercard, Tarjetas de Crédito BROU",
+      "tarjetas": "La promoción comprende un 5% de descuento en combustibles en Estaciones ANCAP los días lunes y viernes abonando con Tarjetas de Crédito BROU Recompensa Mastercard, Tarjetas de Crédito BROU PYME Master",
       "vigencia": "Vigencia: 30/04/2027",
       "desc": "Combustible en Estaciones ANCAP",
       "categoria": "transporte",
@@ -821,12 +731,14 @@
       "nombre": "Priority Pass",
       "pctMax": null,
       "url": "https://beneficios.brou.com.uy/turismo/PriorityPass_VISAPlatinum",
-      "tarjetas": null,
+      "tarjetas": "2 accesos anuales a salas VIP con Visa Platinum del Banco República en Aeropuertos con Priority Pass",
       "vigencia": null,
-      "desc": null,
+      "desc": "2 accesos anuales a salas VIP con Visa Platinum del Banco República en Aeropuertos con Priority Pass",
       "categoria": "turismo",
-      "red": null,
-      "niveles": [],
+      "red": "Visa",
+      "niveles": [
+        "Platinum"
+      ],
       "cobranding": null
     },
     {
