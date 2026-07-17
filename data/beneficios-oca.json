@@ -1,22 +1,7 @@
 {
   "fuente": "OCA",
-  "actualizado": "2026-07-13",
+  "actualizado": "2026-07-17",
   "beneficios": [
-    {
-      "nombre": "Tipo de cambio preferencial con tu OCA Blue para hacer transacciones en Mi Cuenta o la App OCA",
-      "corto": "Tipode Cambio OCA Blue",
-      "pctMax": null,
-      "url": "https://ocablue.uy/beneficios.html?id=61&name=TipodeCambioOCABlue",
-      "categoria": null,
-      "tarjetas": "Abrir cuenta gratis",
-      "vigencia": "Del 15/06/25 al 15/07/26",
-      "desc": "El tipo de cambio preferencial es válido del 15 de junio al 15 de julio del 2026, para pagos de estados de cuenta de tarjetas de crédito OCA desde cuentas OCA Blue.  Además para realizar transferencias entre cuentas propias o a terceros en OCA Blue u otra institución financiera, en moneda cruzada y desde Mi Cuenta o la App de OCA exclusivamente. \n                \n                \n                No aplica para transacciones en las cajas de las sucursales de OCA S.A., en RedPagos y tampoco para operaciones de pago de facturas, ni consumos con la tarjeta OCA Blue. \n                 \n                 \n                OCA Dinero Electrónico S.A. podrá a su sola discreción modificar el tipo de cambio anunciado en cualquier momento.\n                \n                \n                    #mercadopagolegal {\n                        display: none;\n                    }\n                \n             \n                                      No aplica para compras a través de Mercado Pago. \n                                      Promoción no acumulable con otros descuentos.",
-      "red": "OCA",
-      "niveles": [
-        "Blue"
-      ],
-      "cobranding": null
-    },
     {
       "nombre": "30% de dto. en restaurantes y Fast Food en EE.UU, México y Canadá, pagando con el celular. Además 0% de comisión en todo el mundo.",
       "corto": "Mundial Exterior OCA Blue",
@@ -39,6 +24,21 @@
       "tarjetas": "Abrir cuenta gratis",
       "vigencia": null,
       "desc": "Pagá en comercios adheridos con POS Handy y accedé a un 10%, 15% o 20% según el comercio y la campaña vigente, con tarjetas de crédito y OCA Blue.\n            \n            Además, si pagás con la App OCA, Apple Pay o Google Pay, tenés +5% extra.\n                      \n                      \n            *Apple Pay: Aplica solo a tarjeta de crédito Mastercard.\n            *Google Pay: Aplica para OCA Blue y tarjetas de crédito Mastercard y Visa.\n            *App OCA: Aplica mediante NFC, solo en Android, para OCA Blue y tarjetas de crédito Mastercard y Visa.\n            \n            \n            Promoción válida en Uruguay para compras realizadas en comercios participantes y procesadas por POS Handy. Aplican topes, vigencia, exclusiones y condiciones de cada campaña. El descuento del comercio se verá aplicado en el punto de venta.\n            \n            El descuento del +5% extra será aplicado en el estado de cuenta. Tope de +5% extra de $500 por cuenta, por mes. Válido para tarjetas de crédito y OCA Blue.\n               \n               \n            Conocé los comercios adheridos aquí       \n            \n                #mercadopagolegal{\n                    display:none\n                }\n                    #noacumulablelegal{\n                    display:none\n                }\n            \n            \n             \n                                      No aplica para compras a través de Mercado Pago. \n                                      Promoción no acumulable con otros descuentos.",
+      "red": "OCA",
+      "niveles": [
+        "Blue"
+      ],
+      "cobranding": null
+    },
+    {
+      "nombre": "Cupón de 30% de dto. en tus viajes de Cabify con tu OCA Blue",
+      "corto": "Viajacon OC Ay Cabify",
+      "pctMax": 30,
+      "url": "https://ocablue.uy/beneficios.html?id=71&name=ViajaconOCAyCabify",
+      "categoria": null,
+      "tarjetas": "Abrir cuenta gratis",
+      "vigencia": "Del 1/05/26 al 31/07/2026",
+      "desc": "30% de descuento en 3 viajes al mes en Cabify pagando con OCA Blue usando el código \"OCAJUL30\". Promoción válida del 1 al 31 de julio del 2026. Es necesario ingresar el cupón en la App de Cabify previo a realizar el viaje. Una vez ingresado el cupón, ya queda activo para usar en los 3 viajes del mes (al seleccionar tu viaje ya verás reflejado el descuento sobre el total). Tope de descuento: $150 por cada viaje.\n                \n                \n                Paso a paso\n                \n                \n                \n                \n                #mercadopagolegal{\n                    display:none;\n                }\n                \n             \n                                      No aplica para compras a través de Mercado Pago. \n                                      Promoción no acumulable con otros descuentos.",
       "red": "OCA",
       "niveles": [
         "Blue"
@@ -132,6 +132,19 @@
       "cobranding": null
     },
     {
+      "nombre": "10% de descuento todos los días en Burger King.",
+      "corto": "Burguer King",
+      "pctMax": 10,
+      "url": "https://ocablue.uy/beneficios.html?id=30&name=BurguerKing",
+      "categoria": null,
+      "tarjetas": "Abrir cuenta gratis",
+      "vigencia": "todos los díasEn locales",
+      "desc": "Promoción válida todos los días, del 1 de enero al 30 de junio del 2027, para todas las compras realizadas en locales físicos de Burger King con tarjetas OCA Blue. El descuento se realizará en el momento de la compra.\n                \n                \n                No aplica para compras a través de Mercado Pago, Pedidos Ya y/o Rappi.\n                \n                Promoción no acumulable con otros descuentos.\n                \n                \n                Ver lista de comercios participantes.\n                \n                Con tus tarjetas de crédito OCA.De lunes a jueves disfrutá de un 20% de descuento                \n                Ver beneficio\n                \n                    #mercadopagolegal{\n                        display: none;\n                    }\n                    #noacumulablelegal{\n                        display: none;\n                    }\n                \n                 \n                                      No aplica para compras a través de Mercado Pago. \n                                      Promoción no acumulable con otros descuentos.",
+      "red": "OCA",
+      "niveles": [],
+      "cobranding": null
+    },
+    {
       "nombre": "10% de dto. de lunes a jueves en Gelatería del Club con OCA Blue",
       "corto": "Gelatería Del Club OCA Blue",
       "pctMax": 10,
@@ -189,6 +202,19 @@
       "niveles": [
         "Blue"
       ],
+      "cobranding": null
+    },
+    {
+      "nombre": "10% de dto. todos los días",
+      "corto": "Optica Florida",
+      "pctMax": 10,
+      "url": "https://ocablue.uy/beneficios.html?id=68&name=OpticaFlorida",
+      "categoria": null,
+      "tarjetas": "Abrir cuenta gratis",
+      "vigencia": "todos los díasDel 17/07/26 al 31/05/27",
+      "desc": "10% de descuento en todos los locales Óptica Florida ubicados en Montevideo, todos los días, pagando con OCA Blue.\n            \n            \n            20% de descuento en todos los locales Óptica Florida ubicados en Montevideo, todos los viernes, pagando con tarjetas de crédito Mastercard y VISA de OCA. 12 cuotas válidas únicamente para Mastercard de OCA.\n                \n            \n            Tope de descuento de $5.500, por cuenta, por mes. Este tope se comparte entre todas las sucursales de Montevideo de Óptica Florida.\n               \n            \n            Descuento aplicado en el estado de cuenta.\n            \n            \n            Conocé el listado de las sucursales participantes aquí.\n            \n             \n                                      No aplica para compras a través de Mercado Pago. \n                                      Promoción no acumulable con otros descuentos.",
+      "red": "OCA",
+      "niveles": [],
       "cobranding": null
     },
     {
