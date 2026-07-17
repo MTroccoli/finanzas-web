@@ -1,7 +1,7 @@
 {
   "fuente": "bbva.com.uy",
-  "actualizado": "2026-07-13T12:10:47.173Z",
-  "total": 297,
+  "actualizado": "2026-07-17T10:46:57.177Z",
+  "total": 295,
   "categorias": [
     "Gastronomía",
     "Moda",
@@ -444,7 +444,7 @@
       "comercio": "La Guanaca",
       "categoria": "Gastronomía",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/gastronomia/La_Guanaca.html",
-      "vigencia": "30 de Noviembre 2026",
+      "vigencia": "16 de Julio 2026",
       "local": "Pedragosa Sierra e/av Roosevelt y San Ciro, Padron,2615",
       "descuentos": [
         {
@@ -9027,19 +9027,6 @@
       "cobranding": null
     },
     {
-      "comercio": "Fantasy On lce",
-      "categoria": "Experiencias",
-      "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/experiencias/Fantasy_On_lce.html",
-      "vigencia": "12 de Julio 2026",
-      "local": null,
-      "descuentos": [],
-      "pctMax": null,
-      "tope": null,
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
       "comercio": "AquaPark",
       "categoria": "Experiencias",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/experiencias/AquaPark.html",
@@ -9484,39 +9471,6 @@
         "Infinite",
         "Platinum",
         "Black"
-      ],
-      "cobranding": null
-    },
-    {
-      "comercio": "Xiaomi Uruguay",
-      "categoria": "Tecnología",
-      "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/tecnologia/xiaomi.html",
-      "vigencia": "Desde el 06 al 12 de julio de 2026",
-      "local": null,
-      "descuentos": [
-        {
-          "pct": 15,
-          "tarjetas": "Tarjetas de Crédito Internacional, Oro, Pymes, Corporativas, Infinite, Platinum y Black",
-          "texto": "15% Off con Tarjetas de Crédito Internacional, Oro, Pymes, Corporativas, Infinite, Platinum y Black",
-          "isDebit": false,
-          "niveles": [
-            "Infinite",
-            "Platinum",
-            "Black",
-            "Oro",
-            "Clásica"
-          ]
-        }
-      ],
-      "pctMax": 15,
-      "tope": "El descuento será de un 15%, se aplicará en el punto de venta, sin tope de devolución.",
-      "red": null,
-      "niveles": [
-        "Infinite",
-        "Platinum",
-        "Black",
-        "Oro",
-        "Clásica"
       ],
       "cobranding": null
     },
