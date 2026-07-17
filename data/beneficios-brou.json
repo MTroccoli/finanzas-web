@@ -1,8 +1,8 @@
 {
   "fuente": "BROU",
   "url": "https://beneficios.brou.com.uy/beneficios",
-  "fecha": "2026-07-13",
-  "total": 64,
+  "fecha": "2026-07-17",
+  "total": 63,
   "beneficios": [
     {
       "nombre": "Banco Hipotecario del Uruguay",
@@ -761,18 +761,6 @@
       "vigencia": null,
       "desc": "2 x 1 en entradas con tus Tarjetas de Crédito y Débito VISA y BROU Recompensa Mastercard.",
       "categoria": "espectaculos",
-      "red": null,
-      "niveles": [],
-      "cobranding": "Recompensa"
-    },
-    {
-      "nombre": "Preventa Buenos Muchachos",
-      "pctMax": null,
-      "url": "https://beneficios.brou.com.uy/ensenanza/preventa-buenos-muchachos",
-      "tarjetas": "La preventa estará disponible abonando con tarjetas de crédito BROU VISA y BROU Recompensa Mastercard, y tarjetas de débito BROU VISA y BROU Recompensa Mastercard.",
-      "vigencia": "Vigencia: 13/07/2026",
-      "desc": "Preventa Buenos Muchachos",
-      "categoria": "ensenanza",
       "red": null,
       "niveles": [],
       "cobranding": "Recompensa"
