@@ -1,7 +1,7 @@
 {
   "fuente": "scotiabank.com.uy",
-  "actualizado": "2026-07-13T14:35:13.563Z",
-  "total": 85,
+  "actualizado": "2026-07-17T13:29:07.094Z",
+  "total": 84,
   "beneficios": [
     {
       "nombre": "TIENDA INGLESA",
@@ -53,25 +53,6 @@
       "cobranding": null
     },
     {
-      "nombre": "FIFA MUNDIAL",
-      "url": null,
-      "categoria": "Destacados",
-      "pctMax": 20,
-      "descuentos": [
-        {
-          "pct": 20,
-          "texto": "20% de ahorro"
-        }
-      ],
-      "vigencia": "Del 11 de Junio al 19 de Julio",
-      "tarjetas": "20% de ahorro en USA, MÉXICO y CANADÁ usando tu Visa crédito Scotia con billetera digital en todos tus consumos.",
-      "desc": "20% de ahorro en USA, MÉXICO y CANADÁ usando tu Visa crédito Scotia con billetera digital en todos tus consumos.",
-      "exclusivo": false,
-      "red": "Visa",
-      "niveles": [],
-      "cobranding": null
-    },
-    {
       "nombre": "COMBUSTIBLE",
       "url": null,
       "categoria": "Destacados",
@@ -109,6 +90,48 @@
       "niveles": [
         "Platinum"
       ],
+      "cobranding": null
+    },
+    {
+      "nombre": "PORTISUR",
+      "url": null,
+      "categoria": "Destacados",
+      "pctMax": 10,
+      "descuentos": [
+        {
+          "pct": 10,
+          "texto": "10% de ahorro"
+        }
+      ],
+      "vigencia": "Todos los días",
+      "tarjetas": "10% de ahorro con tarjetas de crédito.",
+      "desc": "10% de ahorro con tarjetas de crédito.",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
+    },
+    {
+      "nombre": "CARBONADA",
+      "url": null,
+      "categoria": "Restaurantes",
+      "pctMax": 25,
+      "descuentos": [
+        {
+          "pct": 25,
+          "texto": "25% de ahorro"
+        },
+        {
+          "pct": 15,
+          "texto": "15% de ahorro"
+        }
+      ],
+      "vigencia": "Todos los días",
+      "tarjetas": "25% de ahorro con tarjetas de crédito y débito Premium.",
+      "desc": "25% de ahorro con tarjetas de crédito y débito Premium.",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
       "cobranding": null
     },
     {
@@ -221,33 +244,6 @@
     },
     {
       "nombre": "SOPRANOS",
-      "url": null,
-      "categoria": "Restaurantes",
-      "pctMax": 25,
-      "descuentos": [
-        {
-          "pct": 25,
-          "texto": "25% de ahorro"
-        },
-        {
-          "pct": 15,
-          "texto": "15% de ahorro"
-        }
-      ],
-      "vigencia": "Todos los días",
-      "tarjetas": "25% de ahorro con tarjetas Platinum, Infinite, Gold y débito Premium.",
-      "desc": "25% de ahorro con tarjetas Platinum, Infinite, Gold y débito Premium.",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [
-        "Infinite",
-        "Platinum",
-        "Gold"
-      ],
-      "cobranding": null
-    },
-    {
-      "nombre": "DECANO",
       "url": null,
       "categoria": "Restaurantes",
       "pctMax": 25,
@@ -1245,16 +1241,16 @@
       "nombre": "LAIKA",
       "url": null,
       "categoria": "Mascotas",
-      "pctMax": 10,
+      "pctMax": 20,
       "descuentos": [
         {
-          "pct": 10,
-          "texto": "10% de ahorro"
+          "pct": 20,
+          "texto": "20% de ahorro"
         }
       ],
-      "vigencia": "Todos los días",
-      "tarjetas": "10% de ahorro con tus tarjetas de crédito en todos los productos.",
-      "desc": "10% de ahorro con tus tarjetas de crédito en todos los productos.",
+      "vigencia": "Del 14 al 17 de julio",
+      "tarjetas": "20% de ahorro con tarjetas de crédito.",
+      "desc": "20% de ahorro con tarjetas de crédito.",
       "exclusivo": false,
       "red": null,
       "niveles": [],
@@ -1360,22 +1356,30 @@
       "cobranding": null
     },
     {
-      "nombre": "SCHOOL UNIFORMES",
+      "nombre": "SCHOOL",
       "url": null,
       "categoria": "Niños",
-      "pctMax": 15,
+      "pctMax": 25,
       "descuentos": [
+        {
+          "pct": 25,
+          "texto": "25% de ahorro"
+        },
         {
           "pct": 15,
           "texto": "15% de ahorro"
         }
       ],
       "vigencia": "Todos los días",
-      "tarjetas": "15% de ahorro con tarjetas de crédito y débito.",
-      "desc": "15% de ahorro con tarjetas de crédito y débito.",
+      "tarjetas": "25% de ahorro con tarjetas de crédito Platinum, Infinite, Gold y Débito Premium.",
+      "desc": "25% de ahorro con tarjetas de crédito Platinum, Infinite, Gold y Débito Premium.",
       "exclusivo": false,
       "red": null,
-      "niveles": [],
+      "niveles": [
+        "Infinite",
+        "Platinum",
+        "Gold"
+      ],
       "cobranding": null
     },
     {
@@ -1440,29 +1444,6 @@
       "cobranding": null
     },
     {
-      "nombre": "SCHOOL",
-      "url": null,
-      "categoria": "Niños",
-      "pctMax": 25,
-      "descuentos": [
-        {
-          "pct": 15,
-          "texto": "15% de ahorro"
-        },
-        {
-          "pct": 25,
-          "texto": "25% de ahorro"
-        }
-      ],
-      "vigencia": "Todos los días",
-      "tarjetas": "15% y 25% de ahorro con Tarjetas Scotiabank",
-      "desc": "15% y 25% de ahorro con Tarjetas Scotiabank",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
       "nombre": "MIKANGAROO",
       "url": null,
       "categoria": "Niños",
@@ -1476,6 +1457,25 @@
       "vigencia": "Todos los días",
       "tarjetas": "15% de ahorro con Tarjetas de Crédito Scotiabank",
       "desc": "15% de ahorro con Tarjetas de Crédito Scotiabank",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
+    },
+    {
+      "nombre": "ÓPTICA RIO",
+      "url": null,
+      "categoria": "Ópticas",
+      "pctMax": 15,
+      "descuentos": [
+        {
+          "pct": 15,
+          "texto": "15% de ahorro"
+        }
+      ],
+      "vigencia": "Todos los días",
+      "tarjetas": "15% de ahorro con tarjetas de crédito y débito.",
+      "desc": "15% de ahorro con tarjetas de crédito y débito.",
       "exclusivo": false,
       "red": null,
       "niveles": [],
@@ -1690,25 +1690,6 @@
         "Platinum",
         "Gold"
       ],
-      "cobranding": null
-    },
-    {
-      "nombre": "PORTISUR",
-      "url": null,
-      "categoria": "Supermercados",
-      "pctMax": 10,
-      "descuentos": [
-        {
-          "pct": 10,
-          "texto": "10% de ahorro"
-        }
-      ],
-      "vigencia": "Todos los días",
-      "tarjetas": "10% de ahorro con tarjetas de crédito.",
-      "desc": "10% de ahorro con tarjetas de crédito.",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [],
       "cobranding": null
     },
     {
