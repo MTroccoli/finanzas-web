@@ -1,8 +1,44 @@
 {
   "fuente": "itau.com.uy",
-  "actualizado": "2026-07-10T13:14:19.257Z",
-  "total": 14,
+  "actualizado": "2026-07-17T12:12:06.112Z",
+  "total": 15,
   "beneficios": [
+    {
+      "nombre": "frazadas Campomar",
+      "url": null,
+      "pctMax": 25,
+      "descuentos": [
+        {
+          "pct": 25,
+          "texto": "25%"
+        }
+      ],
+      "vigencia": null,
+      "tarjetas": null,
+      "desc": "25% y 15% menos en frazadas Campomar",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
+    },
+    {
+      "nombre": "Mosca",
+      "url": null,
+      "pctMax": 25,
+      "descuentos": [
+        {
+          "pct": 25,
+          "texto": "25%"
+        }
+      ],
+      "vigencia": null,
+      "tarjetas": null,
+      "desc": "25% y 15% menos en Mosca",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
+    },
     {
       "nombre": "Cantegrill Joyas",
       "url": null,
@@ -137,24 +173,6 @@
       "vigencia": null,
       "tarjetas": null,
       "desc": "25% y 15% menos en San Roque",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
-      "nombre": "Espacio Aroma",
-      "url": null,
-      "pctMax": 25,
-      "descuentos": [
-        {
-          "pct": 25,
-          "texto": "25%"
-        }
-      ],
-      "vigencia": null,
-      "tarjetas": null,
-      "desc": "25% y 15% menos en Espacio Aroma",
       "exclusivo": false,
       "red": null,
       "niveles": [],
