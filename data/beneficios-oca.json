@@ -1,6 +1,6 @@
 {
   "fuente": "OCA",
-  "actualizado": "2026-07-17",
+  "actualizado": "2026-07-20",
   "beneficios": [
     {
       "nombre": "30% de dto. en restaurantes y Fast Food en EE.UU, México y Canadá, pagando con el celular. Además 0% de comisión en todo el mundo.",
@@ -230,6 +230,19 @@
       "niveles": [
         "Blue"
       ],
+      "cobranding": null
+    },
+    {
+      "nombre": "Flor De Semana OCA",
+      "corto": "Flor De Semana OCA",
+      "pctMax": null,
+      "url": "https://ocablue.uy/beneficios.html?id=70&name=FlorDeSemanaOCA",
+      "categoria": "Tarjeta OCA\n\t\t\t\t\tCuenta OCA Blue\n\t\t\t\t\tPréstamos\n\t\t\t\t\tTarjeta Visa de OCA\t\t\t\t\t\n\t\t\t\t\tSeguros\n\t\t\t\t\tFinanciá en hasta 36 cuotas",
+      "tarjetas": "Tarjeta OCA\n\t\t\t\t\t\t\n\t\t\t\t\t\t\t¡Pedila gratis\n\t\t\t\t\t\t\tcon 5.000 Metros\n\t\t\t\t\t\t\tde regalo!\n\t\t\t\t\t\t\n\t\t\t\t\t\t\n\t\t\t\t\t\t\tConocé más",
+      "vigencia": null,
+      "desc": "Toda una semana con flor de beneficios",
+      "red": "OCA",
+      "niveles": [],
       "cobranding": null
     },
     {
