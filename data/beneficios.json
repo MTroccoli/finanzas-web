@@ -1,7 +1,7 @@
 {
   "fuente": "bbva.com.uy",
-  "actualizado": "2026-07-17T10:46:57.177Z",
-  "total": 295,
+  "actualizado": "2026-07-20T11:52:46.563Z",
+  "total": 293,
   "categorias": [
     "Gastronomía",
     "Moda",
@@ -398,54 +398,6 @@
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/gastronomia/la-pasiva-roosevelt.html",
       "vigencia": "30 de Noviembre 2026",
       "local": "Acuña de Figueroa y Roosevelt 485, Maldonado",
-      "descuentos": [
-        {
-          "pct": 20,
-          "tarjetas": "Tarjetas de Débito",
-          "texto": "20% Off con Tarjetas de Débito",
-          "isDebit": true,
-          "niveles": []
-        },
-        {
-          "pct": 20,
-          "tarjetas": "Tarjetas de Crédito Internacional, Oro, Pymes y Corporativas",
-          "texto": "20% Off con Tarjetas de Crédito Internacional, Oro, Pymes y Corporativas",
-          "isDebit": false,
-          "niveles": [
-            "Oro",
-            "Clásica"
-          ]
-        },
-        {
-          "pct": 30,
-          "tarjetas": "Tarjetas de Crédito Platinum, Black e Infinite",
-          "texto": "30% Off con Tarjetas de Crédito Platinum, Black e Infinite",
-          "isDebit": false,
-          "niveles": [
-            "Infinite",
-            "Platinum",
-            "Black"
-          ]
-        }
-      ],
-      "pctMax": 30,
-      "tope": null,
-      "red": null,
-      "niveles": [
-        "Oro",
-        "Clásica",
-        "Infinite",
-        "Platinum",
-        "Black"
-      ],
-      "cobranding": null
-    },
-    {
-      "comercio": "La Guanaca",
-      "categoria": "Gastronomía",
-      "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/gastronomia/La_Guanaca.html",
-      "vigencia": "16 de Julio 2026",
-      "local": "Pedragosa Sierra e/av Roosevelt y San Ciro, Padron,2615",
       "descuentos": [
         {
           "pct": 20,
@@ -5751,7 +5703,7 @@
       "comercio": "Peñarol - Entradas de Campeonato Uruguayo",
       "categoria": "Vida Activa",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/vida-activa/entradas-penarol.html",
-      "vigencia": "30 de Junio 2026",
+      "vigencia": "31 de Diciembre 2026",
       "local": null,
       "descuentos": [
         {
@@ -7901,54 +7853,6 @@
       "tope": null,
       "red": null,
       "niveles": [],
-      "cobranding": null
-    },
-    {
-      "comercio": "Farmacia Bellini",
-      "categoria": "Cuidado Personal",
-      "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/cuidado-personal/farmacia-bellini.html",
-      "vigencia": "16 de Julio 2026",
-      "local": "18 de Julio 582, San José de Mayo",
-      "descuentos": [
-        {
-          "pct": 20,
-          "tarjetas": "Tarjetas de Débito",
-          "texto": "20% Off con Tarjetas de Débito",
-          "isDebit": true,
-          "niveles": []
-        },
-        {
-          "pct": 20,
-          "tarjetas": "Tarjetas de Crédito Internacional, Oro, Pymes y Corporativas",
-          "texto": "20% Off con Tarjetas de Crédito Internacional, Oro, Pymes y Corporativas",
-          "isDebit": false,
-          "niveles": [
-            "Oro",
-            "Clásica"
-          ]
-        },
-        {
-          "pct": 30,
-          "tarjetas": "Tarjetas de Crédito Platinum, Black e Infinite",
-          "texto": "30% Off con Tarjetas de Crédito Platinum, Black e Infinite",
-          "isDebit": false,
-          "niveles": [
-            "Infinite",
-            "Platinum",
-            "Black"
-          ]
-        }
-      ],
-      "pctMax": 30,
-      "tope": null,
-      "red": null,
-      "niveles": [
-        "Oro",
-        "Clásica",
-        "Infinite",
-        "Platinum",
-        "Black"
-      ],
       "cobranding": null
     },
     {
