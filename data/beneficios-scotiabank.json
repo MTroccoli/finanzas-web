@@ -1,6 +1,6 @@
 {
   "fuente": "scotiabank.com.uy",
-  "actualizado": "2026-07-17T13:29:07.094Z",
+  "actualizado": "2026-07-20T14:06:35.259Z",
   "total": 84,
   "beneficios": [
     {
@@ -112,6 +112,33 @@
       "cobranding": null
     },
     {
+      "nombre": "KAISEKI SUSHI",
+      "url": null,
+      "categoria": "Restaurantes",
+      "pctMax": 25,
+      "descuentos": [
+        {
+          "pct": 25,
+          "texto": "25% de ahorro"
+        },
+        {
+          "pct": 15,
+          "texto": "15% de ahorro"
+        }
+      ],
+      "vigencia": "Todos los días",
+      "tarjetas": "25% de ahorro con tarjetas de crédito Platinum, Infinite, Gold y Débito Premium.",
+      "desc": "25% de ahorro con tarjetas de crédito Platinum, Infinite, Gold y Débito Premium.",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [
+        "Infinite",
+        "Platinum",
+        "Gold"
+      ],
+      "cobranding": null
+    },
+    {
       "nombre": "CARBONADA",
       "url": null,
       "categoria": "Restaurantes",
@@ -217,33 +244,6 @@
     },
     {
       "nombre": "BIGA - PIZZA & PASTA",
-      "url": null,
-      "categoria": "Restaurantes",
-      "pctMax": 25,
-      "descuentos": [
-        {
-          "pct": 25,
-          "texto": "25% de ahorro"
-        },
-        {
-          "pct": 15,
-          "texto": "15% de ahorro"
-        }
-      ],
-      "vigencia": "Todos los días",
-      "tarjetas": "25% de ahorro con tarjetas Platinum, Infinite, Gold y débito Premium.",
-      "desc": "25% de ahorro con tarjetas Platinum, Infinite, Gold y débito Premium.",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [
-        "Infinite",
-        "Platinum",
-        "Gold"
-      ],
-      "cobranding": null
-    },
-    {
-      "nombre": "SOPRANOS",
       "url": null,
       "categoria": "Restaurantes",
       "pctMax": 25,
@@ -1241,16 +1241,16 @@
       "nombre": "LAIKA",
       "url": null,
       "categoria": "Mascotas",
-      "pctMax": 20,
+      "pctMax": 10,
       "descuentos": [
         {
-          "pct": 20,
-          "texto": "20% de ahorro"
+          "pct": 10,
+          "texto": "10% de ahorro"
         }
       ],
-      "vigencia": "Del 14 al 17 de julio",
-      "tarjetas": "20% de ahorro con tarjetas de crédito.",
-      "desc": "20% de ahorro con tarjetas de crédito.",
+      "vigencia": "Todos los días",
+      "tarjetas": "10% de ahorro con tus tarjetas de crédito en todos los productos.",
+      "desc": "10% de ahorro con tus tarjetas de crédito en todos los productos.",
       "exclusivo": false,
       "red": null,
       "niveles": [],
