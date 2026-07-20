@@ -1,8 +1,8 @@
 {
   "fuente": "BROU",
   "url": "https://beneficios.brou.com.uy/beneficios",
-  "fecha": "2026-07-17",
-  "total": 63,
+  "fecha": "2026-07-20",
+  "total": 64,
   "beneficios": [
     {
       "nombre": "Banco Hipotecario del Uruguay",
@@ -320,6 +320,18 @@
       "red": null,
       "niveles": [],
       "cobranding": null
+    },
+    {
+      "nombre": "Tiendas Montevideo",
+      "pctMax": 20,
+      "url": "https://beneficios.brou.com.uy/ensenanza/tiendas-montevideo",
+      "tarjetas": "20% de dto. abonando con tarjetas de crédito BROU VISA y BROU Recompensa Mastercard.",
+      "vigencia": "Vigencia: 28/07/2026",
+      "desc": "Disfrutá de hasta 20% de descuento en colchas, frazadas y pie de cama con tarjetas BROU.",
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [],
+      "cobranding": "Recompensa"
     },
     {
       "nombre": "Barraca Malvín",
