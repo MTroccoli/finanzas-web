@@ -1,8 +1,8 @@
 {
   "fuente": "BROU",
   "url": "https://beneficios.brou.com.uy/beneficios",
-  "fecha": "2026-07-20",
-  "total": 64,
+  "fecha": "2026-07-24",
+  "total": 68,
   "beneficios": [
     {
       "nombre": "Banco Hipotecario del Uruguay",
@@ -34,12 +34,13 @@
       "nombre": "SODRE",
       "pctMax": 50,
       "url": "https://beneficios.brou.com.uy/espectaculos/Beneficio-SODRE",
-      "tarjetas": "50% para las tarjetas BROU Recompensa Mastercard Black y VISA Platino del Banco.",
+      "tarjetas": "50% de dto. con las tarjetas de crédito BROU Recompensa Mastercard Platino y Black, y BROU VISA Platino e Infinite.",
       "vigencia": "Vigencia: 28/02/2027",
-      "desc": "Disfrutá de hasta un 50% de descuento en todas las obras del cuerpo estable del SODRE",
+      "desc": "Disfrutá de hasta un 50% de descuento en todas las obras de Los Cuerpos Estables del SODRE",
       "categoria": "espectaculos",
       "red": null,
       "niveles": [
+        "Infinite",
         "Platinum",
         "Black"
       ],
@@ -310,6 +311,21 @@
       "cobranding": null
     },
     {
+      "nombre": "Pappolino",
+      "pctMax": 20,
+      "url": "https://beneficios.brou.com.uy/moda/pappolino",
+      "tarjetas": "20% de descuento con tarjetas de crédito BROU VISA Platinum y BROU Recompensa Mastercard Platinum y Black.",
+      "vigencia": "Vigencia: 30/09/2026",
+      "desc": "Aprovechá los siguientes beneficios en tus compras",
+      "categoria": "moda",
+      "red": null,
+      "niveles": [
+        "Platinum",
+        "Black"
+      ],
+      "cobranding": "Recompensa"
+    },
+    {
       "nombre": "Óptica Net",
       "pctMax": 20,
       "url": "https://beneficios.brou.com.uy/salud-estetica/OPticaNet_Estetica",
@@ -320,6 +336,21 @@
       "red": null,
       "niveles": [],
       "cobranding": null
+    },
+    {
+      "nombre": "Guapa!",
+      "pctMax": 20,
+      "url": "https://beneficios.brou.com.uy/ensenanza/guapa",
+      "tarjetas": "20% de descuento con tarjetas de crédito BROU VISA Platinum y BROU Recompensa Mastercard Platinum y Black.",
+      "vigencia": "Vigencia: 30/09/2026",
+      "desc": "Aprovechá los siguientes descuentos en tus compras",
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [
+        "Platinum",
+        "Black"
+      ],
+      "cobranding": "Recompensa"
     },
     {
       "nombre": "Tiendas Montevideo",
@@ -367,6 +398,21 @@
       "categoria": "ensenanza",
       "red": null,
       "niveles": [],
+      "cobranding": "Recompensa"
+    },
+    {
+      "nombre": "Paprika",
+      "pctMax": 20,
+      "url": "https://beneficios.brou.com.uy/moda/paprika",
+      "tarjetas": "20% de descuento con tarjetas de crédito BROU VISA Platinum y BROU Recompensa Mastercard Platinum y Black.",
+      "vigencia": "Vigencia: 30/09/2026",
+      "desc": "Abonando con tarjetas del Banco República accedés a los siguientes descuentos:",
+      "categoria": "moda",
+      "red": null,
+      "niveles": [
+        "Platinum",
+        "Black"
+      ],
       "cobranding": "Recompensa"
     },
     {
@@ -773,6 +819,18 @@
       "vigencia": null,
       "desc": "2 x 1 en entradas con tus Tarjetas de Crédito y Débito VISA y BROU Recompensa Mastercard.",
       "categoria": "espectaculos",
+      "red": null,
+      "niveles": [],
+      "cobranding": "Recompensa"
+    },
+    {
+      "nombre": "Expo Café",
+      "pctMax": null,
+      "url": "https://beneficios.brou.com.uy/ensenanza/expo-cafe",
+      "tarjetas": "Disfrutá del 2x1 en entradas para Expo Café abonando con tarjetas de crédito y débito BROU VISA y BROU Recompensa Mastercard.",
+      "vigencia": "Vigencia: 13/09/2026",
+      "desc": "Disfrutá del 2x1 en entradas para Expo Café abonando con tarjetas de crédito y débito BROU VISA y BROU Recompensa Mastercard.",
+      "categoria": "ensenanza",
       "red": null,
       "niveles": [],
       "cobranding": "Recompensa"
