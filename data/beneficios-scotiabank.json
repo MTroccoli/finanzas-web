@@ -1,8 +1,31 @@
 {
   "fuente": "scotiabank.com.uy",
-  "actualizado": "2026-07-20T14:06:35.259Z",
-  "total": 84,
+  "actualizado": "2026-07-24T13:46:33.008Z",
+  "total": 85,
   "beneficios": [
+    {
+      "nombre": "PEDIDOSYA MARKET Y FARMACIAS",
+      "url": null,
+      "categoria": "Destacados",
+      "pctMax": 30,
+      "descuentos": [
+        {
+          "pct": 30,
+          "texto": "30% de ahorro"
+        },
+        {
+          "pct": 15,
+          "texto": "15% de ahorro"
+        }
+      ],
+      "vigencia": "De Viernes a Domingo",
+      "tarjetas": "30% de ahorro con tarjetas AMEX si sos usuario Plus.",
+      "desc": "30% de ahorro con tarjetas AMEX si sos usuario Plus.",
+      "exclusivo": false,
+      "red": "Amex",
+      "niveles": [],
+      "cobranding": null
+    },
     {
       "nombre": "TIENDA INGLESA",
       "url": "https://www.scotiabank.com.uy/Personas/Tarjetas/Beneficios/Supermercados/tienda-inglesa-julio-2026",
@@ -93,22 +116,57 @@
       "cobranding": null
     },
     {
-      "nombre": "PORTISUR",
+      "nombre": "WANTAN",
       "url": null,
-      "categoria": "Destacados",
-      "pctMax": 10,
+      "categoria": "Restaurantes",
+      "pctMax": 25,
       "descuentos": [
         {
-          "pct": 10,
-          "texto": "10% de ahorro"
+          "pct": 25,
+          "texto": "25% de ahorro"
+        },
+        {
+          "pct": 15,
+          "texto": "15% de ahorro"
         }
       ],
       "vigencia": "Todos los días",
-      "tarjetas": "10% de ahorro con tarjetas de crédito.",
-      "desc": "10% de ahorro con tarjetas de crédito.",
+      "tarjetas": "25% de ahorro con tarjetas de crédito Platinum, Infinite, Gold y Débito Premium.",
+      "desc": "25% de ahorro con tarjetas de crédito Platinum, Infinite, Gold y Débito Premium.",
       "exclusivo": false,
       "red": null,
-      "niveles": [],
+      "niveles": [
+        "Infinite",
+        "Platinum",
+        "Gold"
+      ],
+      "cobranding": null
+    },
+    {
+      "nombre": "CORDON BEER",
+      "url": null,
+      "categoria": "Restaurantes",
+      "pctMax": 25,
+      "descuentos": [
+        {
+          "pct": 25,
+          "texto": "25% de ahorro"
+        },
+        {
+          "pct": 15,
+          "texto": "15% de ahorro"
+        }
+      ],
+      "vigencia": "Todos los días",
+      "tarjetas": "25% de ahorro con tarjetas de crédito Platinum, Infinite, Gold y Débito Premium.",
+      "desc": "25% de ahorro con tarjetas de crédito Platinum, Infinite, Gold y Débito Premium.",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [
+        "Infinite",
+        "Platinum",
+        "Gold"
+      ],
       "cobranding": null
     },
     {
@@ -190,60 +248,6 @@
     },
     {
       "nombre": "LADERO",
-      "url": null,
-      "categoria": "Restaurantes",
-      "pctMax": 25,
-      "descuentos": [
-        {
-          "pct": 25,
-          "texto": "25% de ahorro"
-        },
-        {
-          "pct": 15,
-          "texto": "15% de ahorro"
-        }
-      ],
-      "vigencia": "Todos los días",
-      "tarjetas": "25% de ahorro con tarjetas Platinum, Infinite, Gold y débito Premium.",
-      "desc": "25% de ahorro con tarjetas Platinum, Infinite, Gold y débito Premium.",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [
-        "Infinite",
-        "Platinum",
-        "Gold"
-      ],
-      "cobranding": null
-    },
-    {
-      "nombre": "ALBERTOS",
-      "url": null,
-      "categoria": "Restaurantes",
-      "pctMax": 25,
-      "descuentos": [
-        {
-          "pct": 25,
-          "texto": "25% de ahorro"
-        },
-        {
-          "pct": 15,
-          "texto": "15% de ahorro"
-        }
-      ],
-      "vigencia": "Todos los días",
-      "tarjetas": "25% de ahorro con tarjetas Platinum, Infinite, Gold y débito Premium.",
-      "desc": "25% de ahorro con tarjetas Platinum, Infinite, Gold y débito Premium.",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [
-        "Infinite",
-        "Platinum",
-        "Gold"
-      ],
-      "cobranding": null
-    },
-    {
-      "nombre": "BIGA - PIZZA & PASTA",
       "url": null,
       "categoria": "Restaurantes",
       "pctMax": 25,
@@ -1260,16 +1264,16 @@
       "nombre": "LAVAKAN",
       "url": null,
       "categoria": "Mascotas",
-      "pctMax": 15,
+      "pctMax": 25,
       "descuentos": [
         {
-          "pct": 15,
-          "texto": "15% de ahorro"
+          "pct": 25,
+          "texto": "25% de ahorro"
         }
       ],
-      "vigencia": "Todos los días",
-      "tarjetas": "15% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y débito Premium.",
-      "desc": "15% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y débito Premium.",
+      "vigencia": "Del 24 al 31 de julio",
+      "tarjetas": "25% de ahorro con tarjetas de crédito Platinum, Infinite, Gold y Débito Premium.",
+      "desc": "25% de ahorro con tarjetas de crédito Platinum, Infinite, Gold y Débito Premium.",
       "exclusivo": false,
       "red": null,
       "niveles": [
@@ -1690,6 +1694,25 @@
         "Platinum",
         "Gold"
       ],
+      "cobranding": null
+    },
+    {
+      "nombre": "PORTISUR",
+      "url": null,
+      "categoria": "Supermercados",
+      "pctMax": 10,
+      "descuentos": [
+        {
+          "pct": 10,
+          "texto": "10% de ahorro"
+        }
+      ],
+      "vigencia": "Todos los días",
+      "tarjetas": "10% de ahorro con tarjetas de crédito.",
+      "desc": "10% de ahorro con tarjetas de crédito.",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
       "cobranding": null
     },
     {
