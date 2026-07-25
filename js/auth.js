@@ -13,6 +13,11 @@ window.Auth = {
     }
     sb.auth.onAuthStateChange(async (event, session) => {
       if (event === 'SIGNED_IN' && session?.user) {
+        // Supabase re-dispara SIGNED_IN en token refresh y al recuperar foco de
+        // la pestaña. Si ya estamos autenticados con el mismo usuario, ignorar:
+        // volver a llamar _afterSignIn() reinicia la ruta y borra el formulario
+        // que el usuario esté cargando.
+        if (this._user?.id === session.user.id) return;
         this._user = session.user;
         await this._afterSignIn();
       } else if (event === 'SIGNED_OUT') {

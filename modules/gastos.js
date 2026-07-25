@@ -1655,6 +1655,7 @@ window.Mods.gastos = {
               <label>Medio de pago</label>
               <select id="g-banco">
                 <option value="">— Sin asignar</option>
+                <option value="Efectivo">💵 Efectivo</option>
                 ${bancosList.filter(b => b !== 'Efectivo').map(b => `<option value="${b}">${b}</option>`).join('')}
               </select>
             </div>
