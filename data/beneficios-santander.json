@@ -1,7 +1,7 @@
 {
   "fuente": "santander.com.uy",
-  "actualizado": "2026-07-24T12:09:49.595Z",
-  "total": 330,
+  "actualizado": "2026-07-27T13:38:51.189Z",
+  "total": 328,
   "beneficios": [
     {
       "nombre": "Optica Estela Jinchuk",
@@ -3174,17 +3174,6 @@
       "cobranding": null
     },
     {
-      "nombre": "Igual a Mi",
-      "url": "https://www.santander.com.uy/beneficios/igual-mi",
-      "pctMax": 25,
-      "vigencia": null,
-      "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
       "nombre": "Viasono Jardín",
       "url": "https://www.santander.com.uy/beneficios/viasono-jardin",
       "pctMax": 25,
@@ -3319,17 +3308,6 @@
     {
       "nombre": "La Hacienda",
       "url": "https://www.santander.com.uy/beneficios/la-hacienda",
-      "pctMax": 25,
-      "vigencia": null,
-      "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
-      "nombre": "Maleza Beach Club",
-      "url": "https://www.santander.com.uy/beneficios/maleza-beach-club",
       "pctMax": 25,
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
