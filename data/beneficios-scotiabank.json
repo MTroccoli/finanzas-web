@@ -1,7 +1,7 @@
 {
   "fuente": "scotiabank.com.uy",
-  "actualizado": "2026-07-24T13:46:33.008Z",
-  "total": 85,
+  "actualizado": "2026-07-27T14:34:53.497Z",
+  "total": 84,
   "beneficios": [
     {
       "nombre": "PEDIDOSYA MARKET Y FARMACIAS",
@@ -274,33 +274,6 @@
       "cobranding": null
     },
     {
-      "nombre": "IL GIARDINO CAFÉ",
-      "url": null,
-      "categoria": "Cafeterías y Salones de té",
-      "pctMax": 25,
-      "descuentos": [
-        {
-          "pct": 25,
-          "texto": "25% de ahorro"
-        },
-        {
-          "pct": 15,
-          "texto": "15% de ahorro"
-        }
-      ],
-      "vigencia": "Todos los días",
-      "tarjetas": "25% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y débito Premium.",
-      "desc": "25% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y débito Premium.",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [
-        "Infinite",
-        "Platinum",
-        "Gold"
-      ],
-      "cobranding": null
-    },
-    {
       "nombre": "ATENEA COFFEE",
       "url": null,
       "categoria": "Cafeterías y Salones de té",
@@ -383,6 +356,33 @@
     },
     {
       "nombre": "FOK",
+      "url": null,
+      "categoria": "Cafeterías y Salones de té",
+      "pctMax": 25,
+      "descuentos": [
+        {
+          "pct": 25,
+          "texto": "25% de ahorro"
+        },
+        {
+          "pct": 15,
+          "texto": "15% de ahorro"
+        }
+      ],
+      "vigencia": "Todos los días",
+      "tarjetas": "25% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y Débito Premium.",
+      "desc": "25% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y Débito Premium.",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [
+        "Infinite",
+        "Platinum",
+        "Gold"
+      ],
+      "cobranding": null
+    },
+    {
+      "nombre": "ADAGIO LIBRERÍA CAFÉ",
       "url": null,
       "categoria": "Cafeterías y Salones de té",
       "pctMax": 25,
@@ -1077,33 +1077,6 @@
       "exclusivo": false,
       "red": null,
       "niveles": [],
-      "cobranding": null
-    },
-    {
-      "nombre": "ADAGIO LIBRERÍA CAFÉ",
-      "url": null,
-      "categoria": "Librerías",
-      "pctMax": 25,
-      "descuentos": [
-        {
-          "pct": 25,
-          "texto": "25% de ahorro"
-        },
-        {
-          "pct": 15,
-          "texto": "15% de ahorro"
-        }
-      ],
-      "vigencia": "Todos los días",
-      "tarjetas": "25% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y Débito Premium.",
-      "desc": "25% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y Débito Premium.",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [
-        "Infinite",
-        "Platinum",
-        "Gold"
-      ],
       "cobranding": null
     },
     {
