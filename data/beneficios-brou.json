@@ -1,8 +1,8 @@
 {
   "fuente": "BROU",
   "url": "https://beneficios.brou.com.uy/beneficios",
-  "fecha": "2026-07-24",
-  "total": 68,
+  "fecha": "2026-07-27",
+  "total": 70,
   "beneficios": [
     {
       "nombre": "Banco Hipotecario del Uruguay",
@@ -452,6 +452,36 @@
         "Clásica"
       ],
       "cobranding": null
+    },
+    {
+      "nombre": "MI BELLEZA",
+      "pctMax": 15,
+      "url": "https://beneficios.brou.com.uy/ensenanza/mi-belleza",
+      "tarjetas": "15% de dto con tarjetas de crédito BROU Recompensa Mastercard Platinum y Black y BROU Visa Platinum.",
+      "vigencia": "Vigencia: 02/08/2026",
+      "desc": "Disfrutá de hasta un 15% de descuento en MI BELLEZA con medios de pago de Tu Banco.",
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [
+        "Platinum",
+        "Black"
+      ],
+      "cobranding": "Recompensa"
+    },
+    {
+      "nombre": "LOI",
+      "pctMax": 15,
+      "url": "https://beneficios.brou.com.uy/ensenanza/loi",
+      "tarjetas": "15% de descuento con tarjetas de crédito BROU Recompensa Mastercard Platinum y Black y BROU Visa Platinum.",
+      "vigencia": "Vigencia: 02/08/2026",
+      "desc": "Aprovechá estos beneficios en LOI con las tarjetas seleccionadas de Tu Banco",
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [
+        "Platinum",
+        "Black"
+      ],
+      "cobranding": "Recompensa"
     },
     {
       "nombre": "GR Joyeros",
