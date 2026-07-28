@@ -912,7 +912,10 @@ window.Mods.gastos = {
         log.textContent = `✅ ${result.count} transacciones${bancoInfo}${mesInfo}${addInfo}${descInfo} · ${overrides} re-categorizadas. Revisá y confirmá.${truncWarn}`;
         setTimeout(() => this._drawReview(), 900);
       } catch(e) {
-        log.textContent = `❌ ${e.message}`;
+        const isNetErr = e instanceof TypeError && /fetch/i.test(e.message);
+        log.textContent = isNetErr
+          ? `❌ No se pudo enviar el PDF (${e.message}). Revisá tu conexión y probá de nuevo. Si persiste, comprimí el PDF (ilovepdf.com) o probá desde otro dispositivo.`
+          : `❌ ${e.message}`;
         btnParse.disabled = false;
         btnParse.textContent = '✨ Parsear con IA';
       }
