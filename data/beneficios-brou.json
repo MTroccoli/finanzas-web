@@ -1,7 +1,7 @@
 {
   "fuente": "BROU",
   "url": "https://beneficios.brou.com.uy/beneficios",
-  "fecha": "2026-07-27",
+  "fecha": "2026-07-31",
   "total": 70,
   "beneficios": [
     {
@@ -185,6 +185,18 @@
       "cobranding": "Recompensa"
     },
     {
+      "nombre": "Fundación de Cultura Universitaria",
+      "pctMax": 25,
+      "url": "https://beneficios.brou.com.uy/ensenanza/fundacion-de-cultura-universitaria",
+      "tarjetas": "En Fundación de Cultura Universitaria, abonando con tarjetas de crédito y débito BROU VISA y BROU Recompensa Mastercard, accedé a los siguientes beneficios:",
+      "vigencia": "Vigencia: 31/07/2027",
+      "desc": "Fundación de Cultura Universitaria",
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [],
+      "cobranding": "Recompensa"
+    },
+    {
       "nombre": "La Sacristía",
       "pctMax": 25,
       "url": "https://beneficios.brou.com.uy/ensenanza/la-sacristía",
@@ -350,18 +362,6 @@
         "Platinum",
         "Black"
       ],
-      "cobranding": "Recompensa"
-    },
-    {
-      "nombre": "Tiendas Montevideo",
-      "pctMax": 20,
-      "url": "https://beneficios.brou.com.uy/ensenanza/tiendas-montevideo",
-      "tarjetas": "20% de dto. abonando con tarjetas de crédito BROU VISA y BROU Recompensa Mastercard.",
-      "vigencia": "Vigencia: 28/07/2026",
-      "desc": "Disfrutá de hasta 20% de descuento en colchas, frazadas y pie de cama con tarjetas BROU.",
-      "categoria": "ensenanza",
-      "red": null,
-      "niveles": [],
       "cobranding": "Recompensa"
     },
     {
