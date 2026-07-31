@@ -1,7 +1,7 @@
 {
   "fuente": "santander.com.uy",
-  "actualizado": "2026-07-27T13:38:51.189Z",
-  "total": 328,
+  "actualizado": "2026-07-31T12:29:05.930Z",
+  "total": 327,
   "beneficios": [
     {
       "nombre": "Optica Estela Jinchuk",
@@ -1370,17 +1370,6 @@
       "cobranding": null
     },
     {
-      "nombre": "Fundación de Cultura Universitaria",
-      "url": "https://www.santander.com.uy/beneficios/fundacion-de-cultura-universitaria",
-      "pctMax": 15,
-      "vigencia": null,
-      "tarjetas": "Tarjetas de crédito",
-      "desc": "Fundación de Cultura Universitaria",
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
       "nombre": "Cloé",
       "url": "https://www.santander.com.uy/beneficios/cloe",
       "pctMax": 15,
@@ -2140,12 +2129,12 @@
       "cobranding": null
     },
     {
-      "nombre": "Café Butiá",
+      "nombre": "Error 503",
       "url": "https://www.santander.com.uy/beneficios/cafe-butia",
       "pctMax": 15,
       "vigencia": null,
-      "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta.",
+      "tarjetas": null,
+      "desc": "Estamos trabajando en el sitio para mejorar tu experiencia",
       "red": null,
       "niveles": [],
       "cobranding": null
