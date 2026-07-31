@@ -1,7 +1,7 @@
 {
   "fuente": "bbva.com.uy",
-  "actualizado": "2026-07-27T12:29:29.519Z",
-  "total": 292,
+  "actualizado": "2026-07-31T11:36:54.454Z",
+  "total": 294,
   "categorias": [
     "Gastronomía",
     "Moda",
@@ -19,6 +19,54 @@
     "Otros"
   ],
   "beneficios": [
+    {
+      "comercio": "La Pasiva Pocitos",
+      "categoria": "Gastronomía",
+      "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/gastronomia/la-pasiva1.html",
+      "vigencia": "30 de Junio 2027",
+      "local": "Juan Benito Blanco 920, Pocitos",
+      "descuentos": [
+        {
+          "pct": 20,
+          "tarjetas": "Tarjetas de Débito",
+          "texto": "20% Off con Tarjetas de Débito",
+          "isDebit": true,
+          "niveles": []
+        },
+        {
+          "pct": 20,
+          "tarjetas": "Tarjetas de Crédito Internacional, Oro, Pymes y Corporativas",
+          "texto": "20% Off con Tarjetas de Crédito Internacional, Oro, Pymes y Corporativas",
+          "isDebit": false,
+          "niveles": [
+            "Oro",
+            "Clásica"
+          ]
+        },
+        {
+          "pct": 30,
+          "tarjetas": "Tarjetas de Crédito Platinum, Black e Infinite",
+          "texto": "30% Off con Tarjetas de Crédito Platinum, Black e Infinite",
+          "isDebit": false,
+          "niveles": [
+            "Infinite",
+            "Platinum",
+            "Black"
+          ]
+        }
+      ],
+      "pctMax": 30,
+      "tope": null,
+      "red": null,
+      "niveles": [
+        "Oro",
+        "Clásica",
+        "Infinite",
+        "Platinum",
+        "Black"
+      ],
+      "cobranding": null
+    },
     {
       "comercio": "Restaurante 1930",
       "categoria": "Gastronomía",
@@ -395,7 +443,7 @@
     {
       "comercio": "La Pasiva Roosevelt",
       "categoria": "Gastronomía",
-      "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/gastronomia/la-pasiva-roosevelt.html",
+      "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/gastronomia/la-pasiva.html",
       "vigencia": "30 de Noviembre 2026",
       "local": "Acuña de Figueroa y Roosevelt 485, Maldonado",
       "descuentos": [
@@ -8879,6 +8927,54 @@
       ],
       "pctMax": 30,
       "tope": null,
+      "red": null,
+      "niveles": [
+        "Oro",
+        "Clásica",
+        "Infinite",
+        "Platinum",
+        "Black"
+      ],
+      "cobranding": null
+    },
+    {
+      "comercio": "Life Cinemas",
+      "categoria": "Experiencias",
+      "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/experiencias/Life_Cinemas.html",
+      "vigencia": "26 de Julio 2029",
+      "local": null,
+      "descuentos": [
+        {
+          "pct": 50,
+          "tarjetas": "Tarjetas de Débito en la compra de entradas para películas 2D y 3D.",
+          "texto": "50% Off con Tarjetas de Débito en la compra de entradas para películas 2D y 3D.",
+          "isDebit": true,
+          "niveles": []
+        },
+        {
+          "pct": 50,
+          "tarjetas": "Tarjetas de Crédito Internacional, Oro, Pymes y Corporativas en la compra de entradas para películas 2D, 3D y en la compra de packs de pop y refresco tradicionales en los Complejos.",
+          "texto": "50% Off con Tarjetas de Crédito Internacional, Oro, Pymes y Corporativas en la compra de entradas para películas 2D, 3D y en la compra de packs de pop y refresco tradicionales en los Complejos.",
+          "isDebit": false,
+          "niveles": [
+            "Oro",
+            "Clásica"
+          ]
+        },
+        {
+          "pct": 50,
+          "tarjetas": "Tarjetas de Crédito Platinum, Black e Infinite en la compra de entradas para películas 2D, 3D. Beneficio especial en packs de pop y refresco, mediante el cual el cliente recibirá gratuitamente un pack de pop y refresco tamaño mediano.",
+          "texto": "50% Off con Tarjetas de Crédito Platinum, Black e Infinite en la compra de entradas para películas 2D, 3D. Beneficio especial en packs de pop y refresco, mediante el cual el cliente recibirá gratuitamente un pack de pop y refresco tamaño mediano.",
+          "isDebit": false,
+          "niveles": [
+            "Infinite",
+            "Platinum",
+            "Black"
+          ]
+        }
+      ],
+      "pctMax": 50,
+      "tope": "Tope de beneficios: el número máximo de beneficios aplicables por Tarjeta y por día será de 4 entradas y 4 packs correspondientes",
       "red": null,
       "niveles": [
         "Oro",
