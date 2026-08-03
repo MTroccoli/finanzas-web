@@ -1,6 +1,6 @@
 {
   "fuente": "scotiabank.com.uy",
-  "actualizado": "2026-07-31T14:07:00.137Z",
+  "actualizado": "2026-08-03T14:39:27.587Z",
   "total": 84,
   "beneficios": [
     {
@@ -116,6 +116,33 @@
       "cobranding": null
     },
     {
+      "nombre": "LA PANTALLA",
+      "url": null,
+      "categoria": "Restaurantes",
+      "pctMax": 25,
+      "descuentos": [
+        {
+          "pct": 25,
+          "texto": "25% de ahorro"
+        },
+        {
+          "pct": 15,
+          "texto": "15% de ahorro"
+        }
+      ],
+      "vigencia": "Todos los días",
+      "tarjetas": "25% de ahorro con tarjetas Platinum, Infinite, Gold y débito Premium.",
+      "desc": "25% de ahorro con tarjetas Platinum, Infinite, Gold y débito Premium.",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [
+        "Infinite",
+        "Platinum",
+        "Gold"
+      ],
+      "cobranding": null
+    },
+    {
       "nombre": "WANTAN",
       "url": null,
       "categoria": "Restaurantes",
@@ -220,7 +247,7 @@
       "cobranding": null
     },
     {
-      "nombre": "IBER PARK",
+      "nombre": "IBER",
       "url": null,
       "categoria": "Restaurantes",
       "pctMax": 15,
@@ -236,33 +263,6 @@
       "exclusivo": false,
       "red": null,
       "niveles": [],
-      "cobranding": null
-    },
-    {
-      "nombre": "SALMUERA",
-      "url": null,
-      "categoria": "Restaurantes",
-      "pctMax": 25,
-      "descuentos": [
-        {
-          "pct": 25,
-          "texto": "25% de ahorro"
-        },
-        {
-          "pct": 15,
-          "texto": "15% de ahorro"
-        }
-      ],
-      "vigencia": "Todos los días",
-      "tarjetas": "25% de ahorro con tarjetas de crédito Platinum, Infinite, Gold y débito Premium.",
-      "desc": "25% de ahorro con tarjetas de crédito Platinum, Infinite, Gold y débito Premium.",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [
-        "Infinite",
-        "Platinum",
-        "Gold"
-      ],
       "cobranding": null
     },
     {
@@ -310,6 +310,33 @@
       "vigencia": "Todos los días",
       "tarjetas": "25% de ahorro con tarjetas Platinum, Infinite, Gold y débito Premium.",
       "desc": "25% de ahorro con tarjetas Platinum, Infinite, Gold y débito Premium.",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [
+        "Infinite",
+        "Platinum",
+        "Gold"
+      ],
+      "cobranding": null
+    },
+    {
+      "nombre": "SALMUERA",
+      "url": null,
+      "categoria": "Cafeterías y Salones de té",
+      "pctMax": 25,
+      "descuentos": [
+        {
+          "pct": 25,
+          "texto": "25% de ahorro"
+        },
+        {
+          "pct": 15,
+          "texto": "15% de ahorro"
+        }
+      ],
+      "vigencia": "Todos los días",
+      "tarjetas": "25% de ahorro con tarjetas de crédito Platinum, Infinite, Gold y débito Premium.",
+      "desc": "25% de ahorro con tarjetas de crédito Platinum, Infinite, Gold y débito Premium.",
       "exclusivo": false,
       "red": null,
       "niveles": [
@@ -680,25 +707,6 @@
       "cobranding": null
     },
     {
-      "nombre": "CLÍNICA MURILLO",
-      "url": null,
-      "categoria": "Estética",
-      "pctMax": 15,
-      "descuentos": [
-        {
-          "pct": 15,
-          "texto": "15% de ahorro"
-        }
-      ],
-      "vigencia": "Todos los días",
-      "tarjetas": "15% de ahorro con Tarjetas de crédito Scotiabank.",
-      "desc": "15% de ahorro con Tarjetas de crédito Scotiabank.",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
       "nombre": "TIENDA FARMA",
       "url": null,
       "categoria": "Farmacias",
@@ -801,16 +809,16 @@
       "nombre": "ACHER",
       "url": null,
       "categoria": "Hogar",
-      "pctMax": 25,
+      "pctMax": 10,
       "descuentos": [
         {
-          "pct": 25,
-          "texto": "25% de ahorro"
+          "pct": 10,
+          "texto": "10% de ahorro"
         }
       ],
-      "vigencia": "Del 1 de junio al 31 de julio",
-      "tarjetas": "25% de ahorro con tarjetas de crédito y débito.",
-      "desc": "25% de ahorro con tarjetas de crédito y débito.",
+      "vigencia": "Todos los días",
+      "tarjetas": "10% de ahorro con tarjetas de crédito y débito.",
+      "desc": "10% de ahorro con tarjetas de crédito y débito.",
       "exclusivo": false,
       "red": null,
       "niveles": [],
@@ -1229,16 +1237,16 @@
       "nombre": "LAVAKAN",
       "url": null,
       "categoria": "Mascotas",
-      "pctMax": 25,
+      "pctMax": 15,
       "descuentos": [
         {
-          "pct": 25,
-          "texto": "25% de ahorro"
+          "pct": 15,
+          "texto": "15% de ahorro"
         }
       ],
-      "vigencia": "Del 24 al 31 de julio",
-      "tarjetas": "25% de ahorro con tarjetas de crédito Platinum, Infinite, Gold y Débito Premium.",
-      "desc": "25% de ahorro con tarjetas de crédito Platinum, Infinite, Gold y Débito Premium.",
+      "vigencia": "Todos los días",
+      "tarjetas": "15% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y débito Premium.",
+      "desc": "15% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y débito Premium.",
       "exclusivo": false,
       "red": null,
       "niveles": [
