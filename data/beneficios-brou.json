@@ -1,8 +1,8 @@
 {
   "fuente": "BROU",
   "url": "https://beneficios.brou.com.uy/beneficios",
-  "fecha": "2026-07-31",
-  "total": 70,
+  "fecha": "2026-08-03",
+  "total": 76,
   "beneficios": [
     {
       "nombre": "Banco Hipotecario del Uruguay",
@@ -74,8 +74,8 @@
       "nombre": "Cabify",
       "pctMax": 30,
       "url": "https://beneficios.brou.com.uy/ensenanza/cabify",
-      "tarjetas": "Con el código \"BROUJUL30\" obtenés 4 viajes hasta el 31 de Julio con un 30% de descuento en la zona de Montevideo y Maldonado, abonando con tarjetas de crédito y débito VISA, BROU Recompensa Mastercard",
-      "vigencia": "Vigencia: 31/07/2026",
+      "tarjetas": "Con el código \"BROUAGOSTO30\" obtenés 4 viajes hasta el 31 de Agosto con un 30% de descuento en la zona de Montevideo y Maldonado, abonando con tarjetas de crédito y débito VISA, BROU Recompensa Master",
+      "vigencia": "Vigencia: 31/08/2026",
       "desc": "Aprovechá el siguiente beneficio con Cabify",
       "categoria": "ensenanza",
       "red": null,
@@ -105,6 +105,51 @@
       "vigencia": "Vigencia: 28/02/2027",
       "desc": "Disfrutá de los descuentos que te ofrece Tu Banco en La Dolfina pagando con los Medios de Pago seleccionados",
       "categoria": "moda",
+      "red": null,
+      "niveles": [
+        "Platinum",
+        "Black"
+      ],
+      "cobranding": "Recompensa"
+    },
+    {
+      "nombre": "Semana BROU en DISTRICOMP",
+      "pctMax": 25,
+      "url": "https://beneficios.brou.com.uy/ensenanza/districomp-semanabrou",
+      "tarjetas": "25% de descuento con tarjetas de crédito BROU VISA Platinum y BROU Recompensa Mastercard Platinum y Black.",
+      "vigencia": "Semana BROU en DISTRICOMP",
+      "desc": "Semana BROU en DISTRICOMP",
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [
+        "Platinum",
+        "Black"
+      ],
+      "cobranding": "Recompensa"
+    },
+    {
+      "nombre": "Hotel del Lago",
+      "pctMax": 25,
+      "url": "https://beneficios.brou.com.uy/ensenanza/hotel-del-lago",
+      "tarjetas": "25% de descuento con tarjetas de crédito BROU Recompensa Mastercard Black y BROU VISA Platinum.",
+      "vigencia": "Vigencia: 31/07/2027",
+      "desc": "Aprovechá un 25% de descuento en tus vacaciones con las tarjetas seleccionadas del BROU",
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [
+        "Platinum",
+        "Black"
+      ],
+      "cobranding": "Recompensa"
+    },
+    {
+      "nombre": "Semana BROU en CASA JARDIN",
+      "pctMax": 25,
+      "url": "https://beneficios.brou.com.uy/ensenanza/Semana-brou-casa-jardin",
+      "tarjetas": "25% de descuento con tarjetas de crédito BROU VISA Platinum y BROU Recompensa Mastercard Platinum y Black.",
+      "vigencia": "Semana BROU en CASA JARDIN",
+      "desc": "Semana BROU en CASA JARDIN",
+      "categoria": "ensenanza",
       "red": null,
       "niveles": [
         "Platinum",
@@ -197,6 +242,37 @@
       "cobranding": "Recompensa"
     },
     {
+      "nombre": "Restaurante La Navicella",
+      "pctMax": 25,
+      "url": "https://beneficios.brou.com.uy/ensenanza/restaurante-la-navicella--hotel-del-lago",
+      "tarjetas": "25% de descuento con tarjetas BROU Recompensa Mastercard Platinum y Black y BROU Visa Platinum e Infinite.",
+      "vigencia": "Vigencia: 31/07/2027",
+      "desc": "Restaurante La Navicella",
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [
+        "Infinite",
+        "Platinum",
+        "Black"
+      ],
+      "cobranding": "Recompensa"
+    },
+    {
+      "nombre": "Semana BROU en Universo Binario",
+      "pctMax": 25,
+      "url": "https://beneficios.brou.com.uy/ensenanza/semana-brou-en-universo-binario",
+      "tarjetas": "25% de dto. con las tarjetas de crédito BROU VISA Platino y BROU Recompensa Mastercard Black.",
+      "vigencia": "Semana BROU en Universo Binario",
+      "desc": "Semana BROU en Universo Binario",
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [
+        "Platinum",
+        "Black"
+      ],
+      "cobranding": "Recompensa"
+    },
+    {
       "nombre": "La Sacristía",
       "pctMax": 25,
       "url": "https://beneficios.brou.com.uy/ensenanza/la-sacristía",
@@ -218,6 +294,21 @@
       "tarjetas": "25% de descuento con tarjetas de crédito BROU VISA Platinum y BROU Recompensa Mastercard Platinum y Black.",
       "vigencia": "Vigencia: 30/04/2027",
       "desc": "Disfrutá de descuentos en COSMESHOP con medios de pago seleccionados.",
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [
+        "Platinum",
+        "Black"
+      ],
+      "cobranding": "Recompensa"
+    },
+    {
+      "nombre": "Semana BROU en El Rey Del Entretenimiento",
+      "pctMax": 25,
+      "url": "https://beneficios.brou.com.uy/ensenanza/el-rey-del-entretenimiento-semanabrou",
+      "tarjetas": "25% de descuento con tarjetas de crédito BROU VISA Platinum y BROU Recompensa Mastercard Platinum y Black.",
+      "vigencia": "Semana BROU en El Rey Del Entretenimiento",
+      "desc": "Semana BROU en El Rey Del Entretenimiento",
       "categoria": "ensenanza",
       "red": null,
       "niveles": [
@@ -259,18 +350,6 @@
       "desc": "Preventa exclusiva y compra de entradas con 20% de descuento pagando con Tarjetas BROU Recompensa Mastercard.",
       "categoria": "espectaculos",
       "red": "Mastercard",
-      "niveles": [],
-      "cobranding": "Recompensa"
-    },
-    {
-      "nombre": "Hotel del Lago",
-      "pctMax": 20,
-      "url": "https://beneficios.brou.com.uy/ensenanza/hotel-del-lago",
-      "tarjetas": "Disfrutá de tu escapada en Hotel del Lago con un 20% de descuento pagando con tus tarjetas de crédito BROU Recompensa Mastercard y VISA.",
-      "vigencia": "Vigencia: 31/07/2026",
-      "desc": "Aprovechá un 20% de descuento en tus vacaciones con las tarjetas seleccionadas del BROU",
-      "categoria": "ensenanza",
-      "red": null,
       "niveles": [],
       "cobranding": "Recompensa"
     },
@@ -365,6 +444,18 @@
       "cobranding": "Recompensa"
     },
     {
+      "nombre": "Tiendas Montevideo",
+      "pctMax": 20,
+      "url": "https://beneficios.brou.com.uy/ensenanza/tiendas-montevideo",
+      "tarjetas": "20% de dto. abonando con tarjetas de crédito BROU VISA y BROU Recompensa Mastercard.",
+      "vigencia": "Vigencia: 25/08/2026",
+      "desc": "Disfrutá de hasta 20% de descuento en colchas, frazadas y pie de cama con tarjetas BROU.",
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [],
+      "cobranding": "Recompensa"
+    },
+    {
       "nombre": "Barraca Malvín",
       "pctMax": 20,
       "url": "https://beneficios.brou.com.uy/hogar/BarracaMalvin_Hogar",
@@ -454,11 +545,23 @@
       "cobranding": null
     },
     {
+      "nombre": "IPlace",
+      "pctMax": 15,
+      "url": "https://beneficios.brou.com.uy/ensenanza/iplace",
+      "tarjetas": "Del 1 al 31 de agosto, aprovechá estos beneficios en iPlace, abonando con tarjetas de crédito BROU VISA y BROU Recompensa Mastercard,",
+      "vigencia": "Vigencia: 31/08/2026",
+      "desc": "Del 1 al 31 de agosto, aprovechá estos beneficios en iPlace, abonando con tarjetas de crédito BROU VISA y BROU Recompensa Mastercard,",
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [],
+      "cobranding": "Recompensa"
+    },
+    {
       "nombre": "MI BELLEZA",
       "pctMax": 15,
       "url": "https://beneficios.brou.com.uy/ensenanza/mi-belleza",
       "tarjetas": "15% de dto con tarjetas de crédito BROU Recompensa Mastercard Platinum y Black y BROU Visa Platinum.",
-      "vigencia": "Vigencia: 02/08/2026",
+      "vigencia": "Vigencia: 09/08/2026",
       "desc": "Disfrutá de hasta un 15% de descuento en MI BELLEZA con medios de pago de Tu Banco.",
       "categoria": "ensenanza",
       "red": null,
@@ -473,7 +576,7 @@
       "pctMax": 15,
       "url": "https://beneficios.brou.com.uy/ensenanza/loi",
       "tarjetas": "15% de descuento con tarjetas de crédito BROU Recompensa Mastercard Platinum y Black y BROU Visa Platinum.",
-      "vigencia": "Vigencia: 02/08/2026",
+      "vigencia": "Vigencia: 09/08/2026",
       "desc": "Aprovechá estos beneficios en LOI con las tarjetas seleccionadas de Tu Banco",
       "categoria": "ensenanza",
       "red": null,
@@ -503,18 +606,6 @@
       "vigencia": "Todos los días tenés descuento con los Medios de Pago de Tu Banco",
       "desc": "Todos los días tenés descuento con los Medios de Pago de Tu Banco",
       "categoria": "PYMES-BENEFICIO",
-      "red": null,
-      "niveles": [],
-      "cobranding": "Recompensa"
-    },
-    {
-      "nombre": "Lorenza Indumentaria femenina",
-      "pctMax": 15,
-      "url": "https://beneficios.brou.com.uy/ensenanza/lorenza-indumentaria-femenina",
-      "tarjetas": "Aprovechá un 15% en todas las compras con tarjetas de crédito y débito VISA, BROU Recompensa Mastercard y MI BROU Tarjeta Joven tanto para compras web como presenciales y Multipagos eBROU.",
-      "vigencia": "Vigencia: 31/07/2026",
-      "desc": "Lorenza Indumentaria femenina",
-      "categoria": "ensenanza",
       "red": null,
       "niveles": [],
       "cobranding": "Recompensa"
