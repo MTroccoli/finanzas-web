@@ -1,21 +1,21 @@
 {
   "fuente": "itau.com.uy",
-  "actualizado": "2026-07-31T12:58:34.838Z",
-  "total": 14,
+  "actualizado": "2026-08-03T13:42:46.517Z",
+  "total": 16,
   "beneficios": [
     {
-      "nombre": "frazadas Campomar",
+      "nombre": "Divino",
       "url": null,
-      "pctMax": 25,
+      "pctMax": 15,
       "descuentos": [
         {
-          "pct": 25,
-          "texto": "25%"
+          "pct": 15,
+          "texto": "15%"
         }
       ],
       "vigencia": null,
       "tarjetas": null,
-      "desc": "25% y 15% menos en frazadas Campomar",
+      "desc": "15% y 10% menos en Divino",
       "exclusivo": false,
       "red": null,
       "niveles": [],
@@ -34,6 +34,19 @@
       "vigencia": null,
       "tarjetas": null,
       "desc": "25% y 15% menos en Mosca",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
+    },
+    {
+      "nombre": "Frog",
+      "url": null,
+      "pctMax": null,
+      "descuentos": [],
+      "vigencia": null,
+      "tarjetas": null,
+      "desc": "Millas x 3 en Frog",
       "exclusivo": false,
       "red": null,
       "niveles": [],
@@ -76,18 +89,36 @@
       "cobranding": null
     },
     {
-      "nombre": "Starbucks",
+      "nombre": "Le Blanc",
       "url": null,
-      "pctMax": 15,
+      "pctMax": 25,
       "descuentos": [
         {
-          "pct": 15,
-          "texto": "15%"
+          "pct": 25,
+          "texto": "25%"
         }
       ],
       "vigencia": null,
       "tarjetas": null,
-      "desc": "15% menos en Starbucks en bebidas",
+      "desc": "25% y 15% menos en Le Blanc",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
+    },
+    {
+      "nombre": "Soho",
+      "url": null,
+      "pctMax": 25,
+      "descuentos": [
+        {
+          "pct": 25,
+          "texto": "25%"
+        }
+      ],
+      "vigencia": null,
+      "tarjetas": null,
+      "desc": "25% y 15% menos en Soho",
       "exclusivo": false,
       "red": null,
       "niveles": [],
