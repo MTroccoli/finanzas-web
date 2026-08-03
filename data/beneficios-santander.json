@@ -1,22 +1,11 @@
 {
   "fuente": "santander.com.uy",
-  "actualizado": "2026-07-31T12:29:05.930Z",
-  "total": 327,
+  "actualizado": "2026-08-03T13:39:08.655Z",
+  "total": 326,
   "beneficios": [
     {
       "nombre": "Optica Estela Jinchuk",
       "url": "https://www.santander.com.uy/beneficios/optica-estela-jinchuk",
-      "pctMax": 15,
-      "vigencia": null,
-      "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta.",
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
-      "nombre": "Iber",
-      "url": "https://www.santander.com.uy/beneficios/iber",
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
@@ -2129,12 +2118,12 @@
       "cobranding": null
     },
     {
-      "nombre": "Error 503",
+      "nombre": "Café Butiá",
       "url": "https://www.santander.com.uy/beneficios/cafe-butia",
       "pctMax": 15,
       "vigencia": null,
-      "tarjetas": null,
-      "desc": "Estamos trabajando en el sitio para mejorar tu experiencia",
+      "tarjetas": "Tarjetas de crédito",
+      "desc": "El descuento se efectúa en el punto de venta.",
       "red": null,
       "niveles": [],
       "cobranding": null
@@ -3361,17 +3350,6 @@
       "cobranding": null
     },
     {
-      "nombre": "Dulce Avellana",
-      "url": "https://www.santander.com.uy/beneficios/dulce-avellana",
-      "pctMax": null,
-      "vigencia": null,
-      "tarjetas": "Tarjetas de crédito",
-      "desc": "El comercio acepta canje de puntos Soy Santander.",
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
       "nombre": "Gozar",
       "url": "https://www.santander.com.uy/beneficios/gozar",
       "pctMax": 25,
@@ -3598,6 +3576,17 @@
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El comercio acepta canje de Puntos Soy Santander.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
+    },
+    {
+      "nombre": "El Naranjo",
+      "url": "https://www.santander.com.uy/beneficios/el-naranjo",
+      "pctMax": 25,
+      "vigencia": null,
+      "tarjetas": "Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
+      "desc": "Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de L",
       "red": null,
       "niveles": [],
       "cobranding": null
