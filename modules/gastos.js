@@ -694,10 +694,12 @@ window.Mods.gastos = {
                               style="font-size:.72rem;padding:2px 8px;color:var(--red)">✕ Eliminar</button>
                           </td>
                           <td>
-                            ${imp.archivo_path ? `
-                              <button class="btn btn-ghost g-imp-reparse-btn" data-path="${imp.archivo_path}"
-                                style="font-size:.72rem;padding:2px 8px">↺ Re-parsear</button>
-                            ` : ''}
+                            <button class="btn btn-ghost g-imp-reparse-btn"
+                              data-path="${imp.archivo_path || ''}" data-imp-id="${imp.id}"
+                              title="${imp.archivo_path ? 'Re-parsear el PDF guardado' : 'Sin PDF guardado — te pedimos que lo subas'}"
+                              style="font-size:.72rem;padding:2px 8px">
+                              ${imp.archivo_path ? '↺ Re-parsear' : '📎 Subir y re-parsear'}
+                            </button>
                           </td>
                         </tr>`).join('')}
                     </tbody>
@@ -943,11 +945,31 @@ window.Mods.gastos = {
       )
     );
 
-    // Re-parsear: descargar archivo guardado y relanzar el parseo
+    // Re-parsear: si hay archivo guardado, lo descarga y relanza el parseo.
+    // Si no (imports viejos sin archivo_path), abre el file picker para que
+    // el usuario suba el PDF a mano — se re-parsea como una importación nueva
+    // y queda con archivo_path para futuros re-parseos.
     document.querySelectorAll('.g-imp-reparse-btn').forEach(btn =>
       btn.addEventListener('click', async () => {
-        const path = btn.dataset.path;
-        if (!path) return;
+        const path   = btn.dataset.path;
+        const impId  = btn.dataset.impId;
+        const origHTML = btn.innerHTML;
+
+        if (!path) {
+          // Sin PDF guardado: abrimos el file picker y dejamos que el usuario
+          // suba el archivo. Cae en el flujo estándar de subida (crea una
+          // importación nueva) — el usuario después puede borrar la vieja.
+          if (!input) { toast('El uploader no está disponible este mes por el límite mensual.', 'err'); return; }
+          toast(`Subí el PDF del EDC #${impId} para re-parsearlo`);
+          const onChange = () => {
+            input.removeEventListener('change', onChange);
+            if (input.files[0]) setFile(input.files[0]);
+          };
+          input.addEventListener('change', onChange);
+          input.click();
+          return;
+        }
+
         btn.disabled = true; btn.textContent = '⏳ Descargando…';
         try {
           const { data, error } = await getDB().storage.from('edcs').download(path);
@@ -962,7 +984,7 @@ window.Mods.gastos = {
           btnParse.click();
         } catch(err) {
           toast('❌ ' + err.message, 'err');
-          btn.disabled = false; btn.textContent = '↺ Re-parsear';
+          btn.disabled = false; btn.innerHTML = origHTML;
         }
       })
     );

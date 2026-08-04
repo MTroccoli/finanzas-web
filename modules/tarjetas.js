@@ -1671,10 +1671,15 @@ window.Mods.tarjetas = {
                   ${this._fmtMon(netAmount, g.moneda)}
                 </td>
                 <td>
-                  <button class="adic-incl-btn" data-id="${g.id}" data-val="${!included}"
-                    style="font-size:.65rem;padding:3px 8px;border-radius:4px;cursor:pointer;white-space:nowrap;${inclBtnSt}">
-                    ${included ? '✓ Incluido' : '+ Incluir'}
-                  </button>
+                  <div style="display:flex;gap:4px;align-items:center;justify-content:flex-end">
+                    <button class="adic-edit-btn" data-id="${g.id}" title="Editar consumo"
+                      style="background:none;border:none;cursor:pointer;color:var(--text-sec);
+                        font-size:.75rem;padding:2px 5px;border-radius:3px">✏️</button>
+                    <button class="adic-incl-btn" data-id="${g.id}" data-val="${!included}"
+                      style="font-size:.65rem;padding:3px 8px;border-radius:4px;cursor:pointer;white-space:nowrap;${inclBtnSt}">
+                      ${included ? '✓ Incluido' : '+ Incluir'}
+                    </button>
+                  </div>
                 </td>
               </tr>`;
           }).join('');
@@ -1864,6 +1869,80 @@ window.Mods.tarjetas = {
           toast('❌ ' + err.message, 'err');
           renameBtn.disabled = false;
         }
+        return;
+      }
+
+      // Editar consumo de adicional: transforma la <tr> en inputs y guarda con dbUpdate.
+      const editBtn = e.target.closest('.adic-edit-btn');
+      if (editBtn) {
+        const id = +editBtn.dataset.id;
+        const g  = adicRows.find(r => r.id === id);
+        if (!g) return;
+        const tr = editBtn.closest('tr');
+        if (!tr) return;
+        const inpSt = `font-size:.72rem;padding:3px 6px;border-radius:4px;
+          border:1px solid var(--border);background:var(--surface);color:var(--text)`;
+        tr.dataset.editing = '1';
+        tr.innerHTML = `
+          <td colspan="6" style="padding:6px 4px">
+            <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+              <input class="ae-fecha" type="date" value="${g.fecha}" style="${inpSt};width:135px">
+              <input class="ae-comercio" type="text" placeholder="Comercio"
+                value="${(g.comercio || '').replace(/"/g,'&quot;')}"
+                style="${inpSt};flex:1;min-width:120px">
+              <input class="ae-monto" type="number" step="0.01" value="${g.monto}"
+                style="${inpSt};width:105px">
+              <select class="ae-moneda" style="${inpSt}">
+                <option value="UYU"${g.moneda === 'UYU' ? ' selected' : ''}>UYU</option>
+                <option value="USD"${g.moneda === 'USD' ? ' selected' : ''}>USD</option>
+              </select>
+              <select class="ae-cat" style="${inpSt};min-width:140px">
+                <option value="">— Sin categoría —</option>
+                ${(this._cats || []).map(c =>
+                  `<option value="${c.id}"${g.categoria_id == c.id ? ' selected' : ''}>${c.icono} ${c.nombre}</option>`
+                ).join('')}
+              </select>
+              <button class="btn btn-primary ae-save" data-id="${g.id}"
+                style="font-size:.72rem;padding:4px 10px">Guardar</button>
+              <button class="btn btn-ghost ae-cancel"
+                style="font-size:.72rem;padding:4px 10px">Cancelar</button>
+            </div>
+          </td>`;
+        tr.querySelector('.ae-comercio')?.focus();
+        return;
+      }
+
+      const saveBtn = e.target.closest('.ae-save');
+      if (saveBtn) {
+        const id = +saveBtn.dataset.id;
+        const tr = saveBtn.closest('tr');
+        const monto = parseFloat(tr.querySelector('.ae-monto').value);
+        if (!(monto > 0)) { toast('Monto inválido', 'err'); return; }
+        const cat = tr.querySelector('.ae-cat').value;
+        saveBtn.disabled = true;
+        saveBtn.textContent = '…';
+        try {
+          await dbUpdate('gastos', {
+            fecha:        tr.querySelector('.ae-fecha').value,
+            comercio:     tr.querySelector('.ae-comercio').value.trim() || null,
+            monto,
+            moneda:       tr.querySelector('.ae-moneda').value,
+            categoria_id: cat ? +cat : null,
+          }, { id });
+          toast('Actualizado');
+          this._invalidateCache();
+          if (window.Mods.gastos) window.Mods.gastos._invalidateGastosCaches();
+          this._drawHistorialAdicional();
+        } catch (err) {
+          toast('❌ ' + err.message, 'err');
+          saveBtn.disabled = false;
+          saveBtn.textContent = 'Guardar';
+        }
+        return;
+      }
+
+      if (e.target.closest('.ae-cancel')) {
+        this._drawHistorialAdicional();
         return;
       }
 
