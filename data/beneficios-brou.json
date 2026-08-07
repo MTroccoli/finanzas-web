@@ -1,8 +1,8 @@
 {
   "fuente": "BROU",
   "url": "https://beneficios.brou.com.uy/beneficios",
-  "fecha": "2026-08-03",
-  "total": 76,
+  "fecha": "2026-08-07",
+  "total": 84,
   "beneficios": [
     {
       "nombre": "Banco Hipotecario del Uruguay",
@@ -258,12 +258,12 @@
       "cobranding": "Recompensa"
     },
     {
-      "nombre": "Semana BROU en Universo Binario",
+      "nombre": "Universo Binario",
       "pctMax": 25,
       "url": "https://beneficios.brou.com.uy/ensenanza/semana-brou-en-universo-binario",
       "tarjetas": "25% de dto. con las tarjetas de crédito BROU VISA Platino y BROU Recompensa Mastercard Black.",
-      "vigencia": "Semana BROU en Universo Binario",
-      "desc": "Semana BROU en Universo Binario",
+      "vigencia": "Vigencia: 16/08/2026",
+      "desc": "Aprovechá los siguientes descuentos en Universo Binario",
       "categoria": "ensenanza",
       "red": null,
       "niveles": [
@@ -823,6 +823,54 @@
       "cobranding": "Recompensa"
     },
     {
+      "nombre": "Cine Sarandí Salto",
+      "pctMax": null,
+      "url": "https://beneficios.brou.com.uy/espectaculos/Cine_sarandi_Salto",
+      "tarjetas": "Tarjetas de Crédito VISA y BROU Recompensa Mastercard.",
+      "vigencia": "Vigencia: 31/05/2027",
+      "desc": "Aprovechá 2x1 en entradas pagando con:",
+      "categoria": "espectaculos",
+      "red": null,
+      "niveles": [],
+      "cobranding": "Recompensa"
+    },
+    {
+      "nombre": "Cine Doré Minas",
+      "pctMax": null,
+      "url": "https://beneficios.brou.com.uy/espectaculos/CineDore_Entretenimiento",
+      "tarjetas": "Tarjetas de Crédito VISA y BROU Recompensa Mastercard.",
+      "vigencia": "Vigencia: 31/05/2027",
+      "desc": "Aprovechá el 2x1 en entradas pagando con:",
+      "categoria": "espectaculos",
+      "red": null,
+      "niveles": [],
+      "cobranding": "Recompensa"
+    },
+    {
+      "nombre": "Cine Teatro Uamá - Carmelo",
+      "pctMax": null,
+      "url": "https://beneficios.brou.com.uy/ensenanza/cine-uama-carmelo",
+      "tarjetas": "Tarjetas de Crédito VISA y BROU Recompensa Mastercard.",
+      "vigencia": "Vigencia: 31/05/2027",
+      "desc": "Cine Teatro Uamá - Carmelo",
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [],
+      "cobranding": "Recompensa"
+    },
+    {
+      "nombre": "Cine Teatro Atenas de Young",
+      "pctMax": null,
+      "url": "https://beneficios.brou.com.uy/ensenanza/cine-teatro-atenas-de-young",
+      "tarjetas": "Tarjetas de Crédito VISA y BROU Recompensa Mastercard.",
+      "vigencia": "Vigencia: 31/05/2027",
+      "desc": "Cine Teatro Atenas de Young",
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [],
+      "cobranding": "Recompensa"
+    },
+    {
       "nombre": "Google Ads PYMES",
       "pctMax": null,
       "url": "https://beneficios.brou.com.uy/ensenanza/google-ads-pymes",
@@ -933,6 +981,30 @@
       "cobranding": null
     },
     {
+      "nombre": "Cine Chaplin Melo",
+      "pctMax": null,
+      "url": "https://beneficios.brou.com.uy/espectaculos/CineChaplin_Entretenimiento",
+      "tarjetas": "Tarjetas de Crédito VISA y BROU Recompensa Mastercard.",
+      "vigencia": "Vigencia: 31/05/2027",
+      "desc": "Aprovechá el 2x1 en entradas pagando con:",
+      "categoria": "espectaculos",
+      "red": null,
+      "niveles": [],
+      "cobranding": "Recompensa"
+    },
+    {
+      "nombre": "Cine Colonia Shopping",
+      "pctMax": null,
+      "url": "https://beneficios.brou.com.uy/espectaculos/CineColonia_Entrenimiento",
+      "tarjetas": "Tarjetas de Crédito VISA y BROU Recompensa Mastercard.",
+      "vigencia": "Vigencia: 31/05/2027",
+      "desc": "Cine Colonia Shopping",
+      "categoria": "espectaculos",
+      "red": null,
+      "niveles": [],
+      "cobranding": "Recompensa"
+    },
+    {
       "nombre": "Teatro El Galpón",
       "pctMax": null,
       "url": "https://beneficios.brou.com.uy/espectaculos/ElGalpon_Entretenimiento",
@@ -969,6 +1041,18 @@
       "cobranding": "Recompensa"
     },
     {
+      "nombre": "Cine Teatro Municipal de Treinta y Tres",
+      "pctMax": null,
+      "url": "https://beneficios.brou.com.uy/espectaculos/CineTeatroMunicipal_Entretenimiento",
+      "tarjetas": "Tarjetas de Crédito VISA y BROU Recompensa Mastercard.",
+      "vigencia": "Vigencia: 31/05/2027",
+      "desc": "Cine Teatro Municipal de Treinta y Tres",
+      "categoria": "espectaculos",
+      "red": null,
+      "niveles": [],
+      "cobranding": "Recompensa"
+    },
+    {
       "nombre": "Grupocine",
       "pctMax": null,
       "url": "https://beneficios.brou.com.uy/espectaculos/Grupocine2x1_Espectaculos",
@@ -991,6 +1075,18 @@
       "red": null,
       "niveles": [],
       "cobranding": null
+    },
+    {
+      "nombre": "Cine Mercedes Digital",
+      "pctMax": null,
+      "url": "https://beneficios.brou.com.uy/espectaculos/CineMercedes_Espectaculos",
+      "tarjetas": "Tarjetas de Crédito VISA y BROU Recompensa Mastercard.",
+      "vigencia": "Vigencia: 31/05/2027",
+      "desc": "Cine Mercedes Digital",
+      "categoria": "espectaculos",
+      "red": null,
+      "niveles": [],
+      "cobranding": "Recompensa"
     }
   ]
 }
