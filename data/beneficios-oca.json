@@ -1,6 +1,6 @@
 {
   "fuente": "OCA",
-  "actualizado": "2026-07-31",
+  "actualizado": "2026-08-07",
   "beneficios": [
     {
       "nombre": "Movie Blue",
@@ -285,6 +285,19 @@
       "niveles": [
         "Blue"
       ],
+      "cobranding": null
+    },
+    {
+      "nombre": "prestamo60dias",
+      "corto": "prestamo60dias",
+      "pctMax": null,
+      "url": "https://ocablue.uy/beneficio-ampliado.html?name=prestamo60dias&id=bltfd7002ecfe671b00",
+      "categoria": "todos",
+      "tarjetas": "Abrir cuenta gratis",
+      "vigencia": null,
+      "desc": null,
+      "red": "OCA",
+      "niveles": [],
       "cobranding": null
     }
   ]
