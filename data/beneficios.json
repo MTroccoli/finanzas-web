@@ -1,6 +1,6 @@
 {
   "fuente": "bbva.com.uy",
-  "actualizado": "2026-08-05T02:36:29.765Z",
+  "actualizado": "2026-08-07T10:07:41.344Z",
   "total": 297,
   "categorias": [
     "Gastronomía",
@@ -19,6 +19,54 @@
     "Otros"
   ],
   "beneficios": [
+    {
+      "comercio": "La Pasiva Pocitos",
+      "categoria": "Gastronomía",
+      "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/gastronomia/la-pasiva1.html",
+      "vigencia": "30 de Junio 2027",
+      "local": "Juan Benito Blanco 920, Pocitos",
+      "descuentos": [
+        {
+          "pct": 20,
+          "tarjetas": "Tarjetas de Débito",
+          "texto": "20% Off con Tarjetas de Débito",
+          "isDebit": true,
+          "niveles": []
+        },
+        {
+          "pct": 20,
+          "tarjetas": "Tarjetas de Crédito Internacional, Oro, Pymes y Corporativas",
+          "texto": "20% Off con Tarjetas de Crédito Internacional, Oro, Pymes y Corporativas",
+          "isDebit": false,
+          "niveles": [
+            "Oro",
+            "Clásica"
+          ]
+        },
+        {
+          "pct": 30,
+          "tarjetas": "Tarjetas de Crédito Platinum, Black e Infinite",
+          "texto": "30% Off con Tarjetas de Crédito Platinum, Black e Infinite",
+          "isDebit": false,
+          "niveles": [
+            "Infinite",
+            "Platinum",
+            "Black"
+          ]
+        }
+      ],
+      "pctMax": 30,
+      "tope": null,
+      "red": null,
+      "niveles": [
+        "Oro",
+        "Clásica",
+        "Infinite",
+        "Platinum",
+        "Black"
+      ],
+      "cobranding": null
+    },
     {
       "comercio": "Restaurante 1930",
       "categoria": "Gastronomía",
@@ -350,6 +398,54 @@
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/gastronomia/Bocatti.html",
       "vigencia": "31 enero de 2027",
       "local": null,
+      "descuentos": [
+        {
+          "pct": 20,
+          "tarjetas": "Tarjetas de Débito",
+          "texto": "20% Off con Tarjetas de Débito",
+          "isDebit": true,
+          "niveles": []
+        },
+        {
+          "pct": 20,
+          "tarjetas": "Tarjetas de Crédito Internacional, Oro, Pymes y Corporativas",
+          "texto": "20% Off con Tarjetas de Crédito Internacional, Oro, Pymes y Corporativas",
+          "isDebit": false,
+          "niveles": [
+            "Oro",
+            "Clásica"
+          ]
+        },
+        {
+          "pct": 30,
+          "tarjetas": "Tarjetas de Crédito Platinum, Black e Infinite",
+          "texto": "30% Off con Tarjetas de Crédito Platinum, Black e Infinite",
+          "isDebit": false,
+          "niveles": [
+            "Infinite",
+            "Platinum",
+            "Black"
+          ]
+        }
+      ],
+      "pctMax": 30,
+      "tope": null,
+      "red": null,
+      "niveles": [
+        "Oro",
+        "Clásica",
+        "Infinite",
+        "Platinum",
+        "Black"
+      ],
+      "cobranding": null
+    },
+    {
+      "comercio": "La Pasiva Roosevelt",
+      "categoria": "Gastronomía",
+      "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/gastronomia/la-pasiva.html",
+      "vigencia": "30 de Noviembre 2026",
+      "local": "Acuña de Figueroa y Roosevelt 485, Maldonado",
       "descuentos": [
         {
           "pct": 20,
@@ -2510,7 +2606,7 @@
       "comercio": "Marmatu",
       "categoria": "Gastronomía",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/gastronomia/Marmatu.html",
-      "vigencia": "31 de Julio 2026",
+      "vigencia": "31 de Julio 2027",
       "local": null,
       "descuentos": [
         {
@@ -3619,102 +3715,6 @@
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/gastronomia/Restaurante_y_Cafeteria_El_Fondito_Gourmet.html",
       "vigencia": "31 de Julio 2027",
       "local": "Pancho López 351,Trindad",
-      "descuentos": [
-        {
-          "pct": 20,
-          "tarjetas": "Tarjetas de Débito",
-          "texto": "20% Off con Tarjetas de Débito",
-          "isDebit": true,
-          "niveles": []
-        },
-        {
-          "pct": 20,
-          "tarjetas": "Tarjetas de Crédito Internacional, Oro, Pymes y Corporativas",
-          "texto": "20% Off con Tarjetas de Crédito Internacional, Oro, Pymes y Corporativas",
-          "isDebit": false,
-          "niveles": [
-            "Oro",
-            "Clásica"
-          ]
-        },
-        {
-          "pct": 30,
-          "tarjetas": "Tarjetas de Crédito Platinum, Black e Infinite",
-          "texto": "30% Off con Tarjetas de Crédito Platinum, Black e Infinite",
-          "isDebit": false,
-          "niveles": [
-            "Infinite",
-            "Platinum",
-            "Black"
-          ]
-        }
-      ],
-      "pctMax": 30,
-      "tope": null,
-      "red": null,
-      "niveles": [
-        "Oro",
-        "Clásica",
-        "Infinite",
-        "Platinum",
-        "Black"
-      ],
-      "cobranding": null
-    },
-    {
-      "comercio": "La Pasiva Pocitos",
-      "categoria": "Gastronomía",
-      "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/gastronomia/la-pasiva1.html",
-      "vigencia": "30 de Junio 2027",
-      "local": "Juan Benito Blanco 920, Pocitos",
-      "descuentos": [
-        {
-          "pct": 20,
-          "tarjetas": "Tarjetas de Débito",
-          "texto": "20% Off con Tarjetas de Débito",
-          "isDebit": true,
-          "niveles": []
-        },
-        {
-          "pct": 20,
-          "tarjetas": "Tarjetas de Crédito Internacional, Oro, Pymes y Corporativas",
-          "texto": "20% Off con Tarjetas de Crédito Internacional, Oro, Pymes y Corporativas",
-          "isDebit": false,
-          "niveles": [
-            "Oro",
-            "Clásica"
-          ]
-        },
-        {
-          "pct": 30,
-          "tarjetas": "Tarjetas de Crédito Platinum, Black e Infinite",
-          "texto": "30% Off con Tarjetas de Crédito Platinum, Black e Infinite",
-          "isDebit": false,
-          "niveles": [
-            "Infinite",
-            "Platinum",
-            "Black"
-          ]
-        }
-      ],
-      "pctMax": 30,
-      "tope": null,
-      "red": null,
-      "niveles": [
-        "Oro",
-        "Clásica",
-        "Infinite",
-        "Platinum",
-        "Black"
-      ],
-      "cobranding": null
-    },
-    {
-      "comercio": "La Pasiva Roosevelt",
-      "categoria": "Gastronomía",
-      "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/gastronomia/la-pasiva.html",
-      "vigencia": "30 de Noviembre 2026",
-      "local": "Acuña de Figueroa y Roosevelt 485, Maldonado",
       "descuentos": [
         {
           "pct": 20,
@@ -5777,7 +5777,7 @@
       "cobranding": null
     },
     {
-      "comercio": "Auge Deportes",
+      "comercio": "VLACK",
       "categoria": "Vida Activa",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/vida-activa/VLACK.html",
       "vigencia": "31 de Julio 2027",
