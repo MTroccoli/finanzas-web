@@ -1,7 +1,7 @@
 {
   "fuente": "itau.com.uy",
-  "actualizado": "2026-08-07T11:48:57.334Z",
-  "total": 18,
+  "actualizado": "2026-08-10T11:49:47.148Z",
+  "total": 17,
   "beneficios": [
     {
       "nombre": "Divino",
@@ -137,24 +137,6 @@
       "vigencia": null,
       "tarjetas": null,
       "desc": "25% y 15% menos en Soho",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
-      "nombre": "Los Reyes Magos",
-      "url": null,
-      "pctMax": 25,
-      "descuentos": [
-        {
-          "pct": 25,
-          "texto": "25%"
-        }
-      ],
-      "vigencia": null,
-      "tarjetas": null,
-      "desc": "25% y 15% menos en Los Reyes Magos",
       "exclusivo": false,
       "red": null,
       "niveles": [],
