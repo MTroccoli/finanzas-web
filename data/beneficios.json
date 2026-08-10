@@ -1,6 +1,6 @@
 {
   "fuente": "bbva.com.uy",
-  "actualizado": "2026-08-07T10:07:41.344Z",
+  "actualizado": "2026-08-10T10:24:09.324Z",
   "total": 297,
   "categorias": [
     "Gastronomía",
@@ -1414,7 +1414,7 @@
       "categoria": "Gastronomía",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/gastronomia/cafe_suarez.html",
       "vigencia": "31 de Diciembre 2026",
-      "local": "Av. Joaquín Suárez 3724, Prado",
+      "local": null,
       "descuentos": [
         {
           "pct": 20,
@@ -10184,7 +10184,7 @@
       "comercio": "Hacienda Tierra Negra",
       "categoria": "Otros",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/otros/hacienda-tierra-negra.html",
-      "vigencia": "31 de julio 2026",
+      "vigencia": "31 de julio 2027",
       "local": "Hacienda Tierra Negra, Zonamerica",
       "descuentos": [
         {
