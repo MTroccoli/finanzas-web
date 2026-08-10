@@ -1,7 +1,7 @@
 {
   "fuente": "scotiabank.com.uy",
-  "actualizado": "2026-08-07T13:03:45.254Z",
-  "total": 89,
+  "actualizado": "2026-08-10T13:07:47.962Z",
+  "total": 85,
   "beneficios": [
     {
       "nombre": "DIA DEL NIÑO",
@@ -63,29 +63,6 @@
       "cobranding": null
     },
     {
-      "nombre": "GANGAS",
-      "url": null,
-      "categoria": "Destacados",
-      "pctMax": 15,
-      "descuentos": [
-        {
-          "pct": 15,
-          "texto": "15% de ahorro"
-        }
-      ],
-      "vigencia": "Del 07 al 09 de Agosto",
-      "tarjetas": "15% de Ahorro Adicional con tarjetas Visa Infinite, Visa Platinum y Amex Platinum. Amex Gold",
-      "desc": "15% de Ahorro Adicional con tarjetas Visa Infinite, Visa Platinum y Amex Platinum. Amex Gold",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [
-        "Infinite",
-        "Platinum",
-        "Gold"
-      ],
-      "cobranding": null
-    },
-    {
       "nombre": "CINES 50%",
       "url": null,
       "categoria": "Destacados",
@@ -126,6 +103,20 @@
       "desc": "30% de ahorro con tarjetas AMEX si sos usuario Plus.",
       "exclusivo": false,
       "red": "Amex",
+      "niveles": [],
+      "cobranding": null
+    },
+    {
+      "nombre": "TIENDA INGLESA",
+      "url": "https://www.scotiabank.com.uy/Personas/Tarjetas/Beneficios/Supermercados/tienda-inglesa",
+      "categoria": "Destacados",
+      "pctMax": null,
+      "descuentos": [],
+      "vigencia": "Todos los días",
+      "tarjetas": "Disfrutá beneficios exclusivos con tus tarjetas Scotiabank.",
+      "desc": "Disfrutá beneficios exclusivos con tus tarjetas Scotiabank.",
+      "exclusivo": false,
+      "red": null,
       "niveles": [],
       "cobranding": null
     },
@@ -303,8 +294,8 @@
         }
       ],
       "vigencia": "Todos los días",
-      "tarjetas": "25% de ahorro con tarjetas Platinum, Infinite, Gold y débito Premium.",
-      "desc": "25% de ahorro con tarjetas Platinum, Infinite, Gold y débito Premium.",
+      "tarjetas": "25% de ahorro con tarjetas Platinum, Infinite, Gold y d��bito Premium.",
+      "desc": "25% de ahorro con tarjetas Platinum, Infinite, Gold y d��bito Premium.",
       "exclusivo": false,
       "red": null,
       "niveles": [
@@ -1403,7 +1394,7 @@
     {
       "nombre": "SCHOOL",
       "url": null,
-      "categoria": "Niños",
+      "categoria": "Día del niño",
       "pctMax": 25,
       "descuentos": [
         {
@@ -1430,7 +1421,7 @@
     {
       "nombre": "MKL COTTON",
       "url": null,
-      "categoria": "Niños",
+      "categoria": "Día del niño",
       "pctMax": 15,
       "descuentos": [
         {
@@ -1449,7 +1440,7 @@
     {
       "nombre": "BALLON",
       "url": null,
-      "categoria": "Niños",
+      "categoria": "Día del niño",
       "pctMax": 25,
       "descuentos": [
         {
@@ -1464,44 +1455,6 @@
       "vigencia": "Todos los días",
       "tarjetas": "15% y 25% de ahorro Todos los días con tus Tarjetas Scotiabank.",
       "desc": "15% y 25% de ahorro Todos los días con tus Tarjetas Scotiabank.",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
-      "nombre": "MVD KIDS",
-      "url": null,
-      "categoria": "Niños",
-      "pctMax": 15,
-      "descuentos": [
-        {
-          "pct": 15,
-          "texto": "15% de ahorro"
-        }
-      ],
-      "vigencia": "Todos los días",
-      "tarjetas": "15% Todos los días con Tarjetas de Crédito y Débito Scotiabank.",
-      "desc": "15% Todos los días con Tarjetas de Crédito y Débito Scotiabank.",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
-      "nombre": "MIKANGAROO",
-      "url": null,
-      "categoria": "Niños",
-      "pctMax": 15,
-      "descuentos": [
-        {
-          "pct": 15,
-          "texto": "15% de ahorro"
-        }
-      ],
-      "vigencia": "Todos los días",
-      "tarjetas": "15% de ahorro con Tarjetas de Crédito Scotiabank",
-      "desc": "15% de ahorro con Tarjetas de Crédito Scotiabank",
       "exclusivo": false,
       "red": null,
       "niveles": [],
@@ -1738,20 +1691,6 @@
       "cobranding": null
     },
     {
-      "nombre": "TIENDA INGLESA",
-      "url": "https://www.scotiabank.com.uy/Personas/Tarjetas/Beneficios/Supermercados/tienda-inglesa",
-      "categoria": "Supermercados",
-      "pctMax": null,
-      "descuentos": [],
-      "vigencia": "Todos los días",
-      "tarjetas": "Disfrutá beneficios exclusivos con tus tarjetas Scotiabank.",
-      "desc": "Disfrutá beneficios exclusivos con tus tarjetas Scotiabank.",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
       "nombre": "PORTISUR",
       "url": null,
       "categoria": "Supermercados",
@@ -1837,29 +1776,6 @@
       "exclusivo": false,
       "red": null,
       "niveles": [],
-      "cobranding": null
-    },
-    {
-      "nombre": "SHOPPING SALE",
-      "url": null,
-      "categoria": "Shoppings",
-      "pctMax": 15,
-      "descuentos": [
-        {
-          "pct": 15,
-          "texto": "15% de ahorro"
-        }
-      ],
-      "vigencia": "Del 6 al 9 de Agosto",
-      "tarjetas": "15% de ahorro ADICIONAL con tarjetas de crédito Visa Infinite, Visa Platinum, American Express Gold y American Express Platinum.",
-      "desc": "15% de ahorro ADICIONAL con tarjetas de crédito Visa Infinite, Visa Platinum, American Express Gold y American Express Platinum.",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [
-        "Infinite",
-        "Platinum",
-        "Gold"
-      ],
       "cobranding": null
     },
     {
