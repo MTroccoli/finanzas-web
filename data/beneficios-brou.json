@@ -1,8 +1,8 @@
 {
   "fuente": "BROU",
   "url": "https://beneficios.brou.com.uy/beneficios",
-  "fecha": "2026-08-07",
-  "total": 84,
+  "fecha": "2026-08-10",
+  "total": 81,
   "beneficios": [
     {
       "nombre": "Banco Hipotecario del Uruguay",
@@ -105,21 +105,6 @@
       "vigencia": "Vigencia: 28/02/2027",
       "desc": "Disfrutá de los descuentos que te ofrece Tu Banco en La Dolfina pagando con los Medios de Pago seleccionados",
       "categoria": "moda",
-      "red": null,
-      "niveles": [
-        "Platinum",
-        "Black"
-      ],
-      "cobranding": "Recompensa"
-    },
-    {
-      "nombre": "Semana BROU en DISTRICOMP",
-      "pctMax": 25,
-      "url": "https://beneficios.brou.com.uy/ensenanza/districomp-semanabrou",
-      "tarjetas": "25% de descuento con tarjetas de crédito BROU VISA Platinum y BROU Recompensa Mastercard Platinum y Black.",
-      "vigencia": "Semana BROU en DISTRICOMP",
-      "desc": "Semana BROU en DISTRICOMP",
-      "categoria": "ensenanza",
       "red": null,
       "niveles": [
         "Platinum",
@@ -554,36 +539,6 @@
       "categoria": "ensenanza",
       "red": null,
       "niveles": [],
-      "cobranding": "Recompensa"
-    },
-    {
-      "nombre": "MI BELLEZA",
-      "pctMax": 15,
-      "url": "https://beneficios.brou.com.uy/ensenanza/mi-belleza",
-      "tarjetas": "15% de dto con tarjetas de crédito BROU Recompensa Mastercard Platinum y Black y BROU Visa Platinum.",
-      "vigencia": "Vigencia: 09/08/2026",
-      "desc": "Disfrutá de hasta un 15% de descuento en MI BELLEZA con medios de pago de Tu Banco.",
-      "categoria": "ensenanza",
-      "red": null,
-      "niveles": [
-        "Platinum",
-        "Black"
-      ],
-      "cobranding": "Recompensa"
-    },
-    {
-      "nombre": "LOI",
-      "pctMax": 15,
-      "url": "https://beneficios.brou.com.uy/ensenanza/loi",
-      "tarjetas": "15% de descuento con tarjetas de crédito BROU Recompensa Mastercard Platinum y Black y BROU Visa Platinum.",
-      "vigencia": "Vigencia: 09/08/2026",
-      "desc": "Aprovechá estos beneficios en LOI con las tarjetas seleccionadas de Tu Banco",
-      "categoria": "ensenanza",
-      "red": null,
-      "niveles": [
-        "Platinum",
-        "Black"
-      ],
       "cobranding": "Recompensa"
     },
     {
