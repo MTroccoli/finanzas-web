@@ -1,26 +1,8 @@
 {
   "fuente": "itau.com.uy",
-  "actualizado": "2026-08-14T11:46:06.263Z",
+  "actualizado": "2026-08-17T11:28:55.052Z",
   "total": 17,
   "beneficios": [
-    {
-      "nombre": "Mosca",
-      "url": null,
-      "pctMax": 25,
-      "descuentos": [
-        {
-          "pct": 25,
-          "texto": "25%"
-        }
-      ],
-      "vigencia": null,
-      "tarjetas": null,
-      "desc": "25% y 15% menos en Mosca",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
     {
       "nombre": "Divino",
       "url": null,
@@ -137,6 +119,24 @@
       "vigencia": null,
       "tarjetas": null,
       "desc": "25% y 15% menos en Le Blanc",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
+    },
+    {
+      "nombre": "Bosch y Cia",
+      "url": null,
+      "pctMax": 25,
+      "descuentos": [
+        {
+          "pct": 25,
+          "texto": "25%"
+        }
+      ],
+      "vigencia": null,
+      "tarjetas": null,
+      "desc": "25% menos en Bosch y Cia",
       "exclusivo": false,
       "red": null,
       "niveles": [],
