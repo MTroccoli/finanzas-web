@@ -1,8 +1,8 @@
 {
   "fuente": "BROU",
   "url": "https://beneficios.brou.com.uy/beneficios",
-  "fecha": "2026-08-14",
-  "total": 81,
+  "fecha": "2026-08-17",
+  "total": 79,
   "beneficios": [
     {
       "nombre": "Banco Hipotecario del Uruguay",
@@ -128,21 +128,6 @@
       "cobranding": "Recompensa"
     },
     {
-      "nombre": "Semana BROU en CASA JARDIN",
-      "pctMax": 25,
-      "url": "https://beneficios.brou.com.uy/ensenanza/Semana-brou-casa-jardin",
-      "tarjetas": "25% de descuento con tarjetas de crédito BROU VISA Platinum y BROU Recompensa Mastercard Platinum y Black.",
-      "vigencia": "Semana BROU en CASA JARDIN",
-      "desc": "Semana BROU en CASA JARDIN",
-      "categoria": "ensenanza",
-      "red": null,
-      "niveles": [
-        "Platinum",
-        "Black"
-      ],
-      "cobranding": "Recompensa"
-    },
-    {
       "nombre": "Ser Animal",
       "pctMax": 25,
       "url": "https://beneficios.brou.com.uy/ensenanza/ser-animal",
@@ -243,21 +228,6 @@
       "cobranding": "Recompensa"
     },
     {
-      "nombre": "Universo Binario",
-      "pctMax": 25,
-      "url": "https://beneficios.brou.com.uy/ensenanza/semana-brou-en-universo-binario",
-      "tarjetas": "25% de dto. con las tarjetas de crédito BROU VISA Platino y BROU Recompensa Mastercard Black.",
-      "vigencia": "Vigencia: 16/08/2026",
-      "desc": "Aprovechá los siguientes descuentos en Universo Binario",
-      "categoria": "ensenanza",
-      "red": null,
-      "niveles": [
-        "Platinum",
-        "Black"
-      ],
-      "cobranding": "Recompensa"
-    },
-    {
       "nombre": "La Sacristía",
       "pctMax": 25,
       "url": "https://beneficios.brou.com.uy/ensenanza/la-sacristía",
@@ -279,21 +249,6 @@
       "tarjetas": "25% de descuento con tarjetas de crédito BROU VISA Platinum y BROU Recompensa Mastercard Platinum y Black.",
       "vigencia": "Vigencia: 30/04/2027",
       "desc": "Disfrutá de descuentos en COSMESHOP con medios de pago seleccionados.",
-      "categoria": "ensenanza",
-      "red": null,
-      "niveles": [
-        "Platinum",
-        "Black"
-      ],
-      "cobranding": "Recompensa"
-    },
-    {
-      "nombre": "Semana BROU en El Rey Del Entretenimiento",
-      "pctMax": 25,
-      "url": "https://beneficios.brou.com.uy/ensenanza/el-rey-del-entretenimiento-semanabrou",
-      "tarjetas": "25% de descuento con tarjetas de crédito BROU VISA Platinum y BROU Recompensa Mastercard Platinum y Black.",
-      "vigencia": "Semana BROU en El Rey Del Entretenimiento",
-      "desc": "Semana BROU en El Rey Del Entretenimiento",
       "categoria": "ensenanza",
       "red": null,
       "niveles": [
@@ -672,6 +627,18 @@
       "tarjetas": "Abonando con tarjetas de crédito y débito BROU VISA y BROU Recompensa Mastercard.",
       "vigencia": "Vigencia: 15/10/2026",
       "desc": "Disfrutá del 10% de dto. para “Década y Media”, la gira nacional de Florencia Núñez que celebra sus 15 años de carrera.",
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [],
+      "cobranding": "Recompensa"
+    },
+    {
+      "nombre": "Preventa Daniel Drexler",
+      "pctMax": 10,
+      "url": "https://beneficios.brou.com.uy/ensenanza/preventa-daniel-drexler",
+      "tarjetas": "Accedé a la Preventa Exclusiva BROU y disfrutá de un 10% de dto. abonando con tarjetas de crédito y débito BROU VISA y BROU Recompensa Mastercard.",
+      "vigencia": "Vigencia: 17/08/2026",
+      "desc": "Preventa Daniel Drexler",
       "categoria": "ensenanza",
       "red": null,
       "niveles": [],
