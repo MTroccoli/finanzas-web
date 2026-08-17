@@ -1,6 +1,6 @@
 {
   "fuente": "OCA",
-  "actualizado": "2026-08-14",
+  "actualizado": "2026-08-17",
   "beneficios": [
     {
       "nombre": "Movie Blue",
@@ -293,19 +293,6 @@
       "pctMax": null,
       "url": "https://ocablue.uy/beneficio-ampliado.html?name=prestamo60dias&id=bltfd7002ecfe671b00",
       "categoria": "todos",
-      "tarjetas": "Abrir cuenta gratis",
-      "vigencia": null,
-      "desc": null,
-      "red": "OCA",
-      "niveles": [],
-      "cobranding": null
-    },
-    {
-      "nombre": "Handy Ddn",
-      "corto": "Handy Ddn",
-      "pctMax": null,
-      "url": "https://ocablue.uy/beneficio-ampliado.html?name=handy-ddn&id=blte3b43cd07c59d7dc",
-      "categoria": "niños",
       "tarjetas": "Abrir cuenta gratis",
       "vigencia": null,
       "desc": null,
