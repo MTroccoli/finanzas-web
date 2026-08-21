@@ -1,7 +1,7 @@
 {
   "fuente": "scotiabank.com.uy",
-  "actualizado": "2026-08-17T12:43:49.752Z",
-  "total": 84,
+  "actualizado": "2026-08-21T12:46:19.284Z",
+  "total": 86,
   "beneficios": [
     {
       "nombre": "PEDIDOSYA MARKET Y FARMACIAS",
@@ -76,43 +76,41 @@
       "cobranding": "ConnectMiles"
     },
     {
-      "nombre": "COMBUSTIBLE",
-      "url": null,
+      "nombre": "ASSIST CARD",
+      "url": "https://scotiabank.com.uy/Personas/Tarjetas/Beneficios/Especiales/assist-card-ago26",
       "categoria": "Destacados",
-      "pctMax": 10,
+      "pctMax": 45,
       "descuentos": [
         {
-          "pct": 10,
-          "texto": "10% de ahorro"
+          "pct": 45,
+          "texto": "45% de ahorro"
         }
       ],
-      "vigencia": "Jueves y Domingos",
-      "tarjetas": null,
-      "desc": "10% de ahorro jueves y domingos en carga de combustible.",
+      "vigencia": "Hasta el 31 de Agosto",
+      "tarjetas": "Solicitá tu Tarjeta Ver Beneficio Términos y Condiciones PROMOCIÓN VÁLIDA PARA LA REPÚBLICA DE URUGUAY, DESDE EL 10/08/2026 AL 31/08/2026, INCLUSIVE",
+      "desc": "Hasta 45% OFF en tu asistencia al viajero.",
       "exclusivo": false,
       "red": null,
       "niveles": [],
       "cobranding": null
     },
     {
-      "nombre": "TELEPEAJE",
+      "nombre": "IBER WINE FEST",
       "url": null,
       "categoria": "Destacados",
-      "pctMax": 50,
+      "pctMax": 25,
       "descuentos": [
         {
-          "pct": 50,
-          "texto": "50% de ahorro"
+          "pct": 25,
+          "texto": "25% de ahorro"
         }
       ],
-      "vigencia": "Todos los días",
-      "tarjetas": "The Platinum Card American Express (excl. ConnectMiles)",
-      "desc": "50% de ahorro todos los días en telepeajes. Tope $1.200/mes.",
+      "vigencia": "Del 20 al 22 de Agosto",
+      "tarjetas": "25% de ahorro con tarjetas de crédito Scotia.",
+      "desc": "25% de ahorro con tarjetas de crédito Scotia.",
       "exclusivo": false,
-      "red": "Amex",
-      "niveles": [
-        "Platinum"
-      ],
+      "red": null,
+      "niveles": [],
       "cobranding": null
     },
     {
@@ -520,6 +518,46 @@
       "exclusivo": false,
       "red": null,
       "niveles": [],
+      "cobranding": null
+    },
+    {
+      "nombre": "COMBUSTIBLE",
+      "url": null,
+      "categoria": "The Platinum Card Amex",
+      "pctMax": 10,
+      "descuentos": [
+        {
+          "pct": 10,
+          "texto": "10% de ahorro"
+        }
+      ],
+      "vigencia": "Jueves y Domingos",
+      "tarjetas": null,
+      "desc": "10% de ahorro jueves y domingos en carga de combustible.",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
+    },
+    {
+      "nombre": "TELEPEAJE",
+      "url": null,
+      "categoria": "The Platinum Card Amex",
+      "pctMax": 50,
+      "descuentos": [
+        {
+          "pct": 50,
+          "texto": "50% de ahorro"
+        }
+      ],
+      "vigencia": "Todos los días",
+      "tarjetas": "The Platinum Card American Express (excl. ConnectMiles)",
+      "desc": "50% de ahorro todos los días en telepeajes. Tope $1.200/mes.",
+      "exclusivo": false,
+      "red": "Amex",
+      "niveles": [
+        "Platinum"
+      ],
       "cobranding": null
     },
     {
