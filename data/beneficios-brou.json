@@ -1,8 +1,8 @@
 {
   "fuente": "BROU",
   "url": "https://beneficios.brou.com.uy/beneficios",
-  "fecha": "2026-08-17",
-  "total": 79,
+  "fecha": "2026-08-21",
+  "total": 78,
   "beneficios": [
     {
       "nombre": "Banco Hipotecario del Uruguay",
@@ -389,7 +389,7 @@
       "url": "https://beneficios.brou.com.uy/ensenanza/tiendas-montevideo",
       "tarjetas": "20% de dto. abonando con tarjetas de crédito BROU VISA y BROU Recompensa Mastercard.",
       "vigencia": "Vigencia: 25/08/2026",
-      "desc": "Disfrutá de hasta 20% de descuento en colchas, frazadas y pie de cama con tarjetas BROU.",
+      "desc": "Disfrutá de hasta 20% de descuento en accesorios de decoración con tarjetas BROU.",
       "categoria": "ensenanza",
       "red": null,
       "niveles": [],
@@ -627,18 +627,6 @@
       "tarjetas": "Abonando con tarjetas de crédito y débito BROU VISA y BROU Recompensa Mastercard.",
       "vigencia": "Vigencia: 15/10/2026",
       "desc": "Disfrutá del 10% de dto. para “Década y Media”, la gira nacional de Florencia Núñez que celebra sus 15 años de carrera.",
-      "categoria": "ensenanza",
-      "red": null,
-      "niveles": [],
-      "cobranding": "Recompensa"
-    },
-    {
-      "nombre": "Preventa Daniel Drexler",
-      "pctMax": 10,
-      "url": "https://beneficios.brou.com.uy/ensenanza/preventa-daniel-drexler",
-      "tarjetas": "Accedé a la Preventa Exclusiva BROU y disfrutá de un 10% de dto. abonando con tarjetas de crédito y débito BROU VISA y BROU Recompensa Mastercard.",
-      "vigencia": "Vigencia: 17/08/2026",
-      "desc": "Preventa Daniel Drexler",
       "categoria": "ensenanza",
       "red": null,
       "niveles": [],
@@ -941,7 +929,7 @@
     {
       "nombre": "Expo Café",
       "pctMax": null,
-      "url": "https://beneficios.brou.com.uy/ensenanza/expo-cafe",
+      "url": "https://beneficios.brou.com.uy/ensenanza/expocafe",
       "tarjetas": "Disfrutá del 2x1 en entradas para Expo Café abonando con tarjetas de crédito y débito BROU VISA y BROU Recompensa Mastercard.",
       "vigencia": "Vigencia: 13/09/2026",
       "desc": "Disfrutá del 2x1 en entradas para Expo Café abonando con tarjetas de crédito y débito BROU VISA y BROU Recompensa Mastercard.",
