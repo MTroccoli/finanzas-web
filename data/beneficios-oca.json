@@ -1,7 +1,22 @@
 {
   "fuente": "OCA",
-  "actualizado": "2026-08-21",
+  "actualizado": "2026-08-24",
   "beneficios": [
+    {
+      "nombre": "Handy Tc Blue",
+      "corto": "Handy Tc Blue",
+      "pctMax": null,
+      "url": "https://ocablue.uy/beneficio-ampliado.html?name=handy-tc-blue&id=blt4b65dc6866ab5f1a",
+      "categoria": "todos",
+      "tarjetas": "Abrir cuenta gratis",
+      "vigencia": null,
+      "desc": null,
+      "red": "OCA",
+      "niveles": [
+        "Blue"
+      ],
+      "cobranding": null
+    },
     {
       "nombre": "Movie Blue",
       "corto": "Movie Blue",
@@ -18,11 +33,11 @@
       "cobranding": null
     },
     {
-      "nombre": "Burger King Blue",
-      "corto": "Burger King Blue",
+      "nombre": "0 De Recargo En El Exterior Blue",
+      "corto": "0 De Recargo En El Exterior Blue",
       "pctMax": null,
-      "url": "https://ocablue.uy/beneficio-ampliado.html?name=burger-king-blue&id=blte1a2cc3ff183e4bd",
-      "categoria": "Gastronomía",
+      "url": "https://ocablue.uy/beneficio-ampliado.html?name=0-de-recargo-en-el-exterior-blue&id=blt0f2bce925702f08e",
+      "categoria": "Viajes",
       "tarjetas": "Abrir cuenta gratis",
       "vigencia": null,
       "desc": null,
@@ -33,11 +48,26 @@
       "cobranding": null
     },
     {
-      "nombre": "Bela Blue",
-      "corto": "Bela Blue",
+      "nombre": "Macromercado Blue",
+      "corto": "Macromercado Blue",
       "pctMax": null,
-      "url": "https://ocablue.uy/beneficio-ampliado.html?name=bela-blue&id=bltd5209bbb5509a85c",
-      "categoria": "bienestar",
+      "url": "https://ocablue.uy/beneficio-ampliado.html?name=macromercado-blue&id=bltd4e84ce5b68b3fb2",
+      "categoria": "supermercado",
+      "tarjetas": "Abrir cuenta gratis",
+      "vigencia": null,
+      "desc": null,
+      "red": "OCA",
+      "niveles": [
+        "Blue"
+      ],
+      "cobranding": null
+    },
+    {
+      "nombre": "Burger King Blue",
+      "corto": "Burger King Blue",
+      "pctMax": null,
+      "url": "https://ocablue.uy/beneficio-ampliado.html?name=burger-king-blue&id=blte1a2cc3ff183e4bd",
+      "categoria": "Gastronomía",
       "tarjetas": "Abrir cuenta gratis",
       "vigencia": null,
       "desc": null,
@@ -93,86 +123,11 @@
       "cobranding": null
     },
     {
-      "nombre": "Megal Blue",
-      "corto": "Megal Blue",
-      "pctMax": null,
-      "url": "https://ocablue.uy/beneficio-ampliado.html?name=megal-blue&id=blt59cecaccccfac8f6",
-      "categoria": "Hogar",
-      "tarjetas": "Abrir cuenta gratis",
-      "vigencia": null,
-      "desc": null,
-      "red": "OCA",
-      "niveles": [
-        "Blue"
-      ],
-      "cobranding": null
-    },
-    {
-      "nombre": "Macromercado Blue",
-      "corto": "Macromercado Blue",
-      "pctMax": null,
-      "url": "https://ocablue.uy/beneficio-ampliado.html?name=macromercado-blue&id=bltd4e84ce5b68b3fb2",
-      "categoria": "supermercado",
-      "tarjetas": "Abrir cuenta gratis",
-      "vigencia": null,
-      "desc": null,
-      "red": "OCA",
-      "niveles": [
-        "Blue"
-      ],
-      "cobranding": null
-    },
-    {
-      "nombre": "Cabify Blue",
-      "corto": "Cabify Blue",
-      "pctMax": null,
-      "url": "https://ocablue.uy/beneficio-ampliado.html?name=cabify-blue&id=blt36d3a4076edf49e2",
-      "categoria": "transporte",
-      "tarjetas": "Abrir cuenta gratis",
-      "vigencia": null,
-      "desc": null,
-      "red": "OCA",
-      "niveles": [
-        "Blue"
-      ],
-      "cobranding": null
-    },
-    {
       "nombre": "Chaja Blue",
       "corto": "Chaja Blue",
       "pctMax": null,
       "url": "https://ocablue.uy/beneficio-ampliado.html?name=chaja-blue&id=bltbc82abfe90af0ff4",
       "categoria": "Gastronomía",
-      "tarjetas": "Abrir cuenta gratis",
-      "vigencia": null,
-      "desc": null,
-      "red": "OCA",
-      "niveles": [
-        "Blue"
-      ],
-      "cobranding": null
-    },
-    {
-      "nombre": "Handy Tc Blue",
-      "corto": "Handy Tc Blue",
-      "pctMax": null,
-      "url": "https://ocablue.uy/beneficio-ampliado.html?name=handy-tc-blue&id=blt4b65dc6866ab5f1a",
-      "categoria": "todos",
-      "tarjetas": "Abrir cuenta gratis",
-      "vigencia": null,
-      "desc": null,
-      "red": "OCA",
-      "niveles": [
-        "Blue"
-      ],
-      "cobranding": null
-    },
-    {
-      "nombre": "Homeopatia Alemana Blue",
-      "corto": "Homeopatia Alemana Blue",
-      "pctMax": null,
-      "url": "https://ocablue.uy/beneficio-ampliado.html?name=homeopatia-alemana-blue&id=bltdcc89b7c0d288160",
-      "categoria": "Salud",
       "tarjetas": "Abrir cuenta gratis",
       "vigencia": null,
       "desc": null,
@@ -198,11 +153,86 @@
       "cobranding": null
     },
     {
-      "nombre": "0 De Recargo En El Exterior Blue",
-      "corto": "0 De Recargo En El Exterior Blue",
+      "nombre": "Bela Blue",
+      "corto": "Bela Blue",
       "pctMax": null,
-      "url": "https://ocablue.uy/beneficio-ampliado.html?name=0-de-recargo-en-el-exterior-blue&id=blt0f2bce925702f08e",
-      "categoria": "Viajes",
+      "url": "https://ocablue.uy/beneficio-ampliado.html?name=bela-blue&id=bltd5209bbb5509a85c",
+      "categoria": "bienestar",
+      "tarjetas": "Abrir cuenta gratis",
+      "vigencia": null,
+      "desc": null,
+      "red": "OCA",
+      "niveles": [
+        "Blue"
+      ],
+      "cobranding": null
+    },
+    {
+      "nombre": "Homeopatia Alemana Blue",
+      "corto": "Homeopatia Alemana Blue",
+      "pctMax": null,
+      "url": "https://ocablue.uy/beneficio-ampliado.html?name=homeopatia-alemana-blue&id=bltdcc89b7c0d288160",
+      "categoria": "Salud",
+      "tarjetas": "Abrir cuenta gratis",
+      "vigencia": null,
+      "desc": null,
+      "red": "OCA",
+      "niveles": [
+        "Blue"
+      ],
+      "cobranding": null
+    },
+    {
+      "nombre": "Megal 10 Blue",
+      "corto": "Megal 10 Blue",
+      "pctMax": null,
+      "url": "https://ocablue.uy/beneficio-ampliado.html?name=megal-10-blue&id=blt2e7a0ebd0d1ec7ff",
+      "categoria": "Hogar",
+      "tarjetas": "Abrir cuenta gratis",
+      "vigencia": null,
+      "desc": null,
+      "red": "OCA",
+      "niveles": [
+        "Blue"
+      ],
+      "cobranding": null
+    },
+    {
+      "nombre": "Cabify Blue",
+      "corto": "Cabify Blue",
+      "pctMax": null,
+      "url": "https://ocablue.uy/beneficio-ampliado.html?name=cabify-blue&id=blt36d3a4076edf49e2",
+      "categoria": "transporte",
+      "tarjetas": "Abrir cuenta gratis",
+      "vigencia": null,
+      "desc": null,
+      "red": "OCA",
+      "niveles": [
+        "Blue"
+      ],
+      "cobranding": null
+    },
+    {
+      "nombre": "Stm Blue",
+      "corto": "Stm Blue",
+      "pctMax": null,
+      "url": "https://ocablue.uy/beneficio-ampliado.html?name=stm-blue&id=bltb58f57c400d33828",
+      "categoria": "transporte",
+      "tarjetas": "Abrir cuenta gratis",
+      "vigencia": null,
+      "desc": null,
+      "red": "OCA",
+      "niveles": [
+        "Blue"
+      ],
+      "cobranding": null
+    },
+    {
+      "nombre": "2 Puntos De Iva Blue",
+      "corto": "2 Puntos De Iva Blue",
+      "pctMax": null,
+      "url": "https://ocablue.uy/beneficio-ampliado.html?name=2-puntos-de-iva-blue&id=blt0c21d9de906fc9c8",
+      "categoria": "todos",
       "tarjetas": "Abrir cuenta gratis",
       "vigencia": null,
       "desc": null,
@@ -248,36 +278,6 @@
       "pctMax": null,
       "url": "https://ocablue.uy/beneficio-ampliado.html?name=hasta-9-puntos-blue&id=blt7c6891f9664895d7",
       "categoria": "Gastronomía",
-      "tarjetas": "Abrir cuenta gratis",
-      "vigencia": null,
-      "desc": null,
-      "red": "OCA",
-      "niveles": [
-        "Blue"
-      ],
-      "cobranding": null
-    },
-    {
-      "nombre": "2 Puntos De Iva Blue",
-      "corto": "2 Puntos De Iva Blue",
-      "pctMax": null,
-      "url": "https://ocablue.uy/beneficio-ampliado.html?name=2-puntos-de-iva-blue&id=blt0c21d9de906fc9c8",
-      "categoria": "todos",
-      "tarjetas": "Abrir cuenta gratis",
-      "vigencia": null,
-      "desc": null,
-      "red": "OCA",
-      "niveles": [
-        "Blue"
-      ],
-      "cobranding": null
-    },
-    {
-      "nombre": "Stm Blue",
-      "corto": "Stm Blue",
-      "pctMax": null,
-      "url": "https://ocablue.uy/beneficio-ampliado.html?name=stm-blue&id=bltb58f57c400d33828",
-      "categoria": "transporte",
       "tarjetas": "Abrir cuenta gratis",
       "vigencia": null,
       "desc": null,
