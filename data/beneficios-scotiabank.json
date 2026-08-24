@@ -1,6 +1,6 @@
 {
   "fuente": "scotiabank.com.uy",
-  "actualizado": "2026-08-21T12:46:19.284Z",
+  "actualizado": "2026-08-24T12:50:53.138Z",
   "total": 86,
   "beneficios": [
     {
@@ -98,16 +98,16 @@
       "nombre": "IBER WINE FEST",
       "url": null,
       "categoria": "Destacados",
-      "pctMax": 25,
+      "pctMax": 15,
       "descuentos": [
         {
-          "pct": 25,
-          "texto": "25% de ahorro"
+          "pct": 15,
+          "texto": "15% de ahorro"
         }
       ],
-      "vigencia": "Del 20 al 22 de Agosto",
-      "tarjetas": "25% de ahorro con tarjetas de crédito Scotia.",
-      "desc": "25% de ahorro con tarjetas de crédito Scotia.",
+      "vigencia": "22 de Octubre",
+      "tarjetas": "15% de ahorro con tarjetas de crédito Scotia.",
+      "desc": "Hotel Cottage Montevideo",
       "exclusivo": false,
       "red": null,
       "niveles": [],
