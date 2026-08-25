@@ -1799,112 +1799,105 @@ window.Mods.inversiones = {
   },
 
   // ── Helpers de market data ───────────────────────────────────────────
-  async fetchYahooPrice(ticker) {
+
+  // Fetch a Yahoo Finance con múltiples fallbacks. Yahoo bloquea CORS desde
+  // browsers y los proxies públicos gratuitos se caen seguido; probamos en
+  // orden: directo → corsproxy.io → allorigins → codetabs. Timeout 7s por
+  // proxy para no colgarnos en uno lento. Devuelve el JSON o null.
+  async _yahooFetch(pathAndQuery) {
+    const yahoo1 = `https://query1.finance.yahoo.com/${pathAndQuery}`;
+    const yahoo2 = `https://query2.finance.yahoo.com/${pathAndQuery}`;
     const urls = [
-      `https://query2.finance.yahoo.com/v8/finance/chart/${ticker}?interval=1d&range=5d`,
-      `https://corsproxy.io/?${encodeURIComponent(`https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?interval=1d&range=5d`)}`,
+      yahoo2,
+      `https://corsproxy.io/?${encodeURIComponent(yahoo1)}`,
+      `https://api.allorigins.win/raw?url=${encodeURIComponent(yahoo1)}`,
+      `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(yahoo1)}`,
     ];
     for (const url of urls) {
       try {
-        const res  = await fetch(url);
+        const res = await fetch(url, { signal: AbortSignal.timeout(7000) });
         if (!res.ok) continue;
-        const json = await res.json();
-        const r    = json.chart?.result?.[0];
-        if (!r) continue;
-        const meta  = r.meta;
-        const price = meta.regularMarketPrice;
-        const prev  = meta.previousClose ?? meta.chartPreviousClose ?? price;
-
-        // Use Yahoo's marketState when available; fall back to currentTradingPeriod timestamps
-        let marketState = meta.marketState ?? null;
-        if (!marketState) {
-          const ctp = meta.currentTradingPeriod;
-          if (ctp) {
-            const now = Date.now() / 1000;
-            if (ctp.regular && now >= ctp.regular.start && now <= ctp.regular.end) {
-              marketState = 'REGULAR';
-            } else if (ctp.pre && now >= ctp.pre.start && now <= ctp.pre.end) {
-              marketState = 'PRE';
-            } else if (ctp.post && now >= ctp.post.start && now <= ctp.post.end) {
-              marketState = 'POST';
-            } else {
-              marketState = 'CLOSED';
-            }
-          }
-        }
-
-        return {
-          ticker:   meta.symbol,
-          name:     meta.shortName ?? meta.symbol,
-          price,
-          prev,
-          open:     meta.regularMarketOpen    ?? price,
-          high:     meta.regularMarketDayHigh ?? price,
-          low:      meta.regularMarketDayLow  ?? price,
-          change:   price - prev,
-          pct:      prev ? ((price - prev) / prev) * 100 : 0,
-          currency:    meta.currency ?? 'USD',
-          marketState,
-          volume:   meta.regularMarketVolume  ?? null,
-          w52high:  meta.fiftyTwoWeekHigh     ?? null,
-          w52low:   meta.fiftyTwoWeekLow      ?? null,
-        };
+        return await res.json();
       } catch (_) {}
     }
-    throw new Error('No se pudo obtener el precio. Verificá el ticker.');
+    return null;
+  },
+
+  async fetchYahooPrice(ticker) {
+    const json = await this._yahooFetch(`v8/finance/chart/${ticker}?interval=1d&range=5d`);
+    const r    = json?.chart?.result?.[0];
+    if (!r) throw new Error('No se pudo obtener el precio. Verificá el ticker.');
+    const meta  = r.meta;
+    const price = meta.regularMarketPrice;
+    const prev  = meta.previousClose ?? meta.chartPreviousClose ?? price;
+
+    // Use Yahoo's marketState when available; fall back to currentTradingPeriod timestamps
+    let marketState = meta.marketState ?? null;
+    if (!marketState) {
+      const ctp = meta.currentTradingPeriod;
+      if (ctp) {
+        const now = Date.now() / 1000;
+        if (ctp.regular && now >= ctp.regular.start && now <= ctp.regular.end) {
+          marketState = 'REGULAR';
+        } else if (ctp.pre && now >= ctp.pre.start && now <= ctp.pre.end) {
+          marketState = 'PRE';
+        } else if (ctp.post && now >= ctp.post.start && now <= ctp.post.end) {
+          marketState = 'POST';
+        } else {
+          marketState = 'CLOSED';
+        }
+      }
+    }
+
+    return {
+      ticker:   meta.symbol,
+      name:     meta.shortName ?? meta.symbol,
+      price,
+      prev,
+      open:     meta.regularMarketOpen    ?? price,
+      high:     meta.regularMarketDayHigh ?? price,
+      low:      meta.regularMarketDayLow  ?? price,
+      change:   price - prev,
+      pct:      prev ? ((price - prev) / prev) * 100 : 0,
+      currency:    meta.currency ?? 'USD',
+      marketState,
+      volume:   meta.regularMarketVolume  ?? null,
+      w52high:  meta.fiftyTwoWeekHigh     ?? null,
+      w52low:   meta.fiftyTwoWeekLow      ?? null,
+    };
   },
 
   async fetchYahooChart(ticker, period = '1mo', interval = '1d') {
-    const urls = [
-      `https://query2.finance.yahoo.com/v8/finance/chart/${ticker}?interval=${interval}&range=${period}`,
-      `https://corsproxy.io/?${encodeURIComponent(`https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?interval=${interval}&range=${period}`)}`,
-    ];
-    for (const url of urls) {
-      try {
-        const res  = await fetch(url);
-        if (!res.ok) continue;
-        const json = await res.json();
-        const r    = json.chart?.result?.[0];
-        if (!r) continue;
-        const ts     = r.timestamp || [];
-        const closes = r.indicators?.quote?.[0]?.close || [];
-        const dates = [], prices = [];
-        for (let i = 0; i < ts.length; i++) {
-          if (closes[i] != null) {
-            dates.push(new Date(ts[i] * 1000));
-            prices.push(closes[i]);
-          }
-        }
-        return { dates, prices };
-      } catch(_) {}
+    const json = await this._yahooFetch(`v8/finance/chart/${ticker}?interval=${interval}&range=${period}`);
+    const r    = json?.chart?.result?.[0];
+    if (!r) throw new Error('No se pudieron obtener datos históricos.');
+    const ts     = r.timestamp || [];
+    const closes = r.indicators?.quote?.[0]?.close || [];
+    const dates = [], prices = [];
+    for (let i = 0; i < ts.length; i++) {
+      if (closes[i] != null) {
+        dates.push(new Date(ts[i] * 1000));
+        prices.push(closes[i]);
+      }
     }
-    throw new Error('No se pudieron obtener datos históricos.');
+    return { dates, prices };
   },
 
   async searchTickers(query) {
     const q = encodeURIComponent(query);
-    const urls = [
-      `https://query2.finance.yahoo.com/v1/finance/search?q=${q}&quotesCount=10&newsCount=0&lang=en-US`,
-      `https://corsproxy.io/?${encodeURIComponent(`https://query1.finance.yahoo.com/v1/finance/search?q=${query}&quotesCount=10&newsCount=0&lang=en-US`)}`,
-    ];
-    for (const url of urls) {
-      try {
-        const res = await fetch(url);
-        if (!res.ok) continue;
-        const json = await res.json();
-        if (!json.quotes?.length) continue;
-        return json.quotes
-          .filter(r => r.symbol && r.quoteType !== 'OPTION')
-          .map(r => ({
-            ticker:   r.symbol,
-            nombre:   r.longname || r.shortname || r.symbol,
-            tipo:     (r.quoteType || 'equity').toLowerCase(),
-            exchange: r.exchDisp || r.exchange || '',
-            currency: r.currency || null,
-          }));
-      } catch(_) {}
+    const json = await this._yahooFetch(`v1/finance/search?q=${q}&quotesCount=10&newsCount=0&lang=en-US`);
+    if (!json?.quotes?.length) {
+      throw new Error('No se pudo buscar. Verificá tu conexión o ingresá el ticker exacto.');
     }
-    throw new Error('No se pudo buscar. Verificá tu conexión o ingresá el ticker exacto.');
+    return json.quotes
+      .filter(r => r.symbol && r.quoteType !== 'OPTION')
+      .map(r => ({
+        ticker:   r.symbol,
+        nombre:   r.longname || r.shortname || r.symbol,
+        tipo:     (r.quoteType || 'equity').toLowerCase(),
+        exchange: r.exchDisp || r.exchange || '',
+        currency: r.currency || null,
+      }));
   },
 
   // Precios live en USD para múltiples tickers
@@ -1950,28 +1943,17 @@ window.Mods.inversiones = {
 
   // Datos financieros básicos (best-effort — falla silenciosamente)
   async fetchYahooQuote(ticker) {
-    const urls = [
-      `https://query2.finance.yahoo.com/v7/finance/quote?symbols=${ticker}`,
-      `https://corsproxy.io/?${encodeURIComponent(`https://query1.finance.yahoo.com/v7/finance/quote?symbols=${ticker}`)}`,
-    ];
-    for (const url of urls) {
-      try {
-        const res = await fetch(url);
-        if (!res.ok) continue;
-        const json = await res.json();
-        const q = json.quoteResponse?.result?.[0];
-        if (!q) continue;
-        return {
-          marketCap: q.marketCap                   ?? null,
-          pe:        q.trailingPE                  ?? null,
-          forwardPE: q.forwardPE                   ?? null,
-          beta:      q.beta                        ?? null,
-          eps:       q.epsTrailingTwelveMonths     ?? null,
-          divYield:  q.trailingAnnualDividendYield ?? q.dividendYield ?? null,
-        };
-      } catch(_) {}
-    }
-    return null;
+    const json = await this._yahooFetch(`v7/finance/quote?symbols=${ticker}`);
+    const q = json?.quoteResponse?.result?.[0];
+    if (!q) return null;
+    return {
+      marketCap: q.marketCap                   ?? null,
+      pe:        q.trailingPE                  ?? null,
+      forwardPE: q.forwardPE                   ?? null,
+      beta:      q.beta                        ?? null,
+      eps:       q.epsTrailingTwelveMonths     ?? null,
+      divYield:  q.trailingAnnualDividendYield ?? q.dividendYield ?? null,
+    };
   },
 
   // Mapea quoteType de Yahoo Finance → valor válido para activos.tipo
