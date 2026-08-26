@@ -1800,22 +1800,28 @@ window.Mods.inversiones = {
 
   // ── Helpers de market data ───────────────────────────────────────────
 
-  // Fetch a Yahoo Finance con múltiples fallbacks. Yahoo bloquea CORS desde
-  // browsers y los proxies públicos gratuitos se caen seguido; probamos en
-  // orden: directo → corsproxy.io → allorigins → codetabs. Timeout 7s por
-  // proxy para no colgarnos en uno lento. Devuelve el JSON o null.
+  // Fetch a Yahoo Finance con múltiples fallbacks.
+  // Primero probamos la edge function propia (market-price), que hace el
+  // fetch server-side sin CORS: rápida y confiable. Si falla, caemos en
+  // Yahoo directo (query2) y luego proxies CORS públicos, que se caen
+  // seguido — solo como último recurso. Timeout 5s por intento.
   async _yahooFetch(pathAndQuery) {
     const yahoo1 = `https://query1.finance.yahoo.com/${pathAndQuery}`;
     const yahoo2 = `https://query2.finance.yahoo.com/${pathAndQuery}`;
+    const edgeFn = `${SUPABASE_URL}/functions/v1/market-price?path=${encodeURIComponent(pathAndQuery)}`;
     const urls = [
-      yahoo2,
-      `https://corsproxy.io/?${encodeURIComponent(yahoo1)}`,
-      `https://api.allorigins.win/raw?url=${encodeURIComponent(yahoo1)}`,
-      `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(yahoo1)}`,
+      { url: edgeFn, headers: { 'Authorization': `Bearer ${SUPABASE_KEY}` } },
+      { url: yahoo2 },
+      { url: `https://corsproxy.io/?${encodeURIComponent(yahoo1)}` },
+      { url: `https://api.allorigins.win/raw?url=${encodeURIComponent(yahoo1)}` },
+      { url: `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(yahoo1)}` },
     ];
-    for (const url of urls) {
+    for (const { url, headers } of urls) {
       try {
-        const res = await fetch(url, { signal: AbortSignal.timeout(7000) });
+        const res = await fetch(url, {
+          headers: headers || {},
+          signal: AbortSignal.timeout(5000),
+        });
         if (!res.ok) continue;
         return await res.json();
       } catch (_) {}
