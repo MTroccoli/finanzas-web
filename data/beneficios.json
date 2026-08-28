@@ -1,7 +1,7 @@
 {
   "fuente": "bbva.com.uy",
-  "actualizado": "2026-08-24T09:52:30.365Z",
-  "total": 299,
+  "actualizado": "2026-08-28T20:46:04.883Z",
+  "total": 303,
   "categorias": [
     "Gastronomía",
     "Moda",
@@ -19,6 +19,198 @@
     "Otros"
   ],
   "beneficios": [
+    {
+      "comercio": "Portofino Cafe",
+      "categoria": "Gastronomía",
+      "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/gastronomia/Portofino_Cafe.html",
+      "vigencia": "31 de Agosto 2027",
+      "local": "Av. Giannattasio 9281, Ciudad de la Costa",
+      "descuentos": [
+        {
+          "pct": 20,
+          "tarjetas": "Tarjetas de Débito",
+          "texto": "20% Off con Tarjetas de Débito",
+          "isDebit": true,
+          "niveles": []
+        },
+        {
+          "pct": 20,
+          "tarjetas": "Tarjetas de Crédito Internacional, Oro, Pymes y Corporativas",
+          "texto": "20% Off con Tarjetas de Crédito Internacional, Oro, Pymes y Corporativas",
+          "isDebit": false,
+          "niveles": [
+            "Oro",
+            "Clásica"
+          ]
+        },
+        {
+          "pct": 30,
+          "tarjetas": "Tarjetas de Crédito Platinum, Black e Infinite",
+          "texto": "30% Off con Tarjetas de Crédito Platinum, Black e Infinite",
+          "isDebit": false,
+          "niveles": [
+            "Infinite",
+            "Platinum",
+            "Black"
+          ]
+        }
+      ],
+      "pctMax": 30,
+      "tope": null,
+      "red": null,
+      "niveles": [
+        "Oro",
+        "Clásica",
+        "Infinite",
+        "Platinum",
+        "Black"
+      ],
+      "cobranding": null
+    },
+    {
+      "comercio": "El Corral",
+      "categoria": "Gastronomía",
+      "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/gastronomia/El_Corral.html",
+      "vigencia": "31 de Agosto 2027",
+      "local": "25 de agosto 550, Trinidad",
+      "descuentos": [
+        {
+          "pct": 20,
+          "tarjetas": "Tarjetas de Débito",
+          "texto": "20% Off con Tarjetas de Débito",
+          "isDebit": true,
+          "niveles": []
+        },
+        {
+          "pct": 20,
+          "tarjetas": "Tarjetas de Crédito Internacional, Oro, Pymes y Corporativas",
+          "texto": "20% Off con Tarjetas de Crédito Internacional, Oro, Pymes y Corporativas",
+          "isDebit": false,
+          "niveles": [
+            "Oro",
+            "Clásica"
+          ]
+        },
+        {
+          "pct": 30,
+          "tarjetas": "Tarjetas de Crédito Platinum, Black e Infinite",
+          "texto": "30% Off con Tarjetas de Crédito Platinum, Black e Infinite",
+          "isDebit": false,
+          "niveles": [
+            "Infinite",
+            "Platinum",
+            "Black"
+          ]
+        }
+      ],
+      "pctMax": 30,
+      "tope": null,
+      "red": null,
+      "niveles": [
+        "Oro",
+        "Clásica",
+        "Infinite",
+        "Platinum",
+        "Black"
+      ],
+      "cobranding": null
+    },
+    {
+      "comercio": "Say Cheese.",
+      "categoria": "Gastronomía",
+      "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/gastronomia/Say_Cheese.html",
+      "vigencia": "31 de Agosto 2027",
+      "local": "21 de Setiembre 2840, Punta Carretas",
+      "descuentos": [
+        {
+          "pct": 20,
+          "tarjetas": "Tarjetas de Débito",
+          "texto": "20% Off con Tarjetas de Débito",
+          "isDebit": true,
+          "niveles": []
+        },
+        {
+          "pct": 20,
+          "tarjetas": "Tarjetas de Crédito Internacional, Oro, Pymes y Corporativas",
+          "texto": "20% Off con Tarjetas de Crédito Internacional, Oro, Pymes y Corporativas",
+          "isDebit": false,
+          "niveles": [
+            "Oro",
+            "Clásica"
+          ]
+        },
+        {
+          "pct": 30,
+          "tarjetas": "Tarjetas de Crédito Platinum, Black e Infinite",
+          "texto": "30% Off con Tarjetas de Crédito Platinum, Black e Infinite",
+          "isDebit": false,
+          "niveles": [
+            "Infinite",
+            "Platinum",
+            "Black"
+          ]
+        }
+      ],
+      "pctMax": 30,
+      "tope": "El descuento será de un 20%, se aplicará en el punto de venta, sin tope de devolución.",
+      "red": null,
+      "niveles": [
+        "Oro",
+        "Clásica",
+        "Infinite",
+        "Platinum",
+        "Black"
+      ],
+      "cobranding": null
+    },
+    {
+      "comercio": "Mar Abierto",
+      "categoria": "Gastronomía",
+      "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/gastronomia/Mar_Abierto.html",
+      "vigencia": "31 de Agosto 2027",
+      "local": "Av. Giannattasio, Km 28.100, M J1 S 28,Ciudad de la Costa ,",
+      "descuentos": [
+        {
+          "pct": 20,
+          "tarjetas": "Tarjetas de Débito",
+          "texto": "20% Off con Tarjetas de Débito",
+          "isDebit": true,
+          "niveles": []
+        },
+        {
+          "pct": 20,
+          "tarjetas": "Tarjetas de Crédito Internacional, Oro, Pymes y Corporativas",
+          "texto": "20% Off con Tarjetas de Crédito Internacional, Oro, Pymes y Corporativas",
+          "isDebit": false,
+          "niveles": [
+            "Oro",
+            "Clásica"
+          ]
+        },
+        {
+          "pct": 30,
+          "tarjetas": "Tarjetas de Crédito Platinum, Black e Infinite",
+          "texto": "30% Off con Tarjetas de Crédito Platinum, Black e Infinite",
+          "isDebit": false,
+          "niveles": [
+            "Infinite",
+            "Platinum",
+            "Black"
+          ]
+        }
+      ],
+      "pctMax": 30,
+      "tope": null,
+      "red": null,
+      "niveles": [
+        "Oro",
+        "Clásica",
+        "Infinite",
+        "Platinum",
+        "Black"
+      ],
+      "cobranding": null
+    },
     {
       "comercio": "Cultura Alfabeta",
       "categoria": "Gastronomía",
@@ -3758,6 +3950,47 @@
       "cobranding": null
     },
     {
+      "comercio": "By Vicky",
+      "categoria": "Moda",
+      "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/moda/By_Vicky.html",
+      "vigencia": "31 de Agosto 2027",
+      "local": "Asamblea 554, San José de Mayo",
+      "descuentos": [
+        {
+          "pct": 20,
+          "tarjetas": "Tarjetas de Crédito Internacional, Oro, Pymes y Corporativas",
+          "texto": "20% Off con Tarjetas de Crédito Internacional, Oro, Pymes y Corporativas",
+          "isDebit": false,
+          "niveles": [
+            "Oro",
+            "Clásica"
+          ]
+        },
+        {
+          "pct": 30,
+          "tarjetas": "Tarjetas de Crédito Platinum, Black e Infinite",
+          "texto": "30% Off con Tarjetas de Crédito Platinum, Black e Infinite",
+          "isDebit": false,
+          "niveles": [
+            "Infinite",
+            "Platinum",
+            "Black"
+          ]
+        }
+      ],
+      "pctMax": 30,
+      "tope": null,
+      "red": null,
+      "niveles": [
+        "Oro",
+        "Clásica",
+        "Infinite",
+        "Platinum",
+        "Black"
+      ],
+      "cobranding": null
+    },
+    {
       "comercio": "Polita",
       "categoria": "Moda",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/moda/Polita.html",
@@ -4972,7 +5205,7 @@
       "comercio": "Maliné",
       "categoria": "Moda",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/moda/maline.html",
-      "vigencia": "30 de Setiembre 2026",
+      "vigencia": "31 de Agosto 2027",
       "local": null,
       "descuentos": [
         {
@@ -6380,7 +6613,7 @@
       "comercio": "Barraca El Surco",
       "categoria": "Hogar y Decoración",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/hogar-y-decoracion/barraca-el-surco.html",
-      "vigencia": "31 de Agosto 2026",
+      "vigencia": "30 de Setiembre 2026",
       "local": null,
       "descuentos": [
         {
@@ -8043,7 +8276,7 @@
       "comercio": "Farmacia Nueva Modernel",
       "categoria": "Cuidado Personal",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/cuidado-personal/farmacia-nueva-modernel.html",
-      "vigencia": "31 de Agosto 2026",
+      "vigencia": "31 de Julio 2027",
       "local": "18 de Julio 549, Trinidad",
       "descuentos": [],
       "pctMax": null,
@@ -9598,39 +9831,6 @@
       "cobranding": null
     },
     {
-      "comercio": "Xiaomi Uruguay",
-      "categoria": "Tecnología",
-      "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/tecnologia/xiaomi.html",
-      "vigencia": "Desde el 10 al 16 de agosto de 2026",
-      "local": null,
-      "descuentos": [
-        {
-          "pct": 15,
-          "tarjetas": "Tarjetas de Crédito Internacional, Oro, Pymes, Corporativas, Infinite, Platinum y Black",
-          "texto": "15% Off con Tarjetas de Crédito Internacional, Oro, Pymes, Corporativas, Infinite, Platinum y Black",
-          "isDebit": false,
-          "niveles": [
-            "Infinite",
-            "Platinum",
-            "Black",
-            "Oro",
-            "Clásica"
-          ]
-        }
-      ],
-      "pctMax": 15,
-      "tope": "El descuento será de un 15%, se aplicará en el punto de venta, sin tope de devolución.",
-      "red": null,
-      "niveles": [
-        "Infinite",
-        "Platinum",
-        "Black",
-        "Oro",
-        "Clásica"
-      ],
-      "cobranding": null
-    },
-    {
       "comercio": "Zona Tecno",
       "categoria": "Tecnología",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/tecnologia/zona-Tecno.html",
@@ -10072,7 +10272,7 @@
       "comercio": "Pinturería Nalon",
       "categoria": "Otros",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/otros/pintureria-Nalon.html",
-      "vigencia": "31 de Agosto 2026",
+      "vigencia": "31 de Agosto 2027",
       "local": null,
       "descuentos": [
         {
