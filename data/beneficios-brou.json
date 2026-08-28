@@ -1,8 +1,8 @@
 {
   "fuente": "BROU",
   "url": "https://beneficios.brou.com.uy/beneficios",
-  "fecha": "2026-08-24",
-  "total": 78,
+  "fecha": "2026-08-28",
+  "total": 77,
   "beneficios": [
     {
       "nombre": "Banco Hipotecario del Uruguay",
@@ -232,7 +232,7 @@
       "pctMax": 25,
       "url": "https://beneficios.brou.com.uy/ensenanza/la-sacristía",
       "tarjetas": "25% de descuento para tarjetas de crédito VISA Platinum y BROU Recompensa Mastercard Black y Platinum.",
-      "vigencia": "Vigencia: 30/09/2026",
+      "vigencia": "Vigencia: 30/09/2027",
       "desc": "En la tienda de vinos, productos gourmet y regalos La Sacristía, también podés aprovechar los beneficios de los medios de pago de Tu Banco:",
       "categoria": "ensenanza",
       "red": null,
@@ -381,18 +381,6 @@
         "Platinum",
         "Black"
       ],
-      "cobranding": "Recompensa"
-    },
-    {
-      "nombre": "Tiendas Montevideo",
-      "pctMax": 20,
-      "url": "https://beneficios.brou.com.uy/ensenanza/tiendas-montevideo",
-      "tarjetas": "20% de dto. abonando con tarjetas de crédito BROU VISA y BROU Recompensa Mastercard.",
-      "vigencia": "Vigencia: 25/08/2026",
-      "desc": "Disfrutá de hasta 20% de descuento en accesorios de decoración con tarjetas BROU.",
-      "categoria": "ensenanza",
-      "red": null,
-      "niveles": [],
       "cobranding": "Recompensa"
     },
     {
@@ -662,7 +650,7 @@
       "nombre": "Supermercados seleccionados",
       "pctMax": 10,
       "url": "https://beneficios.brou.com.uy/hogar/Recompensa-Supermercados",
-      "tarjetas": "La promoción comprende un 10% de descuento todos los martes y jueves en supermercados Ta-Ta, El Dorado, Macro Mercado, Micro Macro, Red Expres y Tienda Inglesa abonando con Tarjetas de Crédito y BROU",
+      "tarjetas": "La promoción comprende un 10% de descuento todos los martes y jueves en supermercados Ta-Ta, El Dorado, Macro Mercado, Micro Macro, Red Expres y Tienda Inglesa abonando con Tarjetas de Crédito BROU Re",
       "vigencia": "Vigencia: 30/04/2027",
       "desc": "Supermercados seleccionados",
       "categoria": "hogar",
