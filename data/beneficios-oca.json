@@ -1,6 +1,6 @@
 {
   "fuente": "OCA",
-  "actualizado": "2026-08-24",
+  "actualizado": "2026-08-28",
   "beneficios": [
     {
       "nombre": "Handy Tc Blue",
@@ -243,21 +243,6 @@
       "cobranding": null
     },
     {
-      "nombre": "Presenta A Un Amigo Blue",
-      "corto": "Presenta A Un Amigo Blue",
-      "pctMax": null,
-      "url": "https://ocablue.uy/beneficio-ampliado.html?name=presenta-a-un-amigo-blue&id=blt59ae5576ef77af2d",
-      "categoria": "todos",
-      "tarjetas": "Abrir cuenta gratis",
-      "vigencia": null,
-      "desc": null,
-      "red": "OCA",
-      "niveles": [
-        "Blue"
-      ],
-      "cobranding": null
-    },
-    {
       "nombre": "1 000 Metros De Regalo Blue",
       "corto": "1 000 Metros De Regalo Blue",
       "pctMax": null,
@@ -288,6 +273,21 @@
       "cobranding": null
     },
     {
+      "nombre": "Presenta A Un Amigo Tc Blue",
+      "corto": "Presenta A Un Amigo Tc Blue",
+      "pctMax": null,
+      "url": "https://ocablue.uy/beneficio-ampliado.html?name=presenta-a-un-amigo-tc-blue&id=bltc4afd4e18c847409",
+      "categoria": "todos",
+      "tarjetas": "Abrir cuenta gratis",
+      "vigencia": null,
+      "desc": null,
+      "red": "OCA",
+      "niveles": [
+        "Blue"
+      ],
+      "cobranding": null
+    },
+    {
       "nombre": "prestamo60dias",
       "corto": "prestamo60dias",
       "pctMax": null,
@@ -298,6 +298,21 @@
       "desc": null,
       "red": "OCA",
       "niveles": [],
+      "cobranding": null
+    },
+    {
+      "nombre": "Cines Del Este Blue",
+      "corto": "Cines Del Este Blue",
+      "pctMax": null,
+      "url": "https://ocablue.uy/beneficio-ampliado.html?name=cines-del-este-blue&id=blt38f5372c9666be8b",
+      "categoria": "Entretenimiento",
+      "tarjetas": "Abrir cuenta gratis",
+      "vigencia": null,
+      "desc": null,
+      "red": "OCA",
+      "niveles": [
+        "Blue"
+      ],
       "cobranding": null
     }
   ]
