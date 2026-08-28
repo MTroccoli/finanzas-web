@@ -1,6 +1,6 @@
 {
   "fuente": "scotiabank.com.uy",
-  "actualizado": "2026-08-24T12:50:53.138Z",
+  "actualizado": "2026-08-28T21:47:44.418Z",
   "total": 86,
   "beneficios": [
     {
@@ -1256,16 +1256,16 @@
       "nombre": "LAIKA",
       "url": null,
       "categoria": "Mascotas",
-      "pctMax": 10,
+      "pctMax": 20,
       "descuentos": [
         {
-          "pct": 10,
-          "texto": "10% de ahorro"
+          "pct": 20,
+          "texto": "20% de ahorro"
         }
       ],
-      "vigencia": "Todos los días",
-      "tarjetas": "10% de ahorro con tus tarjetas de crédito en todos los productos.",
-      "desc": "10% de ahorro con tus tarjetas de crédito en todos los productos.",
+      "vigencia": "Del 26 al 28 de agosto",
+      "tarjetas": "20% de ahorro con tarjetas de crédito.",
+      "desc": "20% de ahorro con tarjetas de crédito.",
       "exclusivo": false,
       "red": null,
       "niveles": [],
@@ -1275,16 +1275,16 @@
       "nombre": "LAVAKAN",
       "url": null,
       "categoria": "Mascotas",
-      "pctMax": 15,
+      "pctMax": 25,
       "descuentos": [
         {
-          "pct": 15,
-          "texto": "15% de ahorro"
+          "pct": 25,
+          "texto": "25% de ahorro"
         }
       ],
-      "vigencia": "Todos los días",
-      "tarjetas": "15% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y débito Premium.",
-      "desc": "15% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y débito Premium.",
+      "vigencia": "Del 27 al 31 de agosto",
+      "tarjetas": "25% de ahorro con tarjetas de crédito Platinum, Infinite, Gold y débito Premium",
+      "desc": "25% de ahorro con tarjetas de crédito Platinum, Infinite, Gold y débito Premium",
       "exclusivo": false,
       "red": null,
       "niveles": [
