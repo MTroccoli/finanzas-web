@@ -1,6 +1,6 @@
 {
   "fuente": "OCA",
-  "actualizado": "2026-08-28",
+  "actualizado": "2026-08-31",
   "beneficios": [
     {
       "nombre": "Handy Tc Blue",
@@ -22,6 +22,21 @@
       "corto": "Movie Blue",
       "pctMax": null,
       "url": "https://ocablue.uy/beneficio-ampliado.html?name=movie-blue&id=blt7a3d225356c245cc",
+      "categoria": "Entretenimiento",
+      "tarjetas": "Abrir cuenta gratis",
+      "vigencia": null,
+      "desc": null,
+      "red": "OCA",
+      "niveles": [
+        "Blue"
+      ],
+      "cobranding": null
+    },
+    {
+      "nombre": "Cines Del Este Blue",
+      "corto": "Cines Del Este Blue",
+      "pctMax": null,
+      "url": "https://ocablue.uy/beneficio-ampliado.html?name=cines-del-este-blue&id=blt38f5372c9666be8b",
       "categoria": "Entretenimiento",
       "tarjetas": "Abrir cuenta gratis",
       "vigencia": null,
@@ -292,27 +307,12 @@
       "corto": "prestamo60dias",
       "pctMax": null,
       "url": "https://ocablue.uy/beneficio-ampliado.html?name=prestamo60dias&id=bltfd7002ecfe671b00",
-      "categoria": "todos",
+      "categoria": null,
       "tarjetas": "Abrir cuenta gratis",
       "vigencia": null,
       "desc": null,
       "red": "OCA",
       "niveles": [],
-      "cobranding": null
-    },
-    {
-      "nombre": "Cines Del Este Blue",
-      "corto": "Cines Del Este Blue",
-      "pctMax": null,
-      "url": "https://ocablue.uy/beneficio-ampliado.html?name=cines-del-este-blue&id=blt38f5372c9666be8b",
-      "categoria": "Entretenimiento",
-      "tarjetas": "Abrir cuenta gratis",
-      "vigencia": null,
-      "desc": null,
-      "red": "OCA",
-      "niveles": [
-        "Blue"
-      ],
       "cobranding": null
     }
   ]
