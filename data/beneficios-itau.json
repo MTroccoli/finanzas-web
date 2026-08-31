@@ -1,7 +1,7 @@
 {
   "fuente": "itau.com.uy",
-  "actualizado": "2026-08-28T21:20:11.625Z",
-  "total": 16,
+  "actualizado": "2026-08-31T17:57:02.259Z",
+  "total": 17,
   "beneficios": [
     {
       "nombre": "Divino",
@@ -29,6 +29,24 @@
       "vigencia": null,
       "tarjetas": null,
       "desc": "Millas x 3 en Frog",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
+    },
+    {
+      "nombre": "Boomerang",
+      "url": null,
+      "pctMax": 25,
+      "descuentos": [
+        {
+          "pct": 25,
+          "texto": "25%"
+        }
+      ],
+      "vigencia": null,
+      "tarjetas": null,
+      "desc": "25% y 15% menos en Boomerang",
       "exclusivo": false,
       "red": null,
       "niveles": [],
