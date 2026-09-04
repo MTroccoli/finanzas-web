@@ -1,7 +1,7 @@
 {
   "fuente": "scotiabank.com.uy",
-  "actualizado": "2026-08-31T18:51:45.365Z",
-  "total": 80,
+  "actualizado": "2026-09-04T15:51:34.774Z",
+  "total": 79,
   "beneficios": [
     {
       "nombre": "PEDIDOSYA MARKET Y FARMACIAS",
@@ -27,6 +27,60 @@
       "cobranding": null
     },
     {
+      "nombre": "MONTEVIDEO SHOPPING",
+      "url": null,
+      "categoria": "Destacados",
+      "pctMax": 25,
+      "descuentos": [
+        {
+          "pct": 25,
+          "texto": "25% de ahorro"
+        },
+        {
+          "pct": 15,
+          "texto": "15% de ahorro"
+        }
+      ],
+      "vigencia": "Del 4 al 6 de Setiembre",
+      "tarjetas": "25% + 15% de ahorro ADICIONAL con tarjetas de crédito Visa Infinite, Visa Platinum, Amex Platinum y Amex Gold dentro de Montevideo Shopping",
+      "desc": "25% + 15% de ahorro ADICIONAL con tarjetas de crédito Visa Infinite, Visa Platinum, Amex Platinum y Amex Gold dentro de Montevideo Shopping",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [
+        "Infinite",
+        "Platinum",
+        "Gold"
+      ],
+      "cobranding": null
+    },
+    {
+      "nombre": "TRES CRUCES SHOPPING",
+      "url": null,
+      "categoria": "Destacados",
+      "pctMax": 25,
+      "descuentos": [
+        {
+          "pct": 25,
+          "texto": "25% de ahorro"
+        },
+        {
+          "pct": 15,
+          "texto": "15% de ahorro"
+        }
+      ],
+      "vigencia": "Del 4 al 6 de Setiembre",
+      "tarjetas": "25% + 15% de ahorro ADICIONAL con tarjetas de crédito Visa Infinite, Visa Platinum, Amex Platinum y Amex Gold dentro de Tres Cruces Shopping",
+      "desc": "25% + 15% de ahorro ADICIONAL con tarjetas de crédito Visa Infinite, Visa Platinum, Amex Platinum y Amex Gold dentro de Tres Cruces Shopping",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [
+        "Infinite",
+        "Platinum",
+        "Gold"
+      ],
+      "cobranding": null
+    },
+    {
       "nombre": "CINES 50%",
       "url": null,
       "categoria": "Destacados",
@@ -48,71 +102,33 @@
       "cobranding": null
     },
     {
-      "nombre": "COPA CONNECTMILES",
+      "nombre": "COPA MILLAS X3 COMBUSTIBLE",
       "url": null,
       "categoria": "Destacados",
       "pctMax": null,
       "descuentos": [],
-      "vigencia": "Del 1 al 31 de Agosto",
-      "tarjetas": "Cada USD 10 en consumos con tu tarjeta Amex ConnectMiles, generás 1 chance para el sorteo de 2 pasajes dobles con destino a elección.",
-      "desc": "Cada USD 10 en consumos con tu tarjeta Amex ConnectMiles, generás 1 chance para el sorteo de 2 pasajes dobles con destino a elección.",
+      "vigencia": "Todos los días",
+      "tarjetas": "Con tu tarjeta American Express ConnectMiles se triplican tus millas al cargar combustible en cualquier estación de servicio del país durante todo setiembre.",
+      "desc": "Con tu tarjeta American Express ConnectMiles se triplican tus millas al cargar combustible en cualquier estación de servicio del país durante todo setiembre.",
       "exclusivo": false,
       "red": "Amex",
       "niveles": [],
       "cobranding": "ConnectMiles"
     },
     {
-      "nombre": "ASSIST CARD",
-      "url": "https://scotiabank.com.uy/Personas/Tarjetas/Beneficios/Especiales/assist-card-ago26",
-      "categoria": "Destacados",
-      "pctMax": 45,
-      "descuentos": [
-        {
-          "pct": 45,
-          "texto": "45% de ahorro"
-        }
-      ],
-      "vigencia": "Hasta el 31 de Agosto",
-      "tarjetas": "Solicitá tu Tarjeta Ver Beneficio Términos y Condiciones PROMOCIÓN VÁLIDA PARA LA REPÚBLICA DE URUGUAY, DESDE EL 10/08/2026 AL 31/08/2026, INCLUSIVE",
-      "desc": "Hasta 45% OFF en tu asistencia al viajero.",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
-      "nombre": "IBER WINE FEST",
+      "nombre": "IBER",
       "url": null,
       "categoria": "Destacados",
-      "pctMax": 15,
+      "pctMax": 25,
       "descuentos": [
         {
-          "pct": 15,
-          "texto": "15% de ahorro"
+          "pct": 25,
+          "texto": "25% de ahorro"
         }
       ],
-      "vigencia": "22 de Octubre",
-      "tarjetas": "15% de ahorro con tarjetas de crédito Scotia.",
-      "desc": "Hotel Cottage Montevideo",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
-      "nombre": "COMBUSTIBLE",
-      "url": null,
-      "categoria": "Destacados",
-      "pctMax": 10,
-      "descuentos": [
-        {
-          "pct": 10,
-          "texto": "10% de ahorro"
-        }
-      ],
-      "vigencia": "Jueves y Domingos",
-      "tarjetas": null,
-      "desc": "10% de ahorro jueves y domingos en carga de combustible.",
+      "vigencia": "Del 1 al 30 de septiembre",
+      "tarjetas": "25% de ahorro con Tarjetas de Crédito Scotiabank",
+      "desc": "25% de ahorro con Tarjetas de Crédito Scotiabank",
       "exclusivo": false,
       "red": null,
       "niveles": [],
@@ -254,56 +270,6 @@
       "cobranding": null
     },
     {
-      "nombre": "CARBONADA",
-      "url": null,
-      "categoria": "Restaurantes",
-      "pctMax": 25,
-      "descuentos": [
-        {
-          "pct": 25,
-          "texto": "25% de ahorro"
-        },
-        {
-          "pct": 15,
-          "texto": "15% de ahorro"
-        }
-      ],
-      "vigencia": "Todos los días",
-      "tarjetas": "25% de ahorro con tarjetas de crédito y débito Premium.",
-      "desc": "25% de ahorro con tarjetas de crédito y débito Premium.",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
-      "nombre": "ATENEA COFFEE",
-      "url": null,
-      "categoria": "Cafeterías y Salones de té",
-      "pctMax": 25,
-      "descuentos": [
-        {
-          "pct": 25,
-          "texto": "25% de ahorro"
-        },
-        {
-          "pct": 15,
-          "texto": "15% de ahorro"
-        }
-      ],
-      "vigencia": "Todos los días",
-      "tarjetas": "25% de ahorro con tarjetas Platinum, Infinite, Gold y débito Premium.",
-      "desc": "25% de ahorro con tarjetas Platinum, Infinite, Gold y débito Premium.",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [
-        "Infinite",
-        "Platinum",
-        "Gold"
-      ],
-      "cobranding": null
-    },
-    {
       "nombre": "TRANQUILO",
       "url": null,
       "categoria": "Cafeterías y Salones de té",
@@ -328,25 +294,6 @@
         "Platinum",
         "Gold"
       ],
-      "cobranding": null
-    },
-    {
-      "nombre": "IBER",
-      "url": null,
-      "categoria": "Cafeterías y Salones de té",
-      "pctMax": 15,
-      "descuentos": [
-        {
-          "pct": 15,
-          "texto": "15% de ahorro"
-        }
-      ],
-      "vigencia": "Todos los días",
-      "tarjetas": "15% de ahorro con tarjetas de crédito y débito.",
-      "desc": "15% de ahorro con tarjetas de crédito y débito.",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [],
       "cobranding": null
     },
     {
@@ -394,6 +341,33 @@
       "vigencia": "Todos los días",
       "tarjetas": "25% de ahorro con tarjetas Platinum, Infinite, Gold y débito Premium.",
       "desc": "25% de ahorro con tarjetas Platinum, Infinite, Gold y débito Premium.",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [
+        "Infinite",
+        "Platinum",
+        "Gold"
+      ],
+      "cobranding": null
+    },
+    {
+      "nombre": "FOK",
+      "url": null,
+      "categoria": "Cafeterías y Salones de té",
+      "pctMax": 25,
+      "descuentos": [
+        {
+          "pct": 25,
+          "texto": "25% de ahorro"
+        },
+        {
+          "pct": 15,
+          "texto": "15% de ahorro"
+        }
+      ],
+      "vigencia": "Todos los días",
+      "tarjetas": "25% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y Débito Premium.",
+      "desc": "25% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y Débito Premium.",
       "exclusivo": false,
       "red": null,
       "niveles": [
@@ -520,6 +494,25 @@
       "vigencia": "Todos los días",
       "tarjetas": "15% de ahorro con tarjetas de crédito y débito.",
       "desc": "15% de ahorro con tarjetas de crédito y débito.",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
+    },
+    {
+      "nombre": "COMBUSTIBLE",
+      "url": null,
+      "categoria": "The Platinum Card Amex",
+      "pctMax": 10,
+      "descuentos": [
+        {
+          "pct": 10,
+          "texto": "10% de ahorro"
+        }
+      ],
+      "vigencia": "Jueves y Domingos",
+      "tarjetas": null,
+      "desc": "10% de ahorro jueves y domingos en carga de combustible.",
       "exclusivo": false,
       "red": null,
       "niveles": [],
@@ -1234,16 +1227,16 @@
       "nombre": "LAVAKAN",
       "url": null,
       "categoria": "Mascotas",
-      "pctMax": 25,
+      "pctMax": 15,
       "descuentos": [
         {
-          "pct": 25,
-          "texto": "25% de ahorro"
+          "pct": 15,
+          "texto": "15% de ahorro"
         }
       ],
-      "vigencia": "Del 27 al 31 de agosto",
-      "tarjetas": "25% de ahorro con tarjetas de crédito Platinum, Infinite, Gold y débito Premium",
-      "desc": "25% de ahorro con tarjetas de crédito Platinum, Infinite, Gold y débito Premium",
+      "vigencia": "Todos los días",
+      "tarjetas": "15% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y débito Premium.",
+      "desc": "15% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y débito Premium.",
       "exclusivo": false,
       "red": null,
       "niveles": [
