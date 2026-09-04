@@ -1,7 +1,7 @@
 {
   "fuente": "bbva.com.uy",
-  "actualizado": "2026-08-31T16:47:27.095Z",
-  "total": 303,
+  "actualizado": "2026-09-04T13:19:12.588Z",
+  "total": 301,
   "categorias": [
     "Gastronomía",
     "Moda",
@@ -2838,29 +2838,29 @@
       "comercio": "Emporio de los sándwiches",
       "categoria": "Gastronomía",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/gastronomia/el-emporio-de-los-sandwiches.html",
-      "vigencia": "31 de Agosto de 2026",
+      "vigencia": "31 de Julio de 2027",
       "local": null,
       "descuentos": [
         {
-          "pct": 25,
+          "pct": 20,
           "tarjetas": "Tarjetas de Débito",
-          "texto": "25% Off con Tarjetas de Débito",
+          "texto": "20% Off con Tarjetas de Débito",
           "isDebit": true,
           "niveles": []
         },
         {
-          "pct": 25,
+          "pct": 20,
           "tarjetas": "Tarjetas de Crédito Internacionales, Oro, Pymes y Corporativas",
-          "texto": "25% Off con Tarjetas de Crédito Internacionales, Oro, Pymes y Corporativas",
+          "texto": "20% Off con Tarjetas de Crédito Internacionales, Oro, Pymes y Corporativas",
           "isDebit": false,
           "niveles": [
             "Oro"
           ]
         },
         {
-          "pct": 35,
+          "pct": 30,
           "tarjetas": "Tarjetas de Crédito Platinum, Black e Infinite",
-          "texto": "35% Off con Tarjetas de Crédito Platinum, Black e Infinite",
+          "texto": "30% Off con Tarjetas de Crédito Platinum, Black e Infinite",
           "isDebit": false,
           "niveles": [
             "Infinite",
@@ -2869,7 +2869,7 @@
           ]
         }
       ],
-      "pctMax": 35,
+      "pctMax": 30,
       "tope": null,
       "red": null,
       "niveles": [
@@ -3329,7 +3329,7 @@
       "comercio": "Sorocabana",
       "categoria": "Gastronomía",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/gastronomia/sorocabana.html",
-      "vigencia": "31 de Octubre 2026",
+      "vigencia": "4 de Setiembre 2026",
       "local": "25 de Mayo 485, Ciudad Vieja",
       "descuentos": [
         {
@@ -3809,7 +3809,7 @@
       "comercio": "La Nueva Parrilla",
       "categoria": "Gastronomía",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/gastronomia/la-nueva-parrilla.html",
-      "vigencia": "31 de Agosto 2026",
+      "vigencia": "31 de Agosto 2027",
       "local": "Santiago Vázquez 1251, Pocitos",
       "descuentos": [
         {
@@ -4754,7 +4754,7 @@
       "comercio": "Mavim Boutique",
       "categoria": "Moda",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/moda/mavim-boutique.html",
-      "vigencia": "31 de Agosto 2026",
+      "vigencia": "31 de Agosto 2027",
       "local": null,
       "descuentos": [
         {
@@ -5439,7 +5439,7 @@
       "comercio": "Malas Juntas",
       "categoria": "Moda",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/moda/malas-juntas.html",
-      "vigencia": "31 de Agosto 2026",
+      "vigencia": "31 de Agosto 2027",
       "local": "Zorrilla 399, San José de Mayo",
       "descuentos": [
         {
@@ -5687,47 +5687,6 @@
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/mundo-infantil/planeta-kids.html",
       "vigencia": "30 de Abril 2027",
       "local": "Colón 564, San José de Mayo",
-      "descuentos": [
-        {
-          "pct": 20,
-          "tarjetas": "Tarjetas de Crédito Internacional, Oro, Pymes y Corporativas",
-          "texto": "20% Off con Tarjetas de Crédito Internacional, Oro, Pymes y Corporativas",
-          "isDebit": false,
-          "niveles": [
-            "Oro",
-            "Clásica"
-          ]
-        },
-        {
-          "pct": 30,
-          "tarjetas": "Tarjetas de Crédito Platinum, Black e Infinite",
-          "texto": "30% Off con Tarjetas de Crédito Platinum, Black e Infinite",
-          "isDebit": false,
-          "niveles": [
-            "Infinite",
-            "Platinum",
-            "Black"
-          ]
-        }
-      ],
-      "pctMax": 30,
-      "tope": null,
-      "red": null,
-      "niveles": [
-        "Oro",
-        "Clásica",
-        "Infinite",
-        "Platinum",
-        "Black"
-      ],
-      "cobranding": null
-    },
-    {
-      "comercio": "Martika Baby & Kids",
-      "categoria": "Mundo Infantil",
-      "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/mundo-infantil/martika-baby-kids.html",
-      "vigencia": "31 de Agosto de 2026",
-      "local": "Solano Garcia 2403,",
       "descuentos": [
         {
           "pct": 20,
@@ -6692,7 +6651,7 @@
       "comercio": "Rústico Hogar",
       "categoria": "Hogar y Decoración",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/hogar-y-decoracion/Rustico_Hogar.html",
-      "vigencia": "31 de Agosto 2026",
+      "vigencia": "31 de Agosto 2027",
       "local": null,
       "descuentos": [
         {
@@ -6990,7 +6949,7 @@
       "comercio": "Good Kitchen",
       "categoria": "Hogar y Decoración",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/hogar-y-decoracion/good-kitchen.html",
-      "vigencia": "31 de Agosto 2026",
+      "vigencia": "31 de Agosto 2027",
       "local": "Calle 24, esquina 27, Punta del Este",
       "descuentos": [
         {
@@ -7031,7 +6990,7 @@
       "comercio": "Garden Pot",
       "categoria": "Hogar y Decoración",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/hogar-y-decoracion/garden-pot.html",
-      "vigencia": "31 de Agosto 2026",
+      "vigencia": "31 de Agosto 2027",
       "local": "José María Montero 2792, Punta Carretas",
       "descuentos": [
         {
@@ -7139,7 +7098,7 @@
       "comercio": "Home Collection",
       "categoria": "Hogar y Decoración",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/hogar-y-decoracion/home-collection.html",
-      "vigencia": "31 de Agosto 2026",
+      "vigencia": "31 de Agosto 2027",
       "local": "Calle 20 Esq. 29, Punta del Este, Maldonado",
       "descuentos": [
         {
@@ -7542,7 +7501,7 @@
       "comercio": "BBQ Uruguay",
       "categoria": "Hogar y Decoración",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/hogar-y-decoracion/bbq-uruguay.html",
-      "vigencia": "31 de Agosto 2026",
+      "vigencia": "31 de Agosto 2027",
       "local": "Pesaro 2917, Villa Española",
       "descuentos": [
         {
@@ -8276,7 +8235,7 @@
       "comercio": "Farmacia Nueva Modernel",
       "categoria": "Cuidado Personal",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/cuidado-personal/farmacia-nueva-modernel.html",
-      "vigencia": "31 de Julio 2027",
+      "vigencia": "31 de Agosto 2027",
       "local": "18 de Julio 549, Trinidad",
       "descuentos": [],
       "pctMax": null,
@@ -8315,7 +8274,7 @@
       "comercio": "Farmacia Femme",
       "categoria": "Cuidado Personal",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/cuidado-personal/farmacia-femme.html",
-      "vigencia": "31 de Agosto 2026",
+      "vigencia": "31 de Agosto 2027",
       "local": null,
       "descuentos": [],
       "pctMax": null,
@@ -8706,51 +8665,10 @@
       "cobranding": null
     },
     {
-      "comercio": "Óptica Zeta",
-      "categoria": "Opticas",
-      "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/opticas/optica-zeta.html",
-      "vigencia": "31 de Agosto 2026",
-      "local": null,
-      "descuentos": [
-        {
-          "pct": 20,
-          "tarjetas": "Tarjetas de Crédito Internacional, Oro, Pymes y Corporativas",
-          "texto": "20% Off con Tarjetas de Crédito Internacional, Oro, Pymes y Corporativas",
-          "isDebit": false,
-          "niveles": [
-            "Oro",
-            "Clásica"
-          ]
-        },
-        {
-          "pct": 30,
-          "tarjetas": "Tarjetas de Crédito Platinum, Black e Infinite",
-          "texto": "30% Off con Tarjetas de Crédito Platinum, Black e Infinite",
-          "isDebit": false,
-          "niveles": [
-            "Infinite",
-            "Platinum",
-            "Black"
-          ]
-        }
-      ],
-      "pctMax": 30,
-      "tope": null,
-      "red": null,
-      "niveles": [
-        "Oro",
-        "Clásica",
-        "Infinite",
-        "Platinum",
-        "Black"
-      ],
-      "cobranding": null
-    },
-    {
       "comercio": "La Lentería San José",
       "categoria": "Opticas",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/opticas/la-lenteriaSJ.html",
-      "vigencia": "31 de Agosto 2026",
+      "vigencia": "31 de Agosto 2027",
       "local": "Asamblea 582, San José de Mayo",
       "descuentos": [
         {
@@ -8832,7 +8750,7 @@
       "comercio": "La Lentería",
       "categoria": "Opticas",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/opticas/la-lenteria.html",
-      "vigencia": "31 de Agosto 2026",
+      "vigencia": "31 de Agosto 2027",
       "local": null,
       "descuentos": [
         {
@@ -9048,7 +8966,7 @@
       "comercio": "Aquarella Hotel",
       "categoria": "Viajes",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/viajes/aquarella-hotel.html",
-      "vigencia": "31 de Agosto 2026",
+      "vigencia": "31 de Agosto 2027",
       "local": "Avenida Central S/N entre calles número 10 y 12, Punta del Diablo, Rocha",
       "descuentos": [],
       "pctMax": null,
@@ -9087,7 +9005,7 @@
       "comercio": "Arapey Oasis Termal",
       "categoria": "Viajes",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/viajes/arapey-oasis-termal.html",
-      "vigencia": "31 de Agosto 2026",
+      "vigencia": "31 de Agosto 2027",
       "local": "Termas del Arapey S/N, Termas Arapey, Salto",
       "descuentos": [],
       "pctMax": null,
@@ -9391,7 +9309,7 @@
       "comercio": "La Obrería",
       "categoria": "Experiencias",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/experiencias/la-obreria.html",
-      "vigencia": "31 de Agosto 2026",
+      "vigencia": "31 de Agosto 2027",
       "local": "Sarandí 252, Ciudad Vieja",
       "descuentos": [
         {
@@ -10338,7 +10256,7 @@
       "comercio": "Pinturería América",
       "categoria": "Otros",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/otros/pintureria-America.html",
-      "vigencia": "31 de Agosto 2026",
+      "vigencia": "31 de Agosto 2027",
       "local": null,
       "descuentos": [
         {
