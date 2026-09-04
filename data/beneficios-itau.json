@@ -1,10 +1,10 @@
 {
   "fuente": "itau.com.uy",
-  "actualizado": "2026-08-31T17:57:02.259Z",
-  "total": 17,
+  "actualizado": "2026-09-04T14:51:50.186Z",
+  "total": 13,
   "beneficios": [
     {
-      "nombre": "Divino",
+      "nombre": "San Roque",
       "url": null,
       "pctMax": 15,
       "descuentos": [
@@ -15,38 +15,133 @@
       ],
       "vigencia": null,
       "tarjetas": null,
-      "desc": "15% y 10% menos en Divino",
+      "desc": "15% menos en San Roque",
       "exclusivo": false,
       "red": null,
       "niveles": [],
       "cobranding": null
     },
     {
-      "nombre": "Frog",
+      "nombre": "El Túnel",
       "url": null,
-      "pctMax": null,
-      "descuentos": [],
-      "vigencia": null,
-      "tarjetas": null,
-      "desc": "Millas x 3 en Frog",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
-      "nombre": "Boomerang",
-      "url": null,
-      "pctMax": 25,
+      "pctMax": 15,
       "descuentos": [
         {
-          "pct": 25,
-          "texto": "25%"
+          "pct": 15,
+          "texto": "15%"
         }
       ],
       "vigencia": null,
       "tarjetas": null,
-      "desc": "25% y 15% menos en Boomerang",
+      "desc": "15% menos en El Túnel",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
+    },
+    {
+      "nombre": "Divino",
+      "url": null,
+      "pctMax": 10,
+      "descuentos": [
+        {
+          "pct": 10,
+          "texto": "10%"
+        }
+      ],
+      "vigencia": null,
+      "tarjetas": null,
+      "desc": "10% menos en Divino",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
+    },
+    {
+      "nombre": "Le Blanc",
+      "url": null,
+      "pctMax": 15,
+      "descuentos": [
+        {
+          "pct": 15,
+          "texto": "15%"
+        }
+      ],
+      "vigencia": null,
+      "tarjetas": null,
+      "desc": "15% menos en Le Blanc",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
+    },
+    {
+      "nombre": "Soho con todas las tarjetas",
+      "url": null,
+      "pctMax": 15,
+      "descuentos": [
+        {
+          "pct": 15,
+          "texto": "15%"
+        }
+      ],
+      "vigencia": null,
+      "tarjetas": "15% menos en Soho con todas las tarjetas ver más",
+      "desc": "15% menos en Soho con todas las tarjetas",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
+    },
+    {
+      "nombre": "Natuzzi con todas las tarjetas",
+      "url": null,
+      "pctMax": 15,
+      "descuentos": [
+        {
+          "pct": 15,
+          "texto": "15%"
+        }
+      ],
+      "vigencia": null,
+      "tarjetas": "15% menos en Natuzzi con todas las tarjetas ver más",
+      "desc": "15% menos en Natuzzi con todas las tarjetas",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
+    },
+    {
+      "nombre": "Candy Sweet",
+      "url": null,
+      "pctMax": 15,
+      "descuentos": [
+        {
+          "pct": 15,
+          "texto": "15%"
+        }
+      ],
+      "vigencia": null,
+      "tarjetas": null,
+      "desc": "15% menos en Candy Sweet",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
+    },
+    {
+      "nombre": "Boomerang .",
+      "url": null,
+      "pctMax": 15,
+      "descuentos": [
+        {
+          "pct": 15,
+          "texto": "15%"
+        }
+      ],
+      "vigencia": null,
+      "tarjetas": null,
+      "desc": "15% menos en Boomerang .",
       "exclusivo": false,
       "red": null,
       "niveles": [],
@@ -65,24 +160,6 @@
       "vigencia": null,
       "tarjetas": null,
       "desc": "15% menos en Cantegrill Joyas",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
-      "nombre": "Bridgestone",
-      "url": null,
-      "pctMax": 20,
-      "descuentos": [
-        {
-          "pct": 20,
-          "texto": "20%"
-        }
-      ],
-      "vigencia": null,
-      "tarjetas": null,
-      "desc": "20% menos y 6 cuotas en Bridgestone",
       "exclusivo": false,
       "red": null,
       "niveles": [],
@@ -125,42 +202,6 @@
       "cobranding": null
     },
     {
-      "nombre": "Le Blanc",
-      "url": null,
-      "pctMax": 25,
-      "descuentos": [
-        {
-          "pct": 25,
-          "texto": "25%"
-        }
-      ],
-      "vigencia": null,
-      "tarjetas": null,
-      "desc": "25% y 15% menos en Le Blanc",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
-      "nombre": "Soho",
-      "url": null,
-      "pctMax": 25,
-      "descuentos": [
-        {
-          "pct": 25,
-          "texto": "25%"
-        }
-      ],
-      "vigencia": null,
-      "tarjetas": null,
-      "desc": "25% y 15% menos en Soho",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
       "nombre": "Wikimusculos",
       "url": null,
       "pctMax": 15,
@@ -173,60 +214,6 @@
       "vigencia": null,
       "tarjetas": null,
       "desc": "15% menos en Wikimusculos",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
-      "nombre": "Farmacia El Túnel",
-      "url": null,
-      "pctMax": 25,
-      "descuentos": [
-        {
-          "pct": 25,
-          "texto": "25%"
-        }
-      ],
-      "vigencia": null,
-      "tarjetas": null,
-      "desc": "25% y 15% menos en Farmacia El Túnel",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
-      "nombre": "San Roque",
-      "url": null,
-      "pctMax": 25,
-      "descuentos": [
-        {
-          "pct": 25,
-          "texto": "25%"
-        }
-      ],
-      "vigencia": null,
-      "tarjetas": null,
-      "desc": "25% y 15% menos en San Roque",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
-      "nombre": "CIR Acondicionamiento térmico",
-      "url": null,
-      "pctMax": 15,
-      "descuentos": [
-        {
-          "pct": 15,
-          "texto": "15%"
-        }
-      ],
-      "vigencia": null,
-      "tarjetas": null,
-      "desc": "15% menos en CIR Acondicionamiento térmico",
       "exclusivo": false,
       "red": null,
       "niveles": [],
@@ -248,69 +235,6 @@
       "exclusivo": false,
       "red": null,
       "niveles": [],
-      "cobranding": null
-    },
-    {
-      "nombre": "Restaurantes",
-      "url": null,
-      "pctMax": 25,
-      "descuentos": [
-        {
-          "pct": 25,
-          "texto": "25%"
-        }
-      ],
-      "vigencia": null,
-      "tarjetas": "25% menos Todos los días, pagando con tus tarjetas de crédito Platinum, Infinite, Black y tarjetas de débito y crédito Personal Bank.",
-      "exclusivo": true,
-      "red": null,
-      "niveles": [
-        "Infinite",
-        "Platinum",
-        "Black"
-      ],
-      "cobranding": null
-    },
-    {
-      "nombre": "Tiendas Gourmet",
-      "url": null,
-      "pctMax": 25,
-      "descuentos": [
-        {
-          "pct": 25,
-          "texto": "25%"
-        }
-      ],
-      "vigencia": null,
-      "tarjetas": "25% menos Todos los días, pagando con tus tarjetas de crédito Platinum, Infinite, Black y tarjetas de débito y crédito Personal Bank.",
-      "exclusivo": true,
-      "red": null,
-      "niveles": [
-        "Infinite",
-        "Platinum",
-        "Black"
-      ],
-      "cobranding": null
-    },
-    {
-      "nombre": "Librerías",
-      "url": null,
-      "pctMax": 25,
-      "descuentos": [
-        {
-          "pct": 25,
-          "texto": "25%"
-        }
-      ],
-      "vigencia": null,
-      "tarjetas": "25% menos Todos los días, pagando con tus tarjetas de crédito Platinum, Infinite, Black y tarjetas de débito y crédito Personal Bank.",
-      "exclusivo": true,
-      "red": null,
-      "niveles": [
-        "Infinite",
-        "Platinum",
-        "Black"
-      ],
       "cobranding": null
     }
   ]
