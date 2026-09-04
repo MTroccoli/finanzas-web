@@ -1,8 +1,8 @@
 {
   "fuente": "BROU",
   "url": "https://beneficios.brou.com.uy/beneficios",
-  "fecha": "2026-08-31",
-  "total": 77,
+  "fecha": "2026-09-04",
+  "total": 87,
   "beneficios": [
     {
       "nombre": "Banco Hipotecario del Uruguay",
@@ -74,8 +74,8 @@
       "nombre": "Cabify",
       "pctMax": 30,
       "url": "https://beneficios.brou.com.uy/ensenanza/cabify",
-      "tarjetas": "Con el código \"BROUAGOSTO30\" obtenés 4 viajes hasta el 31 de Agosto con un 30% de descuento en la zona de Montevideo y Maldonado, abonando con tarjetas de crédito y débito VISA, BROU Recompensa Master",
-      "vigencia": "Vigencia: 31/08/2026",
+      "tarjetas": "Con el código \"BROUSET30\" obtenés 4 viajes hasta el 30 de Setiembre con un 30% de descuento en la zona de Montevideo y Maldonado, abonando con tarjetas de crédito y débito VISA, BROU Recompensa Master",
+      "vigencia": "Vigencia: 30/09/2026",
       "desc": "Aprovechá el siguiente beneficio con Cabify",
       "categoria": "ensenanza",
       "red": null,
@@ -113,6 +113,21 @@
       "cobranding": "Recompensa"
     },
     {
+      "nombre": "Semana BROU en DISTRICOMP",
+      "pctMax": 25,
+      "url": "https://beneficios.brou.com.uy/ensenanza/districomp-semanabrou",
+      "tarjetas": "25% de descuento con tarjetas de crédito BROU VISA Platinum y BROU Recompensa Mastercard Platinum y Black.",
+      "vigencia": "Semana BROU en DISTRICOMP",
+      "desc": "Semana BROU en DISTRICOMP",
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [
+        "Platinum",
+        "Black"
+      ],
+      "cobranding": "Recompensa"
+    },
+    {
       "nombre": "Hotel del Lago",
       "pctMax": 25,
       "url": "https://beneficios.brou.com.uy/ensenanza/hotel-del-lago",
@@ -128,12 +143,42 @@
       "cobranding": "Recompensa"
     },
     {
+      "nombre": "Semana BROU en CASA JARDIN",
+      "pctMax": 25,
+      "url": "https://beneficios.brou.com.uy/ensenanza/Semana-brou-casa-jardin",
+      "tarjetas": "25% de descuento con tarjetas de crédito BROU VISA Platinum y BROU Recompensa Mastercard Platinum y Black.",
+      "vigencia": "Semana BROU en CASA JARDIN",
+      "desc": "Semana BROU en CASA JARDIN",
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [
+        "Platinum",
+        "Black"
+      ],
+      "cobranding": "Recompensa"
+    },
+    {
       "nombre": "Ser Animal",
       "pctMax": 25,
       "url": "https://beneficios.brou.com.uy/ensenanza/ser-animal",
       "tarjetas": "25% de dto. con las tarjetas de crédito BROU VISA Platino y BROU Recompensa Mastercard Black.",
       "vigencia": "Vigencia: 31/03/2027",
       "desc": "Aprovechá los siguientes descuentos en Ser Animal",
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [
+        "Platinum",
+        "Black"
+      ],
+      "cobranding": "Recompensa"
+    },
+    {
+      "nombre": "Universo Binario",
+      "pctMax": 25,
+      "url": "https://beneficios.brou.com.uy/ensenanza/semana-brou-universo-binario",
+      "tarjetas": "25% de descuento con tarjetas de crédito BROU VISA Platinum y BROU Recompensa Mastercard Platinum y Black.",
+      "vigencia": "Vigencia: 13/09/2026",
+      "desc": "Hasta 25% de descuento en Universo Binario con tarjetas BROU.",
       "categoria": "ensenanza",
       "red": null,
       "niveles": [
@@ -258,6 +303,21 @@
       "cobranding": "Recompensa"
     },
     {
+      "nombre": "Semana BROU en El Rey Del Entretenimiento",
+      "pctMax": 25,
+      "url": "https://beneficios.brou.com.uy/ensenanza/el-rey-del-entretenimiento-semanabrou",
+      "tarjetas": "25% de descuento con tarjetas de crédito BROU VISA Platinum y BROU Recompensa Mastercard Platinum y Black.",
+      "vigencia": "Semana BROU en El Rey Del Entretenimiento",
+      "desc": "Semana BROU en El Rey Del Entretenimiento",
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [
+        "Platinum",
+        "Black"
+      ],
+      "cobranding": "Recompensa"
+    },
+    {
       "nombre": "Farmacias Asociación Española",
       "pctMax": 20,
       "url": "https://beneficios.brou.com.uy/salud-estetica/Beneficio_LaEspañola",
@@ -306,6 +366,21 @@
       "cobranding": "Recompensa"
     },
     {
+      "nombre": "Las Piedras Shopping Semana BROU",
+      "pctMax": 20,
+      "url": "https://beneficios.brou.com.uy/ensenanza/las-piedras-shopping-semana-brou",
+      "tarjetas": "20% de descuento con tarjetas de crédito BROU VISA Platinum y BROU Recompensa Mastercard Platinum y Black.",
+      "vigencia": "Las Piedras Shopping Semana BROU",
+      "desc": "Las Piedras Shopping Semana BROU",
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [
+        "Platinum",
+        "Black"
+      ],
+      "cobranding": "Recompensa"
+    },
+    {
       "nombre": "Novatex",
       "pctMax": 20,
       "url": "https://beneficios.brou.com.uy/ensenanza/novatex",
@@ -330,6 +405,18 @@
       "cobranding": "Recompensa"
     },
     {
+      "nombre": "Farmacia Ibiza",
+      "pctMax": 20,
+      "url": "https://beneficios.brou.com.uy/ensenanza/farmacia-ibiza",
+      "tarjetas": "20% de descuento los miércoles, sábados y domingos con tarjetas de crédito BROU Recompensa Mastercard.",
+      "vigencia": "20% de descuento los miércoles, sábados y domingos con tarjetas de crédito BROU Recompensa Mastercar",
+      "desc": "En Farmacia Ibiza, abonando con tarjetas de crédito BROU Recompensa Mastercard, aprovechá un 20% de descuento los miércoles, sábados y domingos.",
+      "categoria": "ensenanza",
+      "red": "Mastercard",
+      "niveles": [],
+      "cobranding": "Recompensa"
+    },
+    {
       "nombre": "Country Atlantida",
       "pctMax": 20,
       "url": "https://beneficios.brou.com.uy/ensenanza/country-atlantida",
@@ -349,6 +436,21 @@
       "vigencia": "Vigencia: 30/09/2026",
       "desc": "Aprovechá los siguientes beneficios en tus compras",
       "categoria": "moda",
+      "red": null,
+      "niveles": [
+        "Platinum",
+        "Black"
+      ],
+      "cobranding": "Recompensa"
+    },
+    {
+      "nombre": "Costa Urbana Shopping",
+      "pctMax": 20,
+      "url": "https://beneficios.brou.com.uy/ensenanza/costaurbana",
+      "tarjetas": "20% de descuento con tarjetas de crédito BROU VISA Platinum y BROU Recompensa Mastercard Platinum y Black.",
+      "vigencia": "Vigencia: 06/09/2026",
+      "desc": "Costa Urbana Shopping",
+      "categoria": "ensenanza",
       "red": null,
       "niveles": [
         "Platinum",
@@ -384,6 +486,18 @@
       "cobranding": "Recompensa"
     },
     {
+      "nombre": "Tiendas Montevideo",
+      "pctMax": 20,
+      "url": "https://beneficios.brou.com.uy/ensenanza/tiendas-montevideo",
+      "tarjetas": "20% de dto. abonando con tarjetas de crédito BROU VISA y BROU Recompensa Mastercard.",
+      "vigencia": "Vigencia: 29/09/2026",
+      "desc": "Disfrutá de hasta 20% de descuento en juegos de cama, sábanas y almohadas con tarjetas BROU.",
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [],
+      "cobranding": "Recompensa"
+    },
+    {
       "nombre": "Barraca Malvín",
       "pctMax": 20,
       "url": "https://beneficios.brou.com.uy/hogar/BarracaMalvin_Hogar",
@@ -406,6 +520,30 @@
       "red": null,
       "niveles": [],
       "cobranding": "Recompensa"
+    },
+    {
+      "nombre": "Interagrovial",
+      "pctMax": 20,
+      "url": "https://beneficios.brou.com.uy/ensenanza/interagrovial",
+      "tarjetas": "20% de descuento en repuestos seleccionados para sembradoras y plantadoras con BROU Agro VISA.",
+      "vigencia": "Vigencia: 15/11/2026",
+      "desc": "En Interagrovial, abonando con tarjeta de crédito BROU Agro VISA, accedé a un 20% de descuento en repuestos seleccionados para sembradoras y plantadoras.",
+      "categoria": "ensenanza",
+      "red": "Visa",
+      "niveles": [],
+      "cobranding": null
+    },
+    {
+      "nombre": "Rural del Prado 2026",
+      "pctMax": 20,
+      "url": "https://beneficios.brou.com.uy/ensenanza/expo-prado-2026",
+      "tarjetas": null,
+      "vigencia": "Vigencia: 20/09/2026",
+      "desc": "Disfrutá de la Rural del Prado con beneficios exclusivos BROU:",
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "AGUERREBERE",
@@ -476,9 +614,9 @@
       "nombre": "IPlace",
       "pctMax": 15,
       "url": "https://beneficios.brou.com.uy/ensenanza/iplace",
-      "tarjetas": "Del 1 al 31 de agosto, aprovechá estos beneficios en iPlace, abonando con tarjetas de crédito BROU VISA y BROU Recompensa Mastercard,",
-      "vigencia": "Vigencia: 31/08/2026",
-      "desc": "Del 1 al 31 de agosto, aprovechá estos beneficios en iPlace, abonando con tarjetas de crédito BROU VISA y BROU Recompensa Mastercard,",
+      "tarjetas": "Durante setiembre, abonando con tarjetas de crédito BROU VISA y BROU Recompensa Mastercard, aprovechá estos beneficios en iPlace:",
+      "vigencia": "Vigencia: 30/09/2026",
+      "desc": "Durante setiembre, abonando con tarjetas de crédito BROU VISA y BROU Recompensa Mastercard, aprovechá estos beneficios en iPlace:",
       "categoria": "ensenanza",
       "red": null,
       "niveles": [],
