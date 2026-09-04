@@ -1,6 +1,6 @@
 {
   "fuente": "OCA",
-  "actualizado": "2026-08-31",
+  "actualizado": "2026-09-04",
   "beneficios": [
     {
       "nombre": "Handy Tc Blue",
@@ -307,7 +307,7 @@
       "corto": "prestamo60dias",
       "pctMax": null,
       "url": "https://ocablue.uy/beneficio-ampliado.html?name=prestamo60dias&id=bltfd7002ecfe671b00",
-      "categoria": null,
+      "categoria": "todos",
       "tarjetas": "Abrir cuenta gratis",
       "vigencia": null,
       "desc": null,
