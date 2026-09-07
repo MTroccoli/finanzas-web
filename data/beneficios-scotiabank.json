@@ -1,7 +1,7 @@
 {
   "fuente": "scotiabank.com.uy",
-  "actualizado": "2026-09-04T15:51:34.774Z",
-  "total": 79,
+  "actualizado": "2026-09-07T17:21:14.877Z",
+  "total": 77,
   "beneficios": [
     {
       "nombre": "PEDIDOSYA MARKET Y FARMACIAS",
@@ -24,60 +24,6 @@
       "exclusivo": false,
       "red": "Amex",
       "niveles": [],
-      "cobranding": null
-    },
-    {
-      "nombre": "MONTEVIDEO SHOPPING",
-      "url": null,
-      "categoria": "Destacados",
-      "pctMax": 25,
-      "descuentos": [
-        {
-          "pct": 25,
-          "texto": "25% de ahorro"
-        },
-        {
-          "pct": 15,
-          "texto": "15% de ahorro"
-        }
-      ],
-      "vigencia": "Del 4 al 6 de Setiembre",
-      "tarjetas": "25% + 15% de ahorro ADICIONAL con tarjetas de crédito Visa Infinite, Visa Platinum, Amex Platinum y Amex Gold dentro de Montevideo Shopping",
-      "desc": "25% + 15% de ahorro ADICIONAL con tarjetas de crédito Visa Infinite, Visa Platinum, Amex Platinum y Amex Gold dentro de Montevideo Shopping",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [
-        "Infinite",
-        "Platinum",
-        "Gold"
-      ],
-      "cobranding": null
-    },
-    {
-      "nombre": "TRES CRUCES SHOPPING",
-      "url": null,
-      "categoria": "Destacados",
-      "pctMax": 25,
-      "descuentos": [
-        {
-          "pct": 25,
-          "texto": "25% de ahorro"
-        },
-        {
-          "pct": 15,
-          "texto": "15% de ahorro"
-        }
-      ],
-      "vigencia": "Del 4 al 6 de Setiembre",
-      "tarjetas": "25% + 15% de ahorro ADICIONAL con tarjetas de crédito Visa Infinite, Visa Platinum, Amex Platinum y Amex Gold dentro de Tres Cruces Shopping",
-      "desc": "25% + 15% de ahorro ADICIONAL con tarjetas de crédito Visa Infinite, Visa Platinum, Amex Platinum y Amex Gold dentro de Tres Cruces Shopping",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [
-        "Infinite",
-        "Platinum",
-        "Gold"
-      ],
       "cobranding": null
     },
     {
@@ -132,6 +78,46 @@
       "exclusivo": false,
       "red": null,
       "niveles": [],
+      "cobranding": null
+    },
+    {
+      "nombre": "COMBUSTIBLE",
+      "url": null,
+      "categoria": "Destacados",
+      "pctMax": 10,
+      "descuentos": [
+        {
+          "pct": 10,
+          "texto": "10% de ahorro"
+        }
+      ],
+      "vigencia": "Jueves y Domingos",
+      "tarjetas": null,
+      "desc": "10% de ahorro jueves y domingos en carga de combustible.",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
+    },
+    {
+      "nombre": "TELEPEAJE",
+      "url": null,
+      "categoria": "Destacados",
+      "pctMax": 50,
+      "descuentos": [
+        {
+          "pct": 50,
+          "texto": "50% de ahorro"
+        }
+      ],
+      "vigencia": "Todos los días",
+      "tarjetas": "The Platinum Card American Express (excl. ConnectMiles)",
+      "desc": "50% de ahorro todos los días en telepeajes. Tope $1.200/mes.",
+      "exclusivo": false,
+      "red": "Amex",
+      "niveles": [
+        "Platinum"
+      ],
       "cobranding": null
     },
     {
@@ -497,46 +483,6 @@
       "exclusivo": false,
       "red": null,
       "niveles": [],
-      "cobranding": null
-    },
-    {
-      "nombre": "COMBUSTIBLE",
-      "url": null,
-      "categoria": "The Platinum Card Amex",
-      "pctMax": 10,
-      "descuentos": [
-        {
-          "pct": 10,
-          "texto": "10% de ahorro"
-        }
-      ],
-      "vigencia": "Jueves y Domingos",
-      "tarjetas": null,
-      "desc": "10% de ahorro jueves y domingos en carga de combustible.",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
-      "nombre": "TELEPEAJE",
-      "url": null,
-      "categoria": "The Platinum Card Amex",
-      "pctMax": 50,
-      "descuentos": [
-        {
-          "pct": 50,
-          "texto": "50% de ahorro"
-        }
-      ],
-      "vigencia": "Todos los días",
-      "tarjetas": "The Platinum Card American Express (excl. ConnectMiles)",
-      "desc": "50% de ahorro todos los días en telepeajes. Tope $1.200/mes.",
-      "exclusivo": false,
-      "red": "Amex",
-      "niveles": [
-        "Platinum"
-      ],
       "cobranding": null
     },
     {
