@@ -1,7 +1,7 @@
 {
   "fuente": "santander.com.uy",
-  "actualizado": "2026-09-04T14:33:15.439Z",
-  "total": 326,
+  "actualizado": "2026-09-07T16:02:58.716Z",
+  "total": 327,
   "beneficios": [
     {
       "nombre": "Optica Estela Jinchuk",
@@ -340,6 +340,17 @@
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "Savia es una marca para mujeres jóvenes y modernas que tiene una gran variedad de prendas de vestir clásicas y actuales, se caracteriza por sus prendas únicas.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
+    },
+    {
+      "nombre": "De Arcos",
+      "url": "https://www.santander.com.uy/beneficios/de-arcos",
+      "pctMax": 15,
+      "vigencia": null,
+      "tarjetas": "Tarjetas de crédito",
+      "desc": "Tienda de muebles, accesorios de decoración, iluminación y regalos!",
       "red": null,
       "niveles": [],
       "cobranding": null
