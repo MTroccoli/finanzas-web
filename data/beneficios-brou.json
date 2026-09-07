@@ -1,8 +1,8 @@
 {
   "fuente": "BROU",
   "url": "https://beneficios.brou.com.uy/beneficios",
-  "fecha": "2026-09-04",
-  "total": 87,
+  "fecha": "2026-09-07",
+  "total": 85,
   "beneficios": [
     {
       "nombre": "Banco Hipotecario del Uruguay",
@@ -366,21 +366,6 @@
       "cobranding": "Recompensa"
     },
     {
-      "nombre": "Las Piedras Shopping Semana BROU",
-      "pctMax": 20,
-      "url": "https://beneficios.brou.com.uy/ensenanza/las-piedras-shopping-semana-brou",
-      "tarjetas": "20% de descuento con tarjetas de crédito BROU VISA Platinum y BROU Recompensa Mastercard Platinum y Black.",
-      "vigencia": "Las Piedras Shopping Semana BROU",
-      "desc": "Las Piedras Shopping Semana BROU",
-      "categoria": "ensenanza",
-      "red": null,
-      "niveles": [
-        "Platinum",
-        "Black"
-      ],
-      "cobranding": "Recompensa"
-    },
-    {
       "nombre": "Novatex",
       "pctMax": 20,
       "url": "https://beneficios.brou.com.uy/ensenanza/novatex",
@@ -436,21 +421,6 @@
       "vigencia": "Vigencia: 30/09/2026",
       "desc": "Aprovechá los siguientes beneficios en tus compras",
       "categoria": "moda",
-      "red": null,
-      "niveles": [
-        "Platinum",
-        "Black"
-      ],
-      "cobranding": "Recompensa"
-    },
-    {
-      "nombre": "Costa Urbana Shopping",
-      "pctMax": 20,
-      "url": "https://beneficios.brou.com.uy/ensenanza/costaurbana",
-      "tarjetas": "20% de descuento con tarjetas de crédito BROU VISA Platinum y BROU Recompensa Mastercard Platinum y Black.",
-      "vigencia": "Vigencia: 06/09/2026",
-      "desc": "Costa Urbana Shopping",
-      "categoria": "ensenanza",
       "red": null,
       "niveles": [
         "Platinum",
