@@ -1,6 +1,6 @@
 {
   "fuente": "OCA",
-  "actualizado": "2026-09-04",
+  "actualizado": "2026-09-07",
   "beneficios": [
     {
       "nombre": "Handy Tc Blue",
@@ -8,6 +8,36 @@
       "pctMax": null,
       "url": "https://ocablue.uy/beneficio-ampliado.html?name=handy-tc-blue&id=blt4b65dc6866ab5f1a",
       "categoria": "todos",
+      "tarjetas": "Abrir cuenta gratis",
+      "vigencia": null,
+      "desc": null,
+      "red": "OCA",
+      "niveles": [
+        "Blue"
+      ],
+      "cobranding": null
+    },
+    {
+      "nombre": "Tipo De Cambio Preferencial Blue",
+      "corto": "Tipo De Cambio Preferencial Blue",
+      "pctMax": null,
+      "url": "https://ocablue.uy/beneficio-ampliado.html?name=tipo-de-cambio-preferencial-blue&id=bltf0c6931e809be358",
+      "categoria": "General",
+      "tarjetas": "Abrir cuenta gratis",
+      "vigencia": null,
+      "desc": null,
+      "red": "OCA",
+      "niveles": [
+        "Blue"
+      ],
+      "cobranding": null
+    },
+    {
+      "nombre": "Fonasa 1000 Metros De Regalo Blue",
+      "corto": "Fonasa 1000 Metros De Regalo Blue",
+      "pctMax": null,
+      "url": "https://ocablue.uy/beneficio-ampliado.html?name=fonasa-1000-metros-de-regalo-blue&id=blt1606788a1664101a",
+      "categoria": "General",
       "tarjetas": "Abrir cuenta gratis",
       "vigencia": null,
       "desc": null,
