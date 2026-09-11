@@ -1,6 +1,6 @@
 {
   "fuente": "scotiabank.com.uy",
-  "actualizado": "2026-09-07T17:21:14.877Z",
+  "actualizado": "2026-09-11T15:57:56.139Z",
   "total": 77,
   "beneficios": [
     {
@@ -48,6 +48,20 @@
       "cobranding": null
     },
     {
+      "nombre": "TIENDA INGLESA",
+      "url": "https://www.scotiabank.com.uy/Personas/Tarjetas/Beneficios/Supermercados/tienda-inglesa",
+      "categoria": "Destacados",
+      "pctMax": 25,
+      "descuentos": [],
+      "vigencia": "Todos los días",
+      "tarjetas": "Disfrutá beneficios exclusivos con tus tarjetas Scotiabank.",
+      "desc": "Disfrutá beneficios exclusivos con tus tarjetas Scotiabank.",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
+    },
+    {
       "nombre": "COPA MILLAS X3 COMBUSTIBLE",
       "url": null,
       "categoria": "Destacados",
@@ -75,25 +89,6 @@
       "vigencia": "Del 1 al 30 de septiembre",
       "tarjetas": "25% de ahorro con Tarjetas de Crédito Scotiabank",
       "desc": "25% de ahorro con Tarjetas de Crédito Scotiabank",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
-      "nombre": "COMBUSTIBLE",
-      "url": null,
-      "categoria": "Destacados",
-      "pctMax": 10,
-      "descuentos": [
-        {
-          "pct": 10,
-          "texto": "10% de ahorro"
-        }
-      ],
-      "vigencia": "Jueves y Domingos",
-      "tarjetas": null,
-      "desc": "10% de ahorro jueves y domingos en carga de combustible.",
       "exclusivo": false,
       "red": null,
       "niveles": [],
