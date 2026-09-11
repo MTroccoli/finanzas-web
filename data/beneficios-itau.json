@@ -1,39 +1,52 @@
 {
   "fuente": "itau.com.uy",
-  "actualizado": "2026-09-07T16:19:18.805Z",
-  "total": 13,
+  "actualizado": "2026-09-11T14:54:09.785Z",
+  "total": 14,
   "beneficios": [
     {
-      "nombre": "San Roque",
+      "nombre": "Beneficios en Expo Prado 2026",
       "url": null,
-      "pctMax": 15,
-      "descuentos": [
-        {
-          "pct": 15,
-          "texto": "15%"
-        }
-      ],
+      "pctMax": null,
+      "descuentos": [],
       "vigencia": null,
       "tarjetas": null,
-      "desc": "15% menos en San Roque",
+      "desc": "Beneficios en Expo Prado 2026",
       "exclusivo": false,
       "red": null,
       "niveles": [],
       "cobranding": null
     },
     {
-      "nombre": "El Túnel",
+      "nombre": "San Roque",
       "url": null,
-      "pctMax": 15,
+      "pctMax": 25,
       "descuentos": [
         {
-          "pct": 15,
-          "texto": "15%"
+          "pct": 25,
+          "texto": "25%"
         }
       ],
       "vigencia": null,
       "tarjetas": null,
-      "desc": "15% menos en El Túnel",
+      "desc": "25% 20% y 15% menos en San Roque",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
+    },
+    {
+      "nombre": "farmacias El Túnel",
+      "url": null,
+      "pctMax": 25,
+      "descuentos": [
+        {
+          "pct": 25,
+          "texto": "25%"
+        }
+      ],
+      "vigencia": null,
+      "tarjetas": null,
+      "desc": "25% y 20% y 15% menos en farmacias El Túnel",
       "exclusivo": false,
       "red": null,
       "niveles": [],
@@ -42,24 +55,6 @@
     {
       "nombre": "Divino",
       "url": null,
-      "pctMax": 10,
-      "descuentos": [
-        {
-          "pct": 10,
-          "texto": "10%"
-        }
-      ],
-      "vigencia": null,
-      "tarjetas": null,
-      "desc": "10% menos en Divino",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
-      "nombre": "Le Blanc",
-      "url": null,
       "pctMax": 15,
       "descuentos": [
         {
@@ -69,7 +64,25 @@
       ],
       "vigencia": null,
       "tarjetas": null,
-      "desc": "15% menos en Le Blanc",
+      "desc": "15% y 10% menos en Divino",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
+    },
+    {
+      "nombre": "Le Blanc",
+      "url": null,
+      "pctMax": 25,
+      "descuentos": [
+        {
+          "pct": 25,
+          "texto": "25%"
+        }
+      ],
+      "vigencia": null,
+      "tarjetas": null,
+      "desc": "25% y 15% menos en Le Blanc",
       "exclusivo": false,
       "red": null,
       "niveles": [],
