@@ -1,7 +1,7 @@
 {
   "fuente": "santander.com.uy",
-  "actualizado": "2026-09-07T16:02:58.716Z",
-  "total": 327,
+  "actualizado": "2026-09-11T14:36:52.495Z",
+  "total": 325,
   "beneficios": [
     {
       "nombre": "Optica Estela Jinchuk",
@@ -842,34 +842,12 @@
       "cobranding": null
     },
     {
-      "nombre": "No se lo Digas a Nadie",
-      "url": "https://www.santander.com.uy/beneficios/no-se-lo-digas-nadie",
-      "pctMax": 15,
-      "vigencia": null,
-      "tarjetas": "Tarjetas de crédito",
-      "desc": "No se lo Digas es una tienda para mujeres de todas las edades, que tiene una gran variedad de prendas casuales, formales y accesorios, se caracteriza por estar al tanto de las tendencias de la moda in",
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
       "nombre": "Rockford",
       "url": "https://www.santander.com.uy/beneficios/rockford",
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "Rockford crea un estilo de vida, descubrilo en todas sus tiendas.",
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
-      "nombre": "Bagno & Company",
-      "url": "https://www.santander.com.uy/beneficios/bagno-company",
-      "pctMax": 15,
-      "vigencia": null,
-      "tarjetas": "Tarjetas de crédito",
-      "desc": "La promoción no aplica para la compra de electrodomésticos.",
       "red": null,
       "niveles": [],
       "cobranding": null
