@@ -1,7 +1,7 @@
 {
   "fuente": "bbva.com.uy",
-  "actualizado": "2026-09-07T14:51:32.800Z",
-  "total": 301,
+  "actualizado": "2026-09-11T13:22:59.553Z",
+  "total": 302,
   "categorias": [
     "Gastronomía",
     "Moda",
@@ -169,6 +169,54 @@
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/gastronomia/Mar_Abierto.html",
       "vigencia": "31 de Agosto 2027",
       "local": "Av. Giannattasio, Km 28.100, M J1 S 28,Ciudad de la Costa ,",
+      "descuentos": [
+        {
+          "pct": 20,
+          "tarjetas": "Tarjetas de Débito",
+          "texto": "20% Off con Tarjetas de Débito",
+          "isDebit": true,
+          "niveles": []
+        },
+        {
+          "pct": 20,
+          "tarjetas": "Tarjetas de Crédito Internacional, Oro, Pymes y Corporativas",
+          "texto": "20% Off con Tarjetas de Crédito Internacional, Oro, Pymes y Corporativas",
+          "isDebit": false,
+          "niveles": [
+            "Oro",
+            "Clásica"
+          ]
+        },
+        {
+          "pct": 30,
+          "tarjetas": "Tarjetas de Crédito Platinum, Black e Infinite",
+          "texto": "30% Off con Tarjetas de Crédito Platinum, Black e Infinite",
+          "isDebit": false,
+          "niveles": [
+            "Infinite",
+            "Platinum",
+            "Black"
+          ]
+        }
+      ],
+      "pctMax": 30,
+      "tope": null,
+      "red": null,
+      "niveles": [
+        "Oro",
+        "Clásica",
+        "Infinite",
+        "Platinum",
+        "Black"
+      ],
+      "cobranding": null
+    },
+    {
+      "comercio": "Submarino Peral",
+      "categoria": "Gastronomía",
+      "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/gastronomia/Submarino_Peral.html",
+      "vigencia": "31 de Agosto 2027",
+      "local": "Avenida Italia 5566, Portones",
       "descuentos": [
         {
           "pct": 20,
@@ -1655,54 +1703,6 @@
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/gastronomia/cafe_suarez.html",
       "vigencia": "31 de Diciembre 2026",
       "local": null,
-      "descuentos": [
-        {
-          "pct": 20,
-          "tarjetas": "Tarjetas de Débito",
-          "texto": "20% Off con Tarjetas de Débito",
-          "isDebit": true,
-          "niveles": []
-        },
-        {
-          "pct": 20,
-          "tarjetas": "Tarjetas de Crédito Internacional, Oro, Pymes y Corporativas",
-          "texto": "20% Off con Tarjetas de Crédito Internacional, Oro, Pymes y Corporativas",
-          "isDebit": false,
-          "niveles": [
-            "Oro",
-            "Clásica"
-          ]
-        },
-        {
-          "pct": 30,
-          "tarjetas": "Tarjetas de Crédito Platinum, Black e Infinite",
-          "texto": "30% Off con Tarjetas de Crédito Platinum, Black e Infinite",
-          "isDebit": false,
-          "niveles": [
-            "Infinite",
-            "Platinum",
-            "Black"
-          ]
-        }
-      ],
-      "pctMax": 30,
-      "tope": null,
-      "red": null,
-      "niveles": [
-        "Oro",
-        "Clásica",
-        "Infinite",
-        "Platinum",
-        "Black"
-      ],
-      "cobranding": null
-    },
-    {
-      "comercio": "Casa Fauno",
-      "categoria": "Gastronomía",
-      "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/gastronomia/casa-fauno.html",
-      "vigencia": "30 de Noviembre 2026",
-      "local": "Dr. Luis Piera 2031, Parque Rodó",
       "descuentos": [
         {
           "pct": 20,
@@ -5481,7 +5481,7 @@
       "categoria": "Moda",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/moda/Serena.html",
       "vigencia": "31 de Enero 2027",
-      "local": "18 de julio 1128 Mac Center Shopping,( ir)",
+      "local": null,
       "descuentos": [
         {
           "pct": 20,
@@ -6360,6 +6360,47 @@
         "Black",
         "Oro",
         "Clásica"
+      ],
+      "cobranding": null
+    },
+    {
+      "comercio": "clementine",
+      "categoria": "Hogar y Decoración",
+      "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/hogar-y-decoracion/Clementine_Natural.html",
+      "vigencia": "30 de Setiembre 2027",
+      "local": "Bv. España 2670, Pocitos",
+      "descuentos": [
+        {
+          "pct": 20,
+          "tarjetas": "Tarjetas de Crédito Internacional, Oro, Pymes y Corporativas",
+          "texto": "20% Off con Tarjetas de Crédito Internacional, Oro, Pymes y Corporativas",
+          "isDebit": false,
+          "niveles": [
+            "Oro",
+            "Clásica"
+          ]
+        },
+        {
+          "pct": 30,
+          "tarjetas": "Tarjetas de Crédito Platinum, Black e Infinite",
+          "texto": "30% Off con Tarjetas de Crédito Platinum, Black e Infinite",
+          "isDebit": false,
+          "niveles": [
+            "Infinite",
+            "Platinum",
+            "Black"
+          ]
+        }
+      ],
+      "pctMax": 30,
+      "tope": null,
+      "red": null,
+      "niveles": [
+        "Oro",
+        "Clásica",
+        "Infinite",
+        "Platinum",
+        "Black"
       ],
       "cobranding": null
     },
@@ -9884,7 +9925,7 @@
       "comercio": "Market",
       "categoria": "Tecnología",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/tecnologia/celular-market.html",
-      "vigencia": "31 de Julio 2027",
+      "vigencia": "10 de Setiembre 2026",
       "local": null,
       "descuentos": [
         {
