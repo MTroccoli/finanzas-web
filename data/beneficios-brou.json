@@ -1,8 +1,8 @@
 {
   "fuente": "BROU",
   "url": "https://beneficios.brou.com.uy/beneficios",
-  "fecha": "2026-09-07",
-  "total": 85,
+  "fecha": "2026-09-11",
+  "total": 89,
   "beneficios": [
     {
       "nombre": "Banco Hipotecario del Uruguay",
@@ -29,6 +29,18 @@
         "Clásica"
       ],
       "cobranding": null
+    },
+    {
+      "nombre": "Club Banco República",
+      "pctMax": 50,
+      "url": "https://beneficios.brou.com.uy/salud-estetica/clubbancorepublica",
+      "tarjetas": "50% de descuento en la matrícula del pasaporte deportivo para clientes que contraten la anualidad y abonen con tarjetas de crédito BROU Recompensa Mastercard y BROU VISA.",
+      "vigencia": "Vigencia: 28/02/2027",
+      "desc": "Hasta 50% de descuento en matrícula y beneficios en Socio de Verano y Colonia de Vacaciones con tarjetas BROU.",
+      "categoria": "salud-estetica",
+      "red": null,
+      "niveles": [],
+      "cobranding": "Recompensa"
     },
     {
       "nombre": "SODRE",
@@ -294,21 +306,6 @@
       "tarjetas": "25% de descuento con tarjetas de crédito BROU VISA Platinum y BROU Recompensa Mastercard Platinum y Black.",
       "vigencia": "Vigencia: 30/04/2027",
       "desc": "Disfrutá de descuentos en COSMESHOP con medios de pago seleccionados.",
-      "categoria": "ensenanza",
-      "red": null,
-      "niveles": [
-        "Platinum",
-        "Black"
-      ],
-      "cobranding": "Recompensa"
-    },
-    {
-      "nombre": "Semana BROU en El Rey Del Entretenimiento",
-      "pctMax": 25,
-      "url": "https://beneficios.brou.com.uy/ensenanza/el-rey-del-entretenimiento-semanabrou",
-      "tarjetas": "25% de descuento con tarjetas de crédito BROU VISA Platinum y BROU Recompensa Mastercard Platinum y Black.",
-      "vigencia": "Semana BROU en El Rey Del Entretenimiento",
-      "desc": "Semana BROU en El Rey Del Entretenimiento",
       "categoria": "ensenanza",
       "red": null,
       "niveles": [
@@ -729,6 +726,44 @@
       "cobranding": "Recompensa"
     },
     {
+      "nombre": "FARMACIA CUCHILLA ALTA",
+      "pctMax": 10,
+      "url": "https://beneficios.brou.com.uy/ensenanza/farmacia-cuchilla-alta",
+      "tarjetas": "Obtené un 10% de descuento los miércoles, sábados y domingos en todos los productos de Farmacia Cuchilla Alta abonando con tarjetas de crédito BROU Recompensa Mastercard, BROU PYME Mastercard y BROU P",
+      "vigencia": "Vigencia: 30/04/2027",
+      "desc": "FARMACIA CUCHILLA ALTA",
+      "categoria": "ensenanza",
+      "red": "Mastercard",
+      "niveles": [],
+      "cobranding": "Recompensa"
+    },
+    {
+      "nombre": "FARMACIA JAUREGUIBERRY",
+      "pctMax": 10,
+      "url": "https://beneficios.brou.com.uy/ensenanza/farmacia-jaureguiberry",
+      "tarjetas": "Obtené un 10% de descuento en todos los productos de Farmacia Jaureguiberry, abonando con tarjetas de crédito BROU Recompensa Mastercard, BROU PYME Mastercard y BROU PYME Mastercard Platinum.",
+      "vigencia": "10% de descuento los miércoles, sábados y domingos con tarjetas seleccionadas del BROU.",
+      "desc": "FARMACIA JAUREGUIBERRY",
+      "categoria": "ensenanza",
+      "red": "Mastercard",
+      "niveles": [
+        "Platinum"
+      ],
+      "cobranding": "Recompensa"
+    },
+    {
+      "nombre": "Outlet Viajes SIUR",
+      "pctMax": 10,
+      "url": "https://beneficios.brou.com.uy/ensenanza/Outlet-Viajes-siur",
+      "tarjetas": "Aprovechá 10% de descuento con tarjetas de crédito BROU VISA y BROU Recompensa Mastercard.",
+      "vigencia": "Vigencia: 30/09/2026",
+      "desc": "Aprovechá 10% de descuento con tarjetas de crédito BROU VISA y BROU Recompensa Mastercard.",
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [],
+      "cobranding": "Recompensa"
+    },
+    {
       "nombre": "Macromercado",
       "pctMax": 10,
       "url": "https://beneficios.brou.com.uy/ensenanza/macro-mercado",
@@ -913,18 +948,6 @@
       "cobranding": null
     },
     {
-      "nombre": "Shopify by Marmeto PYMES",
-      "pctMax": 10,
-      "url": "https://beneficios.brou.com.uy/ensenanza/shopify_pymes",
-      "tarjetas": null,
-      "vigencia": "Vigencia: 31/03/2028",
-      "desc": "Shopify by Marmeto PYMES",
-      "categoria": "ensenanza",
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
       "nombre": "Ciberseguridad Mastercard",
       "pctMax": null,
       "url": "https://beneficios.brou.com.uy/ensenanza/ciberseguridad_mastercard",
@@ -1033,6 +1056,30 @@
       "red": null,
       "niveles": [],
       "cobranding": "Recompensa"
+    },
+    {
+      "nombre": "Google Cloud",
+      "pctMax": null,
+      "url": "https://beneficios.brou.com.uy/ensenanza/google-cloud",
+      "tarjetas": "Obtené USD350 en créditos y acceso gratuito a más de 20 productos de Google Cloud.",
+      "vigencia": "Vigencia: 31/12/2026",
+      "desc": "Obtené USD350 en créditos y acceso gratuito a más de 20 productos de Google Cloud.",
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
+    },
+    {
+      "nombre": "FIDAE 2026",
+      "pctMax": null,
+      "url": "https://beneficios.brou.com.uy/ensenanza/fidae-2026",
+      "tarjetas": "2x1 en entradas para FIDAE 2026 con tarjetas de crédito y débito BROU.",
+      "vigencia": "Vigencia: 18/10/2026",
+      "desc": "Disfrutá FIDAE 2026, el Festival Internacional de Artes Escénicas, con un beneficio exclusivo de BROU.",
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Cinemateca",
