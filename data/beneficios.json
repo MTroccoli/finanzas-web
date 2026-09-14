@@ -1,6 +1,6 @@
 {
   "fuente": "bbva.com.uy",
-  "actualizado": "2026-09-11T13:22:59.553Z",
+  "actualizado": "2026-09-14T15:43:46.384Z",
   "total": 302,
   "categorias": [
     "Gastronomía",
@@ -9540,21 +9540,41 @@
       "comercio": "Santillana",
       "categoria": "Librerías y papelerías",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/librerias-y-papelerias/santillana.html",
-      "vigencia": "31 de Julio 2027",
+      "vigencia": "30 de Junio 2027",
       "local": "Juan Manuel Blanes 1132 esq. Maldonado, Cordón",
       "descuentos": [
         {
-          "pct": 25,
-          "tarjetas": "Tarjetas de Crédito BBVA",
-          "texto": "25% Off con Tarjetas de Crédito BBVA",
+          "pct": 20,
+          "tarjetas": "Tarjetas de Crédito Internacional, Oro, Pymes y Corporativas",
+          "texto": "20% Off con Tarjetas de Crédito Internacional, Oro, Pymes y Corporativas",
           "isDebit": false,
-          "niveles": []
+          "niveles": [
+            "Oro",
+            "Clásica"
+          ]
+        },
+        {
+          "pct": 30,
+          "tarjetas": "Tarjetas de Crédito Platinum, Black e Infinite",
+          "texto": "30% Off con Tarjetas de Crédito Platinum, Black e Infinite",
+          "isDebit": false,
+          "niveles": [
+            "Infinite",
+            "Platinum",
+            "Black"
+          ]
         }
       ],
-      "pctMax": 25,
+      "pctMax": 30,
       "tope": null,
       "red": null,
-      "niveles": [],
+      "niveles": [
+        "Oro",
+        "Clásica",
+        "Infinite",
+        "Platinum",
+        "Black"
+      ],
       "cobranding": null
     },
     {
