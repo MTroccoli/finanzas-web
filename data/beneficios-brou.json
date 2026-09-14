@@ -1,8 +1,8 @@
 {
   "fuente": "BROU",
   "url": "https://beneficios.brou.com.uy/beneficios",
-  "fecha": "2026-09-11",
-  "total": 89,
+  "fecha": "2026-09-14",
+  "total": 86,
   "beneficios": [
     {
       "nombre": "Banco Hipotecario del Uruguay",
@@ -125,21 +125,6 @@
       "cobranding": "Recompensa"
     },
     {
-      "nombre": "Semana BROU en DISTRICOMP",
-      "pctMax": 25,
-      "url": "https://beneficios.brou.com.uy/ensenanza/districomp-semanabrou",
-      "tarjetas": "25% de descuento con tarjetas de crédito BROU VISA Platinum y BROU Recompensa Mastercard Platinum y Black.",
-      "vigencia": "Semana BROU en DISTRICOMP",
-      "desc": "Semana BROU en DISTRICOMP",
-      "categoria": "ensenanza",
-      "red": null,
-      "niveles": [
-        "Platinum",
-        "Black"
-      ],
-      "cobranding": "Recompensa"
-    },
-    {
       "nombre": "Hotel del Lago",
       "pctMax": 25,
       "url": "https://beneficios.brou.com.uy/ensenanza/hotel-del-lago",
@@ -155,42 +140,12 @@
       "cobranding": "Recompensa"
     },
     {
-      "nombre": "Semana BROU en CASA JARDIN",
-      "pctMax": 25,
-      "url": "https://beneficios.brou.com.uy/ensenanza/Semana-brou-casa-jardin",
-      "tarjetas": "25% de descuento con tarjetas de crédito BROU VISA Platinum y BROU Recompensa Mastercard Platinum y Black.",
-      "vigencia": "Semana BROU en CASA JARDIN",
-      "desc": "Semana BROU en CASA JARDIN",
-      "categoria": "ensenanza",
-      "red": null,
-      "niveles": [
-        "Platinum",
-        "Black"
-      ],
-      "cobranding": "Recompensa"
-    },
-    {
       "nombre": "Ser Animal",
       "pctMax": 25,
       "url": "https://beneficios.brou.com.uy/ensenanza/ser-animal",
       "tarjetas": "25% de dto. con las tarjetas de crédito BROU VISA Platino y BROU Recompensa Mastercard Black.",
       "vigencia": "Vigencia: 31/03/2027",
       "desc": "Aprovechá los siguientes descuentos en Ser Animal",
-      "categoria": "ensenanza",
-      "red": null,
-      "niveles": [
-        "Platinum",
-        "Black"
-      ],
-      "cobranding": "Recompensa"
-    },
-    {
-      "nombre": "Universo Binario",
-      "pctMax": 25,
-      "url": "https://beneficios.brou.com.uy/ensenanza/semana-brou-universo-binario",
-      "tarjetas": "25% de descuento con tarjetas de crédito BROU VISA Platinum y BROU Recompensa Mastercard Platinum y Black.",
-      "vigencia": "Vigencia: 13/09/2026",
-      "desc": "Hasta 25% de descuento en Universo Binario con tarjetas BROU.",
       "categoria": "ensenanza",
       "red": null,
       "niveles": [
@@ -705,7 +660,7 @@
       "nombre": "SIUR ViajoFeliz",
       "pctMax": 10,
       "url": "https://beneficios.brou.com.uy/ensenanza/viajofeliz",
-      "tarjetas": "10% de descuento con tus tarjetas de crédito BROU Recompensa Mastercard y BROU VISA.",
+      "tarjetas": "10% de descuento en paquetes seleccionados con tus tarjetas de crédito BROU Recompensa Mastercard y BROU VISA.",
       "vigencia": "Vigencia: 31/12/2026",
       "desc": "Disfrutá de beneficios exclusivos en tus próximos viajes internacionales y paquetes seleccionados con ViajoFeliz.",
       "categoria": "ensenanza",
@@ -755,13 +710,25 @@
       "nombre": "Outlet Viajes SIUR",
       "pctMax": 10,
       "url": "https://beneficios.brou.com.uy/ensenanza/Outlet-Viajes-siur",
-      "tarjetas": "Aprovechá 10% de descuento con tarjetas de crédito BROU VISA y BROU Recompensa Mastercard.",
+      "tarjetas": "Aprovechá 10% de descuento en paquetes seleccionados con tarjetas de crédito BROU VISA y BROU Recompensa Mastercard.",
       "vigencia": "Vigencia: 30/09/2026",
-      "desc": "Aprovechá 10% de descuento con tarjetas de crédito BROU VISA y BROU Recompensa Mastercard.",
+      "desc": "Aprovechá 10% de descuento en paquetes seleccionados con tarjetas de crédito BROU VISA y BROU Recompensa Mastercard.",
       "categoria": "ensenanza",
       "red": null,
       "niveles": [],
       "cobranding": "Recompensa"
+    },
+    {
+      "nombre": "Almacén Rural",
+      "pctMax": 10,
+      "url": "https://beneficios.brou.com.uy/ensenanza/almacn-rural",
+      "tarjetas": "10% de descuento en productos seleccionados de Almacén Rural con BROU Agro VISA.",
+      "vigencia": "Vigencia: 31/10/2026",
+      "desc": "En Almacén Rural, abonando con la tarjeta de crédito BROU Agro VISA, aprovechá un 10% de descuento en productos seleccionados para tu actividad agropecuaria.",
+      "categoria": "ensenanza",
+      "red": "Visa",
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Macromercado",
@@ -1041,18 +1008,6 @@
       "vigencia": null,
       "desc": "2 x 1 en entradas con tus Tarjetas de Crédito y Débito VISA y BROU Recompensa Mastercard.",
       "categoria": "espectaculos",
-      "red": null,
-      "niveles": [],
-      "cobranding": "Recompensa"
-    },
-    {
-      "nombre": "Expo Café",
-      "pctMax": null,
-      "url": "https://beneficios.brou.com.uy/ensenanza/expocafe",
-      "tarjetas": "Disfrutá del 2x1 en entradas para Expo Café abonando con tarjetas de crédito y débito BROU VISA y BROU Recompensa Mastercard.",
-      "vigencia": "Vigencia: 13/09/2026",
-      "desc": "Disfrutá del 2x1 en entradas para Expo Café abonando con tarjetas de crédito y débito BROU VISA y BROU Recompensa Mastercard.",
-      "categoria": "ensenanza",
       "red": null,
       "niveles": [],
       "cobranding": "Recompensa"
