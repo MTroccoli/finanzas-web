@@ -3618,10 +3618,19 @@ window.Mods.gastos = {
   },
 
   async _checkAutoPresetsGastos() {
+    // Guard de reentrada: dos renders solapados leerían los mismos presets
+    // antes de actualizarse ultima_carga → auto-gasto duplicado.
+    if (this._autoPresetsRunning) return;
     // Throttle: los presets son mensuales — chequear una vez cada 10 min por
     // sesión alcanza y evita una query extra en cada navegación de sub-tab.
     if (this._autoPresetsTs && Date.now() - this._autoPresetsTs < 600000) return;
     this._autoPresetsTs = Date.now();
+    this._autoPresetsRunning = true;
+    try { await this._checkAutoPresetsGastosInner(); }
+    finally { this._autoPresetsRunning = false; }
+  },
+
+  async _checkAutoPresetsGastosInner() {
     const today   = new Date().toISOString().slice(0, 10);
     const presets = await this._loadGastosPresets();
     let changed   = false;
@@ -3630,23 +3639,31 @@ window.Mods.gastos = {
       if (!p.auto || !p.frecuencia || !p.ultima_carga) continue;
       // TDC recurrentes no se auto-cargan — vienen por el EDC; solo Efectivo/sin medio
       if (p.banco_tarjeta && p.banco_tarjeta !== 'Efectivo') continue;
-      if (today < this._nextDueGasto(p.ultima_carga, p.frecuencia)) continue;
-      try {
-        await dbInsert('gastos', {
-          fecha:         today,
-          monto:         parseFloat(p.monto),
-          moneda:        p.moneda || 'UYU',
-          comercio:      p.comercio || null,
-          categoria_id:  p.categoria_id ? +p.categoria_id : null,
-          tipo_gasto:    'recurrente',
-          banco_tarjeta: p.banco_tarjeta || null,
-          dividido_entre: p.dividido_entre || 1,
-          fuente:        'manual',
-        });
-        presets[i].ultima_carga = today;
+      // Cada vencimiento se inserta en su día anclado (ej. el 10) tomado de
+      // ultima_carga, no en el día en que se abrió la app. El bucle rellena
+      // meses salteados sin arrastrar el cronograma hacia adelante (drift).
+      let n = 0, guard = 0;
+      let due = this._nextDueGasto(p.ultima_carga, p.frecuencia);
+      while (due <= today && guard++ < 24) {
+        try {
+          await dbInsert('gastos', {
+            fecha:         due,
+            monto:         parseFloat(p.monto),
+            moneda:        p.moneda || 'UYU',
+            comercio:      p.comercio || null,
+            categoria_id:  p.categoria_id ? +p.categoria_id : null,
+            tipo_gasto:    'recurrente',
+            banco_tarjeta: p.banco_tarjeta || null,
+            dividido_entre: p.dividido_entre || 1,
+            fuente:        'manual',
+          });
+        } catch { break; }
+        p.ultima_carga = due;
         changed = true;
-        toast(`⚡ Auto-gasto: ${p.comercio || 'Gasto'} (${p.moneda || 'UYU'} ${p.monto})`);
-      } catch { /* silent */ }
+        n++;
+        due = this._nextDueGasto(p.ultima_carga, p.frecuencia);
+      }
+      if (n) toast(`⚡ Auto-gasto: ${p.comercio || 'Gasto'} (${p.moneda || 'UYU'} ${p.monto})${n > 1 ? ` ×${n}` : ''}`);
     }
     if (changed) {
       await this._saveGastosPresets(presets);
