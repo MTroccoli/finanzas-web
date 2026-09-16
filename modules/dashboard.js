@@ -34,12 +34,12 @@ window.Mods.dashboard = {
   },
 
   async _fetchAll() {
-    const { desde12, desde6 } = this._dateRange();
+    const { desde12 } = this._dateRange();
     const [gastosRes, ingresosRes, cuotasRes, tcCfg, tiposIngRes] = await Promise.all([
       getDB().from('gastos').select('fecha,monto,moneda,tipo_gasto,incluido_en_gastos,cuotas_totales,cuota_actual,comercio,banco_tarjeta')
         .gte('fecha', desde12).order('fecha', {ascending: true}),
       getDB().from('ingresos').select('fecha,monto,moneda,tipo_id,descripcion')
-        .gte('fecha', desde6).order('fecha', {ascending: true}),
+        .gte('fecha', desde12).order('fecha', {ascending: true}),
       getDB().from('gastos').select('comercio,monto,moneda,cuota_actual,cuotas_totales,fecha')
         .not('cuotas_totales', 'is', null).order('fecha', {ascending: false}),
       getConfig('tipo_cambio'),
@@ -142,14 +142,27 @@ window.Mods.dashboard = {
     const recAvg = gastos
       .filter(g => g.tipo_gasto === 'recurrente' && g.fecha.slice(0,7) === lastClosedYM)
       .reduce((s, g) => s + toDisp(g.monto, g.moneda || 'UYU'), 0);
-    const ingAvg = months6.slice(2, 5).reduce((s, m) => s + (byMonth6[m.ym]?.ing || 0), 0) / 3;
-
-    // Casual avg — last 12 months excluding current month (rolling year)
+    // Rolling 12 months excluding current month (año móvil)
     const all12YMs = new Set();
     for (let i = 12; i >= 1; i--) {
       const d = new Date(curY, curM - 1 - i, 1);
       all12YMs.add(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`);
     }
+
+    // Ingresos proyectados: promedio de los meses (de los últimos 12) que
+    // efectivamente tuvieron ingresos — divide por meses con datos, no por 12.
+    const ingByYM = {};
+    ingresos.filter(i => all12YMs.has(i.fecha.slice(0,7)))
+      .forEach(i => {
+        const ym = i.fecha.slice(0,7);
+        ingByYM[ym] = (ingByYM[ym] || 0) + toDisp(i.monto, i.moneda || 'UYU');
+      });
+    const ingMonths = Object.keys(ingByYM).length;
+    const ingAvg = ingMonths > 0
+      ? Object.values(ingByYM).reduce((s, v) => s + v, 0) / ingMonths
+      : 0;
+
+    // Casual avg — last 12 months excluding current month (rolling year)
     const isCasual = g => g.tipo_gasto !== 'recurrente' && (g.cuotas_totales || 1) <= 1;
     const casualRows = gastos.filter(g => isCasual(g) && all12YMs.has(g.fecha.slice(0,7)));
     const casualMonthsWithData = new Set(casualRows.map(g => g.fecha.slice(0,7)));
