@@ -1037,6 +1037,28 @@ window.Mods.gastos = {
     this._attachTarjetasHandlers();
   },
 
+  // Total por moneda de las filas ACTIVAS (marcadas). Usa el monto CRUDO
+  // (el cargo completo del banco, sin dividir) para poder cuadrar contra el
+  // total del EDC original. Se recalcula al activar/desactivar filas.
+  _reviewTotals() {
+    const tot = {};
+    for (const t of this._pending) {
+      if (!t._include) continue;
+      const m = t.moneda || 'UYU';
+      tot[m] = (tot[m] || 0) + (parseFloat(t.monto) || 0);
+    }
+    return tot;
+  },
+
+  _reviewTotalsHTML() {
+    const tot = this._reviewTotals();
+    const keys = [...new Set(['UYU', 'USD', ...Object.keys(tot)])].filter(k => k in tot);
+    if (!keys.length) return '<span style="color:var(--text-sec)">—</span>';
+    return keys.map(m =>
+      `<b style="font-family:'DM Mono',monospace;color:var(--text)">${this._fmtMon(tot[m], m)}</b>`
+    ).join('<span style="color:var(--text-sec)"> · </span>');
+  },
+
   _drawReview() {
     const catOpts    = this._cats.map(c => `<option value="${c.id}">${c.icono} ${c.nombre}</option>`).join('');
     const adicCards  = this._adicCards || [];
@@ -1131,6 +1153,10 @@ window.Mods.gastos = {
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
           <div>
             <h3 style="margin:0 0 4px">${this._pending.length} transacciones · <span id="g-sel-count">${sel}</span> seleccionadas</h3>
+            <div style="font-size:.82rem;font-weight:600;margin:0 0 6px">
+              🧾 Total activo: <span id="g-review-totals">${this._reviewTotalsHTML()}</span>
+              <span style="font-size:.66rem;color:var(--text-sec);font-weight:400">— cuadralo contra el EDC</span>
+            </div>
             <div style="display:flex;align-items:center;gap:12px;font-size:.75rem;color:var(--text-sec);flex-wrap:wrap">
               <span style="display:flex;align-items:center;gap:6px">
                 📅 EDC:
@@ -1164,6 +1190,8 @@ window.Mods.gastos = {
       const n = this._pending.filter(t => t._include).length;
       document.getElementById('g-sel-count').textContent = n;
       document.getElementById('g-confirm-n').textContent = n;
+      const totEl = document.getElementById('g-review-totals');
+      if (totEl) totEl.innerHTML = this._reviewTotalsHTML();
       this._pending.forEach(t => {
         const row = document.querySelector(`tr[data-pending-id="${t._id}"]`);
         if (row) row.style.opacity = t._include ? 1 : 0.4;
