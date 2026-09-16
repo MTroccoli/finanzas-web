@@ -1362,8 +1362,9 @@ window.Mods.gastos = {
     let displayFecha = t.fecha;
     let fechaCorrected = false;
     if ((t._cuotaActual ?? 0) > 1 && this._edcMes) {
-      const dd = String(t.fecha).slice(8, 10);
       const [yyyy, mm] = this._edcMes.split('-');
+      const lastDay = new Date(+yyyy, +mm, 0).getDate();   // clamp: evita fechas tipo 04-31
+      const dd = String(Math.min(parseInt(String(t.fecha).slice(8, 10), 10) || 1, lastDay)).padStart(2, '0');
       const corrected = `${yyyy}-${mm}-${dd}`;
       if (corrected !== t.fecha) { displayFecha = corrected; fechaCorrected = true; }
     }
@@ -1455,8 +1456,9 @@ window.Mods.gastos = {
         const monto = t.monto / N;
         let fecha = t.fecha;
         if ((t._cuotaActual ?? 0) > 1 && this._edcMes) {
-          const dd = String(t.fecha).slice(8, 10);
           const [yyyy, mm] = this._edcMes.split('-');
+          const lastDay = new Date(+yyyy, +mm, 0).getDate();   // clamp: evita fechas tipo 04-31
+          const dd = String(Math.min(parseInt(String(t.fecha).slice(8, 10), 10) || 1, lastDay)).padStart(2, '0');
           fecha = `${yyyy}-${mm}-${dd}`;
         }
         let notas = N > 1 ? `Dividido entre ${N} · total original: ${t.monto} ${t.moneda}` : null;
