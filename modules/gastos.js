@@ -72,7 +72,7 @@ window.Mods.gastos = {
     if (!s) return '';
     return s.toLowerCase()
       .normalize('NFD').replace(/[̀-ͯ]/g, '')         // quitar tildes
-      .replace(/\b\d{1,2}\/\d{1,2}\b/g, '')                     // quitar cuotas 1/12, 2/6, etc.
+      .replace(/\b\d{1,2}\/\s*\d{1,2}\b/g, '')                  // quitar cuotas 1/12, 2/6, 6/ 6 (Itaú con espacio)
       .replace(/\b\d{3,}\b/g, '')                               // quitar números largos (códigos)
       .replace(/\*+\d+/g, '')                                   // quitar *1234
       .replace(/[^a-z0-9 ]+/g, ' ')                             // solo alfanumérico
@@ -87,7 +87,7 @@ window.Mods.gastos = {
     if (!s) return s;
     return String(s)
       .replace(/\(\s*[A-Za-z]{2,3}\s*,[^)]*\)/g, ' ')   // (BR ,BRL, 166,16)
-      .replace(/\b\d{1,2}\/\d{1,2}\b/g, ' ')             // cuota 04/04, 1/12
+      .replace(/\b\d{1,2}\/\s*\d{1,2}\b/g, ' ')          // cuota 04/04, 1/12, 6/ 6 (Itaú con espacio)
       .replace(/\s*([·\-–|])\s*$/,'')                    // separadores colgando al final
       .replace(/\s{2,}/g, ' ')
       .replace(/\s+([.,;])/g, '$1')
@@ -819,7 +819,8 @@ window.Mods.gastos = {
           // Leer la cuota del patrón N/M si la IA no la marcó (la cuota se conserva
           // en sus campos; el N/M se quita del nombre en el cleanComercio de abajo).
           if (!cuotaActual) {
-            const cm = descripcion.match(/\b(\d{1,2})\/(\d{1,2})\b/);
+            // Itaú escribe cuotas como "6/ 6" (espacio tras la barra); tolerarlo.
+            const cm = descripcion.match(/\b(\d{1,2})\/\s*(\d{1,2})\b/);
             if (cm) {
               const n = parseInt(cm[1], 10), tot = parseInt(cm[2], 10);
               if (tot >= 2 && tot <= 60 && n >= 1 && n <= tot) {

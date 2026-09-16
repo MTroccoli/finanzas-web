@@ -2,7 +2,9 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Max-Age': '86400',
 };
 
 function parseRobust(text: string): any {
@@ -91,7 +93,10 @@ Muchos EDC incluyen secciones separadas por tarjeta adicional. Debés:
 
 ## CAMPOS POR TRANSACCIÓN
 Inclui exactamente estos campos para cada transacción:
-- fecha: string YYYY-MM-DD
+- fecha: string YYYY-MM-DD. Reglas de fecha:
+  * Algunos bancos (Itaú) escriben la fecha como "DD MM AA" separada por ESPACIOS (ej "05 04 26" = día 05, mes 04, año 2026 → "2026-04-05"). El año de dos dígitos "AA" es 20AA.
+  * Otros bancos usan "DD/MM" o "DD/MM/AA".
+  * Usá SIEMPRE la fecha LITERAL de cada renglón. Las compras en cuotas muestran la fecha de la compra ORIGINAL, que puede ser de meses o incluso años ANTERIORES al cierre del resumen (ej un resumen de abril 2026 puede tener una cuota con fecha "09 10 25" = 2025-10-09). NO cambies esa fecha al mes del resumen.
 - descripcion: string — nombre del comercio LIMPIO. NO incluyas el número de cuota (ej "04/04", "1/12") ni el bloque de moneda extranjera entre paréntesis (ej "(BR ,BRL, 166,16)"); esos datos van en sus campos. Ejemplos: "LOJAS RENNER 04/04" → "LOJAS RENNER"; "ALECRIM (BR ,BRL, 166,16)" → "ALECRIM".
 - monto: number (positivo=gasto/débito, negativo=crédito/devolución/beneficio/descuento)
 - moneda: "UYU" | "USD" — ver la sección MONEDA más abajo, es CRÍTICO no equivocarse
@@ -101,8 +106,8 @@ Inclui exactamente estos campos para cada transacción:
   * "recurrente": servicios que se cobran todos los meses — streaming (Netflix, Spotify, Disney+, HBO, Apple TV, YouTube Premium), gym/fitness, seguros externos, internet, telefonía, planes de datos, cualquier suscripción mensual automática
   * "tdc": cargos propios de la tarjeta — cargo anual, renovación anual, IVA de financiación, intereses, mora, seguro de vida de la tarjeta, seguro de desempleo de la tarjeta, comisiones del banco sobre la tarjeta
   * "casual": cualquier otra compra puntual que no es recurrente ni cargo de tarjeta
-- cuota_actual: number | null (ej: 2 si dice "2/12")
-- cuotas_totales: number | null (ej: 12 si dice "2/12")
+- cuota_actual: number | null. El indicador de cuota aparece como "N/M" entre la descripción y los importes, y PUEDE tener espacios alrededor de la barra (ej "2/12", "7/10", "6/ 6", "1/ 2"). cuota_actual = N (ej: 2 si dice "2/12", 6 si dice "6/ 6").
+- cuotas_totales: number | null = M (ej: 12 si dice "2/12", 6 si dice "6/ 6"). OJO: NO confundas el indicador de cuota de una transacción con la tabla de "oferta de financiación de saldo" que algunos bancos ponen al final (líneas tipo "3 cuotas de ...", "6 cuotas de ...", "12 cuotas de ... TEA ...%"): esa tabla NO son transacciones, ignorala por completo.
 - tarjeta_adicional: boolean
 - adicional_card_digits: string | null (solo si tarjeta_adicional: true)
 - adicional_card_name: string | null (solo si tarjeta_adicional: true)
@@ -137,6 +142,16 @@ REGLAS ABSOLUTAS para determinar la moneda:
 6. Comercios LOCALES uruguayos (telepeaje, peajes, ANTEL, UTE, OSE, supermercados, farmacias, ómnibus/STM, taxis, combustible) son CASI SIEMPRE pesos (UYU).
 7. Si tenés duda, la moneda por DEFECTO es "UYU" — NO "USD".
 8. La MAYORÍA de las transacciones en un EDC uruguayo son en pesos. Si estás marcando más de la mitad como USD, probablemente estás equivocado.
+
+## FORMATO DE FILA ITAÚ URUGUAY (si el documento es de Itaú)
+Cada transacción se lista con columnas separadas por espacios, en este orden:
+  FECHA(DD MM AA)  TERMINACIÓN(4 dígitos)  DESCRIPCIÓN  [N/M de cuota]  [importe moneda origen]  importe en pesos
+- Los 4 dígitos justo después de la fecha son la TERMINACIÓN de la tarjeta (ej "6028"). NO son parte de la descripción ni del importe. Si esa terminación corresponde a una tarjeta adicional, usala como adicional_card_digits; si es la tarjeta titular, ignorala.
+- Hay hasta DOS columnas de importe: la de la IZQUIERDA es el importe en la moneda de ORIGEN (solo aparece si la compra fue en moneda extranjera, normalmente USD); la de la DERECHA es el importe en PESOS (UYU). Determiná la moneda así: si el renglón SOLO tiene importe en la columna de pesos (derecha) → moneda "UYU"; si tiene importe en la columna de origen (izquierda) → esa es la moneda (normalmente "USD", ej suscripciones como CLAUDE.AI, APPLE.COM/BILL, GOOGLE, o compras en el exterior/aerolíneas).
+- Líneas que NO son transacciones y debés IGNORAR: "SALDO DEL ESTADO DE CUENTA ANTERIOR", "SALDO CONTADO", "SALDO FINANCIABLE", "SEGURO DE VIDA SOBRE SALDO" total, la tabla de oferta de financiación ("N cuotas de ... TEA ...%"), "UD. HA GENERADO ... MILLAS", totales y textos promocionales.
+- "PAGOS" con importe negativo = pago del titular a la tarjeta → es_pago: true.
+- "REDUC. IVA LEY 17934" / "REDUC. IVA" (importe negativo) = reducción/crédito de IVA → moneda según la columna, tipo_gasto "tdc".
+- "COM. PAGO RED COBRANZA" y cargos/comisiones/seguros de la tarjeta → tipo_gasto "tdc".
 
 ## DATOS DEL DOCUMENTO
 También extraé del encabezado/pie del documento:
