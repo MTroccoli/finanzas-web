@@ -1,8 +1,8 @@
 {
   "fuente": "BROU",
   "url": "https://beneficios.brou.com.uy/beneficios",
-  "fecha": "2026-09-14",
-  "total": 86,
+  "fecha": "2026-09-18",
+  "total": 87,
   "beneficios": [
     {
       "nombre": "Banco Hipotecario del Uruguay",
@@ -81,6 +81,18 @@
       "red": "Mastercard",
       "niveles": [],
       "cobranding": "Recompensa"
+    },
+    {
+      "nombre": "Scanntech",
+      "pctMax": 30,
+      "url": "https://beneficios.brou.com.uy/ensenanza/scanntech",
+      "tarjetas": "30% de descuento en productos de marcas seleccionadas, en locales adheridos, abonando con tarjetas de crédito BROU VISA.",
+      "vigencia": "Vigencia: 31/10/2026",
+      "desc": "En locales adheridos a Scanntech, abonando con tarjetas de crédito BROU VISA, aprovechá un 30% de descuento en productos de marcas seleccionadas.",
+      "categoria": "ensenanza",
+      "red": "Visa",
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Cabify",
@@ -1016,9 +1028,9 @@
       "nombre": "Google Cloud",
       "pctMax": null,
       "url": "https://beneficios.brou.com.uy/ensenanza/google-cloud",
-      "tarjetas": "Obtené USD350 en créditos y acceso gratuito a más de 20 productos de Google Cloud.",
+      "tarjetas": "Obtené USD 350 en créditos y acceso gratuito a más de 20 productos de Google Cloud.",
       "vigencia": "Vigencia: 31/12/2026",
-      "desc": "Obtené USD350 en créditos y acceso gratuito a más de 20 productos de Google Cloud.",
+      "desc": "Obtené USD 350 en créditos y acceso gratuito a más de 20 productos de Google Cloud.",
       "categoria": "ensenanza",
       "red": null,
       "niveles": [],
