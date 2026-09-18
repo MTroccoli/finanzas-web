@@ -1,6 +1,6 @@
 {
   "fuente": "bbva.com.uy",
-  "actualizado": "2026-09-14T15:43:46.384Z",
+  "actualizado": "2026-09-18T13:31:57.523Z",
   "total": 302,
   "categorias": [
     "Gastronomía",
@@ -7460,13 +7460,13 @@
       "comercio": "Prodéco",
       "categoria": "Hogar y Decoración",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/hogar-y-decoracion/prodeco.html",
-      "vigencia": "31 de Julio 2027",
+      "vigencia": "30 de Setiembre 2026",
       "local": null,
       "descuentos": [
         {
-          "pct": 15,
+          "pct": 20,
           "tarjetas": "Tarjetas de Crédito Internacional, Oro, Pymes y Corporativas",
-          "texto": "15% Off con Tarjetas de Crédito Internacional, Oro, Pymes y Corporativas",
+          "texto": "20% Off con Tarjetas de Crédito Internacional, Oro, Pymes y Corporativas",
           "isDebit": false,
           "niveles": [
             "Oro",
@@ -7474,9 +7474,9 @@
           ]
         },
         {
-          "pct": 15,
+          "pct": 30,
           "tarjetas": "Tarjetas de Crédito Platinum, Black e Infinite",
-          "texto": "15% Off con Tarjetas de Crédito Platinum, Black e Infinite",
+          "texto": "30% Off con Tarjetas de Crédito Platinum, Black e Infinite",
           "isDebit": false,
           "niveles": [
             "Infinite",
@@ -7485,7 +7485,7 @@
           ]
         }
       ],
-      "pctMax": 15,
+      "pctMax": 30,
       "tope": null,
       "red": null,
       "niveles": [
@@ -10251,13 +10251,13 @@
       "comercio": "Pinturería Nalon",
       "categoria": "Otros",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/otros/pintureria-Nalon.html",
-      "vigencia": "31 de Agosto 2027",
+      "vigencia": "30 de Setiembre de 2026",
       "local": null,
       "descuentos": [
         {
-          "pct": 15,
+          "pct": 30,
           "tarjetas": "Tarjetas de Crédito Internacional, Oro, Pymes y Corporativas, Platinum, Black e Infinite",
-          "texto": "15% Off con Tarjetas de Crédito Internacional, Oro, Pymes y Corporativas, Platinum, Black e Infinite",
+          "texto": "30% Off con Tarjetas de Crédito Internacional, Oro, Pymes y Corporativas, Platinum, Black e Infinite",
           "isDebit": false,
           "niveles": [
             "Infinite",
@@ -10268,7 +10268,7 @@
           ]
         }
       ],
-      "pctMax": 15,
+      "pctMax": 30,
       "tope": null,
       "red": null,
       "niveles": [
