@@ -1,7 +1,7 @@
 {
   "fuente": "santander.com.uy",
-  "actualizado": "2026-09-14T16:38:37.491Z",
-  "total": 327,
+  "actualizado": "2026-09-18T14:40:49.908Z",
+  "total": 326,
   "beneficios": [
     {
       "nombre": "Optica Estela Jinchuk",
@@ -3561,17 +3561,6 @@
     {
       "nombre": "Kiricocho",
       "url": "https://www.santander.com.uy/beneficios/kiricocho",
-      "pctMax": 15,
-      "vigencia": null,
-      "tarjetas": "Tarjetas de crédito",
-      "desc": "El descuento se efectúa en el punto de venta.",
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
-      "nombre": "Indra Veo Veo",
-      "url": "https://www.santander.com.uy/beneficios/indra-veo-veo",
       "pctMax": 15,
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
