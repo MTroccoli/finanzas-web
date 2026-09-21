@@ -1,8 +1,8 @@
 {
   "fuente": "BROU",
   "url": "https://beneficios.brou.com.uy/beneficios",
-  "fecha": "2026-09-18",
-  "total": 87,
+  "fecha": "2026-09-21",
+  "total": 86,
   "beneficios": [
     {
       "nombre": "Banco Hipotecario del Uruguay",
@@ -464,18 +464,6 @@
       "desc": "En Interagrovial, abonando con tarjeta de crédito BROU Agro VISA, accedé a un 20% de descuento en repuestos seleccionados para sembradoras y plantadoras.",
       "categoria": "ensenanza",
       "red": "Visa",
-      "niveles": [],
-      "cobranding": null
-    },
-    {
-      "nombre": "Rural del Prado 2026",
-      "pctMax": 20,
-      "url": "https://beneficios.brou.com.uy/ensenanza/expo-prado-2026",
-      "tarjetas": null,
-      "vigencia": "Vigencia: 20/09/2026",
-      "desc": "Disfrutá de la Rural del Prado con beneficios exclusivos BROU:",
-      "categoria": "ensenanza",
-      "red": null,
       "niveles": [],
       "cobranding": null
     },
