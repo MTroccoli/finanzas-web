@@ -1,7 +1,7 @@
 {
   "fuente": "bbva.com.uy",
-  "actualizado": "2026-09-18T13:31:57.523Z",
-  "total": 302,
+  "actualizado": "2026-09-21T15:48:24.025Z",
+  "total": 301,
   "categorias": [
     "Gastronomía",
     "Moda",
@@ -9008,7 +9008,7 @@
       "categoria": "Viajes",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/viajes/aquarella-hotel.html",
       "vigencia": "31 de Agosto 2027",
-      "local": "Avenida Central S/N entre calles número 10 y 12, Punta del Diablo, Rocha",
+      "local": null,
       "descuentos": [],
       "pctMax": null,
       "tope": null,
@@ -9290,46 +9290,6 @@
         "Infinite",
         "Platinum",
         "Black"
-      ],
-      "cobranding": null
-    },
-    {
-      "comercio": "AquaPark",
-      "categoria": "Experiencias",
-      "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/experiencias/AquaPark.html",
-      "vigencia": "30 de Noviembre 2026",
-      "local": null,
-      "descuentos": [
-        {
-          "pct": 15,
-          "tarjetas": "Tarjetas de Débito",
-          "texto": "15% Off con Tarjetas de Débito",
-          "isDebit": true,
-          "niveles": []
-        },
-        {
-          "pct": 15,
-          "tarjetas": "Tarjetas de Crédito Internacional, Oro, Pymes y Corporativas, Platinum, Black e Infinite",
-          "texto": "15% Off con Tarjetas de Crédito Internacional, Oro, Pymes y Corporativas, Platinum, Black e Infinite",
-          "isDebit": false,
-          "niveles": [
-            "Infinite",
-            "Platinum",
-            "Black",
-            "Oro",
-            "Clásica"
-          ]
-        }
-      ],
-      "pctMax": 15,
-      "tope": null,
-      "red": null,
-      "niveles": [
-        "Infinite",
-        "Platinum",
-        "Black",
-        "Oro",
-        "Clásica"
       ],
       "cobranding": null
     },
