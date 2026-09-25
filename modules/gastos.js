@@ -142,11 +142,12 @@ window.Mods.gastos = {
     // Spinner solo en el primer boot del módulo; al navegar entre sub-tabs se
     // conserva el contenido anterior mientras cargan los datos (sin flash).
     if (!this._cats?.length) c.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
-    const [cats, learnedRows, excludedCards, savedTC, monedaVista, divRows] = await Promise.all([
+    const [cats, learnedRows, excludedCards, savedTC, globalTC, monedaVista, divRows] = await Promise.all([
       dbFetch('categorias_gastos', { filters: { activo: 1 }, order: { col: 'nombre', asc: true } }),
       dbFetch('merchant_categorias', { order: { col: 'seen_count', asc: false } }).catch(() => []),
       getConfig('gastos_tarjetas_excluidas').catch(() => ''),
       getConfig('gastos_tc').catch(() => ''),
+      getConfig('tipo_cambio').catch(() => ''),
       getConfig('moneda_vista').catch(() => null),
       getDB().from('gastos').select('comercio,dividido_entre').gt('dividido_entre', 1).not('comercio', 'is', null)
         .then(r => r.data || []).catch(() => []),
@@ -173,7 +174,10 @@ window.Mods.gastos = {
       this._learnedDiv[k] = +Object.entries(counts).sort((a, b) => b[1] - a[1])[0][0];
     }
     this._excludedCards = excludedCards || '';
-    if (savedTC && !this._tc) this._tc = savedTC;
+    // TC: gastos_tc propio → global tipo_cambio → default. Antes solo leía
+    // gastos_tc; si nunca se seteaba, _tc quedaba vacío y el detalle en vista
+    // UYU/USD no mostraba importes pidiendo un T/C en una barra inexistente.
+    if (!this._tc) this._tc = savedTC || globalTC || '';
     this._splitCatIds = new Set(
       cats.filter(c => this._splitCatNames.has(c.nombre)).map(c => c.id)
     );
@@ -2157,7 +2161,7 @@ window.Mods.gastos = {
           </div>` : ''}
         </div>
         ${needsTC ? `<div style="margin-top:8px;font-size:.75rem;color:var(--red)">
-          ⚠ Ingresá el T/C en la barra de arriba para convertir importes.</div>` : ''}
+          ⚠ Configurá el Tipo de Cambio en Configuración para convertir importes.</div>` : ''}
       </div>
 
 
@@ -2389,7 +2393,7 @@ window.Mods.gastos = {
           </div>
         </div>
         ${needsTC ? `<div style="margin-top:8px;font-size:.75rem;color:var(--red)">
-          ⚠ Ingresá el T/C en la barra de arriba para convertir importes.</div>` : ''}
+          ⚠ Configurá el Tipo de Cambio en Configuración para convertir importes.</div>` : ''}
       </div>` : needsTC ? `<div class="form-card" style="padding:10px 16px;margin-bottom:.75rem;font-size:.75rem;color:var(--red)">
         ⚠ Ingresá el T/C en la barra de arriba para convertir importes.</div>` : ''}
 
@@ -2968,7 +2972,7 @@ window.Mods.gastos = {
             </select>
           </div>
         </div>
-        ${!tc ? '<div style="margin-top:8px;font-size:.75rem;color:var(--red)">⚠ Ingresá el Tipo de Cambio en la barra de arriba para convertir los importes.</div>' : ''}
+        ${!tc ? '<div style="margin-top:8px;font-size:.75rem;color:var(--red)">⚠ Configurá el Tipo de Cambio en Configuración para convertir los importes.</div>' : ''}
       </div>
 
       <!-- Tarjetas resumen -->
