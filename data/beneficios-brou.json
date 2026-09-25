@@ -1,8 +1,8 @@
 {
   "fuente": "BROU",
   "url": "https://beneficios.brou.com.uy/beneficios",
-  "fecha": "2026-09-21",
-  "total": 86,
+  "fecha": "2026-09-25",
+  "total": 87,
   "beneficios": [
     {
       "nombre": "Banco Hipotecario del Uruguay",
@@ -382,7 +382,7 @@
       "pctMax": 20,
       "url": "https://beneficios.brou.com.uy/moda/pappolino",
       "tarjetas": "20% de descuento con tarjetas de crédito BROU VISA Platinum y BROU Recompensa Mastercard Platinum y Black.",
-      "vigencia": "Vigencia: 30/09/2026",
+      "vigencia": "Vigencia: 31/12/2026",
       "desc": "Aprovechá los siguientes beneficios en tus compras",
       "categoria": "moda",
       "red": null,
@@ -409,7 +409,7 @@
       "pctMax": 20,
       "url": "https://beneficios.brou.com.uy/ensenanza/guapa",
       "tarjetas": "20% de descuento con tarjetas de crédito BROU VISA Platinum y BROU Recompensa Mastercard Platinum y Black.",
-      "vigencia": "Vigencia: 30/09/2026",
+      "vigencia": "Vigencia: 31/12/2026",
       "desc": "Aprovechá los siguientes descuentos en tus compras",
       "categoria": "ensenanza",
       "red": null,
@@ -484,7 +484,7 @@
       "pctMax": 20,
       "url": "https://beneficios.brou.com.uy/moda/paprika",
       "tarjetas": "20% de descuento con tarjetas de crédito BROU VISA Platinum y BROU Recompensa Mastercard Platinum y Black.",
-      "vigencia": "Vigencia: 30/09/2026",
+      "vigencia": "Vigencia: 31/12/2026",
       "desc": "Abonando con tarjetas del Banco República accedés a los siguientes descuentos:",
       "categoria": "moda",
       "red": null,
@@ -564,6 +564,18 @@
       "vigencia": "Todos los días tenés descuento con los Medios de Pago de Tu Banco",
       "desc": "Todos los días tenés descuento con los Medios de Pago de Tu Banco",
       "categoria": "PYMES-BENEFICIO",
+      "red": null,
+      "niveles": [],
+      "cobranding": "Recompensa"
+    },
+    {
+      "nombre": "Lorenza Indumentaria femenina",
+      "pctMax": 15,
+      "url": "https://beneficios.brou.com.uy/ensenanza/lorenza-indumentaria-femenina",
+      "tarjetas": "Aprovechá un 15% en todas las compras con tarjetas de crédito y débito VISA, BROU Recompensa Mastercard y MI BROU Tarjeta Joven tanto para compras web como presenciales y Multipagos eBROU.",
+      "vigencia": "Vigencia: 31/07/2027",
+      "desc": "Lorenza Indumentaria femenina",
+      "categoria": "ensenanza",
       "red": null,
       "niveles": [],
       "cobranding": "Recompensa"
