@@ -174,10 +174,10 @@ window.Mods.gastos = {
       this._learnedDiv[k] = +Object.entries(counts).sort((a, b) => b[1] - a[1])[0][0];
     }
     this._excludedCards = excludedCards || '';
-    // TC: gastos_tc propio → global tipo_cambio → default. Antes solo leía
-    // gastos_tc; si nunca se seteaba, _tc quedaba vacío y el detalle en vista
-    // UYU/USD no mostraba importes pidiendo un T/C en una barra inexistente.
-    if (!this._tc) this._tc = savedTC || globalTC || '';
+    // TC unificado: única clave global `tipo_cambio`. `gastos_tc` (savedTC)
+    // solo se lee como fallback legacy para no perder valores viejos; ya no
+    // se escribe más (_saveTC persiste en tipo_cambio).
+    if (!this._tc) this._tc = globalTC || savedTC || '';
     this._splitCatIds = new Set(
       cats.filter(c => this._splitCatNames.has(c.nombre)).map(c => c.id)
     );
@@ -226,10 +226,10 @@ window.Mods.gastos = {
   },
 
 
-  // Guarda el TC en configuracion (fire-and-forget)
+  // Guarda el TC en configuracion (fire-and-forget) — clave global unificada
   _saveTC(val) {
     this._tc = val;
-    setConfig('gastos_tc', val).catch(() => {});
+    setConfig('tipo_cambio', val).catch(() => {});
   },
 
   // ── Combobox de categoría con búsqueda (input + datalist compartido) ─────

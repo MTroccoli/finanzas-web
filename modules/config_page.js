@@ -2,15 +2,17 @@ window.Mods = window.Mods || {};
 window.Mods.configuracion = {
   async render() {
     const c = document.getElementById('content');
-    const [{ data: { user } }, bench, monedaVista, gastosTc, adminStats] = await Promise.all([
+    const [{ data: { user } }, bench, monedaVista, globalTc, legacyTc, adminStats] = await Promise.all([
       getDB().auth.getUser(),
       getConfig('benchmark_ticker'),
       getConfig('moneda_vista').catch(() => null),
-      getConfig('gastos_tc').catch(() => ''),
+      getConfig('tipo_cambio').catch(() => ''),
+      getConfig('gastos_tc').catch(() => ''),   // legacy: solo fallback de lectura
       // Solo devuelve datos para el admin; para el resto falla silenciosamente
       getDB().rpc('admin_stats').then(r => (r.error ? null : r.data)).catch(() => null),
     ]);
     const mv = monedaVista || 'ORIGEN';
+    const gastosTc = globalTc || legacyTc || '';
 
     c.innerHTML = `
       <h1>Configuración</h1>
@@ -240,7 +242,7 @@ window.Mods.configuracion = {
         await Promise.all([
           setConfig('benchmark_ticker', document.getElementById('cfg-bench').value.trim().toUpperCase()),
           setConfig('moneda_vista', monedaVal),
-          tcVal ? setConfig('gastos_tc', tcVal) : Promise.resolve(),
+          tcVal ? setConfig('tipo_cambio', tcVal) : Promise.resolve(),
         ]);
         const msg = document.getElementById('cfg-msg');
         msg.style.display = 'inline';
