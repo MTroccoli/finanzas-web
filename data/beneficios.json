@@ -1,6 +1,6 @@
 {
   "fuente": "bbva.com.uy",
-  "actualizado": "2026-09-25T14:35:44.131Z",
+  "actualizado": "2026-09-28T17:28:00.493Z",
   "total": 302,
   "categorias": [
     "Gastronomía",
@@ -5969,6 +5969,33 @@
       "cobranding": null
     },
     {
+      "comercio": "Tienda Oficial Peñarol",
+      "categoria": "Vida Activa",
+      "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/vida-activa/tienda-oficial-penarol.html",
+      "vigencia": "03 de Octubre 2026",
+      "local": null,
+      "descuentos": [
+        {
+          "pct": 20,
+          "tarjetas": "Tarjetas de Crédito Internacionales, Oro y Platinum BBVA Club Atlético Peñarol",
+          "texto": "20% Off con Tarjetas de Crédito Internacionales, Oro y Platinum BBVA Club Atlético Peñarol",
+          "isDebit": false,
+          "niveles": [
+            "Platinum",
+            "Oro"
+          ]
+        }
+      ],
+      "pctMax": 20,
+      "tope": null,
+      "red": null,
+      "niveles": [
+        "Platinum",
+        "Oro"
+      ],
+      "cobranding": null
+    },
+    {
       "comercio": "NORTHFIELD",
       "categoria": "Vida Activa",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/vida-activa/NORTHFIELD.html",
@@ -6288,33 +6315,6 @@
       "tope": "El 10% adicional para socios se aplicará en el punto de venta sin tope de devolución.",
       "red": null,
       "niveles": [],
-      "cobranding": null
-    },
-    {
-      "comercio": "Tienda Oficial Peñarol",
-      "categoria": "Vida Activa",
-      "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/vida-activa/tienda-oficial-penarol.html",
-      "vigencia": "31 de Diciembre 2026",
-      "local": null,
-      "descuentos": [
-        {
-          "pct": 10,
-          "tarjetas": "Tarjetas de Crédito Internacionales, Oro y Platinum BBVA Club Atlético Peñarol",
-          "texto": "10% Off con Tarjetas de Crédito Internacionales, Oro y Platinum BBVA Club Atlético Peñarol",
-          "isDebit": false,
-          "niveles": [
-            "Platinum",
-            "Oro"
-          ]
-        }
-      ],
-      "pctMax": 10,
-      "tope": null,
-      "red": null,
-      "niveles": [
-        "Platinum",
-        "Oro"
-      ],
       "cobranding": null
     },
     {
@@ -9810,6 +9810,39 @@
       "cobranding": null
     },
     {
+      "comercio": "Zona Phone",
+      "categoria": "Tecnología",
+      "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/tecnologia/zona-phone.html",
+      "vigencia": "30 de Setiembre 2026",
+      "local": null,
+      "descuentos": [
+        {
+          "pct": 15,
+          "tarjetas": "Tarjetas de Crédito Internacional, Oro, Pymes, Corporativas, Infinite, Platinum y Black",
+          "texto": "15% Off con Tarjetas de Crédito Internacional, Oro, Pymes, Corporativas, Infinite, Platinum y Black",
+          "isDebit": false,
+          "niveles": [
+            "Infinite",
+            "Platinum",
+            "Black",
+            "Oro",
+            "Clásica"
+          ]
+        }
+      ],
+      "pctMax": 15,
+      "tope": null,
+      "red": null,
+      "niveles": [
+        "Infinite",
+        "Platinum",
+        "Black",
+        "Oro",
+        "Clásica"
+      ],
+      "cobranding": null
+    },
+    {
       "comercio": "Market",
       "categoria": "Tecnología",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/tecnologia/celular-market.html",
@@ -9931,39 +9964,6 @@
       ],
       "pctMax": 15,
       "tope": "El descuento será de un 15%, se aplicará en el punto de venta, sin tope de devolución.",
-      "red": null,
-      "niveles": [
-        "Infinite",
-        "Platinum",
-        "Black",
-        "Oro",
-        "Clásica"
-      ],
-      "cobranding": null
-    },
-    {
-      "comercio": "Zona Phone",
-      "categoria": "Tecnología",
-      "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/tecnologia/zona-phone.html",
-      "vigencia": "30 de Setiembre 2026",
-      "local": null,
-      "descuentos": [
-        {
-          "pct": 15,
-          "tarjetas": "Tarjetas de Crédito Internacional, Oro, Pymes, Corporativas, Infinite, Platinum y Black",
-          "texto": "15% Off con Tarjetas de Crédito Internacional, Oro, Pymes, Corporativas, Infinite, Platinum y Black",
-          "isDebit": false,
-          "niveles": [
-            "Infinite",
-            "Platinum",
-            "Black",
-            "Oro",
-            "Clásica"
-          ]
-        }
-      ],
-      "pctMax": 15,
-      "tope": null,
       "red": null,
       "niveles": [
         "Infinite",
