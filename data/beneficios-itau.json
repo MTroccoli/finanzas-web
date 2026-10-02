@@ -1,6 +1,6 @@
 {
   "fuente": "itau.com.uy",
-  "actualizado": "2026-09-28T18:31:57.891Z",
+  "actualizado": "2026-10-02T16:33:10.327Z",
   "total": 8,
   "beneficios": [
     {
@@ -22,7 +22,7 @@
       "cobranding": null
     },
     {
-      "nombre": "farmacias El Túnel",
+      "nombre": "Trios Lightning",
       "url": null,
       "pctMax": 25,
       "descuentos": [
@@ -33,25 +33,25 @@
       ],
       "vigencia": null,
       "tarjetas": null,
-      "desc": "25% y 20% y 15% menos en farmacias El Túnel",
+      "desc": "25% menos en Trios Lightning",
       "exclusivo": false,
       "red": null,
       "niveles": [],
       "cobranding": null
     },
     {
-      "nombre": "Candy Sweet",
+      "nombre": "PuntoColor",
       "url": null,
-      "pctMax": 15,
+      "pctMax": 25,
       "descuentos": [
         {
-          "pct": 15,
-          "texto": "15%"
+          "pct": 25,
+          "texto": "25%"
         }
       ],
       "vigencia": null,
       "tarjetas": null,
-      "desc": "15% menos en Candy Sweet",
+      "desc": "25% menos en PuntoColor",
       "exclusivo": false,
       "red": null,
       "niveles": [],
@@ -96,16 +96,16 @@
     {
       "nombre": "Bosch y Cia",
       "url": null,
-      "pctMax": 25,
+      "pctMax": 15,
       "descuentos": [
         {
-          "pct": 25,
-          "texto": "25%"
+          "pct": 15,
+          "texto": "15%"
         }
       ],
       "vigencia": null,
       "tarjetas": null,
-      "desc": "25% menos en Bosch y Cia",
+      "desc": "15% menos en Bosch y Cia",
       "exclusivo": false,
       "red": null,
       "niveles": [],
