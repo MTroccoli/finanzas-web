@@ -1,8 +1,22 @@
 {
   "fuente": "scotiabank.com.uy",
-  "actualizado": "2026-09-28T19:20:03.346Z",
-  "total": 77,
+  "actualizado": "2026-10-02T17:33:40.275Z",
+  "total": 66,
   "beneficios": [
+    {
+      "nombre": "SCOTIAPUNTOS X2",
+      "url": null,
+      "categoria": "Destacados",
+      "pctMax": null,
+      "descuentos": [],
+      "vigencia": "Todos los días",
+      "tarjetas": null,
+      "desc": "Todo octubre cargando combustible en todas las estaciones de servicio del país.",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
+    },
     {
       "nombre": "CINES 50%",
       "url": null,
@@ -25,74 +39,19 @@
       "cobranding": null
     },
     {
-      "nombre": "ALMENARA",
-      "url": "https://www.scotiabank.com.uy/Personas/Tarjetas/Beneficios/Supermercados/almenara",
+      "nombre": "IBER",
+      "url": null,
       "categoria": "Destacados",
-      "pctMax": 25,
+      "pctMax": 15,
       "descuentos": [
-        {
-          "pct": 25,
-          "texto": "25% de ahorro"
-        },
         {
           "pct": 15,
           "texto": "15% de ahorro"
         }
       ],
-      "vigencia": "Del 19 al 27 de septiembre",
-      "tarjetas": "25% de Ahorro con Tarjetas Platinum, Infinite, Gold y Débito Premium.",
-      "desc": "25% de Ahorro con Tarjetas Platinum, Infinite, Gold y Débito Premium.",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [
-        "Infinite",
-        "Platinum",
-        "Gold"
-      ],
-      "cobranding": null
-    },
-    {
-      "nombre": "TIENDA INGLESA",
-      "url": "https://www.scotiabank.com.uy/Personas/Tarjetas/Beneficios/Supermercados/tienda-inglesa",
-      "categoria": "Destacados",
-      "pctMax": 25,
-      "descuentos": [],
       "vigencia": "Todos los días",
-      "tarjetas": "Disfrutá beneficios exclusivos con tus tarjetas Scotiabank.",
-      "desc": "Disfrutá beneficios exclusivos con tus tarjetas Scotiabank.",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
-      "nombre": "COPA MILLAS X3 COMBUSTIBLE",
-      "url": null,
-      "categoria": "Destacados",
-      "pctMax": null,
-      "descuentos": [],
-      "vigencia": "Todos los días",
-      "tarjetas": "Con tu tarjeta American Express ConnectMiles se triplican tus millas al cargar combustible en cualquier estación de servicio del país durante todo setiembre.",
-      "desc": "Con tu tarjeta American Express ConnectMiles se triplican tus millas al cargar combustible en cualquier estación de servicio del país durante todo setiembre.",
-      "exclusivo": false,
-      "red": "Amex",
-      "niveles": [],
-      "cobranding": "ConnectMiles"
-    },
-    {
-      "nombre": "IBER",
-      "url": null,
-      "categoria": "Destacados",
-      "pctMax": 25,
-      "descuentos": [
-        {
-          "pct": 25,
-          "texto": "25% de ahorro"
-        }
-      ],
-      "vigencia": "Del 1 al 30 de septiembre",
-      "tarjetas": "25% de ahorro con Tarjetas de Crédito Scotiabank",
-      "desc": "25% de ahorro con Tarjetas de Crédito Scotiabank",
+      "tarjetas": "15% de ahorro con tarjetas de crédito y débito.",
+      "desc": "15% de ahorro con tarjetas de crédito y débito.",
       "exclusivo": false,
       "red": null,
       "niveles": [],
@@ -115,6 +74,131 @@
       "exclusivo": false,
       "red": null,
       "niveles": [],
+      "cobranding": null
+    },
+    {
+      "nombre": "TELEPEAJE",
+      "url": null,
+      "categoria": "Destacados",
+      "pctMax": 50,
+      "descuentos": [
+        {
+          "pct": 50,
+          "texto": "50% de ahorro"
+        }
+      ],
+      "vigencia": "Todos los días",
+      "tarjetas": "The Platinum Card American Express (excl. ConnectMiles)",
+      "desc": "50% de ahorro todos los días en telepeajes. Tope $1.200/mes.",
+      "exclusivo": false,
+      "red": "Amex",
+      "niveles": [
+        "Platinum"
+      ],
+      "cobranding": null
+    },
+    {
+      "nombre": "PEDIDOSYA MARKET Y FARMACIAS",
+      "url": null,
+      "categoria": "Destacados",
+      "pctMax": 30,
+      "descuentos": [
+        {
+          "pct": 30,
+          "texto": "30% de ahorro"
+        },
+        {
+          "pct": 15,
+          "texto": "15% de ahorro"
+        }
+      ],
+      "vigencia": "Del 2 al 4 de Octubre",
+      "tarjetas": "30% de ahorro con tarjetas AMEX si sos usuario Plus.",
+      "desc": "30% de ahorro con tarjetas AMEX si sos usuario Plus.",
+      "exclusivo": false,
+      "red": "Amex",
+      "niveles": [],
+      "cobranding": null
+    },
+    {
+      "nombre": "PEKALE",
+      "url": null,
+      "categoria": "Restaurantes",
+      "pctMax": 25,
+      "descuentos": [
+        {
+          "pct": 25,
+          "texto": "25% de ahorro"
+        },
+        {
+          "pct": 15,
+          "texto": "15% de ahorro"
+        }
+      ],
+      "vigencia": "Todos los días",
+      "tarjetas": "25% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y Débito Premium.",
+      "desc": "25% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y Débito Premium.",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [
+        "Infinite",
+        "Platinum",
+        "Gold"
+      ],
+      "cobranding": null
+    },
+    {
+      "nombre": "PIER 21",
+      "url": null,
+      "categoria": "Restaurantes",
+      "pctMax": 25,
+      "descuentos": [
+        {
+          "pct": 25,
+          "texto": "25% de ahorro"
+        },
+        {
+          "pct": 15,
+          "texto": "15% de ahorro"
+        }
+      ],
+      "vigencia": "Todos los días",
+      "tarjetas": "25% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y Débito Premium.",
+      "desc": "25% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y Débito Premium.",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [
+        "Infinite",
+        "Platinum",
+        "Gold"
+      ],
+      "cobranding": null
+    },
+    {
+      "nombre": "VITAMINAS",
+      "url": null,
+      "categoria": "Restaurantes",
+      "pctMax": 25,
+      "descuentos": [
+        {
+          "pct": 25,
+          "texto": "25% de ahorro"
+        },
+        {
+          "pct": 15,
+          "texto": "15% de ahorro"
+        }
+      ],
+      "vigencia": "Todos los días",
+      "tarjetas": "25% de ahorro con tarjetas Platinum, Infinite, Gold y Débito Premium.",
+      "desc": "25% de ahorro con tarjetas Platinum, Infinite, Gold y Débito Premium.",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [
+        "Infinite",
+        "Platinum",
+        "Gold"
+      ],
       "cobranding": null
     },
     {
@@ -162,87 +246,6 @@
       "vigencia": "Todos los días",
       "tarjetas": "25% de ahorro con tarjetas Platinum, Infinite, Gold y débito Premium.",
       "desc": "25% de ahorro con tarjetas Platinum, Infinite, Gold y débito Premium.",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [
-        "Infinite",
-        "Platinum",
-        "Gold"
-      ],
-      "cobranding": null
-    },
-    {
-      "nombre": "LA PANTALLA",
-      "url": null,
-      "categoria": "Restaurantes",
-      "pctMax": 25,
-      "descuentos": [
-        {
-          "pct": 25,
-          "texto": "25% de ahorro"
-        },
-        {
-          "pct": 15,
-          "texto": "15% de ahorro"
-        }
-      ],
-      "vigencia": "Todos los días",
-      "tarjetas": "25% de ahorro con tarjetas Platinum, Infinite, Gold y débito Premium.",
-      "desc": "25% de ahorro con tarjetas Platinum, Infinite, Gold y débito Premium.",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [
-        "Infinite",
-        "Platinum",
-        "Gold"
-      ],
-      "cobranding": null
-    },
-    {
-      "nombre": "WANTAN",
-      "url": null,
-      "categoria": "Restaurantes",
-      "pctMax": 25,
-      "descuentos": [
-        {
-          "pct": 25,
-          "texto": "25% de ahorro"
-        },
-        {
-          "pct": 15,
-          "texto": "15% de ahorro"
-        }
-      ],
-      "vigencia": "Todos los días",
-      "tarjetas": "25% de ahorro con tarjetas de crédito Platinum, Infinite, Gold y Débito Premium.",
-      "desc": "25% de ahorro con tarjetas de crédito Platinum, Infinite, Gold y Débito Premium.",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [
-        "Infinite",
-        "Platinum",
-        "Gold"
-      ],
-      "cobranding": null
-    },
-    {
-      "nombre": "CORDON BEER",
-      "url": null,
-      "categoria": "Restaurantes",
-      "pctMax": 25,
-      "descuentos": [
-        {
-          "pct": 25,
-          "texto": "25% de ahorro"
-        },
-        {
-          "pct": 15,
-          "texto": "15% de ahorro"
-        }
-      ],
-      "vigencia": "Todos los días",
-      "tarjetas": "25% de ahorro con tarjetas de crédito Platinum, Infinite, Gold y Débito Premium.",
-      "desc": "25% de ahorro con tarjetas de crédito Platinum, Infinite, Gold y Débito Premium.",
       "exclusivo": false,
       "red": null,
       "niveles": [
@@ -483,27 +486,6 @@
       "cobranding": null
     },
     {
-      "nombre": "TELEPEAJE",
-      "url": null,
-      "categoria": "The Platinum Card Amex",
-      "pctMax": 50,
-      "descuentos": [
-        {
-          "pct": 50,
-          "texto": "50% de ahorro"
-        }
-      ],
-      "vigencia": "Todos los días",
-      "tarjetas": "The Platinum Card American Express (excl. ConnectMiles)",
-      "desc": "50% de ahorro todos los días en telepeajes. Tope $1.200/mes.",
-      "exclusivo": false,
-      "red": "Amex",
-      "niveles": [
-        "Platinum"
-      ],
-      "cobranding": null
-    },
-    {
       "nombre": "AMEX PRESS READER",
       "url": null,
       "categoria": "The Platinum Card Amex",
@@ -517,20 +499,6 @@
       "niveles": [
         "Platinum"
       ],
-      "cobranding": null
-    },
-    {
-      "nombre": "PASELIBRE",
-      "url": "https://www.scotiabank.com.uy/Personas/Tarjetas/Beneficios/Deportes/paselibre",
-      "categoria": "Deportes",
-      "pctMax": null,
-      "descuentos": [],
-      "vigencia": "Todos los días",
-      "tarjetas": "El débito del costo mensual se realizará de forma automática en la tarjeta con la que decidas registrarte al beneficio",
-      "desc": "Asociate a Paselibre. Empezá a disfrutar grandes beneficios.",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [],
       "cobranding": null
     },
     {
@@ -624,33 +592,6 @@
       "vigencia": "Todos los días",
       "tarjetas": "25% de ahorro con Tarjetas de Crédito Platinum, Infinite y Gold.",
       "desc": "25% de ahorro con Tarjetas de Crédito Platinum, Infinite y Gold.",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [
-        "Infinite",
-        "Platinum",
-        "Gold"
-      ],
-      "cobranding": null
-    },
-    {
-      "nombre": "TU PAUSE",
-      "url": null,
-      "categoria": "Estética",
-      "pctMax": 25,
-      "descuentos": [
-        {
-          "pct": 25,
-          "texto": "25% de ahorro"
-        },
-        {
-          "pct": 15,
-          "texto": "15% de ahorro"
-        }
-      ],
-      "vigencia": "Todos los días",
-      "tarjetas": "25% de ahorro de ahorro con Tarjetas de Crédito Infinite, Platinum y Gold.",
-      "desc": "25% de ahorro de ahorro con Tarjetas de Crédito Infinite, Platinum y Gold.",
       "exclusivo": false,
       "red": null,
       "niveles": [
@@ -760,25 +701,6 @@
       "cobranding": null
     },
     {
-      "nombre": "ACHER",
-      "url": null,
-      "categoria": "Hogar",
-      "pctMax": 10,
-      "descuentos": [
-        {
-          "pct": 10,
-          "texto": "10% de ahorro"
-        }
-      ],
-      "vigencia": "Todos los días",
-      "tarjetas": "10% de ahorro con tarjetas de crédito y débito.",
-      "desc": "10% de ahorro con tarjetas de crédito y débito.",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
       "nombre": "ARQUETIPO",
       "url": null,
       "categoria": "Hogar",
@@ -817,44 +739,6 @@
       "cobranding": null
     },
     {
-      "nombre": "CLEMENTINE NATURAL",
-      "url": null,
-      "categoria": "Hogar",
-      "pctMax": 15,
-      "descuentos": [
-        {
-          "pct": 15,
-          "texto": "15% de ahorro"
-        }
-      ],
-      "vigencia": "Todos los días",
-      "tarjetas": "15% de ahorro con Tarjetas de Crédito",
-      "desc": "15% de ahorro con Tarjetas de Crédito",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
-      "nombre": "DARKO",
-      "url": null,
-      "categoria": "Hogar",
-      "pctMax": 15,
-      "descuentos": [
-        {
-          "pct": 15,
-          "texto": "15% de ahorro"
-        }
-      ],
-      "vigencia": "Todos los días",
-      "tarjetas": "15% de ahorro con tarjetas de crédito y débito.",
-      "desc": "15% de ahorro con tarjetas de crédito y débito.",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
       "nombre": "SHERWIN WILLIAMS",
       "url": null,
       "categoria": "Hogar",
@@ -868,6 +752,25 @@
       "vigencia": "Todos los días",
       "tarjetas": "hasta 25% de ahorro con Tarjetas de Crédito y Débito Scotiabank",
       "desc": "hasta 25% de ahorro con Tarjetas de Crédito y Débito Scotiabank",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
+    },
+    {
+      "nombre": "PINTURERÍA ULBRIKA",
+      "url": null,
+      "categoria": "Hogar",
+      "pctMax": 15,
+      "descuentos": [
+        {
+          "pct": 15,
+          "texto": "15% de ahorro"
+        }
+      ],
+      "vigencia": "Todos los días",
+      "tarjetas": "15% de ahorro con tarjetas de crédito y débito.",
+      "desc": "15% de ahorro con tarjetas de crédito y débito.",
       "exclusivo": false,
       "red": null,
       "niveles": [],
@@ -943,25 +846,6 @@
     },
     {
       "nombre": "SYMPHORINE",
-      "url": null,
-      "categoria": "Joyerías y accesorios",
-      "pctMax": 15,
-      "descuentos": [
-        {
-          "pct": 15,
-          "texto": "15% de ahorro"
-        }
-      ],
-      "vigencia": "Todos los días",
-      "tarjetas": "15% de ahorro con Tarjetas de Crédito y Débito",
-      "desc": "15% de ahorro con Tarjetas de Crédito y Débito",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
-      "nombre": "KAUNAS",
       "url": null,
       "categoria": "Joyerías y accesorios",
       "pctMax": 15,
@@ -1183,16 +1067,16 @@
       "nombre": "LAVAKAN",
       "url": null,
       "categoria": "Mascotas",
-      "pctMax": 25,
+      "pctMax": 15,
       "descuentos": [
         {
-          "pct": 25,
-          "texto": "25% de ahorro"
+          "pct": 15,
+          "texto": "15% de ahorro"
         }
       ],
-      "vigencia": "Del 27 al 30 de Septiembre",
-      "tarjetas": "25% de ahorro con tarjetas de crédito Infinite, Platinum y Gold y Tarjetas de Débito Premium.",
-      "desc": "25% de ahorro con tarjetas de crédito Infinite, Platinum y Gold y Tarjetas de Débito Premium.",
+      "vigencia": "Todos los días",
+      "tarjetas": "15% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y débito Premium.",
+      "desc": "15% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y débito Premium.",
       "exclusivo": false,
       "red": null,
       "niveles": [
@@ -1204,63 +1088,6 @@
     },
     {
       "nombre": "FULL PET",
-      "url": null,
-      "categoria": "Mascotas",
-      "pctMax": 15,
-      "descuentos": [
-        {
-          "pct": 15,
-          "texto": "15% de ahorro"
-        }
-      ],
-      "vigencia": "Todos los días",
-      "tarjetas": "15% de ahorro con tarjetas de crédito y débito.",
-      "desc": "15% de ahorro con tarjetas de crédito y débito.",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
-      "nombre": "RACIONES ROCHA",
-      "url": null,
-      "categoria": "Mascotas",
-      "pctMax": 15,
-      "descuentos": [
-        {
-          "pct": 15,
-          "texto": "15% de ahorro"
-        }
-      ],
-      "vigencia": "Todos los días",
-      "tarjetas": "15% de ahorro con tarjetas de crédito y débito.",
-      "desc": "15% de ahorro con tarjetas de crédito y débito.",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
-      "nombre": "VETERINARIA AKITA",
-      "url": null,
-      "categoria": "Mascotas",
-      "pctMax": 15,
-      "descuentos": [
-        {
-          "pct": 15,
-          "texto": "15% de ahorro"
-        }
-      ],
-      "vigencia": "Todos los días",
-      "tarjetas": "15% de ahorro con tarjetas de crédito y débito.",
-      "desc": "15% de ahorro con tarjetas de crédito y débito.",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
-      "nombre": "VETERINARIA DEL MAR",
       "url": null,
       "categoria": "Mascotas",
       "pctMax": 15,
@@ -1303,29 +1130,6 @@
         "Platinum",
         "Gold"
       ],
-      "cobranding": null
-    },
-    {
-      "nombre": "BALLON",
-      "url": null,
-      "categoria": "Niños",
-      "pctMax": 25,
-      "descuentos": [
-        {
-          "pct": 15,
-          "texto": "15% de ahorro"
-        },
-        {
-          "pct": 25,
-          "texto": "25% de ahorro"
-        }
-      ],
-      "vigencia": "Todos los días",
-      "tarjetas": "15% y 25% de ahorro Todos los días con tus Tarjetas Scotiabank.",
-      "desc": "15% y 25% de ahorro Todos los días con tus Tarjetas Scotiabank.",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [],
       "cobranding": null
     },
     {
@@ -1462,33 +1266,6 @@
       "cobranding": null
     },
     {
-      "nombre": "ESCOOL",
-      "url": null,
-      "categoria": "Papelerías",
-      "pctMax": 25,
-      "descuentos": [
-        {
-          "pct": 25,
-          "texto": "25% de ahorro"
-        },
-        {
-          "pct": 15,
-          "texto": "15% de ahorro"
-        }
-      ],
-      "vigencia": "Todos los días",
-      "tarjetas": "25% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y Débito Premium.",
-      "desc": "25% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y Débito Premium.",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [
-        "Infinite",
-        "Platinum",
-        "Gold"
-      ],
-      "cobranding": null
-    },
-    {
       "nombre": "PORTISUR",
       "url": null,
       "categoria": "Supermercados",
@@ -1577,9 +1354,9 @@
       "cobranding": null
     },
     {
-      "nombre": "MAXIMSTORE",
+      "nombre": "CENTRO COLOR",
       "url": null,
-      "categoria": "Tecnología",
+      "categoria": "Shoppings",
       "pctMax": 15,
       "descuentos": [
         {
@@ -1588,15 +1365,15 @@
         }
       ],
       "vigencia": "Todos los días",
-      "tarjetas": "15% de ahorro con tarjetas de crédito.",
-      "desc": "15% de ahorro con tarjetas de crédito.",
+      "tarjetas": "15% de ahorro con tarjetas de Crédito y Débito.",
+      "desc": "15% de ahorro con tarjetas de Crédito y Débito.",
       "exclusivo": false,
       "red": null,
       "niveles": [],
       "cobranding": null
     },
     {
-      "nombre": "ART COMPUTER",
+      "nombre": "MAXIMSTORE",
       "url": null,
       "categoria": "Tecnología",
       "pctMax": 15,
@@ -1604,10 +1381,6 @@
         {
           "pct": 15,
           "texto": "15% de ahorro"
-        },
-        {
-          "pct": 10,
-          "texto": "10% de ahorro"
         }
       ],
       "vigencia": "Todos los días",
