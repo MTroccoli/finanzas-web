@@ -1,8 +1,8 @@
 {
   "fuente": "BROU",
   "url": "https://beneficios.brou.com.uy/beneficios",
-  "fecha": "2026-10-02",
-  "total": 92,
+  "fecha": "2026-10-09",
+  "total": 97,
   "beneficios": [
     {
       "nombre": "Banco Hipotecario del Uruguay",
@@ -312,6 +312,36 @@
       "cobranding": "Recompensa"
     },
     {
+      "nombre": "TOTO",
+      "pctMax": 25,
+      "url": "https://beneficios.brou.com.uy/ensenanza/toto",
+      "tarjetas": "25% de descuento con tarjetas de crédito Black, Platinum o superiores.",
+      "vigencia": "25% y 15% de descuento los lunes, martes y miércoles en TOTO.",
+      "desc": "En TOTO, los lunes, martes y miércoles, aprovechá:",
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [
+        "Platinum",
+        "Black"
+      ],
+      "cobranding": null
+    },
+    {
+      "nombre": "skechers",
+      "pctMax": 25,
+      "url": "https://beneficios.brou.com.uy/ensenanza/skechers",
+      "tarjetas": "25% de descuento con tarjetas de crédito Black, Platinum o superiores.",
+      "vigencia": "25 y 15% de descuento los lunes, martes y miércoles en SKECHERS.",
+      "desc": "25 y 15% de descuento los lunes, martes y miércoles en SKECHERS.",
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [
+        "Platinum",
+        "Black"
+      ],
+      "cobranding": null
+    },
+    {
       "nombre": "La Sacristía",
       "pctMax": 25,
       "url": "https://beneficios.brou.com.uy/ensenanza/la-sacristía",
@@ -511,7 +541,7 @@
       "pctMax": 20,
       "url": "https://beneficios.brou.com.uy/ensenanza/beneficios-fubb2026",
       "tarjetas": "Obtené un 20% de descuento en tus entradas durante toda la fase regular para los torneos de la FUBB abonando con tarjetas de crédito y débito VISA, BROU Recompensa Mastercard y MI BROU Tarjeta Joven.",
-      "vigencia": null,
+      "vigencia": "Vigencia: 01/09/2027",
       "desc": "Descuento en entradas durante la fase regular con medios de pago seleccionados.",
       "categoria": "ensenanza",
       "red": null,
@@ -529,6 +559,18 @@
       "red": "Visa",
       "niveles": [],
       "cobranding": null
+    },
+    {
+      "nombre": "Liga de Basketball de Soriano",
+      "pctMax": 20,
+      "url": "https://beneficios.brou.com.uy/ensenanza/liga-soriano",
+      "tarjetas": "En la Liga de Basketball de Soriano, abonando con tarjetas de crédito BROU VISA y BROU Recompensa Mastercard, y tarjetas de débito BROU VISA y BROU Recompensa Mastercard, aprovechá un 20% de descuento",
+      "vigencia": "Vigencia: 14/03/2027",
+      "desc": "Liga de Basketball de Soriano",
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [],
+      "cobranding": "Recompensa"
     },
     {
       "nombre": "AGUERREBERE",
@@ -620,6 +662,18 @@
         "Platinum",
         "Black"
       ],
+      "cobranding": "Recompensa"
+    },
+    {
+      "nombre": "Beneficios Para Vos con BROU A MANO Comercios",
+      "pctMax": 15,
+      "url": "https://beneficios.brou.com.uy/ensenanza/beneficios-para-vos-con-brou-a-mano-comercios",
+      "tarjetas": "15% de descuento en comercios adheridos, según rubro y día, abonando con tarjetas de crédito BROU Recompensa Mastercard a través de BROU A MANO Comercios.",
+      "vigencia": "Vigencia: 31/12/2026",
+      "desc": "Con Beneficios Para Vos, aprovechá 15% de descuento en comercios adheridos a BROU A MANO Comercios, abonando con tarjetas de crédito BROU Recompensa Mastercard.",
+      "categoria": "ensenanza",
+      "red": "Mastercard",
+      "niveles": [],
       "cobranding": "Recompensa"
     },
     {
@@ -809,6 +863,18 @@
       "niveles": [
         "Platinum"
       ],
+      "cobranding": "Recompensa"
+    },
+    {
+      "nombre": "Outlet Viajes SIUR",
+      "pctMax": 10,
+      "url": "https://beneficios.brou.com.uy/ensenanza/Outlet-Viajes-siur",
+      "tarjetas": "Aprovechá 10% de descuento en paquetes seleccionados con tarjetas de crédito BROU VISA y BROU Recompensa Mastercard.",
+      "vigencia": "Vigencia: 15/10/2026",
+      "desc": "Aprovechá 10% de descuento en paquetes seleccionados con tarjetas de crédito BROU VISA y BROU Recompensa Mastercard.",
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [],
       "cobranding": "Recompensa"
     },
     {
