@@ -1,6 +1,6 @@
 {
   "fuente": "OCA",
-  "actualizado": "2026-10-05",
+  "actualizado": "2026-10-09",
   "beneficios": [
     {
       "nombre": "0 De Recargo En El Exterior Blue",
@@ -307,6 +307,21 @@
       "corto": "Oca Blue Renovaciones",
       "pctMax": null,
       "url": "https://ocablue.uy/beneficio-ampliado.html?name=oca-blue-renovaciones&id=blt33cf051a929e4f22",
+      "categoria": "General",
+      "tarjetas": "Abrir cuenta gratis",
+      "vigencia": null,
+      "desc": null,
+      "red": "OCA",
+      "niveles": [
+        "Blue"
+      ],
+      "cobranding": null
+    },
+    {
+      "nombre": "Oca Blue 600 Metros Bps",
+      "corto": "Oca Blue 600 Metros Bps",
+      "pctMax": null,
+      "url": "https://ocablue.uy/beneficio-ampliado.html?name=oca-blue-600-metros-bps&id=blt6378fae9ece99e6f",
       "categoria": "General",
       "tarjetas": "Abrir cuenta gratis",
       "vigencia": null,
