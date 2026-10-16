@@ -1,8 +1,39 @@
 {
   "fuente": "itau.com.uy",
-  "actualizado": "2026-10-12T20:10:41.137Z",
-  "total": 10,
+  "actualizado": "2026-10-16T15:17:44.386Z",
+  "total": 12,
   "beneficios": [
+    {
+      "nombre": "Infonegocios",
+      "url": null,
+      "pctMax": 25,
+      "descuentos": [
+        {
+          "pct": 25,
+          "texto": "25%"
+        }
+      ],
+      "vigencia": null,
+      "tarjetas": null,
+      "desc": "25% menos en Infonegocios",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
+    },
+    {
+      "nombre": "estaciones Disa",
+      "url": null,
+      "pctMax": null,
+      "descuentos": [],
+      "vigencia": null,
+      "tarjetas": null,
+      "desc": "Millasx3 en estaciones Disa",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
+    },
     {
       "nombre": "Mas Infinito",
       "url": null,
