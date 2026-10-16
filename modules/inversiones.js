@@ -671,10 +671,22 @@ window.Mods.inversiones = {
         movimientos = await dbFetch('movimientos_cuenta', { order: { col: 'fecha', asc: false } }).catch(() => []);
         if (this._portfolioCache) this._portfolioCache.movimientos = movimientos;
       }
-      const cashBalance  = this._computeCash(allOps, dividendos, movimientos);
+      // Fecha desde la que se trackea el efectivo. Lo previo (compras/ventas/
+      // dividendos históricos) no cuenta: ya está en el efectivo real que el
+      // usuario carga como aporte. Default: hoy (arranca en cero).
+      let cashInicio = this._portfolioCache?.cashInicio;
+      if (cashInicio === undefined) {
+        cashInicio = await getConfig('cash_inicio').catch(() => null);
+        if (!cashInicio) {
+          cashInicio = new Date().toISOString().slice(0, 10);
+          setConfig('cash_inicio', cashInicio).catch(() => {});
+        }
+        if (this._portfolioCache) this._portfolioCache.cashInicio = cashInicio;
+      }
+      const cashBalance  = this._computeCash(allOps, dividendos, movimientos, null, cashInicio);
       const accountValue = totalMarket + cashBalance;
       // Contexto para que _buildPortfolioHistory sume el cash al valor de la cartera
-      this._portCashCtx = { dividendos, movimientos };
+      this._portCashCtx = { dividendos, movimientos, cashInicio };
 
       // Shared P&L component row helper
       const compRow = (label, val, barPct, showTC) =>
@@ -902,8 +914,8 @@ window.Mods.inversiones = {
             </div>
             <button class="btn btn-primary" id="cash-save-btn">Guardar</button>
             <p style="font-size:.7rem;color:var(--text-sec);margin-top:8px;line-height:1.5">
-              💡 Cargá un aporte inicial con el capital que metiste en la cuenta para que el efectivo arranque realista.
-              Las ventas, compras y dividendos ajustan el efectivo automáticamente.
+              💡 El efectivo arranca en cero hoy. Cargá un aporte con el efectivo que tenés disponible en la cuenta.
+              De acá en adelante, las ventas suman al efectivo y las compras lo restan automáticamente.
             </p>
           </div>
         </div>
@@ -1231,16 +1243,16 @@ window.Mods.inversiones = {
 
   // Saldo de cash en USD = aportes − retiros + ventas − compras + dividendos.
   // Con `upTo` (ISO date) suma solo los movimientos con fecha <= upTo.
-  _computeCash(ops, dividendos, movimientos, upTo) {
+  _computeCash(ops, dividendos, movimientos, upTo, inicio) {
     let cash = 0;
-    for (const op of (ops || []))        if (!upTo || op.fecha <= upTo) cash += this._cashDelta(op);
-    for (const d  of (dividendos || [])) if (!upTo || d.fecha  <= upTo) cash += parseFloat(d.monto_usd) || 0;
+    for (const op of (ops || []))        if ((!upTo || op.fecha <= upTo) && (!inicio || op.fecha >= inicio)) cash += this._cashDelta(op);
+    for (const d  of (dividendos || [])) if ((!upTo || d.fecha  <= upTo) && (!inicio || d.fecha  >= inicio)) cash += parseFloat(d.monto_usd) || 0;
     for (const m  of (movimientos || [])) if (!upTo || m.fecha <= upTo) cash += (m.tipo === 'retiro' ? -1 : 1) * (parseFloat(m.monto_usd) || 0);
     return cash;
   },
 
   async _buildPortfolioHistory(allOps, period) {
-    const { dividendos = [], movimientos = [] } = this._portCashCtx || {};
+    const { dividendos = [], movimientos = [], cashInicio = null } = this._portCashCtx || {};
     // 1d: intraday using current positions (no date simulation needed)
     if (period === '1d') {
       const qtys = {};
@@ -1249,7 +1261,7 @@ window.Mods.inversiones = {
         qtys[op.ticker] += op.tipo === 'compra' ? parseFloat(op.cantidad) : -parseFloat(op.cantidad);
       }
       const activeTkrs = Object.keys(qtys).filter(t => qtys[t] > 0.0001);
-      const cashNow = this._computeCash(allOps, dividendos, movimientos);
+      const cashNow = this._computeCash(allOps, dividendos, movimientos, null, cashInicio);
       const settled1d = await Promise.allSettled(activeTkrs.map(async ticker => {
         const [chart, priceInfo] = await Promise.all([
           this.fetchYahooChart(ticker, '1d', '30m'),
@@ -1400,7 +1412,7 @@ window.Mods.inversiones = {
         if (p != null) { total += qty * p; hasData = true; }
       }
 
-      const cash = this._computeCash(allOps, dividendos, movimientos, dateStr);
+      const cash = this._computeCash(allOps, dividendos, movimientos, dateStr, cashInicio);
       total += cash;
 
       if ((hasData || cash !== 0) && total > 0) {
