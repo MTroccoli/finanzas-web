@@ -663,6 +663,19 @@ window.Mods.inversiones = {
       const divByTicker = {};
       for (const d of dividendos) divByTicker[d.ticker] = (divByTicker[d.ticker] ?? 0) + parseFloat(d.monto_usd);
 
+      // Cash / aportes: saldo de efectivo de la cuenta en USD
+      let movimientos;
+      if (this._portfolioCache?.movimientos) {
+        movimientos = this._portfolioCache.movimientos;
+      } else {
+        movimientos = await dbFetch('movimientos_cuenta', { order: { col: 'fecha', asc: false } }).catch(() => []);
+        if (this._portfolioCache) this._portfolioCache.movimientos = movimientos;
+      }
+      const cashBalance  = this._computeCash(allOps, dividendos, movimientos);
+      const accountValue = totalMarket + cashBalance;
+      // Contexto para que _buildPortfolioHistory sume el cash al valor de la cartera
+      this._portCashCtx = { dividendos, movimientos };
+
       // Shared P&L component row helper
       const compRow = (label, val, barPct, showTC) =>
         (val !== 0 || !showTC) ? `
@@ -774,8 +787,17 @@ window.Mods.inversiones = {
 
         <div class="metrics-row">
           <div class="metric-card">
+            <div class="metric-label">Valor de cuenta</div>
+            <div class="metric-value">${fmtUSD(accountValue)}</div>
+            <div class="metric-delta neu">Mercado + efectivo</div>
+          </div>
+          <div class="metric-card">
             <div class="metric-label">Valor de mercado</div>
             <div class="metric-value">${fmtUSD(totalMarket)}</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Efectivo</div>
+            <div class="metric-value ${cashBalance < 0 ? 'neg' : ''}">${fmtUSD(cashBalance)}</div>
           </div>
           <div class="metric-card">
             <div class="metric-label">Costo base</div>
@@ -849,6 +871,59 @@ window.Mods.inversiones = {
         <div class="port-accordion">
           ${accSorted.map(p => accItem(p)).join('')}
         </div>
+
+        <!-- Efectivo / Aportes -->
+        <div style="display:flex;justify-content:space-between;align-items:center;margin:1.5rem 0 .75rem">
+          <span style="font-weight:600;font-size:.9rem">Efectivo · <span class="${cashBalance < 0 ? 'neg' : ''}">${fmtUSD(cashBalance)}</span></span>
+          <button class="btn btn-ghost" id="cash-add-btn" style="font-size:.7rem;padding:5px 11px">+ Aporte / Retiro</button>
+        </div>
+        <div id="cash-form-wrap" style="display:none;margin-bottom:1rem">
+          <div class="form-card" style="margin-bottom:0">
+            <div class="form-grid" style="grid-template-columns:repeat(auto-fill,minmax(130px,1fr))">
+              <div class="form-group">
+                <label>Fecha</label>
+                <input id="cash-fecha" type="date" value="${new Date().toISOString().slice(0,10)}">
+              </div>
+              <div class="form-group">
+                <label>Tipo</label>
+                <select id="cash-tipo">
+                  <option value="aporte">Aporte (entra plata)</option>
+                  <option value="retiro">Retiro (sale plata)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Monto (USD)</label>
+                <input id="cash-monto" type="number" step="0.01" placeholder="0.00">
+              </div>
+              <div class="form-group">
+                <label>Descripción</label>
+                <input id="cash-desc" type="text" placeholder="Transferencia inicial">
+              </div>
+            </div>
+            <button class="btn btn-primary" id="cash-save-btn">Guardar</button>
+            <p style="font-size:.7rem;color:var(--text-sec);margin-top:8px;line-height:1.5">
+              💡 Cargá un aporte inicial con el capital que metiste en la cuenta para que el efectivo arranque realista.
+              Las ventas, compras y dividendos ajustan el efectivo automáticamente.
+            </p>
+          </div>
+        </div>
+        ${movimientos.length ? `
+        <div class="form-card" style="padding:0;overflow:hidden">
+          <div style="overflow:auto;max-height:280px">
+            <table>
+              <thead><tr><th>Fecha</th><th>Tipo</th><th>Monto</th><th>Descripción</th><th></th></tr></thead>
+              <tbody>
+                ${movimientos.map(m => `<tr>
+                  <td>${fmtDate(m.fecha)}</td>
+                  <td>${m.tipo === 'aporte' ? '<span class="pos">Aporte</span>' : '<span class="neg">Retiro</span>'}</td>
+                  <td class="${m.tipo === 'aporte' ? 'pos' : 'neg'}">${m.tipo === 'aporte' ? '+' : '−'}${fmtUSD(parseFloat(m.monto_usd))}</td>
+                  <td>${m.descripcion || ''}</td>
+                  <td><button class="cash-del-btn" data-id="${m.id}" style="background:none;border:none;color:var(--text-sec);cursor:pointer;font-size:.85rem">✕</button></td>
+                </tr>`).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>` : ''}
 
         <!-- Dividendos -->
         <div style="display:flex;justify-content:space-between;align-items:center;margin:1.5rem 0 .75rem">
@@ -957,6 +1032,36 @@ window.Mods.inversiones = {
         el.addEventListener('click', () => {
           window._mktAutoSearch = el.dataset.ticker;
           window.location.hash = '#inversiones/mercado';
+        });
+      });
+
+      // Efectivo / aportes
+      document.getElementById('cash-add-btn')?.addEventListener('click', () => {
+        const wrap = document.getElementById('cash-form-wrap');
+        wrap.style.display = wrap.style.display === 'none' ? 'block' : 'none';
+      });
+      document.getElementById('cash-save-btn')?.addEventListener('click', async () => {
+        const fecha = document.getElementById('cash-fecha').value;
+        const tipo  = document.getElementById('cash-tipo').value;
+        const monto = parseFloat(document.getElementById('cash-monto').value);
+        const desc  = document.getElementById('cash-desc').value.trim();
+        if (!fecha || !['aporte','retiro'].includes(tipo) || isNaN(monto) || monto <= 0) {
+          toast('Completá fecha, tipo y monto', 'err'); return;
+        }
+        try {
+          await dbInsert('movimientos_cuenta', { fecha, tipo, monto_usd: monto, descripcion: desc || null });
+          toast(tipo === 'aporte' ? 'Aporte registrado' : 'Retiro registrado');
+          this._portfolioCache = null;   // recomputar efectivo + gráfico
+          this.renderPortafolio();
+        } catch(e) { toast('Error: ' + e.message, 'err'); }
+      });
+      document.querySelectorAll('.cash-del-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          if (!confirm('¿Eliminar este movimiento?')) return;
+          await dbDelete('movimientos_cuenta', { id: parseInt(btn.dataset.id) });
+          toast('Eliminado');
+          this._portfolioCache = null;
+          this.renderPortafolio();
         });
       });
 
@@ -1115,7 +1220,27 @@ window.Mods.inversiones = {
     }
   },
 
+  // Delta de cash en USD por operación: compra resta (costo+comisión),
+  // venta suma (bruto−comisión). precio_unitario y comisión ya están en USD.
+  _cashDelta(op) {
+    const qty = parseFloat(op.cantidad) || 0;
+    const pu  = parseFloat(op.precio_unitario) || 0;
+    const com = parseFloat(op.comision) || 0;
+    return op.tipo === 'compra' ? -(qty * pu + com) : (qty * pu - com);
+  },
+
+  // Saldo de cash en USD = aportes − retiros + ventas − compras + dividendos.
+  // Con `upTo` (ISO date) suma solo los movimientos con fecha <= upTo.
+  _computeCash(ops, dividendos, movimientos, upTo) {
+    let cash = 0;
+    for (const op of (ops || []))        if (!upTo || op.fecha <= upTo) cash += this._cashDelta(op);
+    for (const d  of (dividendos || [])) if (!upTo || d.fecha  <= upTo) cash += parseFloat(d.monto_usd) || 0;
+    for (const m  of (movimientos || [])) if (!upTo || m.fecha <= upTo) cash += (m.tipo === 'retiro' ? -1 : 1) * (parseFloat(m.monto_usd) || 0);
+    return cash;
+  },
+
   async _buildPortfolioHistory(allOps, period) {
+    const { dividendos = [], movimientos = [] } = this._portCashCtx || {};
     // 1d: intraday using current positions (no date simulation needed)
     if (period === '1d') {
       const qtys = {};
@@ -1124,6 +1249,7 @@ window.Mods.inversiones = {
         qtys[op.ticker] += op.tipo === 'compra' ? parseFloat(op.cantidad) : -parseFloat(op.cantidad);
       }
       const activeTkrs = Object.keys(qtys).filter(t => qtys[t] > 0.0001);
+      const cashNow = this._computeCash(allOps, dividendos, movimientos);
       const settled1d = await Promise.allSettled(activeTkrs.map(async ticker => {
         const [chart, priceInfo] = await Promise.all([
           this.fetchYahooChart(ticker, '1d', '30m'),
@@ -1170,6 +1296,7 @@ window.Mods.inversiones = {
           const p = lastKnown[ticker];
           if (p != null) { total += qty * p; hasData = true; }
         }
+        total += cashNow;
         if (hasData && total > 0) { d1Dates.push(new Date(ts)); d1Values.push(total); }
       }
       // Fallback: si no hay puntos tras el filtro (p.ej. NYSE aún no abrió) mostrar todos con carry-forward
@@ -1185,6 +1312,7 @@ window.Mods.inversiones = {
             const p = lk2[ticker];
             if (p != null) { total += qty * p; hasData = true; }
           }
+          total += cashNow;
           if (hasData && total > 0) { d1Dates.push(new Date(ts)); d1Values.push(total); }
         }
       }
@@ -1272,7 +1400,10 @@ window.Mods.inversiones = {
         if (p != null) { total += qty * p; hasData = true; }
       }
 
-      if (hasData && total > 0) {
+      const cash = this._computeCash(allOps, dividendos, movimientos, dateStr);
+      total += cash;
+
+      if ((hasData || cash !== 0) && total > 0) {
         portfolioDates.push(new Date(dateStr + 'T12:00:00'));
         portfolioValues.push(total);
       }
