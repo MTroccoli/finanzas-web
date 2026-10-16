@@ -1,6 +1,6 @@
 {
   "fuente": "scotiabank.com.uy",
-  "actualizado": "2026-10-12T20:59:22.072Z",
+  "actualizado": "2026-10-16T16:11:25.718Z",
   "total": 65,
   "beneficios": [
     {
@@ -42,7 +42,7 @@
       "nombre": "TIENDA INGLESA",
       "url": "https://www.scotiabank.com.uy/Personas/Tarjetas/Beneficios/Supermercados/tienda-inglesa",
       "categoria": "Destacados",
-      "pctMax": 25,
+      "pctMax": null,
       "descuentos": [],
       "vigencia": "Todos los días",
       "tarjetas": "Disfrutá beneficios exclusivos con tus tarjetas Scotiabank.",
