@@ -1,8 +1,8 @@
 {
   "fuente": "BROU",
   "url": "https://beneficios.brou.com.uy/beneficios",
-  "fecha": "2026-10-12",
-  "total": 94,
+  "fecha": "2026-10-16",
+  "total": 91,
   "beneficios": [
     {
       "nombre": "Banco Hipotecario del Uruguay",
@@ -295,6 +295,21 @@
         "Black"
       ],
       "cobranding": null
+    },
+    {
+      "nombre": "TOTO - Día del Centro",
+      "pctMax": 25,
+      "url": "https://beneficios.brou.com.uy/ensenanza/toto-dia-del-centro",
+      "tarjetas": "25% de descuento con tarjetas de crédito BROU VISA Platinum y BROU Recompensa Mastercard Platinum y Black.",
+      "vigencia": "Vigencia: 17/10/2026",
+      "desc": "TOTO - Día del Centro",
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [
+        "Platinum",
+        "Black"
+      ],
+      "cobranding": "Recompensa"
     },
     {
       "nombre": "La Sacristía",
@@ -605,21 +620,6 @@
       "cobranding": "Recompensa"
     },
     {
-      "nombre": "MI BELLEZA",
-      "pctMax": 15,
-      "url": "https://beneficios.brou.com.uy/ensenanza/mi-belleza",
-      "tarjetas": "15% de dto con tarjetas de crédito BROU Recompensa Mastercard Platinum y Black y BROU Visa Platinum.",
-      "vigencia": "Vigencia: 12/10/2026",
-      "desc": "Disfrutá de hasta un 15% de descuento en MI BELLEZA con medios de pago de Tu Banco.",
-      "categoria": "ensenanza",
-      "red": null,
-      "niveles": [
-        "Platinum",
-        "Black"
-      ],
-      "cobranding": "Recompensa"
-    },
-    {
       "nombre": "Beneficios Para Vos con BROU A MANO Comercios",
       "pctMax": 15,
       "url": "https://beneficios.brou.com.uy/ensenanza/beneficios-para-vos-con-brou-a-mano-comercios",
@@ -629,21 +629,6 @@
       "categoria": "ensenanza",
       "red": "Mastercard",
       "niveles": [],
-      "cobranding": "Recompensa"
-    },
-    {
-      "nombre": "LOI",
-      "pctMax": 15,
-      "url": "https://beneficios.brou.com.uy/ensenanza/loi",
-      "tarjetas": "15% de descuento con tarjetas de crédito BROU Recompensa Mastercard Platinum y Black y BROU Visa Platinum.",
-      "vigencia": "Vigencia: 12/10/2026",
-      "desc": "Aprovechá estos beneficios en LOI con las tarjetas seleccionadas de Tu Banco",
-      "categoria": "ensenanza",
-      "red": null,
-      "niveles": [
-        "Platinum",
-        "Black"
-      ],
       "cobranding": "Recompensa"
     },
     {
@@ -783,18 +768,6 @@
       "cobranding": "Recompensa"
     },
     {
-      "nombre": "Florencia Nuñez",
-      "pctMax": 10,
-      "url": "https://beneficios.brou.com.uy/ensenanza/florencia-nuez",
-      "tarjetas": "Abonando con tarjetas de crédito y débito BROU VISA y BROU Recompensa Mastercard.",
-      "vigencia": "Vigencia: 15/10/2026",
-      "desc": "Disfrutá del 10% de dto. para “Década y Media”, la gira nacional de Florencia Núñez que celebra sus 15 años de carrera.",
-      "categoria": "ensenanza",
-      "red": null,
-      "niveles": [],
-      "cobranding": "Recompensa"
-    },
-    {
       "nombre": "FARMACIA CUCHILLA ALTA",
       "pctMax": 10,
       "url": "https://beneficios.brou.com.uy/ensenanza/farmacia-cuchilla-alta",
@@ -818,18 +791,6 @@
       "niveles": [
         "Platinum"
       ],
-      "cobranding": "Recompensa"
-    },
-    {
-      "nombre": "Outlet Viajes SIUR",
-      "pctMax": 10,
-      "url": "https://beneficios.brou.com.uy/ensenanza/Outlet-Viajes-siur",
-      "tarjetas": "Aprovechá 10% de descuento en paquetes seleccionados con tarjetas de crédito BROU VISA y BROU Recompensa Mastercard.",
-      "vigencia": "Vigencia: 15/10/2026",
-      "desc": "Aprovechá 10% de descuento en paquetes seleccionados con tarjetas de crédito BROU VISA y BROU Recompensa Mastercard.",
-      "categoria": "ensenanza",
-      "red": null,
-      "niveles": [],
       "cobranding": "Recompensa"
     },
     {
