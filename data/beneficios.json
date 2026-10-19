@@ -1,6 +1,6 @@
 {
   "fuente": "bbva.com.uy",
-  "actualizado": "2026-10-16T13:54:20.293Z",
+  "actualizado": "2026-10-19T16:16:09.139Z",
   "total": 294,
   "categorias": [
     "Gastronomía",
@@ -19,6 +19,54 @@
     "Otros"
   ],
   "beneficios": [
+    {
+      "comercio": "Amado",
+      "categoria": "Gastronomía",
+      "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/gastronomia/amado.html",
+      "vigencia": "31 de Octubre 2026",
+      "local": null,
+      "descuentos": [
+        {
+          "pct": 20,
+          "tarjetas": "Tarjetas de Débito",
+          "texto": "20% Off con Tarjetas de Débito",
+          "isDebit": true,
+          "niveles": []
+        },
+        {
+          "pct": 20,
+          "tarjetas": "Tarjetas de Crédito Internacional, Oro, Pymes y Corporativas",
+          "texto": "20% Off con Tarjetas de Crédito Internacional, Oro, Pymes y Corporativas",
+          "isDebit": false,
+          "niveles": [
+            "Oro",
+            "Clásica"
+          ]
+        },
+        {
+          "pct": 30,
+          "tarjetas": "Tarjetas de Crédito Platinum, Black e Infinite",
+          "texto": "30% Off con Tarjetas de Crédito Platinum, Black e Infinite",
+          "isDebit": false,
+          "niveles": [
+            "Infinite",
+            "Platinum",
+            "Black"
+          ]
+        }
+      ],
+      "pctMax": 30,
+      "tope": null,
+      "red": null,
+      "niveles": [
+        "Oro",
+        "Clásica",
+        "Infinite",
+        "Platinum",
+        "Black"
+      ],
+      "cobranding": null
+    },
     {
       "comercio": "Cafeteria, Maldonado",
       "categoria": "Gastronomía",
@@ -981,54 +1029,6 @@
       "comercio": "Figari Bistró",
       "categoria": "Gastronomía",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/gastronomia/figari-bistro.html",
-      "vigencia": "31 de Octubre 2026",
-      "local": null,
-      "descuentos": [
-        {
-          "pct": 20,
-          "tarjetas": "Tarjetas de Débito",
-          "texto": "20% Off con Tarjetas de Débito",
-          "isDebit": true,
-          "niveles": []
-        },
-        {
-          "pct": 20,
-          "tarjetas": "Tarjetas de Crédito Internacional, Oro, Pymes y Corporativas",
-          "texto": "20% Off con Tarjetas de Crédito Internacional, Oro, Pymes y Corporativas",
-          "isDebit": false,
-          "niveles": [
-            "Oro",
-            "Clásica"
-          ]
-        },
-        {
-          "pct": 30,
-          "tarjetas": "Tarjetas de Crédito Platinum, Black e Infinite",
-          "texto": "30% Off con Tarjetas de Crédito Platinum, Black e Infinite",
-          "isDebit": false,
-          "niveles": [
-            "Infinite",
-            "Platinum",
-            "Black"
-          ]
-        }
-      ],
-      "pctMax": 30,
-      "tope": null,
-      "red": null,
-      "niveles": [
-        "Oro",
-        "Clásica",
-        "Infinite",
-        "Platinum",
-        "Black"
-      ],
-      "cobranding": null
-    },
-    {
-      "comercio": "Amado",
-      "categoria": "Gastronomía",
-      "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/gastronomia/amado.html",
       "vigencia": "31 de Octubre 2026",
       "local": null,
       "descuentos": [
