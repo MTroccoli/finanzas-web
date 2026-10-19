@@ -1,8 +1,8 @@
 {
   "fuente": "BROU",
   "url": "https://beneficios.brou.com.uy/beneficios",
-  "fecha": "2026-10-16",
-  "total": 91,
+  "fecha": "2026-10-19",
+  "total": 89,
   "beneficios": [
     {
       "nombre": "Banco Hipotecario del Uruguay",
@@ -295,21 +295,6 @@
         "Black"
       ],
       "cobranding": null
-    },
-    {
-      "nombre": "TOTO - Día del Centro",
-      "pctMax": 25,
-      "url": "https://beneficios.brou.com.uy/ensenanza/toto-dia-del-centro",
-      "tarjetas": "25% de descuento con tarjetas de crédito BROU VISA Platinum y BROU Recompensa Mastercard Platinum y Black.",
-      "vigencia": "Vigencia: 17/10/2026",
-      "desc": "TOTO - Día del Centro",
-      "categoria": "ensenanza",
-      "red": null,
-      "niveles": [
-        "Platinum",
-        "Black"
-      ],
-      "cobranding": "Recompensa"
     },
     {
       "nombre": "La Sacristía",
@@ -1094,18 +1079,6 @@
       "tarjetas": "Obtené USD 350 en créditos y acceso gratuito a más de 20 productos de Google Cloud.",
       "vigencia": "Vigencia: 31/12/2026",
       "desc": "Obtené USD 350 en créditos y acceso gratuito a más de 20 productos de Google Cloud.",
-      "categoria": "ensenanza",
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
-      "nombre": "FIDAE 2026",
-      "pctMax": null,
-      "url": "https://beneficios.brou.com.uy/ensenanza/fidae-2026",
-      "tarjetas": "2x1 en entradas para FIDAE 2026 con tarjetas de crédito y débito BROU.",
-      "vigencia": "Vigencia: 18/10/2026",
-      "desc": "Disfrutá FIDAE 2026, el Festival Internacional de Artes Escénicas, con un beneficio exclusivo de BROU.",
       "categoria": "ensenanza",
       "red": null,
       "niveles": [],
