@@ -1,6 +1,6 @@
 {
   "fuente": "scotiabank.com.uy",
-  "actualizado": "2026-10-16T16:11:25.718Z",
+  "actualizado": "2026-10-19T18:25:13.516Z",
   "total": 65,
   "beneficios": [
     {
@@ -330,25 +330,6 @@
       "cobranding": null
     },
     {
-      "nombre": "LANZAMIENTO DE TEMPORADA",
-      "url": "https://www.scotiabank.com.uy/Personas/Tarjetas/Beneficios/Vestimenta/lanzamiento-temporada",
-      "categoria": "Vestimenta",
-      "pctMax": 25,
-      "descuentos": [
-        {
-          "pct": 25,
-          "texto": "25% de ahorro"
-        }
-      ],
-      "vigencia": "Del 5 al 18 de Octubre",
-      "tarjetas": "25% de ahorro con tarjetas de crédito.",
-      "desc": "25% de ahorro con tarjetas de crédito.",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
       "nombre": "ONEILL",
       "url": null,
       "categoria": "Vestimenta",
@@ -434,6 +415,25 @@
     },
     {
       "nombre": "MISTRAL",
+      "url": null,
+      "categoria": "Vestimenta",
+      "pctMax": 15,
+      "descuentos": [
+        {
+          "pct": 15,
+          "texto": "15% de ahorro"
+        }
+      ],
+      "vigencia": "Todos los días",
+      "tarjetas": "15% de ahorro con tarjetas de crédito y débito.",
+      "desc": "15% de ahorro con tarjetas de crédito y débito.",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
+    },
+    {
+      "nombre": "BROOKSFIELD",
       "url": null,
       "categoria": "Vestimenta",
       "pctMax": 15,
