@@ -1,7 +1,7 @@
 {
   "fuente": "santander.com.uy",
-  "actualizado": "2026-10-16T15:03:59.810Z",
-  "total": 327,
+  "actualizado": "2026-10-19T17:18:37.576Z",
+  "total": 326,
   "beneficios": [
     {
       "nombre": "Optica Estela Jinchuk",
@@ -307,17 +307,6 @@
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "El descuento se efectúa en el punto de venta.",
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
-      "nombre": "Isidora Restaurant",
-      "url": "https://www.santander.com.uy/beneficios/isidora-restaurant",
-      "pctMax": 25,
-      "vigencia": null,
-      "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
       "red": null,
       "niveles": [],
       "cobranding": null
