@@ -1,6 +1,6 @@
 {
   "fuente": "bbva.com.uy",
-  "actualizado": "2026-10-19T16:16:09.139Z",
+  "actualizado": "2026-10-23T14:11:43.660Z",
   "total": 294,
   "categorias": [
     "Gastronomía",
@@ -6309,6 +6309,47 @@
       "cobranding": null
     },
     {
+      "comercio": "Berna Home",
+      "categoria": "Hogar y Decoración",
+      "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/hogar-y-decoracion/Berna_Home.html",
+      "vigencia": "30 de Setiembre 2027",
+      "local": null,
+      "descuentos": [
+        {
+          "pct": 20,
+          "tarjetas": "Tarjetas de Crédito Internacional, Oro, Pymes y Corporativas",
+          "texto": "20% Off con Tarjetas de Crédito Internacional, Oro, Pymes y Corporativas",
+          "isDebit": false,
+          "niveles": [
+            "Oro",
+            "Clásica"
+          ]
+        },
+        {
+          "pct": 30,
+          "tarjetas": "Tarjetas de Crédito Platinum, Black e Infinite",
+          "texto": "30% Off con Tarjetas de Crédito Platinum, Black e Infinite",
+          "isDebit": false,
+          "niveles": [
+            "Infinite",
+            "Platinum",
+            "Black"
+          ]
+        }
+      ],
+      "pctMax": 30,
+      "tope": null,
+      "red": null,
+      "niveles": [
+        "Oro",
+        "Clásica",
+        "Infinite",
+        "Platinum",
+        "Black"
+      ],
+      "cobranding": null
+    },
+    {
       "comercio": "Bonacuina",
       "categoria": "Hogar y Decoración",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/hogar-y-decoracion/bonacuina.html",
@@ -7534,47 +7575,6 @@
       "categoria": "Hogar y Decoración",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/hogar-y-decoracion/a-brillar-mi-amor.html",
       "vigencia": "31 de Octubre 2026",
-      "local": null,
-      "descuentos": [
-        {
-          "pct": 20,
-          "tarjetas": "Tarjetas de Crédito Internacional, Oro, Pymes y Corporativas",
-          "texto": "20% Off con Tarjetas de Crédito Internacional, Oro, Pymes y Corporativas",
-          "isDebit": false,
-          "niveles": [
-            "Oro",
-            "Clásica"
-          ]
-        },
-        {
-          "pct": 30,
-          "tarjetas": "Tarjetas de Crédito Platinum, Black e Infinite",
-          "texto": "30% Off con Tarjetas de Crédito Platinum, Black e Infinite",
-          "isDebit": false,
-          "niveles": [
-            "Infinite",
-            "Platinum",
-            "Black"
-          ]
-        }
-      ],
-      "pctMax": 30,
-      "tope": null,
-      "red": null,
-      "niveles": [
-        "Oro",
-        "Clásica",
-        "Infinite",
-        "Platinum",
-        "Black"
-      ],
-      "cobranding": null
-    },
-    {
-      "comercio": "Berna Home",
-      "categoria": "Hogar y Decoración",
-      "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/hogar-y-decoracion/Berna_Home.html",
-      "vigencia": "30 de Setiembre 2026",
       "local": null,
       "descuentos": [
         {
