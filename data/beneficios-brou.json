@@ -1,8 +1,8 @@
 {
   "fuente": "BROU",
   "url": "https://beneficios.brou.com.uy/beneficios",
-  "fecha": "2026-10-19",
-  "total": 89,
+  "fecha": "2026-10-23",
+  "total": 88,
   "beneficios": [
     {
       "nombre": "Banco Hipotecario del Uruguay",
@@ -318,21 +318,6 @@
       "tarjetas": "25% de descuento con tarjetas de crédito BROU VISA Platinum y BROU Recompensa Mastercard Platinum y Black.",
       "vigencia": "Vigencia: 30/04/2027",
       "desc": "Disfrutá de descuentos en COSMESHOP con medios de pago seleccionados.",
-      "categoria": "ensenanza",
-      "red": null,
-      "niveles": [
-        "Platinum",
-        "Black"
-      ],
-      "cobranding": "Recompensa"
-    },
-    {
-      "nombre": "Semana BROU en El Rey Del Entretenimiento",
-      "pctMax": 25,
-      "url": "https://beneficios.brou.com.uy/ensenanza/el-rey-del-entretenimiento-semanabrou",
-      "tarjetas": "25% de descuento con tarjetas de crédito BROU VISA Platinum y BROU Recompensa Mastercard Platinum y Black.",
-      "vigencia": "Semana BROU en El Rey Del Entretenimiento",
-      "desc": "Semana BROU en El Rey Del Entretenimiento",
       "categoria": "ensenanza",
       "red": null,
       "niveles": [
