@@ -1,21 +1,16 @@
 {
   "fuente": "itau.com.uy",
-  "actualizado": "2026-10-19T17:22:22.622Z",
-  "total": 12,
+  "actualizado": "2026-10-23T15:40:20.791Z",
+  "total": 14,
   "beneficios": [
     {
-      "nombre": "Infonegocios",
+      "nombre": "Previa Moweek 22 y 23 de octubre",
       "url": null,
-      "pctMax": 25,
-      "descuentos": [
-        {
-          "pct": 25,
-          "texto": "25%"
-        }
-      ],
+      "pctMax": null,
+      "descuentos": [],
       "vigencia": null,
       "tarjetas": null,
-      "desc": "25% menos en Infonegocios",
+      "desc": "Previa Moweek 22 y 23 de octubre",
       "exclusivo": false,
       "red": null,
       "niveles": [],
@@ -29,6 +24,42 @@
       "vigencia": null,
       "tarjetas": null,
       "desc": "Millasx3 en estaciones Disa",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
+    },
+    {
+      "nombre": "San Roque",
+      "url": null,
+      "pctMax": 25,
+      "descuentos": [
+        {
+          "pct": 25,
+          "texto": "25%"
+        }
+      ],
+      "vigencia": null,
+      "tarjetas": null,
+      "desc": "25% 20% y 15% menos en San Roque",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
+    },
+    {
+      "nombre": "farmacias El Túnel",
+      "url": null,
+      "pctMax": 25,
+      "descuentos": [
+        {
+          "pct": 25,
+          "texto": "25%"
+        }
+      ],
+      "vigencia": null,
+      "tarjetas": null,
+      "desc": "25% y 20% y 15% menos en farmacias El Túnel",
       "exclusivo": false,
       "red": null,
       "niveles": [],
@@ -71,7 +102,7 @@
       "cobranding": null
     },
     {
-      "nombre": "San Roque",
+      "nombre": "Infonegocios",
       "url": null,
       "pctMax": 25,
       "descuentos": [
@@ -82,25 +113,7 @@
       ],
       "vigencia": null,
       "tarjetas": null,
-      "desc": "25% 20% y 15% menos en San Roque",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
-      "nombre": "Trios Lightning",
-      "url": null,
-      "pctMax": 25,
-      "descuentos": [
-        {
-          "pct": 25,
-          "texto": "25%"
-        }
-      ],
-      "vigencia": null,
-      "tarjetas": null,
-      "desc": "25% menos en Trios Lightning",
+      "desc": "25% menos en Infonegocios",
       "exclusivo": false,
       "red": null,
       "niveles": [],
@@ -191,6 +204,24 @@
       "vigencia": null,
       "tarjetas": null,
       "desc": "15% menos en Wikimusculos",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
+    },
+    {
+      "nombre": "Trios Lightning",
+      "url": null,
+      "pctMax": 25,
+      "descuentos": [
+        {
+          "pct": 25,
+          "texto": "25%"
+        }
+      ],
+      "vigencia": null,
+      "tarjetas": null,
+      "desc": "25% menos en Trios Lightning",
       "exclusivo": false,
       "red": null,
       "niveles": [],
