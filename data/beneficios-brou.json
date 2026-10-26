@@ -1,8 +1,8 @@
 {
   "fuente": "BROU",
   "url": "https://beneficios.brou.com.uy/beneficios",
-  "fecha": "2026-10-23",
-  "total": 88,
+  "fecha": "2026-10-26",
+  "total": 89,
   "beneficios": [
     {
       "nombre": "Banco Hipotecario del Uruguay",
@@ -1053,6 +1053,18 @@
       "vigencia": null,
       "desc": "2 x 1 en entradas con tus Tarjetas de Crédito y Débito VISA y BROU Recompensa Mastercard.",
       "categoria": "espectaculos",
+      "red": null,
+      "niveles": [],
+      "cobranding": "Recompensa"
+    },
+    {
+      "nombre": "Preventa La Trampa",
+      "pctMax": null,
+      "url": "https://beneficios.brou.com.uy/ensenanza/preventa-la-trampa",
+      "tarjetas": "Accedé a la Preventa Exclusiva BROU a partir del 26 de octubre a las 10 h, abonando con tarjetas de crédito y débito BROU VISA y BROU Recompensa Mastercard.",
+      "vigencia": "Vigencia: 26/10/2026",
+      "desc": "Aprovechá la Preventa Exclusiva BROU para La Trampa",
+      "categoria": "ensenanza",
       "red": null,
       "niveles": [],
       "cobranding": "Recompensa"
