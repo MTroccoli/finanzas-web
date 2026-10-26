@@ -1,21 +1,8 @@
 {
   "fuente": "itau.com.uy",
-  "actualizado": "2026-10-23T15:40:20.791Z",
+  "actualizado": "2026-10-26T17:10:07.433Z",
   "total": 14,
   "beneficios": [
-    {
-      "nombre": "Previa Moweek 22 y 23 de octubre",
-      "url": null,
-      "pctMax": null,
-      "descuentos": [],
-      "vigencia": null,
-      "tarjetas": null,
-      "desc": "Previa Moweek 22 y 23 de octubre",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
     {
       "nombre": "estaciones Disa",
       "url": null,
@@ -24,6 +11,19 @@
       "vigencia": null,
       "tarjetas": null,
       "desc": "Millasx3 en estaciones Disa",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
+    },
+    {
+      "nombre": "Sinfonía celebra sus 10 años con cuatro talleres",
+      "url": null,
+      "pctMax": null,
+      "descuentos": [],
+      "vigencia": null,
+      "tarjetas": null,
+      "desc": "Sinfonía celebra sus 10 años con cuatro talleres",
       "exclusivo": false,
       "red": null,
       "niveles": [],
