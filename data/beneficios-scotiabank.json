@@ -1,6 +1,6 @@
 {
   "fuente": "scotiabank.com.uy",
-  "actualizado": "2026-10-23T16:34:10.328Z",
+  "actualizado": "2026-10-26T18:19:47.260Z",
   "total": 65,
   "beneficios": [
     {
@@ -1038,16 +1038,16 @@
       "nombre": "LAVAKAN",
       "url": null,
       "categoria": "Mascotas",
-      "pctMax": 15,
+      "pctMax": 25,
       "descuentos": [
         {
-          "pct": 15,
-          "texto": "15% de ahorro"
+          "pct": 25,
+          "texto": "25% de ahorro"
         }
       ],
-      "vigencia": "Todos los días",
-      "tarjetas": "15% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y débito Premium.",
-      "desc": "15% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y débito Premium.",
+      "vigencia": "Del 27 al 30 de Septiembre",
+      "tarjetas": "25% de ahorro con tarjetas de crédito Platinum, Infinite, Gold y débito Premium.",
+      "desc": "25% de ahorro con tarjetas de crédito Platinum, Infinite, Gold y débito Premium.",
       "exclusivo": false,
       "red": null,
       "niveles": [
