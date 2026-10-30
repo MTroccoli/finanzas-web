@@ -1,6 +1,6 @@
 {
   "fuente": "santander.com.uy",
-  "actualizado": "2026-10-26T17:04:24.363Z",
+  "actualizado": "2026-10-30T16:59:42.916Z",
   "total": 326,
   "beneficios": [
     {
@@ -1975,6 +1975,17 @@
       "cobranding": null
     },
     {
+      "nombre": "Pekemundo",
+      "url": "https://www.santander.com.uy/beneficios/pekemundo",
+      "pctMax": 15,
+      "vigencia": null,
+      "tarjetas": "Tarjetas de crédito",
+      "desc": "El descuento se efectúa en el punto de venta.",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
+    },
+    {
       "nombre": "Aire",
       "url": "https://www.santander.com.uy/beneficios/aire",
       "pctMax": 15,
@@ -3224,17 +3235,6 @@
       "vigencia": null,
       "tarjetas": "Tarjetas de crédito",
       "desc": "Especie Humana - The Kul Store",
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
-      "nombre": "Heladería Imperial",
-      "url": "https://www.santander.com.uy/beneficios/heladeria-imperial",
-      "pctMax": 15,
-      "vigencia": null,
-      "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
-      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
       "red": null,
       "niveles": [],
       "cobranding": null
