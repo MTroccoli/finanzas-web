@@ -1,8 +1,8 @@
 {
   "fuente": "BROU",
   "url": "https://beneficios.brou.com.uy/beneficios",
-  "fecha": "2026-10-30",
-  "total": 97,
+  "fecha": "2026-11-02",
+  "total": 95,
   "beneficios": [
     {
       "nombre": "Banco Hipotecario del Uruguay",
@@ -309,22 +309,6 @@
       "categoria": "ensenanza",
       "red": null,
       "niveles": [],
-      "cobranding": "Recompensa"
-    },
-    {
-      "nombre": "Restaurante La Navicella",
-      "pctMax": 25,
-      "url": "https://beneficios.brou.com.uy/ensenanza/restaurante-la-navicella--hotel-del-lago",
-      "tarjetas": "25% de descuento con tarjetas BROU Recompensa Mastercard Platinum y Black y BROU Visa Platinum e Infinite.",
-      "vigencia": "Vigencia: 31/10/2026",
-      "desc": "Restaurante La Navicella",
-      "categoria": "ensenanza",
-      "red": null,
-      "niveles": [
-        "Infinite",
-        "Platinum",
-        "Black"
-      ],
       "cobranding": "Recompensa"
     },
     {
@@ -886,18 +870,6 @@
         "Platinum"
       ],
       "cobranding": "Recompensa"
-    },
-    {
-      "nombre": "Almacén Rural",
-      "pctMax": 10,
-      "url": "https://beneficios.brou.com.uy/ensenanza/almacn-rural",
-      "tarjetas": "10% de descuento en productos seleccionados de Almacén Rural con BROU Agro VISA.",
-      "vigencia": "Vigencia: 31/10/2026",
-      "desc": "En Almacén Rural, abonando con la tarjeta de crédito BROU Agro VISA, aprovechá un 10% de descuento en productos seleccionados para tu actividad agropecuaria.",
-      "categoria": "ensenanza",
-      "red": "Visa",
-      "niveles": [],
-      "cobranding": null
     },
     {
       "nombre": "Macromercado",
