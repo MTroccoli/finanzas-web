@@ -1,8 +1,8 @@
 {
   "fuente": "BROU",
   "url": "https://beneficios.brou.com.uy/beneficios",
-  "fecha": "2026-11-02",
-  "total": 95,
+  "fecha": "2026-11-06",
+  "total": 97,
   "beneficios": [
     {
       "nombre": "Banco Hipotecario del Uruguay",
@@ -132,6 +132,22 @@
       "categoria": "ensenanza",
       "red": null,
       "niveles": [],
+      "cobranding": "Recompensa"
+    },
+    {
+      "nombre": "Semana BROU en CUATROASES",
+      "pctMax": 25,
+      "url": "https://beneficios.brou.com.uy/PYMES-BENEFICIO/semana-brou-en-cuatroases",
+      "tarjetas": "25% de descuento con tarjetas de crédito BROU VISA Platinum e Infinite y BROU Recompensa Mastercard Platinum y Black.",
+      "vigencia": "Semana BROU en CUATROASES",
+      "desc": "Semana BROU en CUATROASES",
+      "categoria": "PYMES-BENEFICIO",
+      "red": null,
+      "niveles": [
+        "Infinite",
+        "Platinum",
+        "Black"
+      ],
       "cobranding": "Recompensa"
     },
     {
@@ -357,6 +373,22 @@
       "cobranding": null
     },
     {
+      "nombre": "Dixie",
+      "pctMax": 25,
+      "url": "https://beneficios.brou.com.uy/ensenanza/dixie",
+      "tarjetas": "25% de descuento con tarjetas de crédito BROU VISA Platinum e Infinite y BROU Recompensa Mastercard Platinum y Black.",
+      "vigencia": null,
+      "desc": "Hasta 25% de descuento en Dixie con tarjetas BROU, en tiendas físicas y online.",
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [
+        "Infinite",
+        "Platinum",
+        "Black"
+      ],
+      "cobranding": "Recompensa"
+    },
+    {
       "nombre": "La Sacristía",
       "pctMax": 25,
       "url": "https://beneficios.brou.com.uy/ensenanza/la-sacristía",
@@ -566,7 +598,7 @@
       "url": "https://beneficios.brou.com.uy/ensenanza/tiendas-montevideo",
       "tarjetas": "20% de dto. abonando con tarjetas de crédito BROU VISA y BROU Recompensa Mastercard.",
       "vigencia": "Vigencia: 24/11/2026",
-      "desc": "Disfrutá de hasta 20% de descuento en pijamas y camisones con tarjetas BROU.",
+      "desc": "Disfrutá de hasta 20% de descuento en Mesa de Navidad con tarjetas BROU.",
       "categoria": "ensenanza",
       "red": null,
       "niveles": [],
@@ -654,6 +686,18 @@
       "tarjetas": "20% de descuento abonando con tarjetas de débito VISA, BROU Recompensa Mastercard y MI BROU Tarjeta Joven.",
       "vigencia": null,
       "desc": "Aprendé inglés en Executive",
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [],
+      "cobranding": "Recompensa"
+    },
+    {
+      "nombre": "McDonald's",
+      "pctMax": 20,
+      "url": "https://beneficios.brou.com.uy/ensenanza/beneficio-mc-donalds",
+      "tarjetas": "20% de descuento en McDonald's con tarjetas de crédito BROU VISA y BROU Recompensa Mastercard.",
+      "vigencia": "Vigencia: 30/11/2026",
+      "desc": "Durante noviembre, aprovechá 20% de descuento en McDonald's abonando con tarjetas de crédito BROU VISA y BROU Recompensa Mastercard.",
       "categoria": "ensenanza",
       "red": null,
       "niveles": [],
@@ -1162,18 +1206,6 @@
       "desc": "Obtené USD 350 en créditos y acceso gratuito a más de 20 productos de Google Cloud.",
       "categoria": "ensenanza",
       "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
-      "nombre": "Preventa exclusiva – Final CONMEBOL Libertadores 2026",
-      "pctMax": null,
-      "url": "https://beneficios.brou.com.uy/ensenanza/preventa-exclusiva--final-conmebol-libertadores-2026",
-      "tarjetas": "Preventa exclusiva de entradas para la Final de CONMEBOL Libertadores 2026 con tarjetas Mastercard BROU, desde el 29 de octubre a las 14:00 horas.",
-      "vigencia": null,
-      "desc": "Preventa exclusiva – Final CONMEBOL Libertadores 2026",
-      "categoria": "ensenanza",
-      "red": "Mastercard",
       "niveles": [],
       "cobranding": null
     },
