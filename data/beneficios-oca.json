@@ -1,6 +1,6 @@
 {
   "fuente": "OCA",
-  "actualizado": "2026-11-02",
+  "actualizado": "2026-11-06",
   "beneficios": [
     {
       "nombre": "0 De Recargo En El Exterior Blue",
@@ -8,21 +8,6 @@
       "pctMax": null,
       "url": "https://ocablue.uy/beneficio-ampliado.html?name=0-de-recargo-en-el-exterior-blue&id=blt0f2bce925702f08e",
       "categoria": "Viajes",
-      "tarjetas": "Abrir cuenta gratis",
-      "vigencia": null,
-      "desc": null,
-      "red": "OCA",
-      "niveles": [
-        "Blue"
-      ],
-      "cobranding": null
-    },
-    {
-      "nombre": "Handy Tc Blue",
-      "corto": "Handy Tc Blue",
-      "pctMax": null,
-      "url": "https://ocablue.uy/beneficio-ampliado.html?name=handy-tc-blue&id=blt4b65dc6866ab5f1a",
-      "categoria": "todos",
       "tarjetas": "Abrir cuenta gratis",
       "vigencia": null,
       "desc": null,
@@ -285,6 +270,19 @@
       "niveles": [
         "Blue"
       ],
+      "cobranding": null
+    },
+    {
+      "nombre": "prestamo60dias",
+      "corto": "prestamo60dias",
+      "pctMax": null,
+      "url": "https://ocablue.uy/beneficio-ampliado.html?name=prestamo60dias&id=bltfd7002ecfe671b00",
+      "categoria": "General",
+      "tarjetas": "Abrir cuenta gratis",
+      "vigencia": null,
+      "desc": null,
+      "red": "OCA",
+      "niveles": [],
       "cobranding": null
     },
     {
