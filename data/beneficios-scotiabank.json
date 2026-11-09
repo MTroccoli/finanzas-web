@@ -1,7 +1,7 @@
 {
   "fuente": "scotiabank.com.uy",
-  "actualizado": "2026-11-06T18:58:04.065Z",
-  "total": 64,
+  "actualizado": "2026-11-09T21:59:55.240Z",
+  "total": 65,
   "beneficios": [
     {
       "nombre": "PEDIDOSYA MARKET Y FARMACIAS",
@@ -20,6 +20,62 @@
       "exclusivo": false,
       "red": null,
       "niveles": [],
+      "cobranding": null
+    },
+    {
+      "nombre": "COPA MILLAS X3 COMBUSTIBLE",
+      "url": null,
+      "categoria": "Destacados",
+      "pctMax": null,
+      "descuentos": [],
+      "vigencia": "Todos los días",
+      "tarjetas": "Con tu tarjeta American Express ConnectMiles se triplican tus millas al cargar combustible en cualquier estación de servicio del país durante todo setiembre.",
+      "desc": "Con tu tarjeta American Express ConnectMiles se triplican tus millas al cargar combustible en cualquier estación de servicio del país durante todo setiembre.",
+      "exclusivo": false,
+      "red": "Amex",
+      "niveles": [],
+      "cobranding": "ConnectMiles"
+    },
+    {
+      "nombre": "COMBUSTIBLE",
+      "url": null,
+      "categoria": "Destacados",
+      "pctMax": 10,
+      "descuentos": [
+        {
+          "pct": 10,
+          "texto": "10% de ahorro"
+        }
+      ],
+      "vigencia": "Jueves y Domingos",
+      "tarjetas": "10% de ahorro jueves y domingos, con tus tarjetas The Platinum Card. En carga de combustible.",
+      "desc": "10% de ahorro jueves y domingos, con tus tarjetas The Platinum Card. En carga de combustible.",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [
+        "Platinum"
+      ],
+      "cobranding": null
+    },
+    {
+      "nombre": "TELEPEAJE",
+      "url": null,
+      "categoria": "Destacados",
+      "pctMax": 50,
+      "descuentos": [
+        {
+          "pct": 50,
+          "texto": "50% de ahorro"
+        }
+      ],
+      "vigencia": "Todos los días",
+      "tarjetas": "The Platinum Card American Express (excl. ConnectMiles)",
+      "desc": "50% de ahorro todos los días en telepeajes. Tope $1.200/mes.",
+      "exclusivo": false,
+      "red": "Amex",
+      "niveles": [
+        "Platinum"
+      ],
       "cobranding": null
     },
     {
@@ -44,7 +100,7 @@
       "cobranding": null
     },
     {
-      "nombre": "ALVAREZ",
+      "nombre": "IBER RESTAURANTES",
       "url": null,
       "categoria": "Destacados",
       "pctMax": 25,
@@ -59,48 +115,17 @@
         }
       ],
       "vigencia": "Todos los días",
-      "tarjetas": "25% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y Débito Premium.",
-      "desc": "25% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y Débito Premium.",
+      "tarjetas": "25% y 15% de ahorro con tarjetas de crédito y débito en sus restaurantes, Punta Carretas Shopping, Mercado Agrícola y Punta Shopping.",
+      "desc": "25% y 15% de ahorro con tarjetas de crédito y débito en sus restaurantes, Punta Carretas Shopping, Mercado Agrícola y Punta Shopping.",
       "exclusivo": false,
       "red": null,
-      "niveles": [
-        "Infinite",
-        "Platinum",
-        "Gold"
-      ],
+      "niveles": [],
       "cobranding": null
     },
     {
       "nombre": "NOA NOA",
       "url": null,
-      "categoria": "Destacados",
-      "pctMax": 25,
-      "descuentos": [
-        {
-          "pct": 25,
-          "texto": "25% de ahorro"
-        },
-        {
-          "pct": 15,
-          "texto": "15% de ahorro"
-        }
-      ],
-      "vigencia": "Todos los días",
-      "tarjetas": "25% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y Débito Premium.",
-      "desc": "25% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y Débito Premium.",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [
-        "Infinite",
-        "Platinum",
-        "Gold"
-      ],
-      "cobranding": null
-    },
-    {
-      "nombre": "FEDERACIÓN",
-      "url": null,
-      "categoria": "Destacados",
+      "categoria": "Restaurantes",
       "pctMax": 25,
       "descuentos": [
         {
@@ -127,7 +152,7 @@
     {
       "nombre": "VERMUTERIA",
       "url": null,
-      "categoria": "Destacados",
+      "categoria": "Restaurantes",
       "pctMax": 25,
       "descuentos": [
         {
@@ -152,7 +177,7 @@
       "cobranding": null
     },
     {
-      "nombre": "IBER RESTAURANTES",
+      "nombre": "ALVAREZ",
       "url": null,
       "categoria": "Restaurantes",
       "pctMax": 25,
@@ -167,11 +192,42 @@
         }
       ],
       "vigencia": "Todos los días",
-      "tarjetas": "25% y 15% de ahorro con tarjetas de crédito y débito en sus restaurantes, Punta Carretas Shopping, Mercado Agrícola y Punta Shopping.",
-      "desc": "25% y 15% de ahorro con tarjetas de crédito y débito en sus restaurantes, Punta Carretas Shopping, Mercado Agrícola y Punta Shopping.",
+      "tarjetas": "25% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y Débito Premium.",
+      "desc": "25% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y Débito Premium.",
       "exclusivo": false,
       "red": null,
-      "niveles": [],
+      "niveles": [
+        "Infinite",
+        "Platinum",
+        "Gold"
+      ],
+      "cobranding": null
+    },
+    {
+      "nombre": "FEDERACIÓN",
+      "url": null,
+      "categoria": "Restaurantes",
+      "pctMax": 25,
+      "descuentos": [
+        {
+          "pct": 25,
+          "texto": "25% de ahorro"
+        },
+        {
+          "pct": 15,
+          "texto": "15% de ahorro"
+        }
+      ],
+      "vigencia": "Todos los días",
+      "tarjetas": "25% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y Débito Premium.",
+      "desc": "25% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y Débito Premium.",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [
+        "Infinite",
+        "Platinum",
+        "Gold"
+      ],
       "cobranding": null
     },
     {
@@ -421,46 +477,6 @@
       "exclusivo": false,
       "red": null,
       "niveles": [],
-      "cobranding": null
-    },
-    {
-      "nombre": "COMBUSTIBLE",
-      "url": null,
-      "categoria": "The Platinum Card Amex",
-      "pctMax": 10,
-      "descuentos": [
-        {
-          "pct": 10,
-          "texto": "10% de ahorro"
-        }
-      ],
-      "vigencia": "Jueves y Domingos",
-      "tarjetas": null,
-      "desc": "10% de ahorro jueves y domingos en carga de combustible.",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
-      "nombre": "TELEPEAJE",
-      "url": null,
-      "categoria": "The Platinum Card Amex",
-      "pctMax": 50,
-      "descuentos": [
-        {
-          "pct": 50,
-          "texto": "50% de ahorro"
-        }
-      ],
-      "vigencia": "Todos los días",
-      "tarjetas": "The Platinum Card American Express (excl. ConnectMiles)",
-      "desc": "50% de ahorro todos los días en telepeajes. Tope $1.200/mes.",
-      "exclusivo": false,
-      "red": "Amex",
-      "niveles": [
-        "Platinum"
-      ],
       "cobranding": null
     },
     {
