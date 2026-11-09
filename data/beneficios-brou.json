@@ -1,8 +1,8 @@
 {
   "fuente": "BROU",
   "url": "https://beneficios.brou.com.uy/beneficios",
-  "fecha": "2026-11-06",
-  "total": 97,
+  "fecha": "2026-11-09",
+  "total": 91,
   "beneficios": [
     {
       "nombre": "Banco Hipotecario del Uruguay",
@@ -135,22 +135,6 @@
       "cobranding": "Recompensa"
     },
     {
-      "nombre": "Semana BROU en CUATROASES",
-      "pctMax": 25,
-      "url": "https://beneficios.brou.com.uy/PYMES-BENEFICIO/semana-brou-en-cuatroases",
-      "tarjetas": "25% de descuento con tarjetas de crédito BROU VISA Platinum e Infinite y BROU Recompensa Mastercard Platinum y Black.",
-      "vigencia": "Semana BROU en CUATROASES",
-      "desc": "Semana BROU en CUATROASES",
-      "categoria": "PYMES-BENEFICIO",
-      "red": null,
-      "niveles": [
-        "Infinite",
-        "Platinum",
-        "Black"
-      ],
-      "cobranding": "Recompensa"
-    },
-    {
       "nombre": "Cuatroases",
       "pctMax": 25,
       "url": "https://beneficios.brou.com.uy/moda/cuatroases",
@@ -181,22 +165,6 @@
       "cobranding": "Recompensa"
     },
     {
-      "nombre": "Semana BROU en DISTRICOMP",
-      "pctMax": 25,
-      "url": "https://beneficios.brou.com.uy/ensenanza/districomp-semanabrou",
-      "tarjetas": "25% de descuento con tarjetas de crédito BROU VISA Platinum e Infinite y BROU Recompensa Mastercard Platinum y Black.",
-      "vigencia": "Semana BROU en DISTRICOMP",
-      "desc": "Semana BROU en DISTRICOMP",
-      "categoria": "ensenanza",
-      "red": null,
-      "niveles": [
-        "Infinite",
-        "Platinum",
-        "Black"
-      ],
-      "cobranding": "Recompensa"
-    },
-    {
       "nombre": "Hotel del Lago",
       "pctMax": 25,
       "url": "https://beneficios.brou.com.uy/ensenanza/hotel-del-lago",
@@ -212,22 +180,6 @@
       "cobranding": "Recompensa"
     },
     {
-      "nombre": "Semana BROU en CASA JARDIN",
-      "pctMax": 25,
-      "url": "https://beneficios.brou.com.uy/ensenanza/Semana-brou-casa-jardin",
-      "tarjetas": "25% de descuento con tarjetas de crédito BROU VISA Platinum e Infinite y BROU Recompensa Mastercard Platinum y Black.",
-      "vigencia": "Semana BROU en CASA JARDIN",
-      "desc": "Semana BROU en CASA JARDIN",
-      "categoria": "ensenanza",
-      "red": null,
-      "niveles": [
-        "Infinite",
-        "Platinum",
-        "Black"
-      ],
-      "cobranding": "Recompensa"
-    },
-    {
       "nombre": "Ser Animal",
       "pctMax": 25,
       "url": "https://beneficios.brou.com.uy/ensenanza/ser-animal",
@@ -237,22 +189,6 @@
       "categoria": "ensenanza",
       "red": null,
       "niveles": [
-        "Platinum",
-        "Black"
-      ],
-      "cobranding": "Recompensa"
-    },
-    {
-      "nombre": "Universo Binario",
-      "pctMax": 25,
-      "url": "https://beneficios.brou.com.uy/ensenanza/semana-brou-universo-binario",
-      "tarjetas": "25% de descuento con tarjetas de crédito BROU VISA Platinum e Infinite y BROU Recompensa Mastercard Platinum y Black.",
-      "vigencia": "Vigencia: 08/11/2026",
-      "desc": "Hasta 25% de descuento en Universo Binario con tarjetas BROU.",
-      "categoria": "ensenanza",
-      "red": null,
-      "niveles": [
-        "Infinite",
         "Platinum",
         "Black"
       ],
@@ -471,22 +407,6 @@
       "cobranding": "Recompensa"
     },
     {
-      "nombre": "Las Piedras Shopping Semana BROU",
-      "pctMax": 20,
-      "url": "https://beneficios.brou.com.uy/ensenanza/las-piedras-shopping-semana-brou",
-      "tarjetas": "20% de descuento con tarjetas de crédito BROU VISA Platinum e Infinite y BROU Recompensa Mastercard Platinum y Black.",
-      "vigencia": "Las Piedras Shopping Semana BROU",
-      "desc": "Las Piedras Shopping Semana BROU",
-      "categoria": "ensenanza",
-      "red": null,
-      "niveles": [
-        "Infinite",
-        "Platinum",
-        "Black"
-      ],
-      "cobranding": "Recompensa"
-    },
-    {
       "nombre": "Novatex",
       "pctMax": 20,
       "url": "https://beneficios.brou.com.uy/ensenanza/novatex",
@@ -544,22 +464,6 @@
       "categoria": "moda",
       "red": null,
       "niveles": [
-        "Platinum",
-        "Black"
-      ],
-      "cobranding": "Recompensa"
-    },
-    {
-      "nombre": "Costa Urbana Shopping",
-      "pctMax": 20,
-      "url": "https://beneficios.brou.com.uy/ensenanza/costaurbana",
-      "tarjetas": "20% de descuento con tarjetas de crédito BROU VISA Platinum e Infinite y BROU Recompensa Mastercard Platinum y Black.",
-      "vigencia": "Vigencia: 06/11/2026",
-      "desc": "Costa Urbana Shopping",
-      "categoria": "ensenanza",
-      "red": null,
-      "niveles": [
-        "Infinite",
         "Platinum",
         "Black"
       ],
@@ -728,18 +632,6 @@
         "Clásica"
       ],
       "cobranding": null
-    },
-    {
-      "nombre": "IPlace",
-      "pctMax": 15,
-      "url": "https://beneficios.brou.com.uy/ensenanza/iplace",
-      "tarjetas": "Del 2 al 8 de noviembre de 2026, abonando con tarjetas de crédito BROU VISA y BROU Recompensa Mastercard, aprovechá:",
-      "vigencia": "Vigencia: 08/11/2026",
-      "desc": "Del 2 al 8 de noviembre de 2026, abonando con tarjetas de crédito BROU VISA y BROU Recompensa Mastercard, aprovechá:",
-      "categoria": "ensenanza",
-      "red": null,
-      "niveles": [],
-      "cobranding": "Recompensa"
     },
     {
       "nombre": "Beneficios Para Vos con BROU A MANO Comercios",
@@ -1217,6 +1109,18 @@
       "vigencia": null,
       "desc": "Aprovecha el beneficio de 2x1 en tus entrada de Cinemateca con los siguientes medios de pago:",
       "categoria": "espectaculos",
+      "red": null,
+      "niveles": [],
+      "cobranding": "Recompensa"
+    },
+    {
+      "nombre": "Campeonato Uruguayo de Asadores",
+      "pctMax": 15,
+      "url": "https://beneficios.brou.com.uy/ensenanza/campeonato-uruguayo-de-asadores",
+      "tarjetas": "Aprovechá un 15% off en tus entradas con tus tarjetas de Crédito y Débito BROU Recompensa Mastercard y BROU Visa.",
+      "vigencia": "Vigencia: 14/11/2026",
+      "desc": "Campeonato Uruguayo de Asadores",
+      "categoria": "ensenanza",
       "red": null,
       "niveles": [],
       "cobranding": "Recompensa"
