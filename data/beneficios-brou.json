@@ -1,8 +1,8 @@
 {
   "fuente": "BROU",
   "url": "https://beneficios.brou.com.uy/beneficios",
-  "fecha": "2026-11-09",
-  "total": 91,
+  "fecha": "2026-11-13",
+  "total": 92,
   "beneficios": [
     {
       "nombre": "Banco Hipotecario del Uruguay",
@@ -325,6 +325,21 @@
       "cobranding": "Recompensa"
     },
     {
+      "nombre": "LA CASA DE LOS CONGELADOS",
+      "pctMax": 25,
+      "url": "https://beneficios.brou.com.uy/ensenanza/la-casa-de-los-congelados",
+      "tarjetas": "25% de descuento con tarjetas de crédito Platinum y Black.",
+      "vigencia": "Hasta 25% de descuento todos los días con tarjetas BROU, en locales y web de La Casa de los Congelad",
+      "desc": "LA CASA DE LOS CONGELADOS",
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [
+        "Platinum",
+        "Black"
+      ],
+      "cobranding": null
+    },
+    {
       "nombre": "La Sacristía",
       "pctMax": 25,
       "url": "https://beneficios.brou.com.uy/ensenanza/la-sacristía",
@@ -349,22 +364,6 @@
       "categoria": "ensenanza",
       "red": null,
       "niveles": [
-        "Platinum",
-        "Black"
-      ],
-      "cobranding": "Recompensa"
-    },
-    {
-      "nombre": "Semana BROU en El Rey Del Entretenimiento",
-      "pctMax": 25,
-      "url": "https://beneficios.brou.com.uy/ensenanza/el-rey-del-entretenimiento-semanabrou",
-      "tarjetas": "25% de descuento con tarjetas de crédito BROU VISA Platinum e Infinite y BROU Recompensa Mastercard Platinum y Black.",
-      "vigencia": "Semana BROU en El Rey Del Entretenimiento",
-      "desc": "Semana BROU en El Rey Del Entretenimiento",
-      "categoria": "ensenanza",
-      "red": null,
-      "niveles": [
-        "Infinite",
         "Platinum",
         "Black"
       ],
@@ -709,13 +708,13 @@
       "nombre": "Espacio Mascota",
       "pctMax": 10,
       "url": "https://beneficios.brou.com.uy/ensenanza/espacio-mascota",
-      "tarjetas": "Aprovechá un 10% de descuento en los puntos de venta, una promoción válida exclusivamente para aquellos clientes NO SOCIOS que abonen con tarjetas de crédito y débito VISA, BROU Recompensa Mastercard",
-      "vigencia": "Vigencia: 30/11/2026",
-      "desc": "Aprovechá los siguientes descuentos en Espacio Mascota",
+      "tarjetas": "10% de descuento en productos de Espacio Mascota con tarjetas de crédito y débito BROU.",
+      "vigencia": "Vigencia: 28/11/2027",
+      "desc": "En Espacio Mascota, aprovechá un 10% de descuento en los productos de la tienda, abonando con tarjetas de crédito y débito BROU VISA y BROU Recompensa Mastercard.",
       "categoria": "ensenanza",
       "red": null,
       "niveles": [],
-      "cobranding": "Recompensa"
+      "cobranding": null
     },
     {
       "nombre": "Micro Macro",
@@ -1124,6 +1123,18 @@
       "red": null,
       "niveles": [],
       "cobranding": "Recompensa"
+    },
+    {
+      "nombre": "Preventa La Bajada 2026",
+      "pctMax": null,
+      "url": "https://beneficios.brou.com.uy/ensenanza/preventa-la-bajada-2026",
+      "tarjetas": "Preventa exclusiva de entradas por 72 horas, desde el 16 de noviembre, con tarjetas de crédito BROU.",
+      "vigencia": "Vigencia: 16/11/2026",
+      "desc": "Preventa La Bajada 2026",
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Cine Teatro Municipal de Treinta y Tres",
