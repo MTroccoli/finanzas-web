@@ -1,8 +1,39 @@
 {
   "fuente": "itau.com.uy",
-  "actualizado": "2026-11-09T21:20:07.814Z",
-  "total": 12,
+  "actualizado": "2026-11-13T18:26:16.728Z",
+  "total": 18,
   "beneficios": [
+    {
+      "nombre": "Mosca",
+      "url": null,
+      "pctMax": 25,
+      "descuentos": [
+        {
+          "pct": 25,
+          "texto": "25%"
+        }
+      ],
+      "vigencia": null,
+      "tarjetas": null,
+      "desc": "25% y 15% menos en Mosca",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
+    },
+    {
+      "nombre": "Cabify- Go to work",
+      "url": null,
+      "pctMax": null,
+      "descuentos": [],
+      "vigencia": null,
+      "tarjetas": null,
+      "desc": "Cabify- Go to work",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
+    },
     {
       "nombre": "estaciones Disa",
       "url": null,
@@ -17,31 +48,67 @@
       "cobranding": null
     },
     {
-      "nombre": "Sinfonía celebra sus 10 años con cuatro talleres",
+      "nombre": "Noche de las librerías",
       "url": null,
-      "pctMax": null,
-      "descuentos": [],
+      "pctMax": 25,
+      "descuentos": [
+        {
+          "pct": 25,
+          "texto": "25%"
+        }
+      ],
       "vigencia": null,
       "tarjetas": null,
-      "desc": "Sinfonía celebra sus 10 años con cuatro talleres",
+      "desc": "25% menos en Noche de las librerías",
       "exclusivo": false,
       "red": null,
       "niveles": [],
       "cobranding": null
     },
     {
-      "nombre": "Divino",
+      "nombre": "El Virrey",
       "url": null,
-      "pctMax": 15,
+      "pctMax": 25,
       "descuentos": [
         {
-          "pct": 15,
-          "texto": "15%"
+          "pct": 25,
+          "texto": "25%"
         }
       ],
       "vigencia": null,
       "tarjetas": null,
-      "desc": "15% y 10% menos en Divino",
+      "desc": "25% menos en El Virrey",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
+    },
+    {
+      "nombre": "Libros Libros (Punta del este)",
+      "url": null,
+      "pctMax": 25,
+      "descuentos": [
+        {
+          "pct": 25,
+          "texto": "25%"
+        }
+      ],
+      "vigencia": null,
+      "tarjetas": null,
+      "desc": "25% menos en Libros Libros (Punta del este)",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
+    },
+    {
+      "nombre": "Moweek 13, 14 y 15 de noviembre",
+      "url": null,
+      "pctMax": null,
+      "descuentos": [],
+      "vigencia": null,
+      "tarjetas": null,
+      "desc": "Moweek 13, 14 y 15 de noviembre",
       "exclusivo": false,
       "red": null,
       "niveles": [],
@@ -60,6 +127,19 @@
       "vigencia": null,
       "tarjetas": null,
       "desc": "25% 20% y 15% menos en San Roque",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
+    },
+    {
+      "nombre": "Sinfonía celebra sus 10 años con cuatro talleres",
+      "url": null,
+      "pctMax": null,
+      "descuentos": [],
+      "vigencia": null,
+      "tarjetas": null,
+      "desc": "Sinfonía celebra sus 10 años con cuatro talleres",
       "exclusivo": false,
       "red": null,
       "niveles": [],
@@ -96,6 +176,24 @@
       "vigencia": null,
       "tarjetas": null,
       "desc": "25% menos en Infonegocios",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
+    },
+    {
+      "nombre": "Divino",
+      "url": null,
+      "pctMax": 15,
+      "descuentos": [
+        {
+          "pct": 15,
+          "texto": "15%"
+        }
+      ],
+      "vigencia": null,
+      "tarjetas": null,
+      "desc": "15% y 10% menos en Divino",
       "exclusivo": false,
       "red": null,
       "niveles": [],
