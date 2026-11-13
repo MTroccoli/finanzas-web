@@ -1,7 +1,7 @@
 {
   "fuente": "bbva.com.uy",
-  "actualizado": "2026-11-09T19:37:28.983Z",
-  "total": 294,
+  "actualizado": "2026-11-13T17:06:18.089Z",
+  "total": 293,
   "categorias": [
     "Gastronomía",
     "Moda",
@@ -834,54 +834,6 @@
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/gastronomia/restaurante-morrina.html",
       "vigencia": "31 de Julio 2027",
       "local": "Miguel Ángel Odriozola 215, Colonia del Sacramento",
-      "descuentos": [
-        {
-          "pct": 20,
-          "tarjetas": "Tarjetas de Débito",
-          "texto": "20% Off con Tarjetas de Débito",
-          "isDebit": true,
-          "niveles": []
-        },
-        {
-          "pct": 20,
-          "tarjetas": "Tarjetas de Crédito Internacional, Oro, Pymes y Corporativas",
-          "texto": "20% Off con Tarjetas de Crédito Internacional, Oro, Pymes y Corporativas",
-          "isDebit": false,
-          "niveles": [
-            "Oro",
-            "Clásica"
-          ]
-        },
-        {
-          "pct": 30,
-          "tarjetas": "Tarjetas de Crédito Platinum, Black e Infinite",
-          "texto": "30% Off con Tarjetas de Crédito Platinum, Black e Infinite",
-          "isDebit": false,
-          "niveles": [
-            "Infinite",
-            "Platinum",
-            "Black"
-          ]
-        }
-      ],
-      "pctMax": 30,
-      "tope": null,
-      "red": null,
-      "niveles": [
-        "Oro",
-        "Clásica",
-        "Infinite",
-        "Platinum",
-        "Black"
-      ],
-      "cobranding": null
-    },
-    {
-      "comercio": "Up Lavista",
-      "categoria": "Gastronomía",
-      "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/gastronomia/Up_Lavista.html",
-      "vigencia": "30 de setiembre 2027",
-      "local": null,
       "descuentos": [
         {
           "pct": 20,
@@ -9161,6 +9113,54 @@
       "cobranding": null
     },
     {
+      "comercio": "Life Cinemas",
+      "categoria": "Experiencias",
+      "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/experiencias/Life_Cinemas.html",
+      "vigencia": "26 de Julio 2029",
+      "local": null,
+      "descuentos": [
+        {
+          "pct": 50,
+          "tarjetas": "Tarjetas de Débito en la compra de entradas para películas 2D y 3D.",
+          "texto": "50% Off con Tarjetas de Débito en la compra de entradas para películas 2D y 3D.",
+          "isDebit": true,
+          "niveles": []
+        },
+        {
+          "pct": 50,
+          "tarjetas": "Tarjetas de Crédito Internacional, Oro, Pymes y Corporativas en la compra de entradas para películas 2D, 3D y en la compra de packs de pop y refresco tradicionales en los Complejos.",
+          "texto": "50% Off con Tarjetas de Crédito Internacional, Oro, Pymes y Corporativas en la compra de entradas para películas 2D, 3D y en la compra de packs de pop y refresco tradicionales en los Complejos.",
+          "isDebit": false,
+          "niveles": [
+            "Oro",
+            "Clásica"
+          ]
+        },
+        {
+          "pct": 50,
+          "tarjetas": "Tarjetas de Crédito Platinum, Black e Infinite en la compra de entradas para películas 2D, 3D. Beneficio especial en packs de pop y refresco, mediante el cual el cliente recibirá un pack de pop y refresco tamaño mediano de regalo si compra sus entradas con Tarjetas de Crédito Platinum, Black e Infinite. El beneficio del pack de pop y refresco no aplica sin la compra asociada de entradas.",
+          "texto": "50% Off con Tarjetas de Crédito Platinum, Black e Infinite en la compra de entradas para películas 2D, 3D. Beneficio especial en packs de pop y refresco, mediante el cual el cliente recibirá un pack de pop y refresco tamaño mediano de regalo si compra sus entradas con Tarjetas de Crédito Platinum, Black e Infinite. El beneficio del pack de pop y refresco no aplica sin la compra asociada de entradas.",
+          "isDebit": false,
+          "niveles": [
+            "Infinite",
+            "Platinum",
+            "Black"
+          ]
+        }
+      ],
+      "pctMax": 50,
+      "tope": "Tope de beneficios: el número máximo de beneficios aplicables por Tarjeta y por día será de 4 entradas y 4 packs correspondientes",
+      "red": null,
+      "niveles": [
+        "Oro",
+        "Clásica",
+        "Infinite",
+        "Platinum",
+        "Black"
+      ],
+      "cobranding": null
+    },
+    {
       "comercio": "Bodega Braco Bosca",
       "categoria": "Experiencias",
       "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/experiencias/Bodega_Braco_Bosca.html",
@@ -9227,54 +9227,6 @@
       "tope": null,
       "red": null,
       "niveles": [],
-      "cobranding": null
-    },
-    {
-      "comercio": "Life Cinemas",
-      "categoria": "Experiencias",
-      "url": "https://www.bbva.com.uy/personas/productos/tarjetas/descuentos/experiencias/Life_Cinemas.html",
-      "vigencia": "26 de Julio 2029",
-      "local": null,
-      "descuentos": [
-        {
-          "pct": 50,
-          "tarjetas": "Tarjetas de Débito en la compra de entradas para películas 2D y 3D.",
-          "texto": "50% Off con Tarjetas de Débito en la compra de entradas para películas 2D y 3D.",
-          "isDebit": true,
-          "niveles": []
-        },
-        {
-          "pct": 50,
-          "tarjetas": "Tarjetas de Crédito Internacional, Oro, Pymes y Corporativas en la compra de entradas para películas 2D, 3D y en la compra de packs de pop y refresco tradicionales en los Complejos.",
-          "texto": "50% Off con Tarjetas de Crédito Internacional, Oro, Pymes y Corporativas en la compra de entradas para películas 2D, 3D y en la compra de packs de pop y refresco tradicionales en los Complejos.",
-          "isDebit": false,
-          "niveles": [
-            "Oro",
-            "Clásica"
-          ]
-        },
-        {
-          "pct": 50,
-          "tarjetas": "Tarjetas de Crédito Platinum, Black e Infinite en la compra de entradas para películas 2D, 3D. Beneficio especial en packs de pop y refresco, mediante el cual el cliente recibirá gratuitamente un pack de pop y refresco tamaño mediano.",
-          "texto": "50% Off con Tarjetas de Crédito Platinum, Black e Infinite en la compra de entradas para películas 2D, 3D. Beneficio especial en packs de pop y refresco, mediante el cual el cliente recibirá gratuitamente un pack de pop y refresco tamaño mediano.",
-          "isDebit": false,
-          "niveles": [
-            "Infinite",
-            "Platinum",
-            "Black"
-          ]
-        }
-      ],
-      "pctMax": 50,
-      "tope": "Tope de beneficios: el número máximo de beneficios aplicables por Tarjeta y por día será de 4 entradas y 4 packs correspondientes",
-      "red": null,
-      "niveles": [
-        "Oro",
-        "Clásica",
-        "Infinite",
-        "Platinum",
-        "Black"
-      ],
       "cobranding": null
     },
     {
@@ -9767,7 +9719,7 @@
         }
       ],
       "pctMax": 15,
-      "tope": "El descuento será de un 10%, se verá reflejado en el estado de cuenta, sin tope de devolucion. El mismo se verá reflejado en un plazo máximo de 30 días.",
+      "tope": null,
       "red": null,
       "niveles": [
         "Infinite",
