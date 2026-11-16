@@ -1,8 +1,8 @@
 {
   "fuente": "BROU",
   "url": "https://beneficios.brou.com.uy/beneficios",
-  "fecha": "2026-11-13",
-  "total": 92,
+  "fecha": "2026-11-16",
+  "total": 90,
   "beneficios": [
     {
       "nombre": "Banco Hipotecario del Uruguay",
@@ -530,18 +530,6 @@
       "red": null,
       "niveles": [],
       "cobranding": "Recompensa"
-    },
-    {
-      "nombre": "Interagrovial",
-      "pctMax": 20,
-      "url": "https://beneficios.brou.com.uy/ensenanza/interagrovial",
-      "tarjetas": "20% de descuento en repuestos seleccionados para sembradoras y plantadoras con BROU Agro VISA.",
-      "vigencia": "Vigencia: 15/11/2026",
-      "desc": "En Interagrovial, abonando con tarjeta de crédito BROU Agro VISA, accedé a un 20% de descuento en repuestos seleccionados para sembradoras y plantadoras.",
-      "categoria": "ensenanza",
-      "red": "Visa",
-      "niveles": [],
-      "cobranding": null
     },
     {
       "nombre": "Liga de Basketball de Soriano",
@@ -1108,18 +1096,6 @@
       "vigencia": null,
       "desc": "Aprovecha el beneficio de 2x1 en tus entrada de Cinemateca con los siguientes medios de pago:",
       "categoria": "espectaculos",
-      "red": null,
-      "niveles": [],
-      "cobranding": "Recompensa"
-    },
-    {
-      "nombre": "Campeonato Uruguayo de Asadores",
-      "pctMax": 15,
-      "url": "https://beneficios.brou.com.uy/ensenanza/campeonato-uruguayo-de-asadores",
-      "tarjetas": "Aprovechá un 15% off en tus entradas con tus tarjetas de Crédito y Débito BROU Recompensa Mastercard y BROU Visa.",
-      "vigencia": "Vigencia: 14/11/2026",
-      "desc": "Campeonato Uruguayo de Asadores",
-      "categoria": "ensenanza",
       "red": null,
       "niveles": [],
       "cobranding": "Recompensa"
