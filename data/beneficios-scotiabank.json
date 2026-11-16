@@ -1,6 +1,6 @@
 {
   "fuente": "scotiabank.com.uy",
-  "actualizado": "2026-11-13T19:17:29.170Z",
+  "actualizado": "2026-11-16T21:42:31.750Z",
   "total": 68,
   "beneficios": [
     {
@@ -1081,16 +1081,16 @@
       "nombre": "LAIKA",
       "url": null,
       "categoria": "Mascotas",
-      "pctMax": 10,
+      "pctMax": 20,
       "descuentos": [
         {
-          "pct": 10,
-          "texto": "10% de ahorro"
+          "pct": 20,
+          "texto": "20% de ahorro"
         }
       ],
-      "vigencia": "Todos los días",
-      "tarjetas": "10% de ahorro con tus tarjetas de crédito en todos los productos.",
-      "desc": "10% de ahorro con tus tarjetas de crédito en todos los productos.",
+      "vigencia": "Del 17 al 20 de Noviembre",
+      "tarjetas": "20% de ahorro con tarjetas de Crédito Scotiabank.",
+      "desc": "20% de ahorro con tarjetas de Crédito Scotiabank.",
       "exclusivo": false,
       "red": null,
       "niveles": [],
