@@ -1,8 +1,8 @@
 {
   "fuente": "BROU",
   "url": "https://beneficios.brou.com.uy/beneficios",
-  "fecha": "2026-11-16",
-  "total": 90,
+  "fecha": "2026-11-20",
+  "total": 89,
   "beneficios": [
     {
       "nombre": "Banco Hipotecario del Uruguay",
@@ -1099,18 +1099,6 @@
       "red": null,
       "niveles": [],
       "cobranding": "Recompensa"
-    },
-    {
-      "nombre": "Preventa La Bajada 2026",
-      "pctMax": null,
-      "url": "https://beneficios.brou.com.uy/ensenanza/preventa-la-bajada-2026",
-      "tarjetas": "Preventa exclusiva de entradas por 72 horas, desde el 16 de noviembre, con tarjetas de crédito BROU.",
-      "vigencia": "Vigencia: 16/11/2026",
-      "desc": "Preventa La Bajada 2026",
-      "categoria": "ensenanza",
-      "red": null,
-      "niveles": [],
-      "cobranding": null
     },
     {
       "nombre": "Cine Teatro Municipal de Treinta y Tres",
