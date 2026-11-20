@@ -1,6 +1,6 @@
 {
   "fuente": "scotiabank.com.uy",
-  "actualizado": "2026-11-16T21:42:31.750Z",
+  "actualizado": "2026-11-20T19:41:03.985Z",
   "total": 68,
   "beneficios": [
     {
@@ -85,10 +85,10 @@
       "pctMax": null,
       "descuentos": [],
       "vigencia": "Del 15 al 22 de noviembre",
-      "tarjetas": "2x1 en entradas con tarjetas Visa y Master de Scotia.",
-      "desc": "2x1 en entradas con tarjetas Visa y Master de Scotia.",
+      "tarjetas": "2x1 con tarjetas Scotiabank.",
+      "desc": "2x1 con tarjetas Scotiabank.",
       "exclusivo": false,
-      "red": "Visa",
+      "red": null,
       "niveles": [],
       "cobranding": null
     },
