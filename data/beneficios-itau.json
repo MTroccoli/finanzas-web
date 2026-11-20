@@ -1,8 +1,57 @@
 {
   "fuente": "itau.com.uy",
-  "actualizado": "2026-11-16T20:50:49.739Z",
-  "total": 14,
+  "actualizado": "2026-11-20T18:59:54.132Z",
+  "total": 17,
   "beneficios": [
+    {
+      "nombre": "Magma",
+      "url": null,
+      "pctMax": 25,
+      "descuentos": [
+        {
+          "pct": 25,
+          "texto": "25%"
+        }
+      ],
+      "vigencia": null,
+      "tarjetas": null,
+      "desc": "25% y 15% menos en Magma",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [],
+      "cobranding": null
+    },
+    {
+      "nombre": "Cabify",
+      "url": null,
+      "pctMax": 50,
+      "descuentos": [
+        {
+          "pct": 50,
+          "texto": "50%"
+        }
+      ],
+      "vigencia": null,
+      "tarjetas": null,
+      "desc": "Con Mastercard 50% menos en Cabify",
+      "exclusivo": false,
+      "red": "Mastercard",
+      "niveles": [],
+      "cobranding": null
+    },
+    {
+      "nombre": "Con MasterCard 2x1 en protectores solares",
+      "url": null,
+      "pctMax": null,
+      "descuentos": [],
+      "vigencia": null,
+      "tarjetas": null,
+      "desc": "Con MasterCard 2x1 en protectores solares",
+      "exclusivo": false,
+      "red": "Mastercard",
+      "niveles": [],
+      "cobranding": null
+    },
     {
       "nombre": "Mosca",
       "url": null,
