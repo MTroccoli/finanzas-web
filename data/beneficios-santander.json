@@ -1,7 +1,7 @@
 {
   "fuente": "santander.com.uy",
-  "actualizado": "2026-11-16T20:49:21.163Z",
-  "total": 324,
+  "actualizado": "2026-11-20T18:51:32.245Z",
+  "total": 326,
   "beneficios": [
     {
       "nombre": "Optica Estela Jinchuk",
@@ -919,6 +919,17 @@
       "cobranding": null
     },
     {
+      "nombre": "Gelatería Il Porto",
+      "url": "https://www.santander.com.uy/beneficios/gelateria-il-porto",
+      "pctMax": 50,
+      "vigencia": null,
+      "tarjetas": "• Tope de Devolución: el mismo se calcula por tipo de tarjeta: crédito o débito.",
+      "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
+    },
+    {
       "nombre": "Shark Club",
       "url": "https://www.santander.com.uy/beneficios/shark-club",
       "pctMax": 25,
@@ -980,6 +991,17 @@
       "vigencia": null,
       "tarjetas": "• Tope de Devolución mensual (por cliente, por tipo de tarjeta -crédito y débito- y por restaurante):",
       "desc": "• Los descuentos aplican a las tarjetas de CRÉDITO y DEBITO emitidas por Banco Santander S.A. (Uruguay), con excepción de la tarjeta débito incluida dentro del paquete Cuenta Nómina Básica (art. 10 de",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
+    },
+    {
+      "nombre": "Desigual",
+      "url": "https://www.santander.com.uy/beneficios/desigual",
+      "pctMax": 15,
+      "vigencia": null,
+      "tarjetas": "Tarjetas de crédito",
+      "desc": "Desigual es una marca para hombres y mujeres de todas las edades, tiene una gran variedad de prendas informales y accesorios, se caracteriza por potenciar la autenticidad de las personas a través de s",
       "red": null,
       "niveles": [],
       "cobranding": null
