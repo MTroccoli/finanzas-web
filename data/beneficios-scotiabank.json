@@ -1,7 +1,7 @@
 {
   "fuente": "scotiabank.com.uy",
-  "actualizado": "2026-11-20T19:41:03.985Z",
-  "total": 68,
+  "actualizado": "2026-11-23T23:27:49.241Z",
+  "total": 67,
   "beneficios": [
     {
       "nombre": "PEDIDOSYA MARKET Y FARMACIAS",
@@ -79,20 +79,6 @@
       "cobranding": null
     },
     {
-      "nombre": "URUGUAY OPEN 2026",
-      "url": null,
-      "categoria": "Destacados",
-      "pctMax": null,
-      "descuentos": [],
-      "vigencia": "Del 15 al 22 de noviembre",
-      "tarjetas": "2x1 con tarjetas Scotiabank.",
-      "desc": "2x1 con tarjetas Scotiabank.",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [],
-      "cobranding": null
-    },
-    {
       "nombre": "TIENDA INGLESA",
       "url": "https://www.scotiabank.com.uy/Personas/Tarjetas/Beneficios/Supermercados/tienda-inglesa",
       "categoria": "Destacados",
@@ -104,6 +90,27 @@
       "exclusivo": false,
       "red": null,
       "niveles": [],
+      "cobranding": null
+    },
+    {
+      "nombre": "CINES 50%",
+      "url": null,
+      "categoria": "Destacados",
+      "pctMax": 50,
+      "descuentos": [
+        {
+          "pct": 50,
+          "texto": "50% de ahorro"
+        }
+      ],
+      "vigencia": "Todos los días",
+      "tarjetas": "50% de ahorro en cines de todo el país con tarjetas débito Premium y débito Infinite.",
+      "desc": "50% de ahorro en cines de todo el país con tarjetas débito Premium y débito Infinite.",
+      "exclusivo": false,
+      "red": null,
+      "niveles": [
+        "Infinite"
+      ],
       "cobranding": null
     },
     {
@@ -511,27 +518,6 @@
       "exclusivo": false,
       "red": null,
       "niveles": [],
-      "cobranding": null
-    },
-    {
-      "nombre": "CINES 50%",
-      "url": null,
-      "categoria": "Cines",
-      "pctMax": 50,
-      "descuentos": [
-        {
-          "pct": 50,
-          "texto": "50% de ahorro"
-        }
-      ],
-      "vigencia": "Todos los días",
-      "tarjetas": "50% de ahorro en cines de todo el país con tarjetas débito Premium y débito Infinite.",
-      "desc": "50% de ahorro en cines de todo el país con tarjetas débito Premium y débito Infinite.",
-      "exclusivo": false,
-      "red": null,
-      "niveles": [
-        "Infinite"
-      ],
       "cobranding": null
     },
     {
@@ -1081,16 +1067,16 @@
       "nombre": "LAIKA",
       "url": null,
       "categoria": "Mascotas",
-      "pctMax": 20,
+      "pctMax": 10,
       "descuentos": [
         {
-          "pct": 20,
-          "texto": "20% de ahorro"
+          "pct": 10,
+          "texto": "10% de ahorro"
         }
       ],
-      "vigencia": "Del 17 al 20 de Noviembre",
-      "tarjetas": "20% de ahorro con tarjetas de Crédito Scotiabank.",
-      "desc": "20% de ahorro con tarjetas de Crédito Scotiabank.",
+      "vigencia": "Todos los días",
+      "tarjetas": "10% de ahorro con tus tarjetas de crédito en todos los productos.",
+      "desc": "10% de ahorro con tus tarjetas de crédito en todos los productos.",
       "exclusivo": false,
       "red": null,
       "niveles": [],
