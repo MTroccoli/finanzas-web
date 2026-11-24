@@ -1,8 +1,8 @@
 {
   "fuente": "BROU",
   "url": "https://beneficios.brou.com.uy/beneficios",
-  "fecha": "2026-11-20",
-  "total": 89,
+  "fecha": "2026-11-24",
+  "total": 90,
   "beneficios": [
     {
       "nombre": "Banco Hipotecario del Uruguay",
@@ -793,6 +793,18 @@
         "Platinum"
       ],
       "cobranding": "Recompensa"
+    },
+    {
+      "nombre": "SIUR - Black Friday 2026",
+      "pctMax": 10,
+      "url": "https://beneficios.brou.com.uy/ensenanza/siur-black-friday-2026",
+      "tarjetas": null,
+      "vigencia": "Vigencia: 09/12/2026",
+      "desc": "SIUR - Black Friday 2026",
+      "categoria": "ensenanza",
+      "red": null,
+      "niveles": [],
+      "cobranding": null
     },
     {
       "nombre": "Macromercado",
