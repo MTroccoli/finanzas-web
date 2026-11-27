@@ -1,7 +1,7 @@
 {
   "fuente": "scotiabank.com.uy",
-  "actualizado": "2026-11-23T23:27:49.241Z",
-  "total": 67,
+  "actualizado": "2026-11-27T20:45:14.155Z",
+  "total": 66,
   "beneficios": [
     {
       "nombre": "PEDIDOSYA MARKET Y FARMACIAS",
@@ -21,20 +21,6 @@
       "red": null,
       "niveles": [],
       "cobranding": null
-    },
-    {
-      "nombre": "COPA MILLAS X3 COMBUSTIBLE",
-      "url": null,
-      "categoria": "Destacados",
-      "pctMax": null,
-      "descuentos": [],
-      "vigencia": "Todos los días",
-      "tarjetas": "Con tu tarjeta American Express ConnectMiles se triplican tus millas al cargar combustible en cualquier estación de servicio del país durante todo setiembre.",
-      "desc": "Con tu tarjeta American Express ConnectMiles se triplican tus millas al cargar combustible en cualquier estación de servicio del país durante todo setiembre.",
-      "exclusivo": false,
-      "red": "Amex",
-      "niveles": [],
-      "cobranding": "ConnectMiles"
     },
     {
       "nombre": "COMBUSTIBLE",
@@ -116,7 +102,7 @@
     {
       "nombre": "IBER RESTAURANTES",
       "url": null,
-      "categoria": "Restaurantes",
+      "categoria": "Destacados",
       "pctMax": 25,
       "descuentos": [
         {
@@ -275,11 +261,15 @@
       "nombre": "IBER",
       "url": null,
       "categoria": "Cafeterías y Salones de té",
-      "pctMax": 15,
+      "pctMax": 25,
       "descuentos": [
         {
           "pct": 15,
           "texto": "15% de ahorro"
+        },
+        {
+          "pct": 25,
+          "texto": "25% de ahorro"
         }
       ],
       "vigencia": "Todos los días",
@@ -1086,16 +1076,16 @@
       "nombre": "LAVAKAN",
       "url": null,
       "categoria": "Mascotas",
-      "pctMax": 15,
+      "pctMax": 25,
       "descuentos": [
         {
-          "pct": 15,
-          "texto": "15% de ahorro"
+          "pct": 25,
+          "texto": "25% de ahorro"
         }
       ],
-      "vigencia": "Todos los días",
-      "tarjetas": "15% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y débito Premium.",
-      "desc": "15% de ahorro con tarjetas de Crédito Platinum, Infinite, Gold y débito Premium.",
+      "vigencia": "Del 26 al 30 de Noviembre",
+      "tarjetas": "25% de ahorro con tarjetas de crédito Platinum, Infinite, Gold y débito Premium.",
+      "desc": "25% de ahorro con tarjetas de crédito Platinum, Infinite, Gold y débito Premium.",
       "exclusivo": false,
       "red": null,
       "niveles": [
